@@ -2,7 +2,7 @@
 
 ## What is bauta node js
 
-BautaJS is mainly a library for build NodeJS middlewares in seconds, this allows the developer to start doing the more important work on a middleware, the bussines logic.
+BautaJS is mainly a library for build NodeJS middlewares in 'seconds'.
 
 Some of the features of this library are:
 
