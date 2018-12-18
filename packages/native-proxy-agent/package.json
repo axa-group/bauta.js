@@ -8,7 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.axa.com/Digital/bauta-nodejs"
+    "url": "git+https://github.axa.com/Digital/bauta-nodejs.git"
+  },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
   },
   "keywords": [
     "agent",
@@ -20,6 +23,10 @@
   "author": "myaxa.mit@axa-groupsolutions.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
-    "got": "^9.4.0"
+    "got": "9.4.0"
+  },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
   }
 }

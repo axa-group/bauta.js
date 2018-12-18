@@ -1,7 +1,7 @@
 {
   "name": "multipart-request-builder",
   "version": "0.0.0",
-  "description": "Build a multipart requests ready to inject to a nodejs request",
+  "description": "Build a multipart/related requests ready to inject to a nodejs request",
   "main": "Multipart.js",
   "scripts": {
     "documentation": "npx documentation build --config documentation.yml \"{,!(node_modules)/**/}*.js\" --sort-order=alpha -f md -o README.md"
@@ -9,6 +9,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
   },
   "keywords": [
     "multipart",
@@ -18,5 +21,9 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "is-stream": "1.1.0"
+  },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
   }
 }
