@@ -1,0 +1,17 @@
+{
+  "testService": {
+    "operations": [
+      {
+        "name": "test",
+        "someVariableOption": "{{req.variableOption}}",
+        "url": "https://facebook.com/"
+      },
+      {
+        "name": "test",
+        "versionId": "v2",
+        "someVariableOption": "{{req.variableOption}}",
+        "url": "https://google.com/"
+      }
+    ]
+  }
+}

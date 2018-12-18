@@ -1,0 +1,15 @@
+[
+  {
+    "versionId": "v1",
+    "openapi": "3.0",
+    "apiVersion": "1.0",
+    "swaggerVersion": "1.0",
+    "info": {
+      "description": "API for MyAXA mobile application",
+      "version": "1.0.0",
+      "title": "MyAXA API",
+      "termsOfService": "http://axa.com/termsofservices"
+    },
+    "basePath": "/v1/api/"
+  }
+]

@@ -1,0 +1,74 @@
+{
+  "/oauth2/token": {
+    "post": {
+      "tags": ["authentication"],
+      "summary": "Authenticate a user using his credentials - standard OAuth 2 version",
+      "description": "",
+      "operationId": "post-token-2",
+      "produces": ["application/json"],
+      "consumes": ["application/x-www-form-urlencoded"],
+      "parameters": [
+        {
+          "name": "grant_type",
+          "in": "formData",
+          "required": true,
+          "description":
+            "This field must be set to -password- for an authentication with user credentials, or to -refresh_token- when a refresh token is provided to get a new access token, or -authorization_code- when an authorization code is provided with field code to get access/refresh tokens",
+          "type": "string",
+          "enum": ["password", "refresh_token", "authorization_code"]
+        },
+        {
+          "name": "username",
+          "in": "formData",
+          "required": false,
+          "description": "The resource owner user name, e.g. the customer's digital account login",
+          "type": "string"
+        },
+        {
+          "name": "password",
+          "in": "formData",
+          "required": false,
+          "description":
+            "The resource owner password, e.g. the customer's digital account password",
+          "type": "string"
+        },
+        {
+          "name": "refresh_token",
+          "in": "formData",
+          "description":
+            "The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)",
+          "required": false,
+          "type": "string"
+        },
+        {
+          "name": "code",
+          "in": "formData",
+          "description":
+            "The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory",
+          "required": false,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "successful operation",
+          "schema": {
+            "$ref": "#/definitions/TokenResponse"
+          }
+        },
+        "401": {
+          "description": "Invalid credentials",
+          "schema": {
+            "$ref": "#/definitions/Error"
+          }
+        },
+        "500": {
+          "description": "Internal server error.",
+          "schema": {
+            "$ref": "#/definitions/Error"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.axa.com/Digital/bauta-nodejs.git"
+  },
+  "keywords": [
+    "middleware",
+    "express",
+    "fastify",
+    "agent",
+    "proxy",
+    "multipart"
+  ],
+  "author": "mit@axa-groupsolutions.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "bugs": {
+    "url": "https://github.axa.com/Digital/bauta-nodejs/issues"
+  },
+  "homepage": "https://github.axa.com/Digital/bauta-nodejs#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "5.5.0",
+    "eslint-config-airbnb-base": "13.1.0",
+    "eslint-config-prettier": "3.0.1",
+    "eslint-plugin-import": "2.14.0",
+    "eslint-plugin-prettier": "2.6.2",
+    "jest": "23.6.0",
+    "jest-extended": "0.8.1",
+    "jest-junit": "5.2.0",
+    "lerna": "3.4.3",
+    "lint-staged": "8.1.0",
+    "nock": "9.6.1",
+    "nsp": "3.2.1",
+    "pre-commit": "1.2.2",
+    "prettier": "1.14.2"
+  },
+  "scripts": {
+    "lerna": "lerna",
+    "eslint": "eslint",
+    "nsp": "nsp",
+    "bootstrap": "lerna bootstrap",
+    "postinstall": "lerna bootstrap",
+    "documentation": "lerna exec -- npm run documentation && git add '*/**/README.md'",
+    "clean": "lerna clean --yes",
+    "release": "npm run clean && npm ci && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
+    "test": "npm run lint && jest --verbose",
+    "coverage": "npm test -- --coverage",
+    "test:clean": "jest --clearCache",
+    "test:watch": "jest --verbose --watchAll",
+    "test:ci": "npm run coverage -- --ci --maxWorkers=2  --reporters=default --reporters=jest-junit",
+    "lint": "eslint .",
+    "security": "npm run nsp check -- --reporter summary --threshold 4; lerna exec --concurrency 14 -- npm run security -- --threshold 4",
+    "checkDeps": "lerna exec --concurrency 14 -- npm outdated"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "jest": {
+    "projects": [
+      "<rootDir>/packages/*"
+    ]
+  },
+  "pre-commit": [
+    "test"
+  ]
+}

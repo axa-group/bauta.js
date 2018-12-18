@@ -1,0 +1,68 @@
+{
+  "/oauth2/token": {
+    "post": {
+      "tags": ["authentication"],
+      "summary": "Authenticate a user using his credentials - standard OAuth 2 version",
+      "description": "",
+      "operationId": "post-token-2",
+      "produces": ["application/json"],
+      "consumes": ["application/x-www-form-urlencoded"],
+      "parameters": [
+        {
+          "name": "request",
+          "in": "body",
+          "schema": {
+            "type": "object",
+            "required": ["grant_type"],
+            "properties": {
+              "grant_type": {
+                "type": "string",
+                "enum": ["password", "refresh_token", "authorization_code"]
+              },
+              "username": {
+                "description":
+                  "The resource owner user name, e.g. the customer's digital account login",
+                "type": "string"
+              },
+              "password": {
+                "description":
+                  "The resource owner password, e.g. the customer's digital account password",
+                "type": "string"
+              },
+              "refresh_token": {
+                "description":
+                  "The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)",
+                "type": "string"
+              },
+              "code": {
+                "description":
+                  "The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory",
+                "type": "string"
+              }
+            }
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "successful operation",
+          "schema": {
+            "$ref": "#/definitions/TokenResponse"
+          }
+        },
+        "401": {
+          "description": "Invalid credentials",
+          "schema": {
+            "$ref": "#/definitions/Error"
+          }
+        },
+        "500": {
+          "description": "Internal server error.",
+          "schema": {
+            "$ref": "#/definitions/Error"
+          }
+        }
+      }
+    }
+  }
+}

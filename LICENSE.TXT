@@ -1,0 +1,146 @@
+License to Use
+
+This License to Use apply to any AXA Company using MyAXA Software. It sets forth the terms and conditions under which Licensee may use the Software and its Source Code.
+Licensee warrants that Users shall comply with “MyAXA Software Terms and Conditions” accessible here: https://github.axa.com/Digital/mana-dev-cookbooks/blob/master/legal/terms_and_conditions.md 
+
+SHOULD LICENSEE BE A PART OF MYAXA CO-DEVELOPMENT PROGRAM AND HAVE ENTERED INTO A SPECIFIC AGREEMENT FOR THIS PURPOSE, THE FOLLOWING PRECEDENCE SHALL APPLY: IN CASE OF CONFLICTING TERMS BETWEEN THE LICENSE TO USE AND THE AFOREMENTIONNED SPECIFIC AGREEMENT, THE PROVISIONS OF THE LICENSE TO USE SHALL PREVAIL IN RELATION TO THE SUBJECT MATTER OF LICENSEE’S USE OF MYAXA SOFTWARE AND SOURCE CODE.
+Licensor reserves the right to modify or replace this License to Use. In such case, Licensor will inform Licensee by issuing a thirty (30) days prior notice.
+1   Definitions
+
+“AXA Company” shall mean:
+(i)	AXA, “Société Anonyme” with a Board of Directors (herein “AXA SA”) having its principal offices at 25, avenue Matignon, 75008 Paris, registered on the Commercial Registry of Paris under the number 572 093 920; and
+(ii)	any other company controlled by, or controlling AXA SA, with a company being considered as controlling another:
+a.	when it holds directly or indirectly a portion of the capital according to it the majority of the voting rights in general meetings of shareholders of this company;
+b.	when it holds solely the majority of the voting rights in this company by virtue of an agreement concluded with other partners or shareholders and which is not contrary to the interest of the company;
+c.	when it determines de facto, by voting rights which it holds, the decisions in the general meetings of shareholders of this company;
+d.	in any event, when it holds, directly or indirectly, a portion of voting rights greater than 40% and when no other partner or shareholder holds directly or indirectly a portion which is greater than its own; and
+(iii)	any economic interest group or joint venture in which AXA SA and/or one or more other Companies of the AXA Group participates for at least 50% in operating costs;
+(iv)	in the cases where the law applicable to a company limits voting rights or control (such as defined here in above), this company will be deemed to be a company of the AXA Group, if the voting rights in general shareholders’ meetings or the control held by a Company of the AXA Group reaches the maximum amount fixed by said applicable law; and
+(v)	any legal entity in which an AXA company holds a lower portion of the capital or of voting rights or cost participation than set forth above when such company is authorized to do business under the name “AXA” or under a name which include the “AXA” business name;
+(vi)	and any other legal entity in which an AXA Company directly or indirectly has an economic interest. For the avoidance of doubt GIE AXA is deemed an AXA Company.
+All AXA Companies constitute the “AXA Group”.
+
+“Contribution(s)” shall mean any original work of authorship, including any modifications or additions to the Source Code, that is intentionally submitted by Licensee to Licensor for inclusion in, or documentation of, the Source Code. For the purposes of this definition, "submitted" means any form of electronic, verbal, or written communication sent to Licensor or its representatives, including but not limited to communication on electronic mailing lists, Source Code control systems, and issue tracking systems that are managed by, or on behalf of, Licensor for the purpose of discussing and improving the Source Code and the Software, but excluding communication that is conspicuously marked or otherwise designated in writing by Licensee as "Not a Contribution."
+
+“Production Environment” means any end user facing distribution platform or mechanism such as, but not limited to, Google Play or Apple Store plus services open to the internet, limited or not to existing AXA clients such as, but not limited to, APIs & Web frontends.
+
+“Pre-production Environment” means any environment where upgrades, fixes, and other changes to the Software are completed and verified before being deployed in the Production Environment.
+
+“Licensee” means the AXA Company Using the Licensed Products.
+
+“Licensor” means AXA Shared Services Spain S.A., a company organized under the laws of Spain, having its principal place of business at Calle Emilio Vargas, 6 28043 Madrid, Spain, registered with the Registro Mercantil of Madrid, under reference ES A86351426.
+
+“MyAXA” means MyAXA mobile application and its related services. MyAXA mobile application allows AXA clients to check their hired AXA services & policies depending on the country where those services have been hired.
+
+"Program" means MyAXA Co-development Program. This Program enables AXA Companies which are part of it to co-develop their own local MyAXA application (e.g. “MyAXA Germany”). AXA Companies that are part of the Program entered into a specific agreement for that purpose.
+
+“Source Code” means the MyAXA source code written in any programming language contained in any format, including human and machine-readable formats, such code including all comments and procedural code plus all related development documents such as, but not limited to, flow charts, schematics, statements of principles of operations or any other specifications.
+
+“Software” means MyAXA software, its documentation and Source Code and any
+associated components licensed hereunder such as, but not limited to, MyAXA android/iOS mobile applications, MANA UI artifacts or libraries, MANA Core artifacts or libraries, mobile middlewares, mobile GraphQL APIs, MyAXA core plus all its packages, any other related gradle or maven artifacts, npm libraries, pods, and any other component required or distributed together with MyAXA. Third-Party components will be used & distributed according to their own license.
+
+“Third-Party” shall refer to any person or entity which shall not be bound by this License to Use. Unless stated otherwise, no AXA Company shall be construed as a Third Party.
+
+“User(s)”: shall mean any employees, agents or other persons whose authorization to use the Licensed Products has been granted;
+
+2   Right of use granted for the Software
+
+
+2.1. Use of the Software.
+
+In accordance with any limitation, restrictions, conditions and dependencies imposed by Third-Party vendor or licensor to Licensor, or directly by Licensor to Licensee, Licensor hereby grants to Licensee a nonexclusive license for the length of the applicable statutory rights to reproduce, represent, adapt, modify, correct, arrange, distribute, translate, integrate, transcribe, analyze, publicly perform, use, in any manner or form, by any means, according to any current or future technology, on any media,  for any territory and create derivative works of the Software, for the benefit of Licensee. The foregoing license shall include use by Licensee personnel, subcontractors, Third-Party service providers, consultants, auditors, agents and representatives, to the extent providing services to or on behalf of Licensee.
+
+Unless Licensee is part a of the Program or is otherwise expressly agreed in writing by Licensor, Licensee shall use the Software for evaluation purposes, and in Pre-production environment only. Should Licensee be a part of the Program or otherwise expressly authorized, Licensee may also use the Software in Production Environment.
+
+Licensee acknowledges that some components of the Software might be edited by Third Parties and might be governed by Third-Party license terms and conditions. In such case, Licensee shall comply with applicable Third-Party license terms and conditions. Should there be any conflicting terms between this License to Use and Third-Party license terms and conditions, the latter shall prevail in relation to the relevant Third-Party components.  
+
+Licensee may make, or have made, copies of all or part of the Software
+for back-up and archival purposes only.
+
+2.2. Access to the Source Code.
+
+This section is dedicated to Licensee’s access to the Source Code. In case of conflicting terms between this section and section 2.1, this section 2.2 shall prevail in relation to the subject matter of Licensee’s use of the Source Code.
+
+Licensor hereby grants to Licensee a non-exclusive, non-transferable and non-sublicensable right to browse, use, install, operate, compile, run, display, make the Source Code available to Users by means of shared platform(s) and/or physical or virtual server(s) whether on one or several partitions (regardless whether such platforms or servers are owned or controlled by Licensor) and permit Users to perform such actions. Right to Use the Source Code is granted for the length of applicable statutory rights.
+
+EXCEPT FOR THOSE USERS WHO ARE NOT EMPLOYEES OF LICENSEE AND WHO HAVE BEEN EXPRESSLY AUTHORIZED TO ACCESS THE SOURCE CODE, THE SOURCE CODE SHALL NOT BE SHARED, DISCLOSED OR OTHERWISE MADE AVAILABLE OR USED PURSUANT TO THE PRESENT SECTION 2.2 OUTSIDE OF THE AXA GROUP.
+
+Unless Licensee is part of the Program or otherwise expressly agreed in writing by Licensor, the Source Code shall be used in Pre-production Environment and solely for the purpose of evaluation. Should Licensee be a part of the Program or otherwise expressly authorized, Licensee may also use the Source Code in Production Environment.
+
+2.3. Price.
+
+Without prejudice to any charges that Licensee may be required to pay pursuant to any specific agreement in connection with the present License to Use, the right to use granted by Licensor under the present License to Use
+is granted free of royalties and free of any charges.
+
+ Notwithstanding the foregoing, Licensee acknowledges that the Source Code may be hosted in a chargeable repository. In such case, Licensee shall bear the cost of accessing the Source Code.
+
+
+
+
+
+
+2.4. Warranty Disclaimer.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+3   Contributions
+
+Unless specified otherwise, Licensee has the ownership of any Contribution submitted by Licensee to Licensor.  
+
+Licensee hereby grants to Licensor the irrevocable and sub-licensable right to reproduce, represent, adapt, modify, correct, arrange, distribute, translate, integrate, transcribe, analyze, publicly perform, use, in any manner or form, by any means, according to any current or future technology, on any media, for any territory, the Contributions and create derivative works of them. The foregoing license is granted to Licensor for the length of applicable statutory rights, free of royalty or any other charges.
+Except for Licensor’s duly authorized consultants and Third-Party contractors, Licensor shall not sub-license, distribute or otherwise make the Contributions available outside of the AXA Group.
+
+4   Third Party Intellectual Property
+Licensor and Licensee respectively represent that neither the Software nor the Contributions infringe on any patent, model, trademark or any other intellectual property right. Both Licensor and Licensee warrant they have obtained any necessary authorization, permission or license from any Third-Party (including within the AXA Group) holding any intellectual property right on any element included in the Software and/or Contributions.
+
+Each Party shall defend, hold harmless and indemnify the other from and against any liability arising out of a claim by a Third-Party that the Software or Contributions infringe, misappropriate or violate such Third-Party’s intellectual property rights.
+
+If the Software or any of its components become the subject of any such Third-Party claim, then
+Licensor (at its choice) may either: (i) procure the right for the Customer to
+continue using the Software or relevant component as contemplated hereunder; (ii) modify the
+Software or relevant component to render it non-infringing; or (iii) replace the Software or relevant component with non-infringing Software or component. If none of the foregoing are
+practicable, then Licensor shall be entitled to terminate the License to Use and shall indemnify Licensee.
+
+5   Confidentiality
+
+Licensee shall deem to be strictly confidential all information of any kind whatsoever (notably financial, technical and administrative information) of which it becomes aware in the context of the use of the Software, regardless of the form or nature of the information involved or the medium on which it is stored (hereinafter the “Confidential Information”), unless Licensor gives its express prior consent for such information to be disclosed. Licensor agrees to use the Confidential Information solely within the context of the use of the Software and warrants that Licensor’s employees shall keep the said information confidential.  Licensor is permitted to disclose this Confidential Information solely to the appropriate administrative authorities and to those persons who require the said Confidential Information pursuant to a law, a decree, a regulation or a court decision. Licensor agrees in such event to (i) immediately inform Licensee thereof in writing and (ii) inform the entities/persons to whom it is required to disclose the Confidential Information of the non-disclosure obligation by which it is bound. This non-disclosure obligation shall apply as from Licensee’s first use of the Software and for 36 (thirty-six) months following the terminate date of this License to Use.
+
+6  Termination
+
+Should Licensee fail to comply with the provisions of this License to Use, Licensor reserves the right to terminate Licensee’s right to use the Software granted pursuant to this License to Use.
+
+Licensee will no longer be authorized to use the Software upon expiration or termination of the License to Use for any reason whatsoever. Should Licensee be part of the Program or otherwise expressly authorized, Licensee may continue to use the Software solely in Pre-Production environment, unless Licensor decides otherwise.
+
+Upon expiration or termination of Licensee’s right to use the Software in Production and Pre-Production Environment, Licensee shall destroy any copy of the Software and certify such destruction to Licensor in writing.
+
+
+7   Liability
+
+In no event shall either Licensor or Licensee be liable for any indirect damages. The total amount of any damages that may be paid by either Licensor or Licensee in connection with this License to Use may not exceed an amount equal to 250,000.00 euros (€).
+
+The limits on liability set out in this section shall not apply in respect of:
+(i)	any liability for death, personal injury, product liability or in other cases in which a limitation of liability is prohibited by mandatory laws or court rulings, resulting from a Party’s wilful misconduct or gross negligence;
+(ii)	any liability for fraud or fraudulent misrepresentation by Licensor or Licensee;
+(iii)	the obligation on Licensee to pay undisputed fees that have become due;
+(iv)	the obligation on Licensee to refrain from sharing, disclosing or otherwise making the Source Code available outside of the AXA Group,
+(v)	the obligation on Licensor to refrain from sub-licensing, distributing or otherwise making the Contributions available outside of the AXA Group.
+(vi)	any other liability to the extent to which it cannot be lawfully excluded.
+(vii)	any liability which is covered by the data privacy provisions.
+
+Licensor shall in no case be liable for whatever reason for any failures to comply with its obligations pursuant to this License to Use which may occur due to any actions or omissions of Third-Parties.
+
+8   Data Privacy
+
+In the enforcement of this License to Use, neither Licensor nor Licensee shall not have access nor receive Personal Information from each other (or from any other AXA Company or Third-Party) but in the case where they do, they shall comply with all applicable laws and regulatory requirements in relation to data protection and privacy i.e. protecting the fundamental rights and freedoms of individuals and, in particular, their right to privacy with respect to the processing of personal data, or similar laws that apply in relation to the processing of personal data, including but not limited to, the Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data,.
+
+Where applicable, Licensor and Licensee warrant to comply with the dispositions of the Master Data Privacy Agreement (the “MDPA”) executed by the them. Licensor and Licensee agree that the dispositions of the MDPA will prevail on the dispositions of this License to Use for data privacy related matters. All of the other dispositions of the License to Use shall remain unchanged and in full force and effect.
+
+9   Governing Law – Competent Court
+
+9.1. Governing Law.
+
+THIS LICENSE TO USE SHALL BE GOVERNED BY AND CONSTRUED IN ACCORDANCE WITH SPANISH LAW EXCLUDING ANY NATIONAL, EUROPEAN OR INTERNATIONAL CONFLICT OF LAWS RULE OR PRINCIPLE.
+
+9.2. Competent Court.
+
+THE COMPETENT COURTS IN THE CITY OF MADRID SHALL HAVE EXCLUSIVE JURISDICTION TO DECIDE ALL DISPUTES RELATING TO THIS AGREEMENT AND ALL SUBSEQUENT APPLICATION CONTRACT OR STATEMENT OF WORK, NOTWITHSTANDING ANY PLURALITY OF DEFENDANTS OR CLAIMS FOR GUARANTEE, EVEN FOR EMERGENCY ATTACHMENT PROCEEDINGS, INTERIM OR EX-PARTE PROCEEDINGS.

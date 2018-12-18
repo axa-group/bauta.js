@@ -1,0 +1,25 @@
+{
+  "name": "native-proxy-agent",
+  "version": "0.0.0",
+  "description": "A native proxy agent that uses the native nodejs http.Agent and https.Agent to proxy the requests, no dependencies",
+  "main": "agent.js",
+  "scripts": {
+    "documentation": "npx documentation build --config documentation.yml \"{,!(node_modules)/**/}*.js\" --sort-order=alpha -f md -o README.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "keywords": [
+    "agent",
+    "proxy",
+    "keep-alive",
+    "http-proxy",
+    "https-proxy"
+  ],
+  "author": "myaxa.mit@axa-groupsolutions.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "devDependencies": {
+    "got": "^9.4.0"
+  }
+}

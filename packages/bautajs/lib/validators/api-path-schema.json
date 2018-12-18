@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array"
+        },
+        "description": {
+          "type": "string"
+        },
+        "responses": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      },
+      "required": ["operationId", "responses"]
+    },
+    "minProperties": 1
+  },
+  "minProperties": 1
+}

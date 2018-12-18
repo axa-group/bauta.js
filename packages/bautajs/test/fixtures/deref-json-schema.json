@@ -1,0 +1,29 @@
+{
+  "title": "Claim",
+  "properties": {
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string",
+            "description":
+              "A code describing the hypermedia relation. e.g. item for a document in a collection. See <a href='https://axagroupsolutions.atlassian.net/wiki/display/DAMYAXA/HypermediaLink.rel' target='_blank'> possible values</a>",
+            "example": "Coverages"
+          },
+          "uri": {
+            "type": "string",
+            "description": "The unique identifier of the associated resource",
+            "example": "/policies/123456780/coverages"
+          },
+          "method": {
+            "type": "string",
+            "description": "The HTTP method to use to follow the hypermedia link",
+            "example": "GET"
+          }
+        }
+      }
+    }
+  }
+}

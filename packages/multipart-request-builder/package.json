@@ -1,0 +1,22 @@
+{
+  "name": "multipart-request-builder",
+  "version": "0.0.0",
+  "description": "Build a multipart requests ready to inject to a nodejs request",
+  "main": "Multipart.js",
+  "scripts": {
+    "documentation": "npx documentation build --config documentation.yml \"{,!(node_modules)/**/}*.js\" --sort-order=alpha -f md -o README.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "keywords": [
+    "multipart",
+    "request"
+  ],
+  "author": "myaxa.mit@axa-groupsolutions.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "is-stream": "1.1.0"
+  }
+}

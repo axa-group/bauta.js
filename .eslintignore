@@ -1,0 +1,15 @@
+node_modules/
+target/
+*.csv
+*.dat
+*.iml
+*.log
+*.out
+*.pid
+*.seed
+*.sublime-*
+*.swo
+*.swp
+*.tgz
+packages/generator-myaxa/generators/app/templates/
+packages/generator-myaxa/generators/app/excluded/

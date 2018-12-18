@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "links": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "title": "Claim"
+}

@@ -1,0 +1,11 @@
+{
+  "testService": {
+    "operations": [
+      {
+        "name": "test",
+        "someVariableOption": "{{req.variableOption}}",
+        "url": "https://google.com/"
+      }
+    ]
+  }
+}
