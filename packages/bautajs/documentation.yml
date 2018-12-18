@@ -8,6 +8,99 @@ toc:
       ```console
         npm install bautajs
       ```
+  - name: Usage
+    description: |
+      To use bautaJS with the default configuration we will need to create the following folder structure:
+        - server
+          - services
+            - v1
+              - cats
+                  - cats-datasource.json
+                  - cats-loader.js
+                  - cats-schema.json
+          - server.js
+          - api-definitions.json
+
+      // cats-datasource.json
+      ```json
+      {
+        "cats": {
+          "operations": [
+            {
+              "name": "find",
+              "url": "{{config.endpoint}}/getsome"
+            }
+          ]
+        }
+      }
+      ```
+
+      // cats-loader.js
+      ```js
+        const catsSchema = require('./cats-schema.json');
+
+        module.exports = services => {
+          services.cats.v1.find
+            .setSchema(catsSchema)
+            .setLoader(function catLoaders(){
+              this.req.logger.info('Fetching some cats');
+
+              return this.dataSource.request();
+            })
+        };
+      ```
+
+      // cats-schema.json
+      ```json
+        {
+          "/cats": {
+            "get": {
+              "tags": ["cats"],
+              "summary": "Get the list of cats",
+              "operationId": "get-cats",
+              "produces": ["application/json"],
+              "responses": {
+                "200": {
+                  "description": "successful operation",
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "Object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+      ```
+
+      // server.js
+
+      ```js
+          const bautaJS = require('bautajs');
+          
+          const config = {
+            endpoint:'http://coolcats.com'
+          }
+
+          bautaJS(config);
+
+          await bautaJS.services.cats.v1.find.exec({});
+      ```
+
+      This will produce a request to `coolcats.com` with the result:
+        ```json
+          [
+            {
+              "name": "cat1"
+            }
+          ]
+        ```
   - name: Features
     children:
       - name: Store
