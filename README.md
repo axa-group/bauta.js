@@ -16,7 +16,7 @@ Some of the features of this library are:
 
 ## Why use this
 
-Because is easy to learn, tested, it's not a framework, it's light and fast and it comes with a loot of cool features.
+Because is easy to learn, tested, it's not a framework, it's light and fast and it comes with a lot of cool features.
 
 ## Packages
 
