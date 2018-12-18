@@ -191,16 +191,36 @@ To use bautaJS with the default configuration we will need to create the followi
     }
 ```
 
+// api-definitions.json
+
+```json
+  [
+    {
+      "versionId": "v1",
+      "openapi": "3.0",
+      "apiVersion": "1.0",
+      "swaggerVersion": "1.0",
+      "info": {
+        "description": "API for cool cats",
+        "version": "1.0.0",
+        "title": "MyAXA API"
+      },
+      "basePath": "/v1/api/"
+    }
+  ]
+```
+
 // server.js
 
 ```js
     const bautaJS = require('bautajs');
+    const apiDefinitions = require('./api-definitions.json');
     
     const config = {
       endpoint:'http://coolcats.com'
     }
 
-    bautaJS(config);
+    bautaJS(config, apiDefinitions);
 
     await bautaJS.services.cats.v1.find.exec({});
 ```
