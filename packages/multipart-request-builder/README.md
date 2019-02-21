@@ -2,711 +2,40 @@
 
 ### Table of Contents
 
--   [bautajs][1]
+-   [Multipart request builder][1]
 -   [How to install][2]
--   [Optional dependencies][3]
--   [Features][4]
-    -   [Config][5]
-    -   [Request Validation][6]
-    -   [datasources][7]
-    -   [multipart/related requests][8]
-    -   [multipart/form-data requests][9]
-    -   [Request like features][10]
-    -   [Debug][11]
-    -   [LoopbackFilters][12]
-    -   [next, previous and fork hooks][13]
-    -   [API versioning][14]
-    -   [Set an Operation schema (endpoint schema)][15]
-    -   [Store][16]
--   [Public API][17]
-    -   [request][18]
-        -   [Multipart][19]
-            -   [Parameters][20]
-            -   [Examples][21]
-            -   [buildRequest][22]
-                -   [Parameters][23]
-                -   [Examples][24]
-    -   [Artifacts][25]
+-   [Multipart][3]
+    -   [Parameters][4]
+    -   [Examples][5]
+    -   [buildRequest][6]
+        -   [Parameters][7]
+        -   [Examples][8]
 
-## bautajs
+## Multipart request builder
 
-This library allow the developer built REST API defined with OpenAPI. TBC
+Build a multipart requests ready to inject to a nodejs request
 
 
 ## How to install
 
-Make sure that you have access to [Artifactory][26]
+Make sure that you have access to [Artifactory][9]
 
 ```console
-  npm install myaxa-core
+  npm install multipart-request-builder
 ```
 
 
-## Optional dependencies
-
-`myaxa-core` has `myaxa-cross-framework` as dependency. It has the following optional dependencies:
-`"express": "4.x", "koa-router": "7.x", "swagger-ui-express": "3.x"`.
-Please, install them as your project dependencies if you need to use them.
-
-
-## Features
-
-
-
-
-### Config
-
-By default `myaxa-core` will add the configuration you send in the initialization moment into a global store. So you can access the config
-inside all the loaders by doing:
-
-```js
-  const { config } = require('myaxa-core').store;
-```
-
-
-### Request Validation
-
-MyAXA core comes with a default request validation for the swagger endpoints schemas. By default, it is set to false.
-Adding `validateRequest: true` on the operation datasource, request validation out of the box is enabled.
-
-### Example
-
-  This is a datasource example:
-
-```json
-{
-  "testService":{
-    "operations":[
-      {
-        "name":"test",
-        "url":"http://myserver.com",
-        "validateRequest": true
-      }
-    ]
-  }
-}
-```
-
-  Alternative you can also validate inside every loader by accesing to the context `this.validate(this.req)` sending a req body or query.
-
-```js
-  services.policies.v1.find.previous(function pFn() {
-    const error = this.validate(this.req);
-    if(error) {
-      throw error;
-    }
-  })
-```
-
-
-### datasources
-
-The datasources are the main feature of the library, they defines how the services will behave and from where the data comes from.
-
-### Define a datasource
-
-To define a datasource, create a file into `"services/"` folder with a name ending on `"-datasource.json|js"`. The datasources are loaded automatically by the `myaxa-core` in bootstrap time.
-A datasource containing a `url` property on its definition, represents a HTTP request (using [Got][27]).           
-
-`By default request are done using [keepAlive](https://nodejs.org/api/http.html#http_new_agent_options)`
-
-Without `url`, a datasource just describe an simple service operation.
-
-### Datasource structure
-
-`myaxa-core` datasources must be compliant with [./lib/validators/datasource-schema.json][28].
-
-### Example
-
-This is a datasource example:
-
-```json
-{
-  "testService":{
-    "operations":[
-      {
-        "name":"test",
-        "url":"http://myserver.com",
-        "options":{
-          "json": true,
-          "headers": {
-            "Accept":"application-json"
-          }
-        }
-      }
-    ]
-  }
-}
-```
-
-### Dynamic datasources
-
-Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `req`, `config` and `env` (environment variables) objects. 
-See the template syntax format at [json-templates][29].
-to retrieve dynamic data.
-
-```json
-{
-  "testService":{
-    "operations":[
-      {
-        "name":"test",
-        "url":"{{config.url}}",
-        "options":{
-          "json": true,
-          "headers": {
-            "Accept-Language": "{{req.headers.accept-language:ES_es}}",
-            "x-axa-user-agent": "{{req.headers.x-axa-user-agent:My default user agent}}"
-          }
-        }
-      }
-    ]
-  }
-}
-```
-
-`Once the dynamic data is resolved, the fields with`undefined`or`null\` values, are removed from the request as [got definitions][27].
-
-### Accessing compiled datasources from loader
-
-Is possible to access to compiled datasources from the operations loaders.
-
-```js
-  // Launching the operation datasource request.
-  services.policies.v1.find.setLoader(function myLoader() {
-    return this.dataSource.request();
-  });
-  // Launching the operation datasource request with custom option.
-  // They will be merged with the definition options.
-  services.policies.v1.findById.setLoader(function myLoader() {
-    const customOptions = { json: false };
-    return this.dataSource.request(customOptions);
-  });
-```
-
-```js
-  // Launching other operation datasource request
-  services.policies.v1.find.setLoader(function myLoader() {
-    return services.documents.v1.find.dataSource(this.req).request();
-  });
-```
-
-By default, `myaxa-core`, uses [got][27] library to launch the operation datasources requests.
-However, is possible to use your preferred request module using the datasources definitions.
-
-```js
-  const request = require('request');
-  services.policies.v1.find.setLoader(function myLoader(cb){
-    const { method, url, options } = services.documents.v1.find.dataSource(this.req);
-
-    return request({ method, url, ...options }, cb);
-  });
-```
-
-### Accessing a datasource from previous and middleware hooks
-
-Accessing from a `previous` hook (see [Previous][30]) the datasource is not compiled yet. 
-Is possible to add/modify datasources template options (e.g. headers) on the previous hooks.
-
-On the other hand, is possible to compile the operation datasource in a previous hook. 
-Even that, it will be compiled again on the loader phase as well.
-
-```js
-    services.policies.v1.previous(function prev() {
-      const compiled = this.dataSource({req:this.req});
-      // do something with compiled
-    })
-```
-
-
-### multipart/related requests
-
-[got][27] do not come with `multipart/related` out of the box.
-Thus, `myaxa-core` add it to be available at the operations datasources requests.
-`myaxa-core` follows the way [request/request][31] implements `multipart/related`.
-
-```text
-  Do not add the multipart configuration in the operation datasource definition if it has streams (fs.createReadStream).
-  It must be passed in the loader definition
-```
-
-```json
-// my-datasource.json
-// multipart/related without streams
-{
-  "testService": {
-    "operations":  [
-      {
-        "name": "operation1",
-        "headers": {
-          "content-type": "multipart/related"
-        },
-        "preambleCRLF": true,
-        "postambleCRLF": true
-      }
-    ]
-  }
-} 
-```
-
-```js
-// my-loader.js
-// multipart/related with stream
-services.tstService.v1.operation1.setLoader(function loader(){
-  return this.dataSource.requests({
-    multipart: [
-      {
-        'content-type': 'application/json',
-        body: JSON.stringify({
-          foo: 'bar',
-          _attachments: {
-            'message.txt': {
-              follaws: true,
-              length: 18,
-              'content_type': 'text/plain'
-            }
-          }
-        })
-      },
-      {
-        body: 'I am an attachment'
-      },
-      {
-        body: fs.createReadStream('image.png')
-      }
-    ],
-    // alternatively pass an object containing additional options multipart: {
-    chunked: false,
-    data: [
-      {
-        'content-type': 'application/json',
-        body: JSON.stringify({
-          foo: 'bar',
-          _attachments: {
-            'message.txt': {
-              follows: true,
-              length: 18,
-              'content_type': 'text/plain'
-            }
-          }
-        })
-      },
-      {
-        body: 'I am an attachment'
-      }
-    ]
-  }})
-})
-```
-
-
-### multipart/form-data requests
-
-As for `multipart/related`, `myaxa-core` provides its own implementation for `multipart/form-data`.
-
-```text
-  Do not add the multipart configuration in the operation datasource definition if it has streams (fs.createReadStream).
-  It must be passed in the loader definition
-```
-
-```json
-// my-datasource.json
-// multipart/related without streams
-{
-  "testService": {
-    "operations":  [
-      {
-        "name": "operation1"
-      }
-    ]
-} 
-```
-
-```js
-// my-loader.js
-// multipart/related with streams
-services.testService.v1.operation1.setLoader(function loader(){
-  const formData = {
-    // Pass a simple key-value pair
-    my_field: 'my_value',
-    // Pass data via Buffers
-    my_buffer: Buffer.from([1, 2, 3]),
-    // Pass data via Streams
-    my_file: fs.createReadStream(__dirname + '/unicycle.jpg'),
-    // Pass multiple values /w an Array
-    attachments: [
-      fs.createReadStream(__dirname + '/attachment1.jpg'),
-      fs.createReadStream(__dirname + '/attachment2.jpg')
-    ],
-    // Pass optional meta-data with an 'options' object with style: {value: DATA, options: OPTIONS}
-    // Use case: for some types of streams, you'll need to provide "file"-related information manually.
-    // See the `form-data` README for more information about options: https://github.com/form-data/form-data
-    file: {
-      value:  fs.createReadStream('/file'),
-      options: {
-        filename: 'someImage.jpg',
-        contentType: 'image/jpeg'
-      }
-    }
-  };
-  return this.dataSource.request({ formData });
-});
-```
-
-
-### Request like features
-
-To help on the transition from `request` to `got`, there are some alias and helpfull fields that feels like still using request library:
-
--   Use 'json' as an object to POST json data (content-type: application/json):
-
-```json
-  {
-    "json": {
-      "someFiled":"someValue"
-    }
-  }
-```
-
--   Use 'form' as an object to POST data as url encoded form (content-type:application/x-www-form-urlencoded):
-
-```json
-  {
-    "form": {
-      "someFiled":"someValue"
-    }
-  }
-```
-
--   Custom `Agent` allowing the following features:
-    -   http_proxy and https_proxy environment variables
-    -   Request using custom certificates throught 'cert' and 'key' native NODEJS fields
-    -   StricSSL enable throught 'rejectUnauthorized' field
-
-
-### Debug
-
-One of the main purpose of `myaxa-core` is provide a nice debugging experience. 
-The request options, the response body and the times a request takes are logged.
-To activate the logs just set debug:
-
-```cmd
-LOG_LEVEL=debug DEBUG=myaxa-core
-```
-
-Furthemore you can censor some words from the logger using [setCensoredWords][114]
-
-
-### LoopbackFilters
-
-The `myaxa-core` allows to use [loopback filters][32] over arrays.
-Add the applyLoopbackFilters option to datasource operations:
-
-### Example
-
-```json
-{
-  "testService":{
-    "operations":[
-      {
-        "name":"test",
-        "url":"http://myserver.com",
-        "applyLoopbackFilters": true,
-        "options":{
-          "json": true
-        }
-      }
-    ]
-  }
-}
-```
-
-Given the received data:
-
-```json
-[
-  {
-    "code":"foo"
-  },
-  {
-    "code":"bar"
-  }
-]
-```
-
-Applying the given filter `?filter[where][code]=foo`, the result will be:
-
-```json
-[
-  {
-    "code":"foo"
-  }
-]
-```
-
-
-### next, previous and fork hooks
-
-Another `myaxa-core` cool feature are hooks. Modify and add new behaviours before/after the data is being requested/received. 
-Also it accepts to fork the request chain to process hooks in parallel.
-See full examples on [Next][33], [Fork][34] and [Previous][30]
-
-
-### API versioning
-
-The `myaxa-core` has API versioning out of the box to version the services and datasources easily.
-
-### API definition
-
-The API definition is where are defined API versions, see [./lib/validators/api-definition-schema.json][35]
-
-### Example
-
-This is an example of API definitions for two API versions:
-
-```json
-[
-  {
-    "versionId": "v1",
-    "swagger": "2.0",
-    "apiVersion": "1.0",
-    "info": {
-      "description": "A new API",
-      "version": "1.0.0",
-      "title": "CORE API"
-    },
-    "basePath": "/v1/api/"
-  },
-  {
-    "versionId": "v2",
-    "swagger": "2.0",
-    "apiVersion": "2.0",
-    "info": {
-      "description": "A new API",
-      "version": "1.0.0",
-      "title": "CORE API"
-    },
-    "basePath": "/v2/api/"
-  }
-]
-```
-
-API versions are accesible by code too:
-
-```js
-const { services } = require('myaxa-core');
-
-services.cats.v1.find.exec();
-services.cats.v2.find.exec();
-```
-
-In this example the `cats.v2` is inheriting automatically the behaviour of `cats.v1`
-
-### Example of no inheritance
-
-This is an example of API definitions for two API versions without inheritance:
-
-```json
-[
-  {
-    "versionId": "v1",
-    "swagger": "2.0",
-    "apiVersion": "1.0",
-    "info": {
-      "description": "A new API",
-      "version": "1.0.0",
-      "title": "CORE API"
-    },
-    "basePath": "/v1/api/"
-  },
-  {
-    "versionId": "v2",
-    "swagger": "2.0",
-    "apiVersion": "2.0",
-    "info": {
-      "description": "A new API",
-      "version": "1.0.0",
-      "title": "CORE API"
-    },
-    "basePath": "/v2/api/",
-    "noInheritance":{
-      "cats":["find"]
-    }
-  }
-]
-```
-
-Then the two versions will have a different behaviour:
-
-```js
-const { services } = require('myaxa-core');
-
-services.cats.v1.find.exec();
-services.cats.v2.find.exec(); // The result of this will be different from the v1
-```
-
-### Example of different datasources by version
-
-This is an example of API definitions for two API versions without inheritance:
-
-```json
-[
-  {
-    "versionId": "v1",
-    "swagger": "2.0",
-    "apiVersion": "1.0",
-    "info": {
-      "description": "A new API",
-      "version": "1.0.0",
-      "title": "CORE API"
-    },
-    "basePath": "/v1/api/"
-  },
-  {
-    "versionId": "v2",
-    "swagger": "2.0",
-    "apiVersion": "2.0",
-    "info": {
-      "description": "A new API",
-      "version": "1.0.0",
-      "title": "CORE API"
-    },
-    "basePath": "/v2/api/"
-  }
-]
-```
-
-This will be the datasource for the different versions:
-
-```json
-{
-  "cats":{
-    "operations":[
-      {
-        "name":"find",
-        "url":"http://google.es"
-      },
-      {
-        "name":"find",
-        "url":"http://facebook.es",
-        "versionId":"v2"
-      }
-    ]
-  }
-}
-```
-
-So as you can see here the v1 `cats.find` will fetch the data from google.es and v2 will fetch data from facebook.com.
-Datasources without `versionId` will be applied to all the API versions. Also, `versionId` must match with the API definition `versionId`.
-
-
-### Set an Operation schema (endpoint schema)
-
-myaxa-core provides the way to associate an [OPENAPI][36] definition to one operation. Later this
-will have multiple uses:
-
--   As an input validation if the option validateRequest is set to true or if the `this.validate()` function is called inside the loader.
--   To expose the service through an API endpoint.
--   To add the endpoint on the swagger explorer
--   Your imagination ;)
-
-Take in account you can access to the definitions set when you create the myaxa-core instance on your API definition under definions field, that way
-you are hable to share schema definitions between operation schemas.
-
-Example:
-my-schema.json
-
-```json
-  {
-    "/cats/{catId}": {
-      "get": {
-        "tags": ["cats"],
-        "summary": "Get cats by id",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "catId",
-            "required": true,
-            "type": "string",
-            "description": "The identifier of the cat"
-        ],
-        "operationId": "get-cats-catsId",
-        "produces": ["application/json"],
-        "responses": {
-          "201": {
-            "schema": {
-              "$ref": "#/definitions/Cat"
-            }
-          },
-          "401": {
-            "description": "Not authorized",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "422": {
-            "description": "Unprocessable entity",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    }
-  }
-```
-
-some-loader.js
-
-```js
-  const mySchema = require('./my-schema.json')
-  module.exports = (services) => {
-      services.myService.v1.find.setSchema(mySchema)
-  }
-```
-
-
-### Store
-
-`myaxa-core` provides a built-in singleton. Add data and get data from everywhere.
-The singleton life is related to the life of the Node.js process. 
-
-```js
-  const { store } = require('myaxa-core');
-
-  store.add('data', { foo: boo });
-
-  const data = store.get('data');
-```
-
-
-## Public API
-
-
-
-
-### request
-
-Utils for do a requests, such request agent, multipart handler and form data builder
-
-
-#### Multipart
+## Multipart
 
 A multipart builder for any request library. It's based on request/request lib.
 
-##### Parameters
+### Parameters
 
--   `options` **[Object][37]?** Optional configuration
-    -   `options.preambleCRLF` **[boolean][38]?** Add the pre CRLF character '\\r\\n'
-    -   `options.postambleCRLF` **[boolean][38]?** Add the post CRLF character '\\r\\n'
+-   `options` **[Object][10]?** Optional configuration
+    -   `options.preambleCRLF` **[boolean][11]?** Add the pre CRLF character '\\r\\n'
+    -   `options.postambleCRLF` **[boolean][11]?** Add the post CRLF character '\\r\\n'
 
-##### Examples
+### Examples
 
 ```javascript
 const Multipart = require('multipart-request-buildier');
@@ -732,19 +61,19 @@ const multipartRequest = multipartInstance.buildRequest(reqOptions);
 // }
 ```
 
-Returns **[Multipart][39]** 
+Returns **[Multipart][12]** 
 
-##### buildRequest
+### buildRequest
 
 Allows build the multipart request
 
-###### Parameters
+#### Parameters
 
--   `options` **([Object][37] \| [Array][40]&lt;[string][41]> | [Array][40]&lt;[object][37]> | [Array][40]&lt;[Stream][42]>)** The multipart options, could be an array of string, nodejs stream and objects, or an object to attached.
-    -   `options.data` **([Array][40]&lt;[string][41]> | [Array][40]&lt;[object][37]> | [Array][40]&lt;[Stream][42]>)?** Use it only if you have to change the value of chunked to true
-    -   `options.chunked` **[Object][37]?** wherever or not you need to split the data in chunks. If some operation.data is equals to a node Stream, chunked will be automatically true.
+-   `options` **([Object][10] \| [Array][13]&lt;[string][14]> | [Array][13]&lt;[object][10]> | [Array][13]&lt;[Stream][15]>)** The multipart options, could be an array of string, nodejs stream and objects, or an object to attached.
+    -   `options.data` **([Array][13]&lt;[string][14]> | [Array][13]&lt;[object][10]> | [Array][13]&lt;[Stream][15]>)?** Use it only if you have to change the value of chunked to true
+    -   `options.chunked` **[Object][10]?** wherever or not you need to split the data in chunks. If some operation.data is equals to a node Stream, chunked will be automatically true.
 
-###### Examples
+#### Examples
 
 ```javascript
 const multipartRequest = multipartInstance.buildRequest(reqOptions);
@@ -756,93 +85,34 @@ const multipartRequest = multipartInstance.buildRequest(reqOptions);
 // }
 ```
 
-Returns **[Object][37]** the headers and body ready for the request
+Returns **[Object][10]** the headers and body ready for the request
 
-### Artifacts
-
-A set of artifacts that myaxa-core provides when use its public API
-
-
-[1]: #bautajs
+[1]: #multipart-request-builder
 
 [2]: #how-to-install
 
-[3]: #optional-dependencies
+[3]: #multipart
 
-[4]: #features
+[4]: #parameters
 
-[5]: #config
+[5]: #examples
 
-[6]: #request-validation
+[6]: #buildrequest
 
-[7]: #datasources
+[7]: #parameters-1
 
-[8]: #multipartrelated-requests
+[8]: #examples-1
 
-[9]: #multipartform-data-requests
+[9]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
 
-[10]: #request-like-features
+[10]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[11]: #debug
+[11]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[12]: #loopbackfilters
+[12]: #multipart
 
-[13]: #next-previous-and-fork-hooks
+[13]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[14]: #api-versioning
+[14]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[15]: #set-an-operation-schema-endpoint-schema
-
-[16]: #store
-
-[17]: #public-api
-
-[18]: #request
-
-[19]: #multipart
-
-[20]: #parameters
-
-[21]: #examples
-
-[22]: #buildrequest
-
-[23]: #parameters-1
-
-[24]: #examples-1
-
-[25]: #artifacts
-
-[26]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
-
-[27]: https://github.com/sindresorhus/got
-
-[28]: ./lib/validators/datasource-schema.json
-
-[29]: https://github.com/datavis-tech/json-templates
-
-[30]: /#previous
-
-[31]: https://github.com/request/request#multipartrelated
-
-[32]: https://loopback.io/doc/en/lb2/Querying-data.html
-
-[33]: /#next
-
-[34]: /#fork
-
-[35]: ./lib/validators/api-definition-schema.json
-
-[36]: https://github.com/OAI/OpenAPI-Specification
-
-[37]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-
-[38]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
-
-[39]: #multipart
-
-[40]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
-
-[41]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-
-[42]: https://nodejs.org/api/stream.html
+[15]: https://nodejs.org/api/stream.html
