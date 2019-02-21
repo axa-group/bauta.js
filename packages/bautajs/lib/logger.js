@@ -12,18 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const debuger = require('debug-logger');
-const safeStringify = require('fast-safe-stringify');
+const debug = require('debug');
 
 const moduleName = 'bautajs';
 
-function childLogger(config) {
-  return debuger(moduleName + safeStringify(config));
+function buildLogger(namespace) {
+  const levels = ['debug', 'trace', 'log', 'info', 'warn', 'error'];
+  return levels.reduce((acc, level) => {
+    acc[level] = debug(`${namespace}:${level}`);
+    return acc;
+  }, {});
 }
-const logger = {
-  log: Object.assign(debuger(moduleName), {
-    child: childLogger
-  })
-};
 
-module.exports = logger;
+module.exports = Object.assign(buildLogger(moduleName), {
+  create(namespace) {
+    return buildLogger(moduleName + namespace);
+  }
+});

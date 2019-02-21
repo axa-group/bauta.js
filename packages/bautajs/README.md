@@ -18,88 +18,88 @@
     -   [API versioning][14]
     -   [Set an Operation schema (endpoint schema)][15]
 -   [Public API][16]
-    -   [services][17]
-        -   [Examples][18]
-    -   [requireAll][19]
-        -   [Parameters][20]
-        -   [Examples][21]
-    -   [store][22]
-        -   [Examples][23]
-    -   [batuajs][24]
-        -   [Parameters][25]
-        -   [Examples][26]
-    -   [deref][27]
-        -   [Parameters][28]
-    -   [Artifacts][29]
-        -   [Operation][30]
-            -   [Parameters][31]
-            -   [addMiddleware][32]
+    -   [Artifacts][17]
+        -   [Operation][18]
+            -   [Parameters][19]
+            -   [addMiddleware][20]
+                -   [Parameters][21]
+                -   [Examples][22]
+            -   [dataSource][23]
+                -   [Properties][24]
+            -   [exec][25]
+                -   [Parameters][26]
+                -   [Examples][27]
+            -   [fork][28]
+                -   [Parameters][29]
+                -   [Examples][30]
+            -   [join][31]
+            -   [next][32]
                 -   [Parameters][33]
                 -   [Examples][34]
-            -   [dataSource][35]
+            -   [operationId][35]
                 -   [Properties][36]
-            -   [definitions][37]
-                -   [Properties][38]
-            -   [exec][39]
-                -   [Parameters][40]
-                -   [Examples][41]
-            -   [exposeOperation][42]
-                -   [Examples][43]
-            -   [fork][44]
-                -   [Parameters][45]
-                -   [Examples][46]
-            -   [join][47]
-            -   [next][48]
+            -   [previous][37]
+                -   [Parameters][38]
+                -   [Examples][39]
+            -   [run][40]
+                -   [Parameters][41]
+            -   [runFork][42]
+                -   [Parameters][43]
+            -   [schema][44]
+                -   [Properties][45]
+            -   [serviceId][46]
+                -   [Properties][47]
+            -   [setErrorHandler][48]
                 -   [Parameters][49]
                 -   [Examples][50]
-            -   [parametersSchema][51]
-            -   [previous][52]
-                -   [Parameters][53]
-                -   [Examples][54]
-            -   [run][55]
-                -   [Parameters][56]
-            -   [runFork][57]
+            -   [setLoader][51]
+                -   [Parameters][52]
+                -   [Examples][53]
+            -   [setSchema][54]
+                -   [Parameters][55]
+                -   [Examples][56]
+            -   [validateRequest][57]
                 -   [Parameters][58]
-            -   [schema][59]
-            -   [serviceName][60]
-                -   [Properties][61]
-            -   [setErrorHandler][62]
-                -   [Parameters][63]
-                -   [Examples][64]
-            -   [setLoader][65]
+                -   [Examples][59]
+            -   [validateResponse][60]
+                -   [Parameters][61]
+                -   [Examples][62]
+        -   [Fork][63]
+            -   [Parameters][64]
+            -   [initIterator][65]
                 -   [Parameters][66]
-                -   [Examples][67]
-            -   [setSchema][68]
-                -   [Parameters][69]
-                -   [Examples][70]
-            -   [validate][71]
-                -   [Parameters][72]
-                -   [Examples][73]
-        -   [Fork][74]
-            -   [Parameters][75]
-            -   [initIterator][76]
+            -   [nextValue][67]
+        -   [Step][68]
+            -   [Parameters][69]
+            -   [handleValue][70]
+                -   [Parameters][71]
+            -   [run][72]
+                -   [Parameters][73]
+            -   [runWithCallback][74]
+                -   [Parameters][75]
+            -   [runWithReturn][76]
                 -   [Parameters][77]
-            -   [nextValue][78]
-        -   [Step][79]
-            -   [Parameters][80]
-            -   [handleValue][81]
-                -   [Parameters][82]
-            -   [run][83]
-                -   [Parameters][84]
-            -   [runWithCallback][85]
+        -   [Service][78]
+            -   [Parameters][79]
+        -   [Version][80]
+            -   [Parameters][81]
+            -   [addMiddleware][82]
+                -   [Parameters][83]
+                -   [Examples][84]
+            -   [addOperation][85]
                 -   [Parameters][86]
-            -   [runWithReturn][87]
-                -   [Parameters][88]
-        -   [Service][89]
-            -   [Parameters][90]
-        -   [Version][91]
-            -   [Parameters][92]
-            -   [addMiddleware][93]
-                -   [Parameters][94]
-                -   [Examples][95]
-            -   [addOperation][96]
-                -   [Parameters][97]
-                -   [Examples][98]
+                -   [Examples][87]
+-   [Batuajs][88]
+    -   [Parameters][89]
+    -   [Examples][90]
+-   [Logger][91]
+-   [logger][92]
+    -   [Properties][93]
+-   [requireAll][94]
+    -   [Parameters][95]
+    -   [Examples][96]
+-   [services][97]
+    -   [Properties][98]
 
 ## bautajs
 
@@ -759,105 +759,6 @@ some-loader.js
 
 
 
-### services
-
-A services dictionary containing all the built services
-
-Type: [Object][113]&lt;[string][114], [Service][115]>
-
-#### Examples
-
-```javascript
-const { services } = require('bautajs');
-
-services.cats.v1.find.next(someAfterHook);
-
-const myContext = {};
-const result = await services.cats.v1.find.exec(myContext);
-```
-
-### requireAll
-
-Require a bunch of files that matches the given [glob][116] path.
-
-#### Parameters
-
--   `folder` **([string][114] \| [Array][117]&lt;[string][114]>)** the given folder magic path, see [https://github.com/isaacs/node-glob][116]
--   `execute` **[boolean][118]** execute the required files with the given vars if they are functions (optional, default `true`)
--   `vars` **[Object][113]?** optional variables to add as a parameter on the file execution
-
-#### Examples
-
-```javascript
-const { requireAll } = require('bautajs');
-
-const files = requireAll('./my/path/to/datasources/*.js', true, {someVar:123});
-```
-
-Returns **[Array][117]&lt;any>** array of required files
-
-### store
-
-A store instance, use it to add global instances accesible from every where on your app.
-
-Type: [Map][119]
-
-#### Examples
-
-```javascript
-// fileA.js
-const { store } = require('bautajs');
-
-const myInstance = newInstance();
-
-store.set('myInstance', myInstance);
-
-// fileb.js
-const { store } = require('bautajs');
-
-const myInstance = store.get('myInstance');
-```
-
-### batuajs
-
-Build the BautaJS services with the given dataSources and loaders.
-This services could be accessible from { services } = require('bautajs'); after the initialization.
-
-#### Parameters
-
--   `config` **[Object][113]** Your current envionment or static configuration, this will be injected into dataSource render time.
--   `apiDefinitions` **[Array][117]&lt;[Object][113]>** An array of [OpenAPI 3.0][120] definitions. See the valid schema @see [./lib/validators/api-definition-schema-json][121].
--   `options`   (optional, default `{}`)
-
-#### Examples
-
-```javascript
-const bautajs = require('bautajs');
-const config = {
-  someProp: 'someVal'
-};
-
-bautajs(config, {
- // Load all the files with datasource in the file name
- dataSourcesPath: './services/*-datasource.?(js|json)',
- loadersPath:  './services/*-loaders.js'
-});
-
-// Assuming we have a dataSource for cats, once bautajs is initialized, you can execute the operation with the following code:
-await bautajs.services.cats.v1.find.exec({});
-```
-
-### deref
-
-Replace the $ref from the schema with the equivalent definition recursively
-
-#### Parameters
-
--   `schema` **[Object][113]** the shcema to deref
--   `definitionsSchema` **[Object][113]** the definitions of the schema
-
-Returns **[Object][113]** the given schema with the $ref replaced
-
 ### Artifacts
 
 A set of artifacts that bautajs provides when use its public API
@@ -870,12 +771,11 @@ every where to execute a flow of loaders and hooks.
 
 ##### Parameters
 
--   `steps` **[Array][117]&lt;[function][122]>** an array of steps to add to the operation
--   `dataSourceTemplate` **[Object][113]** the operation datasource template definition, contains all the request data
--   `apiDefinition` **[Object][113]** An [OpenAPI][100] definition.
--   `optionals` **[Object][113]?** optional stuff
-    -   `optionals.schema` **[Object][113]?** the [OpenAPI][100] schema specification for this operation. Can have $ref to the api-definition.json file @see [../../api-definition.json][123]
-    -   `optionals.serviceName` **[Object][113]?** the service name of the operation, only used for log purposes
+-   `id` **[string][113]** the id of the operation
+-   `steps` **[Array][114]&lt;[function][115]>** an array of steps to add to the operation
+-   `dataSourceTemplate` **[Object][116]** the operation datasource template definition, contains all the request data
+-   `apiDefinition` **[Object][116]** An [OpenAPI][100] definition.
+-   `serviceId` **[Object][116]?** the service name of the operation, only used for log purposes
 
 ##### addMiddleware
 
@@ -909,19 +809,13 @@ services.cats.v1.find.addMiddleware((previousValue, done) => {
 }).addMiddleware('value1')
 ```
 
-Returns **[Operation][124]** An instance of the operation
+Returns **[Operation][117]** An instance of the operation
 
 ##### dataSource
 
 ###### Properties
 
--   `dataSource` **[Object][113]** the original operation datasource. Call this.dataSource(context) to get the compiled datasource template with the given context
-
-##### definitions
-
-###### Properties
-
--   `definitions` **[Object][113]** operation OpenAPI definitions
+-   `dataSource` **[Object][116]** the original operation datasource. Call this.dataSource(context) to get the compiled datasource template with the given context
 
 ##### exec
 
@@ -930,8 +824,9 @@ The dataSource is only compiled on the loader step\`
 
 ###### Parameters
 
--   `req` **[Object][113]** the context of the operation, usually the req object
--   `initialData` **[Object][113]** the initial data to execute the first flow step (optional, default `{}`)
+-   `req` **[Object][116]** the context of the operation, usually the req object
+-   `res` **[Object][116]** the response object
+-   `initialData` **[Object][116]** the initial data to execute the first flow step (optional, default `{}`)
 
 ###### Examples
 
@@ -940,25 +835,12 @@ const { services } = require('bautajs');
 const express = require('express');
 const app = express();
 
-app.get('/blue', (req,res next) => {
- services.cats.v1.find.exec(req).then((value) =>next(null, value)).catch(next);
+app.get('/blue', (req, res, next) => {
+ services.cats.v1.find.exec(req, res).then((value) =>next(null, value)).catch(next);
 })
 ```
 
-Returns **[Promise][125]&lt;([Array][117]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the flow execution value, rejects with the flow execution error
-
-##### exposeOperation
-
-Expose the operation to the API of the selected framework. By using this instead of the framwork native, allows you to use async await
-on the frameworks that do not accept them and API versioning. To use this feature you need to use bautaJS through a bautajs frameworks plugin
-
-###### Examples
-
-```javascript
-const { services } = require('bautajs');
-
-services.myCustomService.apiVersionId.myCustomOperation.exposeOperation();
-```
+Returns **[Promise][118]&lt;([Array][114]&lt;[object][116]> | [object][116]), [Error][119]>** resolves with the flow execution value, rejects with the flow execution error
 
 ##### fork
 
@@ -966,7 +848,7 @@ Set a parallel flow in to your operation flow that resolves all the next steps i
 
 ###### Parameters
 
--   `iterable` **([function][122] \| [Array][117]&lt;[object][113]> | [Array][117]&lt;[string][114]> | [Array][117]&lt;[number][127]>)** an iterable function that returns an array of values or an array of values
+-   `iterable` **([function][115] \| [Array][114]&lt;[object][116]> | [Array][114]&lt;[string][113]> | [Array][114]&lt;[number][120]>)** an iterable function that returns an array of values or an array of values
 
 ###### Examples
 
@@ -988,13 +870,13 @@ return previousValue
 })
 ```
 
-Returns **[Operation][124]** An instance of the operation
+Returns **[Operation][117]** An instance of the operation
 
 ##### join
 
 Join the fork stream to the parent flow chain
 
-Returns **[Operation][124]** An instance of the operation
+Returns **[Operation][117]** An instance of the operation
 
 ##### next
 
@@ -1028,9 +910,13 @@ services.cats.v1.find.next('value1').next((previousValue, done) => {
 }).next('value1')
 ```
 
-Returns **[Operation][124]** An instance of the operation
+Returns **[Operation][117]** An instance of the operation
 
-##### parametersSchema
+##### operationId
+
+###### Properties
+
+-   `operationId` **[Object][116]** the operation id
 
 ##### previous
 
@@ -1064,7 +950,7 @@ services.cats.v1.find.previous((previousValue, done) => {
 }).previous('value1')
 ```
 
-Returns **[Operation][124]** An instance of the operation
+Returns **[Operation][117]** An instance of the operation
 
 ##### run
 
@@ -1072,11 +958,11 @@ Run the steps chain from the given step index
 
 ###### Parameters
 
--   `index` **[number][127]** the step index
--   `value` **[Object][113]** the value to send to the step
--   `context` **[Object][113]** the context to send to the step
+-   `index` **[number][120]** the step index
+-   `value` **[Object][116]** the value to send to the step
+-   `context` **[Object][116]** the context to send to the step
 
-Returns **[Promise][125]&lt;([Array][117]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the step execution value, rejects with the step execution error
+Returns **[Promise][118]&lt;([Array][114]&lt;[object][116]> | [object][116]), [Error][119]>** resolves with the step execution value, rejects with the step execution error
 
 ##### runFork
 
@@ -1084,20 +970,24 @@ Run the given fork chain
 
 ###### Parameters
 
--   `fork` **[Fork][128]** a fork instance
--   `chain` **[Operation][124]** the fork chain of steps
--   `value` **[Object][113]** the last step values
+-   `fork` **[Fork][121]** a fork instance
+-   `chain` **[Operation][117]** the fork chain of steps
+-   `value` **[Object][116]** the last step values
 -   `context`  
 
-Returns **[Promise][125]&lt;[Array][117]&lt;[object][113]>, [Error][126]>** resolves with the array of values from the given fork execution, reject with the fork error execution
+Returns **[Promise][118]&lt;[Array][114]&lt;[object][116]>, [Error][119]>** resolves with the array of values from the given fork execution, reject with the fork error execution
 
 ##### schema
 
-##### serviceName
+###### Properties
+
+-   `schema` **[Object][116]** operation OpenAPI schema
+
+##### serviceId
 
 ###### Properties
 
--   `serviceName` **[Object][113]** the service name that this operation belongs
+-   `serviceId` **[Object][116]** the service id that this operation belongs
 
 ##### setErrorHandler
 
@@ -1105,7 +995,7 @@ Set a custom error handler that will be executed in case of some loader is rejec
 
 ###### Parameters
 
--   `errorHandler` **[function][122]** the error handler function
+-   `errorHandler` **[function][115]** the error handler function
 
 ###### Examples
 
@@ -1115,7 +1005,7 @@ const { services } = require('bautajs');
 services.cats.v1.find.setErrorHandler((err) => Promise.reject(err));
 ```
 
-Returns **[Operation][124]** An instance of the operation
+Returns **[Operation][117]** An instance of the operation
 
 ##### setLoader
 
@@ -1146,7 +1036,7 @@ services.cats.v1.find.setLoader((previousValue, done) => done(null, 'myValue'));
 services.cats.v1.find.setLoader('value');
 ```
 
-Returns **[Operation][124]** an instance of the operation
+Returns **[Operation][117]** an instance of the operation
 
 ##### setSchema
 
@@ -1154,7 +1044,7 @@ Override the operation schema
 
 ###### Parameters
 
--   `schema` **[Object][113]** the [OpenAPI][100] path schema @see [https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example][129]
+-   `schema` **[Object][116]** the [OpenAPI][100] path schema @see [https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example][122]
 
 ###### Examples
 
@@ -1165,32 +1055,54 @@ conmst mySchema = require('./some-schema.json');
 services.cats.v1.find.setSchema(mySchema);
 ```
 
-Returns **[Operation][124]** An instance of the operation
+Returns **[Operation][117]** An instance of the operation
 
-##### validate
+##### validateRequest
 
-Allows to validate the given request againts the operation schema
+Validate the given request.
 
 ###### Parameters
 
--   `req` **[Object][113]** the nodejs request (optional, default `{}`)
-    -   `req.body` **[Object][113]?** The request body
-    -   `req.query` **[Object][113]?** The request query params
+-   `req` **any?** the request object. If not set the given context request will be validated.
 
 ###### Examples
 
 ```javascript
 const { services } = require('bautajs');
 
-services.myCustomService.v1.find.previous(function prev() => {
- const error = this.validate(this.req);
- if(error){
-  throw error;
+services.cats.v1.find.previous(function(previousValue){
+ const error = this.validateRequest();
+ if(error) {
+   throw error;
  }
-})
+
+ return 'value';
+});
 ```
 
-Returns **([Error][126] | null)** A T400 error is returned for an not valid body json
+##### validateResponse
+
+Validate the given response
+
+###### Parameters
+
+-   `response` **any** the response object.
+
+###### Examples
+
+```javascript
+const { services } = require('bautajs');
+
+services.cats.v1.find.next(function(response){
+ const error = this.validateResponse(response);
+ if(error) {
+   this.logger.error(`Error on validate the response ${error}`);
+   throw error;
+ }
+
+ return 'value';
+});
+```
 
 #### Fork
 
@@ -1198,7 +1110,7 @@ A fork instance is a sub chain of steps that run in parallel inside the current 
 
 ##### Parameters
 
--   `iterable` **([function][122] \| [Array][117]&lt;any>)** an iterable function that returns an array of values or an array of values
+-   `iterable` **([function][115] \| [Array][114]&lt;any>)** an iterable function that returns an array of values or an array of values
 
 ##### initIterator
 
@@ -1206,11 +1118,11 @@ Initialize the fork iterator, the limit items for the iterable is 20
 
 ###### Parameters
 
--   `context` **[Object][113]** the given context of the flow
--   `value` **[Object][113]** the last value before the fork
+-   `context` **[Object][116]** the given context of the flow
+-   `value` **[Object][116]** the last value before the fork
 
 
--   Throws **[Error][126]** if the fork limit is reached or the iterator is not valid
+-   Throws **[Error][119]** if the fork limit is reached or the iterator is not valid
 
 ##### nextValue
 
@@ -1225,8 +1137,8 @@ The step gets as parameter the context and the previous step value and returns a
 
 ##### Parameters
 
--   `step` **[function][122]** a function that returns a promise
--   `type` **[String][114]** represents the type of the operation (loader, next, previous, join, fork)
+-   `step` **[function][115]** a function that returns a promise
+-   `type` **[String][113]** represents the type of the operation (loader, next, previous, join, fork)
 
 ##### handleValue
 
@@ -1234,9 +1146,9 @@ Return the step as a promise
 
 ###### Parameters
 
--   `value` **[Object][113]** the input value to send as a result
+-   `value` **[Object][116]** the input value to send as a result
 
-Returns **[Promise][125]&lt;([Array][117]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the step result, rejects with the step error
+Returns **[Promise][118]&lt;([Array][114]&lt;[object][116]> | [object][116]), [Error][119]>** resolves with the step result, rejects with the step error
 
 ##### run
 
@@ -1246,8 +1158,8 @@ The step always returns a promise, but inside the step function you can return a
 
 ###### Parameters
 
--   `context` **[Object][113]** the context bind to the step execution
--   `value` **[Object][113]** the input value to send to the step execution
+-   `context` **[Object][116]** the context bind to the step execution
+-   `value` **[Object][116]** the input value to send to the step execution
 
 ##### runWithCallback
 
@@ -1255,10 +1167,10 @@ Execute the step and convert the callback returned into a promise
 
 ###### Parameters
 
--   `context` **[Object][113]** the context bind to the step execution
--   `value` **[Object][113]** the input value to send to the step execution
+-   `context` **[Object][116]** the context bind to the step execution
+-   `value` **[Object][116]** the input value to send to the step execution
 
-Returns **[Promise][125]&lt;([Array][117]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the step result, rejects with the step error
+Returns **[Promise][118]&lt;([Array][114]&lt;[object][116]> | [object][116]), [Error][119]>** resolves with the step result, rejects with the step error
 
 ##### runWithReturn
 
@@ -1266,33 +1178,33 @@ Execute the step and covnert the simple result returned into a promise
 
 ###### Parameters
 
--   `context` **[Object][113]** the context bind to the step execution
--   `value` **[Object][113]** the input value to send to the step execution
+-   `context` **[Object][116]** the context bind to the step execution
+-   `value` **[Object][116]** the input value to send to the step execution
 
-Returns **[Promise][125]&lt;([Array][117]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the step result, rejects with the step error
+Returns **[Promise][118]&lt;([Array][114]&lt;[object][116]> | [object][116]), [Error][119]>** resolves with the step result, rejects with the step error
 
 #### Service
 
-The Service is a set of [Version][91]
+The Service is a set of [Version][80]
 
-Type: [Object][113]
+Type: [Object][116]
 
 ##### Parameters
 
--   `serviceName` **[string][114]** the service name
--   `datasourceTemplate` **[Object][113]** a dictionary of services with his operations @see [../validators/datasource-schema.json][130]
--   `apiDefinitions` **[Array][117]&lt;[Object][113]>** Array of [OpenAPI][100] definitions.
--   `optionals` **[Object][113]?** optional stuff
+-   `serviceId` **[string][113]** the service id
+-   `datasourceTemplate` **[Object][116]** a dictionary of services with his operations @see [../validators/datasource-schema.json][123]
+-   `apiDefinitions` **[Array][114]&lt;[Object][116]>** Array of [OpenAPI][100] definitions.
+-   `optionals` **[Object][116]?** optional stuff
 
 #### Version
 
-The Version is a set of [Operation][30]
+The Version is a set of [Operation][18]
 
-Type: [Object][113]
+Type: [Object][116]
 
 ##### Parameters
 
--   `versionName` **[string][114]** the version name
+-   `versionId` **[string][113]** the version name
 
 ##### addMiddleware
 
@@ -1325,7 +1237,7 @@ services.cats.v1.addMiddleware((previousValue, done) => {
 }).addMiddleware('value1')
 ```
 
-Returns **[Version][131]** An instance of the version
+Returns **[Version][124]** An instance of the version
 
 ##### addOperation
 
@@ -1333,15 +1245,15 @@ Create a new operation for the given version service. It is recomended to declar
 
 ###### Parameters
 
--   `name` **[string][114]** The operation name
--   `operation` **[Operation][124]** The operation instance
+-   `id` **[string][113]** The operation id
+-   `operation` **[Operation][117]** The operation instance
 
 ###### Examples
 
 ```javascript
 const { services, Operation } = require('bautajs');
 const dataSourceTemplate = {
- name: 'find'
+ id: 'find'
 }
 const apiDefinition = {
  versionId:"v1",
@@ -1351,12 +1263,79 @@ const apiDefinition = {
    version: "1.0"
  }
 }
-const operation = new Operation([() => 'hellow world'], dataSourceTemplate, apiDefinition, { serviceName: 'cats' })
+const operation = new Operation('myaOperationId', [() => 'hellow world'], dataSourceTemplate, apiDefinition, serviceId: 'cats' )
 
 services.cats.v1.addOperation(dataSourceTemplate.name, operation);
 ```
 
-Returns **[Version][131]** An instance of the version
+Returns **[Version][124]** An instance of the version
+
+## Batuajs
+
+Build the BautaJS services with the given dataSources and loaders.
+This services could be accessible from the instance .services after the initialization.
+
+### Parameters
+
+-   `apiDefinitions` **([Array][114]&lt;[Object][116]> | [Object][116])** An array of [OpenAPI 3.0/2.0][125] definitions. See the valid schema @see [./lib/validators/api-definition-schema-json][126].
+
+### Examples
+
+```javascript
+const Bautajs = require('bautajs');
+const apiDefinitions = require('./open-api-definition.json');
+const ctx = {
+  someProp: 'someVal'
+};
+
+const bautaJS = new Bautajs(apiDefinitions, {
+ // Load all the files with datasource in the file name
+ dataSourcesPath: './services/*-datasource.?(js|json)',
+ loadersPath:  './services/*-loaders.js',
+ dataSourceCtx: ctx
+});
+
+// Assuming we have a dataSource for cats, once bautajs is initialized, you can execute the operation with the following code:
+await bautaJS.services.cats.v1.find.exec({});
+```
+
+## Logger
+
+A logger instance of debug
+
+Type: {debug, trace, log, info, warn, error, events, eventTypes}
+
+## logger
+
+### Properties
+
+-   `logger` **[Logger][127]** A [debug][https://www.npmjs.com/package/debug][128] logger instance
+
+## requireAll
+
+Require a bunch of files that matches the given [glob][129] path.
+
+### Parameters
+
+-   `folder` **([string][113] \| [Array][114]&lt;[string][113]>)** the given folder magic path, see [https://github.com/isaacs/node-glob][129]
+-   `execute` **[boolean][130]** execute the required files with the given vars if they are functions (optional, default `true`)
+-   `vars` **[Object][116]?** optional variables to add as a parameter on the file execution (optional, default `{}`)
+
+### Examples
+
+```javascript
+const { requireAll } = require('bautajs');
+
+const files = requireAll('./my/path/to/datasources/*.js', true, {someVar:123});
+```
+
+Returns **[Array][114]&lt;any>** array of required files
+
+## services
+
+### Properties
+
+-   `services` **[Object][116]&lt;[string][113], [Service][131]>** A services dictionary containing all the created services
 
 [1]: #bautajs
 
@@ -1390,169 +1369,169 @@ Returns **[Version][131]** An instance of the version
 
 [16]: #public-api
 
-[17]: #services
+[17]: #artifacts
 
-[18]: #examples
+[18]: #operation
 
-[19]: #requireall
+[19]: #parameters
 
-[20]: #parameters
+[20]: #addmiddleware
 
-[21]: #examples-1
+[21]: #parameters-1
 
-[22]: #store-1
+[22]: #examples
 
-[23]: #examples-2
+[23]: #datasource
 
-[24]: #batuajs
+[24]: #properties
 
-[25]: #parameters-1
+[25]: #exec
 
-[26]: #examples-3
+[26]: #parameters-2
 
-[27]: #deref
+[27]: #examples-1
 
-[28]: #parameters-2
+[28]: #fork
 
-[29]: #artifacts
+[29]: #parameters-3
 
-[30]: #operation
+[30]: #examples-2
 
-[31]: #parameters-3
+[31]: #join
 
-[32]: #addmiddleware
+[32]: #next
 
 [33]: #parameters-4
 
-[34]: #examples-4
+[34]: #examples-3
 
-[35]: #datasource
+[35]: #operationid
 
-[36]: #properties
+[36]: #properties-1
 
-[37]: #definitions
+[37]: #previous
 
-[38]: #properties-1
+[38]: #parameters-5
 
-[39]: #exec
+[39]: #examples-4
 
-[40]: #parameters-5
+[40]: #run
 
-[41]: #examples-5
+[41]: #parameters-6
 
-[42]: #exposeoperation
+[42]: #runfork
 
-[43]: #examples-6
+[43]: #parameters-7
 
-[44]: #fork
+[44]: #schema
 
-[45]: #parameters-6
+[45]: #properties-2
 
-[46]: #examples-7
+[46]: #serviceid
 
-[47]: #join
+[47]: #properties-3
 
-[48]: #next
+[48]: #seterrorhandler
 
-[49]: #parameters-7
+[49]: #parameters-8
 
-[50]: #examples-8
+[50]: #examples-5
 
-[51]: #parametersschema
+[51]: #setloader
 
-[52]: #previous
+[52]: #parameters-9
 
-[53]: #parameters-8
+[53]: #examples-6
 
-[54]: #examples-9
+[54]: #setschema
 
-[55]: #run
+[55]: #parameters-10
 
-[56]: #parameters-9
+[56]: #examples-7
 
-[57]: #runfork
+[57]: #validaterequest
 
-[58]: #parameters-10
+[58]: #parameters-11
 
-[59]: #schema
+[59]: #examples-8
 
-[60]: #servicename
+[60]: #validateresponse
 
-[61]: #properties-2
+[61]: #parameters-12
 
-[62]: #seterrorhandler
+[62]: #examples-9
 
-[63]: #parameters-11
+[63]: #fork-1
 
-[64]: #examples-10
+[64]: #parameters-13
 
-[65]: #setloader
+[65]: #inititerator
 
-[66]: #parameters-12
+[66]: #parameters-14
 
-[67]: #examples-11
+[67]: #nextvalue
 
-[68]: #setschema
+[68]: #step
 
-[69]: #parameters-13
+[69]: #parameters-15
 
-[70]: #examples-12
+[70]: #handlevalue
 
-[71]: #validate
+[71]: #parameters-16
 
-[72]: #parameters-14
+[72]: #run-1
 
-[73]: #examples-13
+[73]: #parameters-17
 
-[74]: #fork-1
+[74]: #runwithcallback
 
-[75]: #parameters-15
+[75]: #parameters-18
 
-[76]: #inititerator
+[76]: #runwithreturn
 
-[77]: #parameters-16
+[77]: #parameters-19
 
-[78]: #nextvalue
+[78]: #service
 
-[79]: #step
+[79]: #parameters-20
 
-[80]: #parameters-17
+[80]: #version
 
-[81]: #handlevalue
+[81]: #parameters-21
 
-[82]: #parameters-18
+[82]: #addmiddleware-1
 
-[83]: #run-1
+[83]: #parameters-22
 
-[84]: #parameters-19
+[84]: #examples-10
 
-[85]: #runwithcallback
+[85]: #addoperation
 
-[86]: #parameters-20
+[86]: #parameters-23
 
-[87]: #runwithreturn
+[87]: #examples-11
 
-[88]: #parameters-21
+[88]: #batuajs
 
-[89]: #service
+[89]: #parameters-24
 
-[90]: #parameters-22
+[90]: #examples-12
 
-[91]: #version
+[91]: #logger
 
-[92]: #parameters-23
+[92]: #logger-1
 
-[93]: #addmiddleware-1
+[93]: #properties-4
 
-[94]: #parameters-24
+[94]: #requireall
 
-[95]: #examples-14
+[95]: #parameters-25
 
-[96]: #addoperation
+[96]: #examples-13
 
-[97]: #parameters-25
+[97]: #services
 
-[98]: #examples-15
+[98]: #properties-5
 
 [99]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
 
@@ -1582,40 +1561,40 @@ Returns **[Version][131]** An instance of the version
 
 [112]: https://github.com/OAI/OpenAPI-Specification
 
-[113]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[113]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[114]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[114]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[115]: #service
+[115]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
 
-[116]: https://github.com/isaacs/node-glob
+[116]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[117]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[117]: #operation
 
-[118]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[118]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
-[119]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map
+[119]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error
 
-[120]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md
+[120]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[121]: ./lib/validators/api-definition-schema-json
+[121]: #fork
 
-[122]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[122]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example
 
-[123]: ../../api-definition.json
+[123]: ../validators/datasource-schema.json
 
-[124]: #operation
+[124]: #version
 
-[125]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[125]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md
 
-[126]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error
+[126]: ./lib/validators/api-definition-schema-json
 
-[127]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[127]: #logger
 
-[128]: #fork
+[128]: https://www.npmjs.com/package/debug
 
-[129]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example
+[129]: https://github.com/isaacs/node-glob
 
-[130]: ../validators/datasource-schema.json
+[130]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[131]: #version
+[131]: #service

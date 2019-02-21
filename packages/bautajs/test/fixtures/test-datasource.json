@@ -2,7 +2,7 @@
   "testService": {
     "operations": [
       {
-        "name": "test",
+        "id": "operation1",
         "someVariableOption": "{{req.variableOption}}",
         "url": "https://google.com/"
       }

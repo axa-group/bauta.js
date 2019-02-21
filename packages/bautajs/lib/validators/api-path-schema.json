@@ -8,29 +8,9 @@
       "properties": {
         "operationId": {
           "type": "string"
-        },
-        "parameters": {
-          "type": "array"
-        },
-        "description": {
-          "type": "string"
-        },
-        "responses": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "object",
-            "properties": {
-              "description": {
-                "type": "string"
-              },
-              "schema": {
-                "type": "object"
-              }
-            }
-          }
         }
       },
-      "required": ["operationId", "responses"]
+      "required": ["operationId"]
     },
     "minProperties": 1
   },

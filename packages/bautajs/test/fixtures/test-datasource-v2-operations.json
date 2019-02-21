@@ -2,13 +2,13 @@
   "testService": {
     "operations": [
       {
-        "name": "test",
+        "id": "test",
         "someVariableOption": "{{req.variableOption}}",
         "url": "https://google.com/"
       },
       {
-        "name": "testV2",
-        "versionId": "v2",
+        "id": "testV2",
+        "version": "v2",
         "someVariableOption": "{{req.variableOption}}",
         "url": "https://facebook.com/"
       }

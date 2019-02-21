@@ -5,16 +5,16 @@
   "additionalProperties": {
     "type": "object",
     "required": ["operations"],
-    "description": "The service name use it to define the access to the service, like 'cats', then you will access like 'services.cats'",
+    "description": "The service id use it to define the access to the service, like 'cats', then you will access like 'services.cats'",
     "properties": {
       "operations": {
         "type": "array",
         "items": {
           "type": "object",
           "properties": {
-            "name": {
+            "id": {
               "type": "string",
-              "description": "The name of the operation"
+              "description": "The id of the operation"
             },
             "method": {
               "type": "string",
@@ -23,6 +23,14 @@
             "url": {
               "type": "string",
               "description": "The URL that will be use to request the data using 'https://github.com/sindresorhus/got'"
+            },
+            "validateRequest": {
+              "type": "string",
+              "description": "Validate the given request body, params and query params with the given operation schema."
+            },
+            "validateResponse": {
+              "type": "string",
+              "description": "Validate the given response operation schema response."
             },
             "applyLoopbackFilter": {
               "type": "boolean",
@@ -33,7 +41,7 @@
               "description": "Add the got module properties here, see 'https://github.com/sindresorhus/got'"
             }
           },
-          "required": ["name"]
+          "required": ["id"]
         }
       }
     }

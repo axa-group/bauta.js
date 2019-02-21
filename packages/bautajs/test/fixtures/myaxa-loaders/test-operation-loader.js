@@ -13,5 +13,5 @@
  * limitations under the License.
  */
 module.exports = services => {
-  services.testService.v1.test.next('benderTest');
+  services.testService.v1.operation1.next('benderTest');
 };

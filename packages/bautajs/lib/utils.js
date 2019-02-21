@@ -13,19 +13,20 @@
  * limitations under the License.
  */
 const safeStringify = require('fast-safe-stringify');
-const truncate = require('lodash/truncate');
-const isObject = require('lodash/isObject');
+
+function truncate(string, limit) {
+  if (string.length > limit) {
+    return `${string.substring(0, limit)}...`;
+  }
+  return string;
+}
 
 function prepareToLog(object) {
-  if (isObject(object)) {
-    return truncate(safeStringify(object), {
-      length: 32000
-    });
+  if (typeof object === 'object') {
+    return truncate(safeStringify(object), 3200);
   }
 
-  return truncate(object, {
-    length: 32000
-  });
+  return truncate(object, 32000);
 }
 
 function defaultLoader() {

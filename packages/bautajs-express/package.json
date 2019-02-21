@@ -1,0 +1,23 @@
+{
+  "name": "bautajs-express",
+  "version": "0.0.0",
+  "description": "A bautaJS express plugin. Allows auto exposing the bautaJS services.",
+  "main": "bauta-express.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "keywords": [
+    "bautajs",
+    "express",
+    "middleware"
+  ],
+  "author": "mit@axa-groupsolutions.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "bautajs": "^0.0.0"
+  }
+}

@@ -19,24 +19,24 @@ const Operation = require('./Operation');
  * @public
  * @class Version
  * @typedef {Object} Version
- * @param {string} versionName - the version name
+ * @param {string} versionId - the version name
  */
 module.exports = class Version {
-  constructor(versionName) {
-    this.versionName = versionName;
-    this.operationNames = [];
+  constructor(versionId) {
+    this.versionId = versionId;
+    this.operationIds = [];
   }
 
   /**
    * Create a new operation for the given version service. It is recomended to declare operations from the datasource and not using this method!
-   * @param {string} name The operation name
+   * @param {string} id The operation id
    * @param {Operation} operation The operation instance
    * @returns {Version} An instance of the version
    * @memberof Version#
    * @example
    * const { services, Operation } = require('bautajs');
    * const dataSourceTemplate = {
-   *  name: 'find'
+   *  id: 'find'
    * }
    * const apiDefinition = {
    *  versionId:"v1",
@@ -46,18 +46,18 @@ module.exports = class Version {
    *    version: "1.0"
    *  }
    * }
-   * const operation = new Operation([() => 'hellow world'], dataSourceTemplate, apiDefinition, { serviceName: 'cats' })
+   * const operation = new Operation('myaOperationId', [() => 'hellow world'], dataSourceTemplate, apiDefinition, serviceId: 'cats' )
    *
    * services.cats.v1.addOperation(dataSourceTemplate.name, operation);
    */
-  addOperation(name, operation) {
-    const forbiddenNames = ['addMiddleware', this.versionName, 'operationNames', 'addOperation'];
+  addOperation(id, operation) {
+    const forbiddenNames = ['addMiddleware', this.versionId, 'operationIds', 'addOperation'];
 
-    if (forbiddenNames.includes(name)) {
+    if (forbiddenNames.includes(id)) {
       throw new Error(
         `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', ${
-          this.versionName
-        } and operationNames`
+          this.versionId
+        } and operationIds`
       );
     }
 
@@ -65,8 +65,8 @@ module.exports = class Version {
       throw new Error('The provided operation is not an instance of a bautajs Operation');
     }
 
-    this[name] = operation;
-    this.operationNames.push(name);
+    this[id] = operation;
+    this.operationIds.push(id);
 
     return this;
   }
@@ -97,8 +97,8 @@ module.exports = class Version {
    * }).addMiddleware('value1')
    */
   addMiddleware(middleware) {
-    this.operationNames.forEach(operationName => {
-      this[operationName].addMiddleware(middleware);
+    this.operationIds.forEach(operationId => {
+      this[operationId].addMiddleware(middleware);
     });
 
     return this;

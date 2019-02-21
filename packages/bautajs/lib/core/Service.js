@@ -20,9 +20,9 @@ const { defaultLoader } = require('../utils');
 function haveToInherit(operation) {
   const noInherit =
     operation.apiDefinition.noInheritance &&
-    operation.apiDefinition.noInheritance[operation.serviceName];
+    operation.apiDefinition.noInheritance[operation.serviceId];
 
-  return !noInherit || !noInherit.includes(operation.dataSource.template.name);
+  return !noInherit || !noInherit.includes(operation.dataSource.template.id);
 }
 
 /**
@@ -30,45 +30,46 @@ function haveToInherit(operation) {
  * @public
  * @class Service
  * @typedef {Object} Service
- * @param {string} serviceName - the service name
+ * @param {string} serviceId - the service id
  * @param {Object} datasourceTemplate - a dictionary of services with his operations @see {@link ../validators/datasource-schema.json}
  * @param {Object[]} apiDefinitions - Array of [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification) definitions.
  * @param {Object} [optionals] - optional stuff
  */
 module.exports = class Service {
-  constructor(serviceName, datasourceTemplate, apiDefinitions = []) {
+  constructor(serviceId, datasourceTemplate, apiDefinitions = []) {
     // Define the operations
     const { operations } = datasourceTemplate || { operations: [] };
-
     // Create API versions
     apiDefinitions.forEach(API => {
-      this[API.versionId] = new Version(API.versionId);
+      this[API.info.version] = new Version(API.info.version);
     });
 
     operations.forEach(operationTemplate => {
       let previousOperation;
       apiDefinitions.forEach(apiDefinition => {
         if (
-          !operationTemplate.versionId ||
-          (operationTemplate.versionId && operationTemplate.versionId === apiDefinition.versionId)
+          !operationTemplate.version ||
+          (operationTemplate.version && operationTemplate.version === apiDefinition.info.version)
         ) {
-          const operation = new Operation([defaultLoader], operationTemplate, apiDefinition, {
-            serviceName
-          });
+          const operation = new Operation(
+            operationTemplate.id,
+            [defaultLoader],
+            operationTemplate,
+            apiDefinition,
+            serviceId
+          );
 
           // Add inerithance method to the current operation
           if (previousOperation && haveToInherit(operation)) {
             previousOperation.nextVersionOperation = operation;
           }
 
-          this[apiDefinition.versionId].addOperation(operationTemplate.name, operation);
+          this[apiDefinition.info.version].addOperation(operationTemplate.id, operation);
           previousOperation = operation;
         }
       });
 
-      logger.log.info(
-        `[OK] ${serviceName}.${operationTemplate.name} operation registered on bautajs`
-      );
+      logger.info(`[OK] ${serviceId}.${operationTemplate.id} operation registered on bautajs`);
     });
 
     // Blue neva freeeezz!

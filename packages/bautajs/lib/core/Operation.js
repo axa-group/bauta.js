@@ -14,6 +14,9 @@
  */
 const chalk = require('chalk');
 const applyFilter = require('loopback-filters');
+const OpenAPIRequestValidator = require('openapi-request-validator').default;
+const OpenAPIDefaultSetter = require('openapi-default-setter').default;
+const OpenAPIResponseValidator = require('openapi-response-validator').default;
 
 const validate = require('../validators/validate');
 const apiPathSchema = require('../validators/api-path-schema.json');
@@ -21,7 +24,6 @@ const logger = require('../logger');
 const Step = require('./Step');
 const Fork = require('./Fork');
 const buildDataSource = require('../request/datasource');
-const { getOperationParametersSchema } = require('../schemas');
 const sessionFactory = require('../session-factory');
 
 function isValidStepChain(steps) {
@@ -35,18 +37,35 @@ function loopbackFilter(data, queryFilter) {
   return !Array.isArray(data) || !queryFilter ? data : applyFilter(data, queryFilter);
 }
 
-function validateStep(step, versionId, operationName, serviceName) {
+function validateStep(step, version, operationId, serviceId) {
   if (step === undefined) {
-    logger.log.error(
+    logger.error(
       '[ERROR]',
       chalk.blueBright(
-        `An step loader can not be undefined on ${serviceName}.${versionId}.${operationName}`
+        `An step loader can not be undefined on ${serviceId}.${version}.${operationId}`
       )
     );
     throw new Error(
-      `An step loader can not be undefined on ${serviceName}.${versionId}.${operationName}`
+      `An step loader can not be undefined on ${serviceId}.${version}.${operationId}`
     );
   }
+}
+
+function findOperation(id, paths) {
+  let schema;
+
+  Object.keys(paths).some(pathKey =>
+    Object.keys(paths[pathKey]).some(methodKey => {
+      if (paths[pathKey][methodKey].operationId === id) {
+        schema = { [pathKey]: { [methodKey]: paths[pathKey][methodKey] } };
+        return true;
+      }
+
+      return false;
+    })
+  );
+
+  return schema;
 }
 
 /**
@@ -54,33 +73,64 @@ function validateStep(step, versionId, operationName, serviceName) {
  * every where to execute a flow of loaders and hooks.
  * @public
  * @class Operation
+ * @param {string} id - the id of the operation
  * @param {function[]} steps - an array of steps to add to the operation
  * @param {Object} dataSourceTemplate - the operation datasource template definition, contains all the request data
  * @param {Object} apiDefinition - An [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification) definition.
- * @param {Object} [optionals] - optional stuff
- * @param {Object} [optionals.schema] - the [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification) schema specification for this operation. Can have $ref to the api-definition.json file @see {@link ../../api-definition.json}
- * @param {Object} [optionals.serviceName] - the service name of the operation, only used for log purposes
+ * @param {Object} [serviceId] - the service name of the operation, only used for log purposes
  */
 module.exports = class Operation {
-  constructor(steps, dataSourceTemplate, apiDefinition, { schema, serviceName }) {
+  constructor(id, steps, dataSourceTemplate, apiDefinition, serviceId) {
     Object.defineProperties(this, {
       /** @memberof Operation#
-       * @property {Object} definitions - operation OpenAPI definitions
+       * @property {Object} schema - operation OpenAPI schema
        */
-      definitions: {
-        value: {
-          /**
-           * @memberof Operation#
-           * @property {Object} schema.schema - the operation [OpenAPI 3.0/2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification) schema
-           */
-          schema,
-          /**
-           * @memberof Operation#
-           * @property {Object} schema.parametersSchema - the operation parameters of [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification) schema @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#parametersDefinitionsObject
-           */
-          parametersSchema: getOperationParametersSchema(schema, apiDefinition.definitions || {})
-        },
-        writable: false
+      schema: {
+        value: null,
+        writable: true
+      },
+      /**
+       * Validate the given request.
+       * @param {any} [req] - the request object. If not set the given context request will be validated.
+       * @throw {Error} a 400 error if the given request is not valid
+       * @memberof Operation#
+       * @example
+       * const { services } = require('bautajs');
+       *
+       * services.cats.v1.find.previous(function(previousValue){
+       *  const error = this.validateRequest();
+       *  if(error) {
+       *    throw error;
+       *  }
+       *
+       *  return 'value';
+       * });
+       */
+      validateRequest: {
+        value: null,
+        writable: true
+      },
+      /**
+       * Validate the given response
+       * @param {any} response - the response object.
+       * @throw {Error} a 500 error if the given response is not valid
+       * @memberof Operation#
+       * @example
+       * const { services } = require('bautajs');
+       *
+       * services.cats.v1.find.next(function(response){
+       *  const error = this.validateResponse(response);
+       *  if(error) {
+       *    this.logger.error(`Error on validate the response ${error}`);
+       *    throw error;
+       *  }
+       *
+       *  return 'value';
+       * });
+       */
+      validateResponse: {
+        value: null,
+        writable: true
       },
       /**
        * @memberof Operation#
@@ -91,10 +141,10 @@ module.exports = class Operation {
         writable: false
       },
       /** @memberof Operation#
-       * @property {Object} serviceName - the service name that this operation belongs
+       * @property {Object} serviceId - the service id that this operation belongs
        */
-      serviceName: {
-        value: serviceName,
+      serviceId: {
+        value: serviceId,
         writable: false
       },
       steps: {
@@ -112,6 +162,12 @@ module.exports = class Operation {
         writable: false
       }
     });
+    if (apiDefinition) {
+      const schema = findOperation(id, apiDefinition.paths);
+      if (schema) {
+        this.setSchema(schema);
+      }
+    }
 
     if (Array.isArray(steps) && steps.length > 0) {
       // If all given steps are instanceof Step, add them directly to steps
@@ -125,101 +181,8 @@ module.exports = class Operation {
         // Add the next operations
         steps.slice(1, steps.length).forEach(step => this.next(step));
       } else {
-        logger.log.warn(
-          'You can not mix instances of Steps with other types on create the operation'
-        );
+        logger.warn('You can not mix instances of Steps with other types on create the operation');
       }
-    }
-  }
-
-  /**
-   * Allows to validate the given request againts the operation schema
-   * @memberof Operation#
-   * @param {Object} [req={}] - the nodejs request
-   * @param {Object} [req.body] - The request body
-   * @param {Object} [req.query] - The request query params
-   * @returns {(Error | null)} A T400 error is returned for an not valid body json
-   * @example
-   * const { services } = require('bautajs');
-   *
-   * services.myCustomService.v1.find.previous(function prev() => {
-   *  const error = this.validate(this.req);
-   *  if(error){
-   *   throw error;
-   *  }
-   * })
-   */
-  validate(req = {}) {
-    if (!this.definitions.parametersSchema) {
-      return null;
-    }
-
-    const bodySchema = this.definitions.parametersSchema.find(schema => schema.in === 'body');
-    const querySchema = this.definitions.parametersSchema.find(
-      schema => schema.in === 'custom-query'
-    );
-
-    let validationError;
-    if (querySchema) {
-      validationError = validate(req.query, querySchema.schema);
-    }
-
-    if (!validationError) {
-      if (bodySchema) {
-        validationError = validate(req.body, bodySchema.schema);
-      } else {
-        const formSchema = this.definitions.parametersSchema.find(
-          schema => schema.in === 'custom-formData'
-        );
-        if (formSchema) {
-          validationError = validate(req.body, formSchema.schema);
-        }
-      }
-    }
-
-    if (validationError) {
-      return new Error(
-        `Bad request, "${validationError[0].dataPath}" ${validationError[0].message}`
-      );
-    }
-
-    return null;
-  }
-
-  /**
-   * Expose the operation to the API of the selected framework. By using this instead of the framwork native, allows you to use async await
-   * on the frameworks that do not accept them and API versioning. To use this feature you need to use bautaJS through a bautajs frameworks plugin
-   * @memberof Operation#
-   * @example
-   * const { services } = require('bautajs');
-   *
-   * services.myCustomService.apiVersionId.myCustomOperation.exposeOperation();
-   */
-  exposeOperation() {
-    if (typeof this.apiDefinition.add !== 'function') {
-      throw new Error('The API definition is not a valid BautaJS plugin.');
-    }
-    // Expose the opertions over REST
-    if (this.definitions.schema) {
-      const { method, path, apiRoot } = this.apiDefinition.add(
-        this.definitions.schema,
-        (req, res, optionals) =>
-          this.exec(req, {
-            optionals
-          })
-      );
-      logger.log.info(
-        '[OK]',
-        chalk.yellowBright(
-          `[${method.toUpperCase()}] ${apiRoot + path} operation exposed on the API from ${
-            this.serviceName
-          }.${this.apiDefinition.versionId}.${this.dataSource.template.name}`
-        )
-      );
-    } else {
-      logger.log.warn(
-        `[NOT] ${this.serviceName}.${this.dataSource.template.name} operation definition not found`
-      );
     }
   }
 
@@ -249,15 +212,15 @@ module.exports = class Operation {
   setLoader(loader) {
     validateStep(
       loader,
-      this.apiDefinition.versionId,
-      this.dataSource.template.name,
-      this.serviceName
+      this.apiDefinition.info.version,
+      this.dataSource.template.id,
+      this.serviceId
     );
 
-    logger.log.debug(
+    logger.debug(
       '[OK]',
-      chalk.blueBright(`${this.serviceName}.${this.apiDefinition.versionId}
-      .${this.dataSource.template.name} loader step registered on batuajs`)
+      chalk.blueBright(`${this.serviceId}.${this.apiDefinition.info.version}
+      .${this.dataSource.template.id} loader step registered on batuajs`)
     );
 
     const loaderIndex = this.steps.findIndex(step => step.type === 'loader');
@@ -313,9 +276,41 @@ module.exports = class Operation {
     if (error) {
       throw new Error(`Invalid schema, "${error[0].dataPath}" ${error[0].message}`);
     }
-    const parametersSchema = getOperationParametersSchema(schema, this.apiDefinition.definitions);
+    const [endpointDefinition] = Object.values(Object.values(schema)[0]);
+    // Determine OpenAPI version
+    const schemas =
+      !!this.apiDefinition.openapi && !!this.apiDefinition.components
+        ? this.apiDefinition.components.schemas
+        : this.apiDefinition.definitions;
+    const validateRequest = new OpenAPIRequestValidator({
+      ...endpointDefinition,
+      schemas
+    });
+    const validateResponse = new OpenAPIResponseValidator({
+      ...endpointDefinition,
+      definitions: schemas
+    });
 
-    Object.assign(this.definitions, { schema, parametersSchema });
+    this.schema = schema;
+    const defaultSetter = new OpenAPIDefaultSetter(endpointDefinition);
+    this.validateRequest = req => {
+      defaultSetter.handle(req);
+      if (!req.headers) {
+        // if is not a Nodejs request set the content-type to force validation
+        req.headers = { 'content-type': 'application/json' };
+      }
+      const verror = validateRequest.validate(req);
+      if (verror && verror.errors.length > 0) {
+        return Object.assign(
+          new Error(`${verror.errors[0].path || ''} ${verror.errors[0].message}`.trim()),
+          verror
+        );
+      }
+
+      return null;
+    };
+    this.validateResponse = (res, statusCode = 200) =>
+      validateResponse.validateResponse(statusCode, res);
 
     // Propagate the definitions to the next versions
     if (this.nextVersionOperation) {
@@ -354,15 +349,15 @@ module.exports = class Operation {
   previous(step) {
     validateStep(
       step,
-      this.apiDefinition.versionId,
-      this.dataSource.template.name,
-      this.serviceName
+      this.apiDefinition.info.version,
+      this.dataSource.template.id,
+      this.serviceId
     );
 
-    logger.log.debug(
+    logger.debug(
       '[OK]',
-      chalk.blueBright(`${this.serviceName}.${this.apiDefinition.versionId}
-      .${this.dataSource.template.name} previous hook step registered on bautajs`)
+      chalk.blueBright(`${this.serviceId}.${this.apiDefinition.info.version}
+      .${this.dataSource.template.id} previous hook step registered on bautajs`)
     );
     const loaderIndex = this.steps.findIndex(s => s.type === 'loader');
     this.steps.splice(loaderIndex, 0, new Step(step, 'previous'));
@@ -404,15 +399,15 @@ module.exports = class Operation {
   next(step) {
     validateStep(
       step,
-      this.apiDefinition.versionId,
-      this.dataSource.template.name,
-      this.serviceName
+      this.apiDefinition.info.version,
+      this.dataSource.template.id,
+      this.serviceId
     );
 
-    logger.log.debug(
+    logger.debug(
       '[OK]',
-      chalk.blueBright(`${this.serviceName}.${this.apiDefinition.versionId}
-      .${this.dataSource.template.name} next hook step registered on bautajs`)
+      chalk.blueBright(`${this.serviceId}.${this.apiDefinition.info.version}
+      .${this.dataSource.template.id} next hook step registered on bautajs`)
     );
 
     this.steps.push(new Step(step, 'next'));
@@ -454,15 +449,15 @@ module.exports = class Operation {
   addMiddleware(step) {
     validateStep(
       step,
-      this.apiDefinition.versionId,
-      this.dataSource.template.name,
-      this.serviceName
+      this.apiDefinition.info.version,
+      this.dataSource.template.id,
+      this.serviceId
     );
 
-    logger.log.debug(
+    logger.debug(
       '[OK]',
-      chalk.blueBright(`${this.serviceName}.${this.apiDefinition.versionId}
-      .${this.dataSource.template.name} middleware step registered on bautajs`)
+      chalk.blueBright(`${this.serviceId}.${this.apiDefinition.info.version}
+      .${this.dataSource.template.id} middleware step registered on bautajs`)
     );
 
     let firstIndex = this.steps.findIndex(s => s.type === 'previous');
@@ -503,10 +498,10 @@ module.exports = class Operation {
    * })
    */
   fork(iterable) {
-    logger.log.debug(
+    logger.debug(
       '[OK]',
-      chalk.blueBright(`${this.serviceName}.${this.apiDefinition.versionId}
-      .${this.dataSource.template.name} fork hook step registered on bautajs`)
+      chalk.blueBright(`${this.serviceId}.${this.apiDefinition.info.version}
+      .${this.dataSource.template.id} fork hook step registered on bautajs`)
     );
 
     this.steps.push(new Fork(iterable));
@@ -525,10 +520,10 @@ module.exports = class Operation {
    * @memberof Operation#
    */
   join() {
-    logger.log.debug(
+    logger.debug(
       '[OK]',
-      chalk.blueBright(`${this.serviceName}.${this.apiDefinition.versionId}
-      .${this.dataSource.template.name} join hook step registered on bautajs`)
+      chalk.blueBright(`${this.serviceId}.${this.apiDefinition.info.version}
+      .${this.dataSource.template.id} join hook step registered on bautajs`)
     );
 
     if (!isValidStepChain(this.steps)) {
@@ -555,6 +550,7 @@ module.exports = class Operation {
    * Executes the current operation flow with the given context and initial data
    * The dataSource is only compiled on the loader step`
    * @param {Object} req - the context of the operation, usually the req object
+   * @param {Object} res - the response object
    * @param {Object} [initialData= {}] - the initial data to execute the first flow step
    * @returns {Promise<object[]|object, Error>} resolves with the flow execution value, rejects with the flow execution error
    * @memberof Operation#
@@ -564,34 +560,35 @@ module.exports = class Operation {
    * const express = require('express');
    * const app = express();
    *
-   * app.get('/blue', (req,res next) => {
-   *  services.cats.v1.find.exec(req).then((value) =>next(null, value)).catch(next);
+   * app.get('/blue', (req, res, next) => {
+   *  services.cats.v1.find.exec(req, res).then((value) =>next(null, value)).catch(next);
    * })
    *
    */
-  exec(req, initialData = {}) {
+  exec(req, res, initialData = {}) {
     const values = Object.assign({}, initialData);
     const context = {
-      parametersSchema: this.definitions.parametersSchema,
-      validate: this.validate.bind(this),
+      validateRequest: request => this.validateRequest(request || req),
+      validateResponse: response => this.validateResponse(response),
       dataSource: this.dataSource,
       metadata: {
-        serviceName: this.serviceName,
-        operationName: this.dataSource.template.name
+        version: this.dataSource.template.version,
+        serviceId: this.serviceId,
+        operationId: this.dataSource.template.id
       }
     };
 
     if (req) {
-      Object.assign(context, { req, ...sessionFactory(req) });
+      Object.assign(context, { req, res, ...sessionFactory(req) });
     } else {
       throw new Error('The context(req) parameter is mandatory');
     }
 
     // Validate the request
-    if (this.dataSource.template.validateRequest === true) {
-      const errors = this.validate(req);
-      if (errors) {
-        throw Object.assign(errors, { statusCode: 400 });
+    if (this.schema && this.dataSource.template.validateRequest === true) {
+      const error = this.validateRequest(req);
+      if (error) {
+        throw error;
       }
     }
 
@@ -628,16 +625,11 @@ module.exports = class Operation {
         until = joinIndex - index;
       }
       const chain = new Operation(
+        this.operationId,
         this.steps.splice(index + 1, until),
         this.dataSource,
-        {
-          operationDef: this.operationDef,
-          app: this.app
-        },
-        {
-          serviceName: this.serviceName,
-          definitions: this.definitions
-        }
+        this.apiDefinition,
+        this.serviceId
       );
 
       const promises = this.constructor.runFork(step, chain, value, context);
@@ -656,6 +648,17 @@ module.exports = class Operation {
         if (index + 1 < this.steps.length) {
           return this.run(index + 1, result, context);
         }
+
+        if (this.schema && this.dataSource.template.validateResponse) {
+          const error = this.validateResponse(
+            result,
+            context.res ? context.res.statusCode : undefined
+          );
+          if (error && error.errors.length > 0) {
+            throw error.errors;
+          }
+        }
+
         // Apply loopback filter to the services that have the applyLoopackFilters toggle to true
         if (this.dataSource.template.applyLoopbackFilters === true) {
           return loopbackFilter(result, context.req.query && context.req.query.filter);

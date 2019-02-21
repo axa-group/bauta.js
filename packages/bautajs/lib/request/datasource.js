@@ -12,14 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const parse = require('json-templates');
+const STJS = require('stjs');
 const got = require('got');
 const createAgent = require('native-proxy-agent');
 const Multipart = require('multipart-request-builder');
 const { prepareToLog } = require('../utils');
-const store = require('../store');
 const logger = require('../logger');
 const buildForm = require('./form-data');
+
+// waiting for GOT 5.0
+function parseBody(responseType, body) {
+  if (responseType === 'json') {
+    return JSON.parse(body);
+  }
+  if (responseType === 'buffer') {
+    return Buffer.from(body);
+  }
+  if (responseType !== 'text' && (responseType !== null || responseType !== undefined)) {
+    throw new Error(`Failed to parse body of type '${responseType}'`);
+  }
+
+  return body;
+}
 
 function requestHooks(log) {
   return {
@@ -71,9 +85,23 @@ function normalizeOptions(options) {
     parsedOptions.headers = {};
   }
 
+  if (!parsedOptions['user-agent']) {
+    parsedOptions.headers['user-agent'] = 'bautaJS';
+  }
+
   if (typeof options.json === 'object') {
     parsedOptions.body = options.json;
-    parsedOptions.json = true;
+    parsedOptions.responseType = 'json';
+  } else if (options.json === true) {
+    parsedOptions.responseType = 'json';
+  }
+
+  if (typeof options.resolveBodyOnly !== 'boolean') {
+    parsedOptions.resolveBodyOnly = true;
+  }
+
+  if (typeof responseType !== 'string') {
+    parsedOptions.responseType = 'text';
   }
 
   if (!Array.isArray(options.form) && typeof options.form === 'object') {
@@ -86,12 +114,14 @@ function normalizeOptions(options) {
     const { body, headers } = multipart.buildRequest(options.multipart);
     parsedOptions.body = body;
     parsedOptions.json = false;
+    parsedOptions.responseType = 'json';
     parsedOptions.headers = { ...options.headers, ...headers, Accept: 'application/json' };
   }
 
   if (!Array.isArray(options.formData) && typeof options.formData === 'object') {
     parsedOptions.body = buildForm(options.formData);
     parsedOptions.json = false;
+    parsedOptions.responseType = 'json';
     parsedOptions.headers = { ...options.headers, Accept: 'application/json' };
   }
 
@@ -103,12 +133,14 @@ function normalizeOptions(options) {
 }
 
 function compileDatasource(dataSourceTemplate, context) {
-  const dataSource = dataSourceTemplate({
+  const dataSource = STJS.select({
     req: context,
-    config: store.get('config'),
     env: process.env
-  });
-  const log = context.logger || logger.log;
+  })
+    .transformWith(dataSourceTemplate)
+    .root();
+
+  const log = context.logger || logger;
   const hooks = requestHooks(log);
   const { cert, key, rejectUnauthorized, proxy, ...options } = {
     method: dataSource.method,
@@ -123,19 +155,26 @@ function compileDatasource(dataSourceTemplate, context) {
       afterResponse: [hooks.logResponse, hooks.getResponseBody]
     }
   };
-  const gotInstace = got.extend(normalizeOptions(options));
+  const initOptions = normalizeOptions(options);
+  const gotInstace = got.extend(initOptions);
 
   return {
     ...dataSource,
     request: (params = {}) => {
       const url = !params.url ? dataSource.url : params.url;
-      if (!url) {
+
+      if (typeof url !== 'string') {
         throw new Error(
-          `URL is a mandatory parameter for a datasource request on operation: ${dataSource.name}`
+          `URL is a mandatory parameter for a datasource request on operation: ${dataSource.id}`
         );
       }
+      let updateOptions = {
+        headers: {}
+      };
+      if (Object.keys(params).length > 0) {
+        updateOptions = normalizeOptions(params);
+      }
 
-      const mergedOptions = normalizeOptions(params);
       const strictSSL =
         rejectUnauthorized === null || rejectUnauthorized === undefined
           ? !!params.rejectUnauthorized
@@ -146,40 +185,31 @@ function compileDatasource(dataSourceTemplate, context) {
         rejectUnauthorized: strictSSL,
         proxy
       });
+      // add request id
+      updateOptions.headers['x-request-id'] = context.id;
 
-      return gotInstace(url, { agent, ...mergedOptions }).then(response => {
-        // Allow to get the full response of the request
-        if (dataSource.fullResponse === true) {
-          return response;
+      // GOT 5.0 will include this
+      if (updateOptions.stram === true || initOptions.stream === true) {
+        return gotInstace(url, { agent, ...updateOptions });
+      }
+
+      // GOT 5.0 will include this
+      return gotInstace(url, { agent, ...updateOptions }).then(response => {
+        if (updateOptions.resolveBodyOnly === true || initOptions.resolveBodyOnly === true) {
+          return parseBody(updateOptions.responseType || initOptions.responseType, response.body);
         }
 
-        // Got don't allow parse JSON response using stream request body (multipart). The json parse should be done manually.
-        if (
-          typeof response.body !== 'object' &&
-          dataSource.options &&
-          dataSource.options.json !== false
-        ) {
-          let res = {};
-          try {
-            res = JSON.parse(response.body);
-          } catch (e) {
-            log.error(
-              `request-logger: The response for ${response.requestUrl} could not be parsed as JSON`
-            );
-          }
-
-          return res;
-        }
-
-        return response.body;
+        return {
+          ...response,
+          body: parseBody(updateOptions.responseType || initOptions.responseType, response.body)
+        };
       });
     }
   };
 }
 
 module.exports = function buildDataSource(dataSourceTemplate) {
-  const parsedDatasource = parse(dataSourceTemplate);
-  const datasourceAsFn = context => compileDatasource(parsedDatasource, context);
+  const datasourceAsFn = context => compileDatasource(dataSourceTemplate, context);
 
   return Object.assign(datasourceAsFn, { template: dataSourceTemplate });
 };

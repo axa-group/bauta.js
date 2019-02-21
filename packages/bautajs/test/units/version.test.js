@@ -17,13 +17,15 @@ const Version = require('../../lib/core/Version');
 const { defaultLoader } = require('../../lib/utils');
 const Step = require('../../lib/core/Step');
 const Operation = require('../../lib/core/Operation');
+const { testService } = require('../fixtures/test-datasource.json');
+const [testApiDefinition] = require('../fixtures/test-api-definitions.json');
 
 describe('Version class tests', () => {
   describe('Version.addOperation tests', () => {
     test('should throw an error if the name is equals to the version name', () => {
       const testVersion = new Version('v1');
       const expected = new Error(
-        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', v1 and operationNames`
+        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', v1 and operationIds`
       );
 
       expect(() => testVersion.addOperation('v1')).toThrow(expected);
@@ -32,16 +34,16 @@ describe('Version class tests', () => {
     test('should throw an error if the name is equals to "operationNames', () => {
       const testVersion = new Version('v1');
       const expected = new Error(
-        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', v1 and operationNames`
+        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', v1 and operationIds`
       );
 
-      expect(() => testVersion.addOperation('operationNames')).toThrow(expected);
+      expect(() => testVersion.addOperation('operationIds')).toThrow(expected);
     });
 
     test('should throw an error if the name is equals to "addOperation', () => {
       const testVersion = new Version('v1');
       const expected = new Error(
-        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', v1 and operationNames`
+        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', v1 and operationIds`
       );
 
       expect(() => testVersion.addOperation('addOperation')).toThrow(expected);
@@ -50,7 +52,7 @@ describe('Version class tests', () => {
     test('should throw an error if the name is equals to "addMiddleware', () => {
       const testVersion = new Version('v1');
       const expected = new Error(
-        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', v1 and operationNames`
+        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', v1 and operationIds`
       );
 
       expect(() => testVersion.addOperation('addOperation')).toThrow(expected);
@@ -61,23 +63,21 @@ describe('Version class tests', () => {
     test('should add middleware to all the operations of the version', () => {
       const testVersion = new Version('v1');
       const mwFn = () => 'someMw';
-      testVersion.operationNames = ['a', 'b'];
+      testVersion.operationIds = ['a', 'b'];
       testVersion.a = new Operation(
+        'operation1',
         [defaultLoader],
-        {},
-        {},
-        {
-          serviceName: 'testService'
-        }
+        testService.operations[0],
+        testApiDefinition,
+        'testService'
       );
 
       testVersion.b = new Operation(
+        'operation1',
         [defaultLoader],
-        {},
-        {},
-        {
-          serviceName: 'testService'
-        }
+        testService.operations[0],
+        testApiDefinition,
+        'testService'
       );
 
       testVersion.addMiddleware(mwFn);

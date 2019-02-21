@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const safeStringify = require('fast-safe-stringify');
 const logger = require('./logger');
 
 const maxInt = 2147483647;
@@ -40,5 +41,7 @@ module.exports = req => {
     context.userId = req.headers.authorization.substring(req.headers.authorization.length - 6);
   }
 
-  return { ...context, logger: logger.log.child(context) };
+  context.url = req.url;
+
+  return { ...context, logger: logger.create(safeStringify(context)) };
 };
