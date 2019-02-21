@@ -16,6 +16,11 @@
               "type": "string",
               "description": "The id of the operation"
             },
+            "version": {
+              "type": "string",
+              "description": "The id of the info.version related with this data source/operation, if not provided by default will be linked to the first api-definition info.version",
+              "example": "v1"
+            },
             "method": {
               "type": "string",
               "description": "The HTTP method that will be use to request the data using 'https://github.com/sindresorhus/got'"
