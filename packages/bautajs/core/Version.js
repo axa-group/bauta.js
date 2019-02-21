@@ -72,33 +72,35 @@ module.exports = class Version {
   }
 
   /**
-   * Set a middleware before all the operations of the given version service. You can add as many as you want. The step will be added as the first executable function.
-   * `MW2(new) -> MW1 -> P1 -> P2-> Loader -> N1 -> N2`
-   * `Carefully do not use arrow functions if you want to access to the middleware this context`
-   * @param {any} middleware - A function to add to all the version operations chain. It's a function that receives
-   * a previous middleware step result and returns a promise, a value or a callback
-   * @returns {Version} An instance of the version
-   * @memberof Version#
+   * Push an step/function to the end of all version operations chain
+   * @param {any} step - the step function, value or class
+   * @returns {Operation} an instance of the operation
+   * @memberof Operation#
    * @example
-   * const { services } = require('bautajs');
+   * //common-resolver.js
+   * const compileDataSource = require('bautajs/decorators/compile-data-source');
    *
-   * // Middleware step can be a function that returns a promise
-   * services.cats.v1.addMiddleware((previousValue) => Promise.resolve('myValue'));
-   * // Middleware step can be a function that returns a value
-   * services.cats.v1.addMiddleware((previousValue) => 'value');
-   * // Middleware step can be a function that returns a callback
-   * services.cats.v1.addMiddleware((previousValue, done) => done(null, 'myValue'));
-   * // Middleware step can be a value
-   * services.cats.v1.addMiddleware('value');
-   * // Middlewares can be chained, keep the order of execution as the declaration order.
-   * services.cats.v1.addMiddleware((previousValue, done) => {
-   *  // previousValue = 'value1';
-   *  return done(null, previousValue);
-   * }).addMiddleware('value1')
+   * module.exports = (services) => {
+   *  // Step can be a function that returns a promise
+   *  services.cats.v1.push((previousValue) => Promise.resolve('myValue'));
+   *  // Step can be a function that returns a value
+   *  services.cats.v1.push((previousValue, ctx) =>{
+   *    const req = ctx.req;
+   *    return 'value';
+   *  });
+   *  // Step can be a function that returns a callback
+   *  services.cats.v1.push((previousValue , ctx, done) => done(null, 'myValue'));
+   *  // Step can be a value
+   *  services.cats.v1.push('value');
+   *  // Step can have pseudo decorators
+   *  services.cats.v1.push(compileDataSource((_ , ctx) => {
+   *    return ctx.dataSource.request();
+   *  });
+   * }
    */
-  addMiddleware(middleware) {
+  push(step) {
     this.operationIds.forEach(operationId => {
-      this[operationId].addMiddleware(middleware);
+      this[operationId].push(step);
     });
 
     return this;

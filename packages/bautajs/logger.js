@@ -13,17 +13,38 @@
  * limitations under the License.
  */
 const debug = require('debug');
+const EventEmmiter = require('events');
 
 const moduleName = 'bautajs';
+const eventTypes = {
+  PUSH_STEP: 1,
+  UNSHIFT_STEP: 2,
+  REGISTER_SERVICE: 3,
+  DATASOURCE_REQUEST: 4,
+  DATASOURCE_RESPONSE: 5,
+  EXPOSE_OPERATION: 6
+};
+const emmiter = new EventEmmiter();
 
 function buildLogger(namespace) {
   const levels = ['debug', 'trace', 'log', 'info', 'warn', 'error'];
-  return levels.reduce((acc, level) => {
-    acc[level] = debug(`${namespace}:${level}`);
-    return acc;
-  }, {});
+  return levels.reduce(
+    (acc, level) => {
+      acc[level] = debug(`${namespace}:${level}`);
+      return acc;
+    },
+    {
+      events: emmiter,
+      eventTypes
+    }
+  );
 }
 
+/**
+ * A logger instance of debug
+ * @constant Logger
+ * @type {{debug,trace,log,info,warn,error,events,eventTypes}}
+ */
 module.exports = Object.assign(buildLogger(moduleName), {
   create(namespace) {
     return buildLogger(moduleName + namespace);

@@ -15,15 +15,6 @@
 const Operation = require('./Operation');
 const Version = require('./Version');
 const logger = require('../logger');
-const { defaultLoader } = require('../utils');
-
-function haveToInherit(operation) {
-  const noInherit =
-    operation.apiDefinition.noInheritance &&
-    operation.apiDefinition.noInheritance[operation.serviceId];
-
-  return !noInherit || !noInherit.includes(operation.dataSource.template.id);
-}
 
 /**
  * The Service is a set of {@link Version}
@@ -53,14 +44,14 @@ module.exports = class Service {
         ) {
           const operation = new Operation(
             operationTemplate.id,
-            [defaultLoader],
+            [],
             operationTemplate,
             apiDefinition,
             serviceId
           );
 
           // Add inerithance method to the current operation
-          if (previousOperation && haveToInherit(operation)) {
+          if (previousOperation && operationTemplate.inherit !== false) {
             previousOperation.nextVersionOperation = operation;
           }
 
@@ -70,6 +61,10 @@ module.exports = class Service {
       });
 
       logger.info(`[OK] ${serviceId}.${operationTemplate.id} operation registered on bautajs`);
+      logger.events.emit(logger.eventTypes.REGISTER_SERVICE, {
+        service: serviceId,
+        operation: operationTemplate
+      });
     });
 
     // Blue neva freeeezz!

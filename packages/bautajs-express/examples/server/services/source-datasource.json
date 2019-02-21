@@ -1,0 +1,10 @@
+{
+  "test": {
+    "operations": [
+      {
+        "id": "operation1",
+        "reqId": "{{req.query.a}}"
+      }
+    ]
+  }
+}

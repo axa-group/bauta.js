@@ -131,7 +131,7 @@ describe('Core tests', () => {
     });
   });
 
-  describe('Load loaders from path', () => {
+  describe('Load resolvers from path', () => {
     beforeEach(() => {
       nock('https://google.com')
         .persist()
@@ -143,36 +143,39 @@ describe('Core tests', () => {
     afterEach(() => {
       nock.cleanAll();
     });
-    test('should load the loaders from the given path', async () => {
+    test('should load the operations from the given path', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
 
       const bautaJS = new BautaJS(testApiDefinitions, {
         dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
-        loadersPath: path.resolve(__dirname, '../fixtures/myaxa-loaders/test-operation-loader.js'),
+        resolversPath: path.resolve(
+          __dirname,
+          '../fixtures/test-resolvers/test-operation-resolver.js'
+        ),
         dataSourceCtx: config
       });
 
       expect(await bautaJS.services.testService.v1.operation1.exec({})).toEqual('benderTest');
     });
 
-    test('should load the loaders from the given array of paths', async () => {
+    test('should load the resolvers from the given array of paths', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
 
       const bautaJS = new BautaJS(testApiDefinitions, {
         dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
-        loadersPath: [
-          path.resolve(__dirname, '../fixtures/myaxa-loaders/test-operation-loader.js'),
-          path.resolve(__dirname, '../fixtures/myaxa-loaders/test-operation-loader-1.js')
+        resolversPath: [
+          path.resolve(__dirname, '../fixtures/test-resolvers/test-operation-resolver.js'),
+          path.resolve(__dirname, '../fixtures/test-resolvers/test-operation-resolver-1.js')
         ],
         dataSourceCtx: config
       });
 
       expect(await bautaJS.services.testService.v1.operation1.exec({})).toEqual('benderTest1');
-      expect(bautaJS.services.testService.v1.operation1.steps.length).toEqual(3);
+      expect(bautaJS.services.testService.v1.operation1.steps.length).toEqual(2);
     });
   });
 });

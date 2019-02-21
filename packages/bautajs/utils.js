@@ -29,9 +29,9 @@ function prepareToLog(object) {
   return truncate(object, 32000);
 }
 
-function defaultLoader() {
-  if (this.dataSource) {
-    return this.dataSource.request();
+function defaultLoader(_, ctx) {
+  if (ctx.dataSource) {
+    return ctx.dataSource(ctx.req).request();
   }
   const error = new Error('Not found');
   return Promise.reject(Object.assign(error, { statusCode: 404 }));

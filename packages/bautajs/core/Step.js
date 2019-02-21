@@ -19,32 +19,28 @@
  * @public
  * @class Step
  * @param {function} step - a function that returns a promise
- * @param {String} type - represents the type of the operation (loader, next, previous, join, fork)
  */
 module.exports = class Step {
-  constructor(step, type) {
+  constructor(step) {
     this.step = step;
-    this.type = type;
   }
 
   /**
    * Run the step binding the given context and adding the given value, making accessible the context (req) by 'this'
    * inside the step function.
    * The step always returns a promise, but inside the step function you can return a value, promise or a callback.
-   * @param {Object} context - the context bind to the step execution
+   * @param {Object} ctx - the context bind to the step execution
    * @param {Object} value - the input value to send to the step execution
    * @returns {{Promise<object[]|object, Error>}} resolves with the step result, rejects with the step error
    * @memberof Step#
    * @async
    */
-  run(context, value) {
+  run(ctx, value) {
     let promise;
 
     if (typeof this.step === 'function') {
       promise =
-        this.step.length > 1
-          ? this.runWithCallback(context, value)
-          : this.runWithReturn(context, value);
+        this.step.length > 2 ? this.runWithCallback(ctx, value) : this.runWithReturn(ctx, value);
     } else {
       // step is a promise or a value
       promise = this.constructor.handleValue(this.step);
@@ -55,17 +51,17 @@ module.exports = class Step {
 
   /**
    * Execute the step and convert the callback returned into a promise
-   * @param {Object} context - the context bind to the step execution
+   * @param {Object} ctx - the context bind to the step execution
    * @param {Object} value - the input value to send to the step execution
    * @returns {Promise<object[]|object, Error>} resolves with the step result, rejects with the step error
    * @memberof Step#
    * @async
    */
-  runWithCallback(context, value) {
+  runWithCallback(ctx, value) {
     return new Promise((resolve, reject) => {
-      this.step.call(
-        context,
+      this.step(
         value,
+        ctx,
         (err, result) => {
           if (err instanceof Error) {
             reject(err);
@@ -79,14 +75,14 @@ module.exports = class Step {
 
   /**
    * Execute the step and covnert the simple result returned into a promise
-   * @param {Object} context - the context bind to the step execution
+   * @param {Object} ctx - the context bind to the step execution
    * @param {Object} value - the input value to send to the step execution
    * @returns {Promise<object[]|object, Error>} resolves with the step result, rejects with the step error
    * @memberof Step#
    * @async
    */
-  runWithReturn(context, value) {
-    const result = this.step.call(context, value);
+  runWithReturn(ctx, value) {
+    const result = this.step(value, ctx);
     return this.constructor.handleValue(result);
   }
 

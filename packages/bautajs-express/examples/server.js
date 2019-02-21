@@ -12,6 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module.exports = services => {
-  services.testService.v1.operation1.next('benderTest');
-};
+const { notFound } = require('boom');
+const bautaJS = require('./server/instances/bauta');
+
+bautaJS.applyMiddlewares();
+
+/* Error handler */
+// 404 error
+bautaJS.app.use((req, res, next) => next(notFound()));
+// Error handler
+/* eslint-disable-next-line no-unused-vars */
+bautaJS.app.use((err, req, res, next) => {
+  res.status(err.output ? err.output.statusCode : 500).json(err.output ? err.output.payload : err);
+});
+
+bautaJS.listen();
+
+process.on('unhandledRejection', () => {
+  process.exit(1);
+});

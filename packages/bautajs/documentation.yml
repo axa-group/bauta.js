@@ -10,28 +10,6 @@ toc:
       ```
   - name: Features
     children:
-      - name: Store
-        description: |
-          `bautajs` provides a built-in 'Map' singleton. Add data and get data from everywhere.
-          The singleton life is related to the life of the Node.js process. 
-
-          ```js
-            const { store } = require('bautajs');
-
-            store.set('data', { foo: boo });
-
-            const data = store.get('data');
-          ```
-      - name: Config
-        description: |
-          By default `bautajs` will add the configuration you send in the initialization moment into a global store. So you can access the config
-          inside all the loaders by doing:
-
-          ```js
-            const { store } = require('bautajs');
-
-            store.get('config');
-          ```
       - name: Request Validation
         description: |
           `bautajs` comes with a default request validation using the [openAPI schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). By default, it is set to false.
@@ -618,11 +596,7 @@ toc:
           ```
   - name: Public API
     children:
-      - services
-      - requireAll
-      - store
-      - batuajs
-      - deref
+      - BautaJS
       - name: Artifacts
         description: |
           A set of artifacts that bautajs provides when use its public API

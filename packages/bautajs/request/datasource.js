@@ -17,7 +17,7 @@ const got = require('got');
 const createAgent = require('native-proxy-agent');
 const Multipart = require('multipart-request-builder');
 const { prepareToLog } = require('../utils');
-const logger = require('../logger');
+const sessionFactory = require('../session-factory');
 const buildForm = require('./form-data');
 
 // waiting for GOT 5.0
@@ -49,6 +49,7 @@ function requestHooks(log) {
           requestData.body = prepareToLog(options.body);
         }
         log.debug(`request-logger: Request data: `, requestData);
+        log.events.emit(log.eventTypes.DATASOURCE_REQUEST, options);
       }
     },
     logResponse(response) {
@@ -67,6 +68,7 @@ function requestHooks(log) {
           response.timings.phases.total
         } ms`
       );
+      log.events.emit(log.eventTypes.DATASOURCE_RESPONSE, response);
 
       return response;
     },
@@ -140,7 +142,7 @@ function compileDatasource(dataSourceTemplate, context) {
     .transformWith(dataSourceTemplate)
     .root();
 
-  const log = context.logger || logger;
+  const log = context.logger ? context.logger : sessionFactory(context).logger;
   const hooks = requestHooks(log);
   const { cert, key, rejectUnauthorized, proxy, ...options } = {
     method: dataSource.method,

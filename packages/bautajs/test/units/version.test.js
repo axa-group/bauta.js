@@ -13,10 +13,9 @@
  * limitations under the License.
  */
 /* global expect, describe, test */
-const Version = require('../../lib/core/Version');
-const { defaultLoader } = require('../../lib/utils');
-const Step = require('../../lib/core/Step');
-const Operation = require('../../lib/core/Operation');
+const Version = require('../../core/Version');
+const Step = require('../../core/Step');
+const Operation = require('../../core/Operation');
 const { testService } = require('../fixtures/test-datasource.json');
 const [testApiDefinition] = require('../fixtures/test-api-definitions.json');
 
@@ -59,14 +58,14 @@ describe('Version class tests', () => {
     });
   });
 
-  describe('Version.addMiddleware tests', () => {
-    test('should add middleware to all the operations of the version', () => {
+  describe('Version.push tests', () => {
+    test('should add and step to all the operations of the version', () => {
       const testVersion = new Version('v1');
       const mwFn = () => 'someMw';
       testVersion.operationIds = ['a', 'b'];
       testVersion.a = new Operation(
         'operation1',
-        [defaultLoader],
+        [],
         testService.operations[0],
         testApiDefinition,
         'testService'
@@ -74,22 +73,16 @@ describe('Version class tests', () => {
 
       testVersion.b = new Operation(
         'operation1',
-        [defaultLoader],
+        [],
         testService.operations[0],
         testApiDefinition,
         'testService'
       );
 
-      testVersion.addMiddleware(mwFn);
+      testVersion.push(mwFn);
 
-      expect(testVersion.a.steps).toEqual([
-        new Step(mwFn, 'middleware'),
-        new Step(defaultLoader, 'loader')
-      ]);
-      expect(testVersion.b.steps).toEqual([
-        new Step(mwFn, 'middleware'),
-        new Step(defaultLoader, 'loader')
-      ]);
+      expect(testVersion.a.steps).toEqual([new Step(mwFn)]);
+      expect(testVersion.b.steps).toEqual([new Step(mwFn)]);
     });
   });
 });

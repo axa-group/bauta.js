@@ -19,7 +19,8 @@ const fs = require('fs');
 const http = require('http');
 const https = require('https');
 const EventEmitter = require('events');
-const buildDataSource = require('../../lib/request/datasource');
+const buildDataSource = require('../../request/datasource');
+const logger = require('../../logger');
 
 describe('datasource test', () => {
   describe('Request alias features', () => {
@@ -104,7 +105,8 @@ describe('datasource test', () => {
         }
       };
       const debugLogs = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         debug(...params) {
           debugLogs.push(params);
         },
@@ -112,7 +114,7 @@ describe('datasource test', () => {
         warn() {}
       };
       const dataSource = buildDataSource(template);
-      const compiled = dataSource({ logger });
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(debugLogs[0][0]).toEqual(expectedMsg);
       expect(debugLogs[0][1]).toEqual(expectedData);
@@ -138,7 +140,8 @@ describe('datasource test', () => {
         }
       };
       const infoLogs = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         info: (...params) => {
           infoLogs.push(params);
         },
@@ -146,7 +149,7 @@ describe('datasource test', () => {
         warn() {}
       };
       const dataSource = buildDataSource(template);
-      const compiled = dataSource({ logger });
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(infoLogs[0][0]).toEqual(expectedMsg);
     });
@@ -178,7 +181,8 @@ describe('datasource test', () => {
         }
       };
       const debugLogs = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         debug(...params) {
           debugLogs.push(params);
         },
@@ -186,7 +190,7 @@ describe('datasource test', () => {
         warn() {}
       };
       const dataSource = buildDataSource(template);
-      const compiled = dataSource({ logger });
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
 
       expect(debugLogs[0][0]).toEqual(expectedMsg);
@@ -216,7 +220,8 @@ describe('datasource test', () => {
       };
       const debugConsole = [];
       const infoConsole = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         debug: (...params) => {
           debugConsole.push(params);
         },
@@ -226,7 +231,7 @@ describe('datasource test', () => {
         warn() {}
       };
       const dataSource = buildDataSource(template);
-      const compiled = dataSource({ logger });
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(debugConsole[1]).toEqual(expectedMsg);
     });
@@ -246,13 +251,14 @@ describe('datasource test', () => {
         method: 'GET'
       };
       const infoConsole = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         info: (...params) => {
           infoConsole.push(params);
         }
       };
       const dataSource = buildDataSource(template);
-      const compiled = dataSource({ logger });
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(infoConsole[1][0]).toMatch(expectedMsg);
     });
@@ -284,7 +290,8 @@ describe('datasource test', () => {
       };
       const debugConsole = [];
       const infoConsole = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         debug: (...params) => {
           debugConsole.push(params);
         },
@@ -294,7 +301,7 @@ describe('datasource test', () => {
         warn() {}
       };
       const dataSource = buildDataSource(template);
-      const compiled = dataSource({ logger });
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(debugConsole[1]).toEqual(expectedMsg);
     });

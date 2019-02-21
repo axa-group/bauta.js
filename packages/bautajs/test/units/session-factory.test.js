@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 /* global expect, describe, test */
-const sessionFactory = require('../../lib/session-factory');
+const sessionFactory = require('../../session-factory');
 
 describe('Session middleware tests', () => {
   describe('sessionMw function tests', () => {

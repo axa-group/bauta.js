@@ -12,10 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test, beforeEach, jest */
-const Operation = require('../../lib/core/Operation');
-const Step = require('../../lib/core/Step');
-const Fork = require('../../lib/core/Fork');
+/* global expect, describe, test, beforeEach */
+const Operation = require('../../core/Operation');
+const Step = require('../../core/Step');
 
 const { testService } = require('../fixtures/test-datasource.json');
 const [testApiDefinition] = require('../fixtures/test-api-definitions.json');
@@ -23,11 +22,11 @@ const testDataource = require('../fixtures/test-datasource.json');
 
 describe('Operation class tests', () => {
   describe('constructor tests', () => {
-    test('operation steps should be empty, for undefined loaders', () => {
-      const loaderUndefined = undefined;
+    test('operation steps should be empty, for undefined step', () => {
+      const stepUndefined = undefined;
       const operationTest = new Operation(
         'operation1',
-        loaderUndefined,
+        stepUndefined,
         testService.operations[0],
         testApiDefinition,
         'testService'
@@ -36,7 +35,7 @@ describe('Operation class tests', () => {
       expect(operationTest.steps).toEqual([]);
     });
 
-    test('operation steps should be empty, for empty loaders', () => {
+    test('operation steps should be empty, for empty step', () => {
       const operationTest = new Operation(
         'operation1',
         [],
@@ -58,18 +57,16 @@ describe('Operation class tests', () => {
         'testService'
       );
 
-      expect(operationTest.steps).toEqual(
-        steps.map((s, i) => new Step(s, i === 0 ? 'loader' : 'next'))
-      );
+      expect(operationTest.steps).toEqual(steps.map(s => new Step(s)));
     });
   });
 
   describe('Build operations cases', () => {
     test('should let you build an operation without schema', () => {
-      const loaderUndefined = undefined;
+      const stepUndefined = undefined;
       const operationTest = new Operation(
         'operation1',
-        loaderUndefined,
+        stepUndefined,
         testService.operations[0],
         null,
         'testService'
@@ -79,7 +76,7 @@ describe('Operation class tests', () => {
     });
 
     test('should add the steps if are instance of Step', () => {
-      const steps = [new Step(() => 'bender1', 'loader'), new Step(() => 'bender2', 'next')];
+      const steps = [new Step(() => 'bender1'), new Step(() => 'bender2')];
       const operationTest = new Operation(
         'operation1',
         steps,
@@ -92,7 +89,7 @@ describe('Operation class tests', () => {
     });
 
     test('should not add the steps if the given steps are instances of Steps and other types', () => {
-      const steps = ['String', new Step(() => 'bender2', 'next')];
+      const steps = ['String', new Step(() => 'bender2')];
       const operationTest = new Operation(
         'operation1',
         steps,
@@ -105,10 +102,10 @@ describe('Operation class tests', () => {
     });
 
     test('should build the request validator from the schema parameters', () => {
-      const loaderUndefined = () => 'Someloader';
+      const stepUndefined = () => 'SomeStep';
       const operationTest = new Operation(
         'operation1',
-        [loaderUndefined],
+        [stepUndefined],
         testService.operations[0],
         testApiDefinition,
         'testService'
@@ -133,10 +130,10 @@ describe('Operation class tests', () => {
     });
 
     test('should build the response validator from the schema response', () => {
-      const loaderUndefined = () => 'Someloader';
+      const stepUndefined = () => 'Someloader';
       const operationTest = new Operation(
         'operation1',
-        [loaderUndefined],
+        [stepUndefined],
         testService.operations[0],
         testApiDefinition,
         'testService'
@@ -157,11 +154,11 @@ describe('Operation class tests', () => {
     });
 
     test('should convert the datasource in a compilable datasource by the request parameter', () => {
-      const loaderUndefined = () => 'Someloader';
+      const stepUndefined = () => 'Someloader';
       const operationSource = testDataource.testService.operations[0];
       const operationTest = new Operation(
         'operation1',
-        [loaderUndefined],
+        [stepUndefined],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -171,10 +168,10 @@ describe('Operation class tests', () => {
     });
 
     test('should compile the datasource on call the datasource compile function', () => {
-      const loaderUndefined = () => 'Someloader';
+      const stepUndefined = () => 'Someloader';
       const operationTest = new Operation(
         'operation1',
-        [loaderUndefined],
+        [stepUndefined],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -185,10 +182,10 @@ describe('Operation class tests', () => {
     });
 
     test('the default error handler should be a promise reject of the given error', async () => {
-      const loaderUndefined = () => 'Someloader';
+      const stepUndefined = () => 'Someloader';
       const operationTest = new Operation(
         'operation1',
-        [loaderUndefined],
+        [stepUndefined],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -203,75 +200,7 @@ describe('Operation class tests', () => {
     });
   });
 
-  describe('Operation.setLoader tests', () => {
-    test('Should throw an error if the given loader is undefined', () => {
-      const operationTest = new Operation(
-        'operation1',
-        [],
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-      const operationThrow = () => operationTest.setLoader(undefined);
-      expect(operationThrow).toThrowError(
-        'An step loader can not be undefined on testService.v1.operation1'
-      );
-    });
-    test('the loader should be the first step', () => {
-      const operationTest = new Operation(
-        'operation1',
-        [],
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-
-      operationTest.setLoader('loader');
-
-      expect(operationTest.steps[0]).toEqual(new Step('loader', 'loader'));
-    });
-
-    test('the operation steps should keep the order', () => {
-      const steps = [() => ({ name: 'loader' }), 'next1', () => 'next2'];
-      const operationTest = new Operation(
-        'operation1',
-        steps,
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-
-      operationTest.setLoader('new loader');
-
-      expect(operationTest.steps).toEqual([
-        new Step('new loader', 'loader'),
-        ...steps.slice(1, steps.length).map(s => new Step(s, 'next'))
-      ]);
-    });
-
-    test('the operation steps should inherit from the older operation version', () => {
-      const steps = [() => ({ name: 'loader' }), 'next1', () => 'next2'];
-      const operationTest = new Operation(
-        'operation1',
-        steps,
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-
-      operationTest.setLoader('new loader');
-
-      const opertionV2 = Object.create(operationTest, {});
-      opertionV2.setLoader('loader v2');
-
-      expect(opertionV2.steps).toEqual([
-        new Step('loader v2', 'loader'),
-        ...steps.slice(1, steps.length).map(s => new Step(s, 'next'))
-      ]);
-    });
-  });
-
-  describe('Operation.next tests', () => {
+  describe('Operation.push tests', () => {
     let operationTest;
     const steps = [() => ({ name: 'loader' }), 'next1', () => 'next2'];
 
@@ -285,245 +214,26 @@ describe('Operation class tests', () => {
       );
     });
 
-    test('Should throw an error if the given loader is undefined', () => {
-      const operationThrow = () => operationTest.next(undefined);
+    test('Should throw an error if the given step is undefined', () => {
+      const operationThrow = () => operationTest.push(undefined);
       expect(operationThrow).toThrow(
-        new Error('An step loader can not be undefined on testService.v1.operation1')
+        new Error('An step can not be undefined on testService.v1.operation1')
       );
     });
-    test('the next step should be the last step', () => {
-      operationTest.next('next3');
+    test('the next pushed step should be the last step', () => {
+      operationTest.push('next3');
 
-      expect(operationTest.steps[operationTest.steps.length - 1]).toEqual(
-        new Step('next3', 'next')
-      );
-    });
-
-    test('the operation steps should keep the order', () => {
-      operationTest.next('next3');
-
-      expect(operationTest.steps).toEqual([
-        ...steps.map((s, i) => new Step(s, i === 0 ? 'loader' : 'next')),
-        new Step('next3', 'next')
-      ]);
-    });
-  });
-
-  describe('Operation.previous tests', () => {
-    let operationTest;
-    const steps = [() => ({ name: 'loader' }), 'next1', () => 'next2'];
-
-    beforeEach(() => {
-      operationTest = new Operation(
-        'operation1',
-        steps,
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-    });
-
-    test('Should throw an error if the given loader is undefined', () => {
-      const operationThrow = () => operationTest.previous(undefined);
-      expect(operationThrow).toThrow(
-        new Error('An step loader can not be undefined on testService.v1.operation1')
-      );
-    });
-    test("the previous step should be the the loader's step before", () => {
-      operationTest.previous('previous');
-
-      expect(operationTest.steps[0]).toEqual(new Step('previous', 'previous'));
-    });
-
-    test('the operation steps should keep the order', () => {
-      operationTest.previous('previous');
-
-      expect(operationTest.steps).toEqual([
-        new Step('previous', 'previous'),
-        ...steps.map((s, i) => new Step(s, i === 0 ? 'loader' : 'next'))
-      ]);
-    });
-  });
-
-  describe('Operation.fork tests', () => {
-    let operationTest;
-    const steps = [() => ({ name: 'loader' }), 'next1', () => 'next2'];
-
-    beforeEach(() => {
-      operationTest = new Operation(
-        'operation1',
-        steps,
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-    });
-
-    test('the fork step should be the last step', () => {
-      operationTest.fork([]);
-
-      expect(operationTest.steps[operationTest.steps.length - 1]).toEqual(new Fork([], 'fork'));
-    });
-
-    test('the operation steps should keep the order', () => {
-      operationTest.fork([]);
-
-      expect(operationTest.steps).toEqual([
-        ...steps.map((s, i) => new Step(s, i === 0 ? 'loader' : 'next')),
-        new Fork([], 'fork')
-      ]);
-    });
-
-    test('the fork step should be executed in parallel and give the result without join', async () => {
-      operationTest.fork([1, 2]);
-      operationTest.next(v => v);
-
-      const result = await operationTest.exec({});
-      const expected = [2, 1];
-
-      expect(result).toEqual(expected);
-    });
-  });
-
-  describe('Operation.addMiddleware tests', () => {
-    let operationTest;
-    const steps = ['previous1', () => ({ name: 'loader' }), 'next1', () => 'next2'];
-
-    beforeEach(() => {
-      operationTest = new Operation(
-        'operation1',
-        steps,
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-    });
-
-    test('Should throw an error if the given loader is undefined', () => {
-      const operationThrow = () => operationTest.addMiddleware(undefined);
-      expect(operationThrow).toThrow(
-        new Error('An step loader can not be undefined on testService.v1.operation1')
-      );
-    });
-    test("the middleware step should be the previous hook's step before", () => {
-      operationTest.addMiddleware('middleware1');
-
-      expect(operationTest.steps[0]).toEqual(new Step('middleware1', 'middleware'));
-    });
-
-    test('the operation steps should keep the order', () => {
-      operationTest.addMiddleware('middleware1');
-
-      expect(operationTest.steps).toEqual([
-        new Step('middleware1', 'middleware'),
-        ...steps.map((s, i) => new Step(s, i === 0 ? 'loader' : 'next'))
-      ]);
-    });
-
-    test('the middleware should be added in order as the first steps', () => {
-      operationTest.addMiddleware('middleware1');
-      operationTest.addMiddleware('middleware2');
-
-      expect(operationTest.steps).toEqual([
-        new Step('middleware1', 'middleware'),
-        new Step('middleware2', 'middleware'),
-        ...steps.map((s, i) => new Step(s, i === 0 ? 'loader' : 'next'))
-      ]);
-    });
-
-    test('the middleware should be added in order as the first steps, in front of previous steps', () => {
-      operationTest.previous('previous');
-      operationTest.addMiddleware('middleware1');
-      operationTest.addMiddleware('middleware2');
-
-      expect(operationTest.steps).toEqual([
-        new Step('middleware1', 'middleware'),
-        new Step('middleware2', 'middleware'),
-        new Step('previous', 'previous'),
-        ...steps.map((s, i) => new Step(s, i === 0 ? 'loader' : 'next'))
-      ]);
-    });
-
-    test('the middleware should be added in order as the first steps, in front of previous steps even if previous steps are added after middlewares', () => {
-      operationTest.addMiddleware('middleware1');
-      operationTest.addMiddleware('middleware2');
-      operationTest.previous('previous');
-
-      expect(operationTest.steps).toEqual([
-        new Step('middleware1', 'middleware'),
-        new Step('middleware2', 'middleware'),
-        new Step('previous', 'previous'),
-        ...steps.map((s, i) => new Step(s, i === 0 ? 'loader' : 'next'))
-      ]);
-    });
-  });
-
-  describe('Operation.join tests', () => {
-    let operationTest;
-    const steps = [() => ({ name: 'loader' })];
-    const nextStep = value => value;
-
-    beforeEach(() => {
-      operationTest = new Operation(
-        'operation1',
-        steps,
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-      operationTest.fork([5, 6]);
-    });
-
-    test('should throw an error if there is a join as an before step', () => {
-      operationTest.next(nextStep);
-      operationTest.join();
-      const expected = new Error(
-        'The join step should be used after a fork step. Ex: fork -> next -> join'
-      );
-
-      expect(() => operationTest.join()).toThrow(expected);
-    });
-
-    test('should throw an error if there is not a fork step as a previous step', () => {
-      operationTest.steps.pop();
-      operationTest.join();
-      const expected = new Error(
-        'The join step should be used after a fork step. Ex: fork -> next -> join'
-      );
-
-      expect(() => operationTest.join()).toThrow(expected);
-    });
-
-    test('should throw an error if there is a fork step followed by a join step', () => {
-      const expected = new Error(
-        `The join step can't be next to a fork step, please add steps in between. Ex: fork -> next -> join`
-      );
-
-      expect(() => operationTest.join()).toThrow(expected);
-    });
-
-    test('the join should join a fork execution', async () => {
-      operationTest.next(nextStep);
-      operationTest.join();
-
-      expect(operationTest.steps).toEqual([
-        new Step(steps[0], 'loader'),
-        new Fork([5, 6]),
-        new Step(nextStep, 'next'),
-        operationTest.steps[operationTest.steps.length - 1]
-      ]);
-      const result = await operationTest.exec({});
-      expect(result).toEqual([6, 5]);
+      expect(operationTest.steps[operationTest.steps.length - 1]).toEqual(new Step('next3'));
     });
   });
 
   describe('Operation.setErrorHandler tests', () => {
     test('should throw an error if the first argument is not a function', () => {
       const errorHandler = 'String';
-      const loaderUndefined = null;
+      const stepUndefined = null;
       const operationTest = new Operation(
         'operation1',
-        [loaderUndefined],
+        [stepUndefined],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -537,10 +247,10 @@ describe('Operation class tests', () => {
 
     test('should set the given error handler', async () => {
       const errorHandler = () => 'error';
-      const loader = () => Promise.reject(new Error('crashhh!!!'));
+      const step = () => Promise.reject(new Error('crashhh!!!'));
       const operationTest = new Operation(
         'operation1',
-        [loader],
+        [step],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -557,17 +267,17 @@ describe('Operation class tests', () => {
     test('should set the error handler to the inherit operation diferent from the first operation', async () => {
       const errorHandler = () => 'error';
       const errorHandlerV2 = () => 'errorV2';
-      const loader = () => Promise.reject(new Error('crashhh!!!'));
+      const step = () => Promise.reject(new Error('crashhh!!!'));
       const operationTest = new Operation(
         'operation1',
-        [loader],
+        [step],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
       );
       const operationV2 = new Operation(
         'operation2',
-        [loader],
+        [step],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -595,10 +305,10 @@ describe('Operation class tests', () => {
 
     test('should throw an error if the schema is invalid', () => {
       const invalidSchema = {};
-      const loaderUndefined = null;
+      const stepUndefined = null;
       const operationTest = new Operation(
         'operation1',
-        [loaderUndefined],
+        [stepUndefined],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -609,10 +319,10 @@ describe('Operation class tests', () => {
     });
 
     test('should set the new operation schema', () => {
-      const loaderUndefined = null;
+      const stepUndefined = null;
       const operationTest = new Operation(
         'operation1',
-        [loaderUndefined],
+        [stepUndefined],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -635,29 +345,6 @@ describe('Operation class tests', () => {
         'testService'
       );
       operationTest.steps.push(null);
-      const expected = null;
-
-      const res = await operationTest.exec({});
-      expect(res).toEqual(expected);
-    });
-
-    test('should execute an instance of Operation step', async () => {
-      const operationTest = new Operation(
-        'operation1',
-        [() => 'bender'],
-        testDataource.testService.operations[0],
-        testApiDefinition,
-        'testService'
-      );
-      operationTest.steps.push(
-        new Operation(
-          'operation1',
-          [() => 'bender'],
-          testDataource.testService.operations[0],
-          testApiDefinition,
-          'testService'
-        )
-      );
       const expected = 'bender';
 
       const res = await operationTest.exec({});
@@ -683,8 +370,8 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [
-          function loader() {
-            expect(this.metadata).toEqual({
+          function step(_, ctx) {
+            expect(ctx.metadata).toEqual({
               operationId: 'operation1',
               serviceId: 'testService'
             });
@@ -700,7 +387,7 @@ describe('Operation class tests', () => {
     test('should run with a callback step', async () => {
       const operationTest = new Operation(
         'operation1',
-        [(val, cb) => cb(null, 'bender')],
+        [(val, ctx, cb) => cb(null, 'bender')],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -715,7 +402,7 @@ describe('Operation class tests', () => {
     test('should allow callback rejection', async () => {
       const operationTest = new Operation(
         'operation1',
-        [(val, cb) => cb(new Error('bender'))],
+        [(val, ctx, cb) => cb(new Error('bender'))],
         testDataource.testService.operations[0],
         testApiDefinition,
         'testService'
@@ -759,7 +446,7 @@ describe('Operation class tests', () => {
       expect(res).toEqual(expected);
     });
 
-    test('dataSource should be accesible from previous hook', async () => {
+    test('dataSource should be accesible from all steps', async () => {
       const operationTest = new Operation(
         'operation1',
         ['bender'],
@@ -770,15 +457,15 @@ describe('Operation class tests', () => {
         testApiDefinition,
         'testService'
       );
-      operationTest.previous(function pr() {
-        expect(this.dataSource.template.url).toEqual('1234');
+      operationTest.push((_, ctx) => {
+        expect(ctx.dataSource.template.url).toEqual('1234');
       });
       await operationTest.exec({});
     });
   });
 
   describe('Operation.exec with loopback filters', () => {
-    test('should apply the loopback filters to a an loader array', async () => {
+    test('should apply the loopback filters to a an step array', async () => {
       const operationTest = new Operation(
         'operation1',
         [
@@ -816,7 +503,7 @@ describe('Operation class tests', () => {
       expect(await operationTest.exec(context)).toEqual(expected);
     });
 
-    test('should apply the loopback filters to a an loader array and must be the final "step"', async () => {
+    test('should apply the loopback filters to a an step array and must be the final "step"', async () => {
       const operationTest = new Operation(
         'operation1',
         [
@@ -836,7 +523,7 @@ describe('Operation class tests', () => {
         testApiDefinition,
         'testService'
       );
-      operationTest.next(result => result.filter(r => r.code !== 'foo'));
+      operationTest.push(result => result.filter(r => r.code !== 'foo'));
 
       const expected = [];
       const context = {
@@ -982,10 +669,12 @@ describe('Operation class tests', () => {
           ]
         ],
         {
-          id: 'operation1',
+          id: 'operation1'
+        },
+        {
+          ...testApiDefinition,
           validateRequest: true
         },
-        testApiDefinition,
         'testService'
       );
 
@@ -1020,6 +709,7 @@ describe('Operation class tests', () => {
 
     test('should validate the request for mandatory fields', async () => {
       const operationTest = new Operation(
+        'operation1',
         [
           () => [
             {
@@ -1031,14 +721,9 @@ describe('Operation class tests', () => {
           ]
         ],
         {
-          name: 'test',
-          validateRequest: true
+          id: 'operation1'
         },
-        {
-          id: 'operation1',
-          validateRequest: true
-        },
-        testApiDefinition,
+        { ...testApiDefinition, validateRequest: true },
         'testService'
       );
 
@@ -1079,10 +764,12 @@ describe('Operation class tests', () => {
           ]
         ],
         {
-          id: 'operation1',
+          id: 'operation1'
+        },
+        {
+          ...testApiDefinition,
           validateRequest: false
         },
-        testApiDefinition,
         'testService'
       );
       operationTest.setSchema(testApiDefinitionQueryBody);
@@ -1120,10 +807,12 @@ describe('Operation class tests', () => {
           ]
         ],
         {
-          id: 'operation1',
+          id: 'operation1'
+        },
+        {
+          ...testApiDefinition,
           validateRequest: true
         },
-        testApiDefinition,
         'testService'
       );
       operationTest.setSchema(testApiDefinitionQueryBody);

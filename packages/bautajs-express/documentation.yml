@@ -1,0 +1,20 @@
+toc:
+  - name: bautajs-express
+    description: |
+      A library to build easy versionable and self organized middlewares for express.
+  - name: How to install
+    description: |
+      Make sure that you have access to [Artifactory](https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/)
+      ```console
+        npm install bautajs-express
+      ```
+  - name: Usage
+    description: |
+      ```js
+        const BautaJSExpress = require('bauta-express');
+        const apiDefinition = require('../../api-definition.json');
+
+        const bautJSExpress = new BautaJSExpress(apiDefinition, {});
+        bautJSExpress.applyMiddlewares();
+        bautaJS.listen();
+      ```

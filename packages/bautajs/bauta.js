@@ -17,10 +17,11 @@ const glob = require('glob');
 const path = require('path');
 const mergeDeep = require('merge-deep');
 const OpenAPISchemaValidator = require('openapi-schema-validator').default;
-const validate = require('./lib/validators/validate');
-const Service = require('./lib/core/Service');
-const dataSourceSchema = require('./lib/validators/datasource-schema.json');
-const inheritanceSchema = require('./lib/validators/inheritance-schema.json');
+const validate = require('./validators/validate');
+const Service = require('./core/Service');
+const dataSourceSchema = require('./validators/datasource-schema.json');
+const extendOpenAPISchema = require('./validators/extend-openapi-schema.json');
+const logger = require('./logger');
 
 /**
  * Split the datasources in services and register them in to the services object
@@ -42,11 +43,14 @@ function registerServices(apiDefinitions, dataSources) {
 }
 
 /**
- * Build the BautaJS services with the given dataSources and loaders.
+ * Build the BautaJS services with the given dataSources and resolvers.
  * This services could be accessible from the instance .services after the initialization.
+ * @public
+ * @class BautaJS
  * @param {Object[]|Object} apiDefinitions - An array of [OpenAPI 3.0/2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) definitions. See the valid schema @see {@link ./lib/validators/api-definition-schema-json}.
- * @param {string|string[]} [options.dataSourcesPath='./server/services/../.datasource.?(js|json)'] - A [node-glob](https://github.com/isaacs/node-glob) path to your dataSources.
- * @param {string|string[]} [options.loadersPath='./server/services/../.loader.js'] - A [node-glob](https://github.com/isaacs/node-glob) path to your loaders definitions.
+ * @param {Object} [options]
+ * @param {string|string[]} [options.dataSourcesPath='./server/services/../..-datasource.?(js|json)'] - A [node-glob](https://github.com/isaacs/node-glob) path to your dataSources.
+ * @param {string|string[]} [options.resolversPath='./server/services/../..-resolver.js'] - A [node-glob](https://github.com/isaacs/node-glob) path to your resolvers definitions.
  * @param {any} [options.dataSourceCtx={}] - Object to be injected on the dataSources in run time
  * @example
  * const Bautajs = require('bautajs');
@@ -58,7 +62,7 @@ function registerServices(apiDefinitions, dataSources) {
  * const bautaJS = new Bautajs(apiDefinitions, {
  *  // Load all the files with datasource in the file name
  *  dataSourcesPath: './services/*-datasource.?(js|json)',
- *  loadersPath:  './services/*-loaders.js',
+ *  resolversPath:  './services/*-resolver.js',
  *  dataSourceCtx: ctx
  * });
  *
@@ -75,8 +79,8 @@ module.exports = class Batuajs {
 
     apiDefinitions.some(apiDefinition => {
       const apiDefinitionValidator = new OpenAPISchemaValidator({
-        version2Extensions: inheritanceSchema,
-        version3Extensions: inheritanceSchema,
+        version2Extensions: extendOpenAPISchema,
+        version3Extensions: extendOpenAPISchema,
         version: apiDefinition.openapi ? 3 : 2
       });
       error = apiDefinitionValidator.validate(apiDefinition);
@@ -106,17 +110,20 @@ module.exports = class Batuajs {
         `Invalid or not found dataSources, "${error[0].dataPath}" ${error[0].message}`
       );
     }
-
+    /**
+     * @memberof BautaJS#
+     * @property {Object.<string, Service>} services - A services dictionary containing all the created services
+     */
     this.services = registerServices(apiDefinitions, dataSources);
-    // Load custom loaders and operations modifiers
+    /**
+     * @memberof BautaJS#
+     * @property {Logger} logger - A [debug]{@link https://www.npmjs.com/package/debug} logger instance
+     */
+    this.logger = logger;
+
+    // Load custom resolvers and operations modifiers
     Batuajs.requireAll(
-      options.loadersPath || './server/services/**/*loader.js',
-      true,
-      this.services
-    );
-    // Load middlewares
-    Batuajs.requireAll(
-      options.middlewaresPath || './server/middlewares/**/*middleware.js',
+      options.resolversPath || './server/services/**/*resolver.js',
       true,
       this.services
     );
@@ -127,7 +134,8 @@ module.exports = class Batuajs {
   /**
    * Require a bunch of files that matches the given [glob](https://github.com/isaacs/node-glob) path.
    * @public
-   * @function requireAll
+   * @memberof BautaJS#
+   * @static
    * @param {string|string[]} folder - the given folder magic path, see https://github.com/isaacs/node-glob
    * @param {boolean} [execute=true] - execute the required files with the given vars if they are functions
    * @param {Object} [vars] - optional variables to add as a parameter on the file execution

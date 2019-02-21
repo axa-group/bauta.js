@@ -2,7 +2,7 @@
   "name": "bautajs",
   "version": "0.0.0",
   "description": "A simple library to make middlewares",
-  "main": "lib/bauta.js",
+  "main": "bauta.js",
   "scripts": {
     "documentation": "npx documentation build \"{,!(node_modules)/**/}*.js\" --config documentation.yml --sort-order=alpha -f md -o README.md",
     "security": "nsp check --reporter summary --threshold 4"
