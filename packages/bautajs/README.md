@@ -109,8 +109,8 @@ Make sure that you have access to [Artifactory][86]
 
 ### Request Validation
 
-`bautajs` comes with a default request validation using the [openAPI schema][87]. By default, it is set to false.
-This feature is always enabled as soon as you have a valid openAPI schema inputs. To disable it for one endpoint just add validateRequest to false inside the path definition.
+`bautajs` comes with a default request validation using the [openAPI schema][87]. By default, it is set to true.
+This feature is always enabled while you have a valid openAPI schema inputs. To disable it for one endpoint just add validateRequest to false inside the path definition.
 
 ### Example
 

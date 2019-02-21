@@ -12,8 +12,8 @@ toc:
     children:
       - name: Request Validation
         description: |
-          `bautajs` comes with a default request validation using the [openAPI schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). By default, it is set to false.
-          This feature is always enabled as soon as you have a valid openAPI schema inputs. To disable it for one endpoint just add validateRequest to false inside the path definition.
+          `bautajs` comes with a default request validation using the [openAPI schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). By default, it is set to true.
+          This feature is always enabled while you have a valid openAPI schema inputs. To disable it for one endpoint just add validateRequest to false inside the path definition.
 
           ### Example
            
