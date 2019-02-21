@@ -147,6 +147,10 @@ module.exports = class Operation {
         value: [],
         writable: false
       },
+      /**
+       * @memberof Operation#
+       * @property {Object} apiDefinition - the complete API definition related to this operation
+       */
       apiDefinition: {
         value: apiDefinition,
         writable: false

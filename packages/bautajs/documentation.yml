@@ -552,6 +552,21 @@ toc:
             }
 
           ```
+  - name: Decorators
+    description: A set of decorators to be used as a helpers of your resolvers
+    children:
+      - name: Usage
+        description: |
+          To access to the decorators you just have to import them one by one:
+          ```js
+            const compileDataSource = require('bautajs/decorators/compile-datasource');
+
+            services.v1.cats.op1.push(compileDataSource((_, ctx) => {
+              return ctx.dataSource.request();
+            }));
+          ```
+      - request
+      - compileDataSource
   - name: Public API
     children:
       - BautaJS
@@ -563,3 +578,4 @@ toc:
           - Step
           - Service
           - Version
+          - Logger

@@ -74,8 +74,8 @@ module.exports = class Version {
   /**
    * Push an step/function to the end of all version operations chain
    * @param {any} step - the step function, value or class
-   * @returns {Operation} an instance of the operation
-   * @memberof Operation#
+   * @returns {Version} an instance of the operation
+   * @memberof Version#
    * @example
    * //common-resolver.js
    * const compileDataSource = require('bautajs/decorators/compile-data-source');
