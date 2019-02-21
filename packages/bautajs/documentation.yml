@@ -106,7 +106,7 @@ toc:
                     "json": true,
                     "headers": {
                       "Accept-Language": [{
-                        "{{#if !req.headers.accept-language}}": 'my default lang',
+                        "{{#if !req.headers.accept-language}}": "my default lang",
                         "{{#else}}":"{{req.headers.accept-language}}"
                       }]",
                       "x-axa-user-agent": "{{req.headers.x-axa-user-agent}}"
@@ -148,12 +148,14 @@ toc:
           By default, `bautajs`, uses [got](https://github.com/sindresorhus/got) library to launch the operation datasources requests.
           However, is possible to use your preferred request module using the datasources definitions.
           ```js
+            const compileDataSource = require('bautajs/decorators/compile-datasource');
             const request = require('request');
-            services.cats.v1.find.push((_, ctx, cb) =>{
-              const { method, url, options } = ctx.dataSource(ctx.req);
+
+            services.cats.v1.find.push(compileDataSource(_, ctx, cb) =>{
+              const { method, url, options } = ctx.dataSource;
 
               return request({ method, url, ...options }, cb);
-            });
+            }));
           ````
 
       - name: multipart/related requests
@@ -250,7 +252,7 @@ toc:
           // multipart/related without streams
           {
             "testService": {
-              "operations":  [
+              "operations": [
                 {
                   "name": "operation1"
                 }
@@ -512,6 +514,7 @@ toc:
                       "required": true,
                       "type": "string",
                       "description": "The identifier of the cat"
+                    }
                   ],
                   "operationId": "get-cats-catsId",
                   "produces": ["application/json"],

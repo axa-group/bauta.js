@@ -207,7 +207,7 @@ to retrieve dynamic data.
           "json": true,
           "headers": {
             "Accept-Language": [{
-              "{{#if !req.headers.accept-language}}": 'my default lang',
+              "{{#if !req.headers.accept-language}}": "my default lang",
               "{{#else}}":"{{req.headers.accept-language}}"
             }]",
             "x-axa-user-agent": "{{req.headers.x-axa-user-agent}}"
@@ -251,12 +251,14 @@ By default, `bautajs`, uses [got][88] library to launch the operation datasource
 However, is possible to use your preferred request module using the datasources definitions.
 
 ```js
+  const compileDataSource = require('bautajs/decorators/compile-datasource');
   const request = require('request');
-  services.cats.v1.find.push((_, ctx, cb) =>{
-    const { method, url, options } = ctx.dataSource(ctx.req);
+
+  services.cats.v1.find.push(compileDataSource(_, ctx, cb) =>{
+    const { method, url, options } = ctx.dataSource;
 
     return request({ method, url, ...options }, cb);
-  });
+  }));
 ```
 
 
@@ -356,7 +358,7 @@ As for `multipart/related`, `bautajs` provides its own implementation for `multi
 // multipart/related without streams
 {
   "testService": {
-    "operations":  [
+    "operations": [
       {
         "name": "operation1"
       }
@@ -632,6 +634,7 @@ my-schema.json
             "required": true,
             "type": "string",
             "description": "The identifier of the cat"
+          }
         ],
         "operationId": "get-cats-catsId",
         "produces": ["application/json"],
