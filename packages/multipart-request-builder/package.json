@@ -1,7 +1,7 @@
 {
   "name": "multipart-request-builder",
   "version": "0.0.0",
-  "description": "Build a multipart requests ready to inject to a nodejs request",
+  "description": "Build a multipart/related requests ready to inject to a nodejs request",
   "main": "Multipart.js",
   "scripts": {
     "documentation": "npx documentation build --config documentation.yml \"{,!(node_modules)/**/}*.js\" --sort-order=alpha -f md -o README.md"

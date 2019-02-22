@@ -2,19 +2,18 @@
 
 ### Table of Contents
 
--   [Native Proxy Agent][1]
--   [How to install][2]
--   [createAgent][3]
-    -   [Parameters][4]
--   [HttpAgent][5]
-    -   [Parameters][6]
--   [HttpsAgent][7]
-    -   [Parameters][8]
+- [Native Proxy Agent][1]
+- [How to install][2]
+- [createAgent][3]
+  - [Parameters][4]
+- [HttpAgent][5]
+  - [Parameters][6]
+- [HttpsAgent][7]
+  - [Parameters][8]
 
 ## Native Proxy Agent
 
 A native proxy agent that uses the native nodejs http.Agent and https.Agent to proxy the requests, no dependencies
-
 
 ## How to install
 
@@ -24,7 +23,6 @@ Make sure that you have access to [Artifactory][9]
   npm install native-proxy-agent
 ```
 
-
 ## createAgent
 
 Get the needed proxy agent depending of the given proxy options and target.
@@ -32,12 +30,12 @@ Also try to gets the proxy from the http/s_proxy env variables
 
 ### Parameters
 
--   `target` **[string][10]** The target to proxy
--   `options` **[Object][11]?** options to pass to the native http/s.Agent (optional, default `{}`)
-    -   `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
-        -   `options.proxy.host` **[Object][11]?** proxy host
-        -   `options.proxy.port` **[Object][11]?** proxy port
-        -   `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
+- `target` **[string][10]** The target to proxy
+- `options` **[Object][11]?** options to pass to the native http/s.Agent (optional, default `{}`)
+  - `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
+    - `options.proxy.host` **[Object][11]?** proxy host
+    - `options.proxy.port` **[Object][11]?** proxy port
+    - `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
 
 Returns **([HttpsAgent][12] \| [HttpAgent][13])** The agent depending on the target.
 
@@ -49,11 +47,11 @@ A http agent implementation with proxy
 
 ### Parameters
 
--   `options` **[Object][11]** options to pass to the native http/s.Agent
-    -   `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
-        -   `options.proxy.host` **[Object][11]?** proxy host
-        -   `options.proxy.port` **[Object][11]?** proxy port
-        -   `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
+- `options` **[Object][11]** options to pass to the native http/s.Agent
+  - `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
+    - `options.proxy.host` **[Object][11]?** proxy host
+    - `options.proxy.port` **[Object][11]?** proxy port
+    - `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
 
 ## HttpsAgent
 
@@ -63,34 +61,22 @@ A https agent implementation with proxy
 
 ### Parameters
 
--   `options` **[Object][11]** options to pass to the native http/s.Agent
-    -   `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
-        -   `options.proxy.host` **[Object][11]?** proxy host
-        -   `options.proxy.port` **[Object][11]?** proxy port
-        -   `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
+- `options` **[Object][11]** options to pass to the native http/s.Agent
+  - `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
+    - `options.proxy.host` **[Object][11]?** proxy host
+    - `options.proxy.port` **[Object][11]?** proxy port
+    - `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
 
 [1]: #native-proxy-agent
-
 [2]: #how-to-install
-
 [3]: #createagent
-
 [4]: #parameters
-
 [5]: #httpagent
-
 [6]: #parameters-1
-
 [7]: #httpsagent
-
 [8]: #parameters-2
-
 [9]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
-
 [10]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-
 [11]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-
 [12]: #httpsagent
-
 [13]: #httpagent

@@ -11,5 +11,5 @@ target/
 *.swo
 *.swp
 *.tgz
-packages/generator-myaxa/generators/app/templates/
-packages/generator-myaxa/generators/app/excluded/
+coverage/
+target/

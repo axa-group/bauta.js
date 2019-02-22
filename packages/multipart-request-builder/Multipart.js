@@ -147,7 +147,7 @@ module.exports = class Multipart {
    * @param {Object|string[]|object[]|Stream[]} options - The multipart options, could be an array of string, nodejs stream and objects, or an object to attached.
    * @param {string[]|object[]|Stream[]} [options.data] - Use it only if you have to change the value of chunked to true
    * @param {Object} [options.chunked] - wherever or not you need to split the data in chunks. If some operation.data is equals to a node Stream, chunked will be automatically true.
-   * @returns {Object} the headers and body ready for the request
+   * @returns {{headers:Object, body:Object}} the headers and body ready for the request
    * @example
    * const multipartRequest = multipartInstance.buildRequest(reqOptions);
    * // {
