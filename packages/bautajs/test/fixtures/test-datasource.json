@@ -3,7 +3,7 @@
     "operations": [
       {
         "id": "operation1",
-        "someVariableOption": "{{req.variableOption}}",
+        "someVariableOption": "{{ctx.req.variableOption}}",
         "url": "https://google.com/"
       }
     ]

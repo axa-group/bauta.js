@@ -136,7 +136,7 @@ function normalizeOptions(options) {
 
 function compileDatasource(dataSourceTemplate, context) {
   const dataSource = STJS.select({
-    req: context,
+    ctx: context,
     env: process.env
   })
     .transformWith(dataSourceTemplate)

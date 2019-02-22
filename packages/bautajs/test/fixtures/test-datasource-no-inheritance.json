@@ -4,7 +4,7 @@
       {
         "id": "operation1",
         "inherit": false,
-        "someVariableOption": "{{req.variableOption}}",
+        "someVariableOption": "{{ctx.req.variableOption}}",
         "url": "https://google.com/"
       }
     ]

@@ -177,7 +177,7 @@ describe('Operation class tests', () => {
         'testService'
       );
 
-      const compiled = operationTest.dataSource({ variableOption: 'test' });
+      const compiled = operationTest.dataSource({ req: { variableOption: 'test' } });
       expect(compiled.someVariableOption).toEqual('test');
     });
 

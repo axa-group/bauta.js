@@ -3,13 +3,13 @@
     "operations": [
       {
         "id": "test",
-        "someVariableOption": "{{req.variableOption}}",
+        "someVariableOption": "{{ctx.req.variableOption}}",
         "url": "https://google.com/"
       },
       {
         "id": "testV2",
         "version": "v2",
-        "someVariableOption": "{{req.variableOption}}",
+        "someVariableOption": "{{ctx.req.variableOption}}",
         "url": "https://facebook.com/"
       }
     ]

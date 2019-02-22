@@ -555,6 +555,32 @@ toc:
             }
 
           ```
+      - name: Using lodash FP functions
+        description: |
+          Lodash FP functions can be pushed to the execution chain.
+          ```js
+          // my-resolver.js
+          const flow = require('lodash/fp/flow');
+          const map = require('lodash/fp/map');
+          const filter = require('lodash/fp/filter');
+          const request = require('bautajs/decorators/request');
+
+          module.export = (services) => {
+            services.test.v1.op1
+              .push(request)
+              .push(flow(
+                  map(['id':'myIdMapped']),
+                  filter(['tag','dogs'])
+                )
+              )
+            // Use it without flow (not recomended sice push will create a promise always)
+            services.test.v1.op1
+                .push(request)
+                .push(map(['id':'myIdMapped']))
+                .push(filter(['tag','dogs']))
+          }
+
+          ```
   - name: Decorators
     description: A set of decorators to be used as a helpers of your resolvers
     children:
@@ -568,8 +594,24 @@ toc:
               return ctx.dataSource.request();
             }));
           ```
+      - name: Create your own decorator
+        description: |
+          To create your own decorator just take in account that BautaJS push function will inject the previous value, the context(ctx) containing the req, res... and a done function.
+          Example:
+          ```js
+            const Step = require('bautajs/core/Step');
+
+            module.exports = fn => async (value, ctx) => {
+              const step = new Step(fn);
+              return step.run({ ...ctx, dataSource: ctx.dataSource(ctx.req) }, value);
+            };
+          ```
+          Remember use Step to wrap the given function, it will helps on the managment of the Promise/callback/simple value usage.
+
       - request
       - compileDataSource
+      - batch
+      - template
   - name: Public API
     children:
       - BautaJS
