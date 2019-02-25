@@ -723,6 +723,7 @@ toc:
       - compileDataSource
       - batch
       - template
+      - parallel
   - name: Public API
     children:
       - BautaJS
