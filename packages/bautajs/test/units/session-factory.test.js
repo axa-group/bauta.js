@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 /* global expect, describe, test */
-const sessionFactory = require('../../lib/session-factory');
+const sessionFactory = require('../../session-factory');
 
 describe('Session middleware tests', () => {
   describe('sessionMw function tests', () => {
@@ -21,7 +21,7 @@ describe('Session middleware tests', () => {
       const req = { headers: {} };
       const result = sessionFactory(req);
       expect(typeof result.id).toEqual('number');
-      expect(typeof result.logger).toEqual('function');
+      expect(typeof result.logger.info).toEqual('function');
     });
 
     test('should return the request id, the logger and the userId with the user token encripted in case of an Authenticated request', () => {

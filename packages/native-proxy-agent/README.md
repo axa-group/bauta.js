@@ -2,72 +2,26 @@
 
 ### Table of Contents
 
--   [native-proxy-agent][1]
--   [How to install][2]
--   [Usage][3]
--   [Usage with strict ssl and certificates][4]
--   [createAgent][5]
-    -   [Parameters][6]
--   [HttpAgent][7]
-    -   [Parameters][8]
--   [HttpsAgent][9]
-    -   [Parameters][10]
+- [Native Proxy Agent][1]
+- [How to install][2]
+- [createAgent][3]
+  - [Parameters][4]
+- [HttpAgent][5]
+  - [Parameters][6]
+- [HttpsAgent][7]
+  - [Parameters][8]
 
-## native-proxy-agent
+## Native Proxy Agent
 
-Build a NodeJS agent with proxy support taking profite of the native [NodeJS http/s Agent][11] features.
-Comes by default with:
-
--   Keep Alive.
--   http_proxy, https_proxy environment variables support.
--   All Nodejs Agent features.
-
+A native proxy agent that uses the native nodejs http.Agent and https.Agent to proxy the requests, no dependencies
 
 ## How to install
 
-Make sure that you have access to [Artifactory][12]
+Make sure that you have access to [Artifactory][9]
 
 ```console
   npm install native-proxy-agent
 ```
-
-
-## Usage
-
-```js
-  const got = require('got');
-  const createAgent = require('native-proxy-agent');
-  
-  const target = 'http://someUrl.com/somePost';
-  const httpAgent = createAgent(target)
-  
-  await got('http://someUrl.com/someGet', {
-    method: 'GET',
-    agent: httpAgent
-  })
-```
-
-Since we didn't specify a proxy, the library will look for the proxy env variables and do the request.
-
-
-## Usage with strict ssl and certificates
-
-```js
-  const fs = require('fs');
-  const got = require('got');
-  const createAgent = require('native-proxy-agent');
-
-  const cert = fs.readFileSync('mycert.pem');
-  const key = fs.readFileSync('mykey.key');
-  const target = 'http://someUrl.com/somePost';
-  const httpAgent = createAgent(target, { cert, key, rejectUnauthorized: true })
-  
-  await got('http://someUrl.com/someGet', {
-    method: 'GET',
-    agent: httpAgent
-  })
-```
-
 
 ## createAgent
 
@@ -76,14 +30,14 @@ Also try to gets the proxy from the http/s_proxy env variables
 
 ### Parameters
 
--   `target` **[string][13]** The target to proxy
--   `options` **[Object][14]?** options to pass to the native http/s.Agent (optional, default `{}`)
-    -   `options.proxy` **[Object][14]?** overrides the proxy from the http/s_proxy env variables
-        -   `options.proxy.host` **[Object][14]?** proxy host
-        -   `options.proxy.port` **[Object][14]?** proxy port
-        -   `options.proxy.protocol` **[Object][14]?** proxy protocol, http, https...
+- `target` **[string][10]** The target to proxy
+- `options` **[Object][11]?** options to pass to the native http/s.Agent (optional, default `{}`)
+  - `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
+    - `options.proxy.host` **[Object][11]?** proxy host
+    - `options.proxy.port` **[Object][11]?** proxy port
+    - `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
 
-Returns **([HttpsAgent][15] \| [HttpAgent][16])** The agent depending on the target.
+Returns **([HttpsAgent][12] \| [HttpAgent][13])** The agent depending on the target.
 
 ## HttpAgent
 
@@ -93,11 +47,11 @@ A http agent implementation with proxy
 
 ### Parameters
 
--   `options` **[Object][14]** options to pass to the native http/s.Agent
-    -   `options.proxy` **[Object][14]?** overrides the proxy from the http/s_proxy env variables
-        -   `options.proxy.host` **[Object][14]?** proxy host
-        -   `options.proxy.port` **[Object][14]?** proxy port
-        -   `options.proxy.protocol` **[Object][14]?** proxy protocol, http, https...
+- `options` **[Object][11]** options to pass to the native http/s.Agent
+  - `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
+    - `options.proxy.host` **[Object][11]?** proxy host
+    - `options.proxy.port` **[Object][11]?** proxy port
+    - `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
 
 ## HttpsAgent
 
@@ -107,40 +61,22 @@ A https agent implementation with proxy
 
 ### Parameters
 
--   `options` **[Object][14]** options to pass to the native http/s.Agent
-    -   `options.proxy` **[Object][14]?** overrides the proxy from the http/s_proxy env variables
-        -   `options.proxy.host` **[Object][14]?** proxy host
-        -   `options.proxy.port` **[Object][14]?** proxy port
-        -   `options.proxy.protocol` **[Object][14]?** proxy protocol, http, https...
+- `options` **[Object][11]** options to pass to the native http/s.Agent
+  - `options.proxy` **[Object][11]?** overrides the proxy from the http/s_proxy env variables
+    - `options.proxy.host` **[Object][11]?** proxy host
+    - `options.proxy.port` **[Object][11]?** proxy port
+    - `options.proxy.protocol` **[Object][11]?** proxy protocol, http, https...
 
 [1]: #native-proxy-agent
-
 [2]: #how-to-install
-
-[3]: #usage
-
-[4]: #usage-with-strict-ssl-and-certificates
-
-[5]: #createagent
-
-[6]: #parameters
-
-[7]: #httpagent
-
-[8]: #parameters-1
-
-[9]: #httpsagent
-
-[10]: #parameters-2
-
-[11]: https://nodejs.org/api/http.html#http_new_agent_options
-
-[12]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
-
-[13]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-
-[14]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-
-[15]: #httpsagent
-
-[16]: #httpagent
+[3]: #createagent
+[4]: #parameters
+[5]: #httpagent
+[6]: #parameters-1
+[7]: #httpsagent
+[8]: #parameters-2
+[9]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
+[10]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[11]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[12]: #httpsagent
+[13]: #httpagent

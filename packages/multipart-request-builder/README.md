@@ -2,59 +2,27 @@
 
 ### Table of Contents
 
--   [multipart-request-builder][1]
+-   [Multipart request builder][1]
 -   [How to install][2]
--   [Usage][3]
--   [Multipart][4]
-    -   [Parameters][5]
-    -   [Examples][6]
-    -   [buildRequest][7]
-        -   [Parameters][8]
-        -   [Examples][9]
+-   [Multipart][3]
+    -   [Parameters][4]
+    -   [Examples][5]
+    -   [buildRequest][6]
+        -   [Parameters][7]
+        -   [Examples][8]
 
-## multipart-request-builder
+## Multipart request builder
 
-Use it to build a multipart/related requests ready to inject to a nodejs request
+Build a multipart requests ready to inject to a nodejs request
 
 
 ## How to install
 
-Make sure that you have access to [Artifactory][10]
+Make sure that you have access to [Artifactory][9]
 
 ```console
   npm install multipart-request-builder
 ```
-
-
-## Usage
-
-```js
-  const got = require('got');
-  const Multipart = require('multipart-request-buildier');
-  const options = {
-    preambleCRLF: true,
-    postambleCRLF true
-  }
-  
-  const multipartInstance = new Multipart(options);
-  const reqOptions = {
-    "chunked": false,
-    "data": [
-       { body: 'I am an attachment' },
-       { body: fs.createReadStream(path.resolve(__dirname, '../someFile.json')) }
-     ]
-    }
-  const multipartRequest = multipartInstance.buildRequest(reqOptions);
-
-  await got('http://someUrl.com/somePost', {
-    method: 'POST',
-    body: multipartRequest.body,
-    headers: { ...multipartRequest.headers, Accept: 'application/json' },
-    json: false
-  })
-```
-
-This produces a request to the `somePost` service with the given files and json.
 
 
 ## Multipart
@@ -63,9 +31,9 @@ A multipart builder for any request library. It's based on request/request lib.
 
 ### Parameters
 
--   `options` **[Object][11]?** Optional configuration
-    -   `options.preambleCRLF` **[boolean][12]?** Add the pre CRLF character '\\r\\n'
-    -   `options.postambleCRLF` **[boolean][12]?** Add the post CRLF character '\\r\\n'
+-   `options` **[Object][10]?** Optional configuration
+    -   `options.preambleCRLF` **[boolean][11]?** Add the pre CRLF character '\\r\\n'
+    -   `options.postambleCRLF` **[boolean][11]?** Add the post CRLF character '\\r\\n'
 
 ### Examples
 
@@ -93,7 +61,7 @@ const multipartRequest = multipartInstance.buildRequest(reqOptions);
 // }
 ```
 
-Returns **[Multipart][13]** 
+Returns **[Multipart][12]** 
 
 ### buildRequest
 
@@ -101,9 +69,9 @@ Allows build the multipart request
 
 #### Parameters
 
--   `options` **([Object][11] \| [Array][14]&lt;[string][15]> | [Array][14]&lt;[object][11]> | [Array][14]&lt;[Stream][16]>)** The multipart options, could be an array of string, nodejs stream and objects, or an object to attached.
-    -   `options.data` **([Array][14]&lt;[string][15]> | [Array][14]&lt;[object][11]> | [Array][14]&lt;[Stream][16]>)?** Use it only if you have to change the value of chunked to true
-    -   `options.chunked` **[Object][11]?** wherever or not you need to split the data in chunks. If some operation.data is equals to a node Stream, chunked will be automatically true.
+-   `options` **([Object][10] \| [Array][13]&lt;[string][14]> | [Array][13]&lt;[object][10]> | [Array][13]&lt;[Stream][15]>)** The multipart options, could be an array of string, nodejs stream and objects, or an object to attached.
+    -   `options.data` **([Array][13]&lt;[string][14]> | [Array][13]&lt;[object][10]> | [Array][13]&lt;[Stream][15]>)?** Use it only if you have to change the value of chunked to true
+    -   `options.chunked` **[Object][10]?** wherever or not you need to split the data in chunks. If some operation.data is equals to a node Stream, chunked will be automatically true.
 
 #### Examples
 
@@ -117,36 +85,34 @@ const multipartRequest = multipartInstance.buildRequest(reqOptions);
 // }
 ```
 
-Returns **{headers: [Object][11], body: [Object][11]}** the headers and body ready for the request
+Returns **[Object][10]** the headers and body ready for the request
 
 [1]: #multipart-request-builder
 
 [2]: #how-to-install
 
-[3]: #usage
+[3]: #multipart
 
-[4]: #multipart
+[4]: #parameters
 
-[5]: #parameters
+[5]: #examples
 
-[6]: #examples
+[6]: #buildrequest
 
-[7]: #buildrequest
+[7]: #parameters-1
 
-[8]: #parameters-1
+[8]: #examples-1
 
-[9]: #examples-1
+[9]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
 
-[10]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
+[10]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[11]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[11]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[12]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[12]: #multipart
 
-[13]: #multipart
+[13]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[14]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[14]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[15]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
-
-[16]: https://nodejs.org/api/stream.html
+[15]: https://nodejs.org/api/stream.html

@@ -1,48 +1,10 @@
 toc:
-  - name: native-proxy-agent
+  - name: Native Proxy Agent
     description: |
-      Build a NodeJS agent with proxy support taking profite of the native [NodeJS http/s Agent](https://nodejs.org/api/http.html#http_new_agent_options) features.
-      Comes by default with:
-        - Keep Alive.
-        - http_proxy, https_proxy environment variables support.
-        - All Nodejs Agent features.
-
+      A native proxy agent that uses the native nodejs http.Agent and https.Agent to proxy the requests, no dependencies
   - name: How to install
     description: |
       Make sure that you have access to [Artifactory](https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/)
       ```console
         npm install native-proxy-agent
-      ```
-  - name: Usage
-    description: |
-      ```js
-        const got = require('got');
-        const createAgent = require('native-proxy-agent');
-        
-        const target = 'http://someUrl.com/somePost';
-        const httpAgent = createAgent(target)
-        
-        await got('http://someUrl.com/someGet', {
-          method: 'GET',
-          agent: httpAgent
-        })
-      ```
-      Since we didn't specify a proxy, the library will look for the proxy env variables and do the request.
-
-  - name: Usage with strict ssl and certificates
-    description: |
-      ```js
-        const fs = require('fs');
-        const got = require('got');
-        const createAgent = require('native-proxy-agent');
-
-        const cert = fs.readFileSync('mycert.pem');
-        const key = fs.readFileSync('mykey.key');
-        const target = 'http://someUrl.com/somePost';
-        const httpAgent = createAgent(target, { cert, key, rejectUnauthorized: true })
-        
-        await got('http://someUrl.com/someGet', {
-          method: 'GET',
-          agent: httpAgent
-        })
       ```

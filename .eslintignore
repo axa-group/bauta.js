@@ -11,3 +11,5 @@ target/
 *.swo
 *.swp
 *.tgz
+coverage/
+target/

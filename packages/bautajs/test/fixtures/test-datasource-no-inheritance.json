@@ -1,0 +1,12 @@
+{
+  "testService": {
+    "operations": [
+      {
+        "id": "operation1",
+        "inherit": false,
+        "someVariableOption": "{{ctx.req.variableOption}}",
+        "url": "https://google.com/"
+      }
+    ]
+  }
+}

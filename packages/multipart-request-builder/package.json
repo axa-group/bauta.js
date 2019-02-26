@@ -6,12 +6,12 @@
   "scripts": {
     "documentation": "npx documentation build --config documentation.yml \"{,!(node_modules)/**/}*.js\" --sort-order=alpha -f md -o README.md"
   },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.axa.com/Digital/bauta-nodejs"
-  },
-  "publishConfig": {
-    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
   },
   "keywords": [
     "multipart",
@@ -20,7 +20,10 @@
   "author": "myaxa.mit@axa-groupsolutions.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "is-stream": "1.1.0"
+    "combined-stream": "^1.0.7",
+    "is-stream": "1.1.0",
+    "safe-buffer": "^5.1.2",
+    "uuid": "^3.3.2"
   },
   "engines": {
     "node": ">=8",

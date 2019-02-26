@@ -12,7 +12,7 @@ Some of the features of this library are:
 - Easy debug
 - Code self organized
 - Build in swagger explorer
-- Request like features such multipart request, proxy support... and much more without using the [request](https://github.com/request/request) library
+- Request like features such multipart request, proxy support... and much more.
 
 ## Why use this
 
@@ -20,7 +20,8 @@ Because is easy to learn, tested, it's not a framework, it's light and fast and 
 
 ## Packages
 
-- [bautaJS](./packages/bautajs)
+- [BautaJS](./packages/bautajs)
+- [BautaJS Express](./packages/bautajs-express)
 - [Multipart request builder](./packages/multipart-request-builder)
 - [Native proxy agent](./packages/native-proxy-agent)
 

@@ -6,6 +6,9 @@
   "scripts": {
     "documentation": "npx documentation build --config documentation.yml \"{,!(node_modules)/**/}*.js\" --sort-order=alpha -f md -o README.md"
   },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.axa.com/Digital/bauta-nodejs.git"

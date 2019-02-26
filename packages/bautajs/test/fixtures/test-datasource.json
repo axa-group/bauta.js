@@ -2,8 +2,8 @@
   "testService": {
     "operations": [
       {
-        "name": "test",
-        "someVariableOption": "{{req.variableOption}}",
+        "id": "operation1",
+        "someVariableOption": "{{ctx.req.variableOption}}",
         "url": "https://google.com/"
       }
     ]

@@ -17,7 +17,7 @@ module.exports = () => ({
     operations: [
       {
         name: 'test',
-        someVariableOption: '{{req.variableOption}}',
+        someVariableOption: '{{ctx.req.variableOption}}',
         url: 'https://google.com/'
       }
     ]

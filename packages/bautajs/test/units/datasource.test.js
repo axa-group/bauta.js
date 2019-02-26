@@ -19,7 +19,8 @@ const fs = require('fs');
 const http = require('http');
 const https = require('https');
 const EventEmitter = require('events');
-const createDataSource = require('../../lib/request/datasource');
+const buildDataSource = require('../../request/datasource');
+const logger = require('../../logger');
 
 describe('datasource test', () => {
   describe('Request alias features', () => {
@@ -28,12 +29,12 @@ describe('datasource test', () => {
     });
     test('should allow a request with application/json header using the field json as an object', async () => {
       const expected = { bender: 'ok' };
-      nock('https://axa.com')
+      nock('https://pets.com')
         .post('/v1/policies', '{"field1":"value"}')
         .reply(200, expected);
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           json: {
@@ -41,16 +42,15 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       const response = await compiled.request();
-
       expect(response).toEqual(expected);
     });
 
     test('should allow a request with application/x-www-form-urlencoded using the field form as an object', async () => {
       const expected = { bender: 'ok' };
-      nock('https://axa.com', {
+      nock('https://pets.com', {
         reqheaders: {
           'content-type': 'application/x-www-form-urlencoded'
         }
@@ -61,7 +61,7 @@ describe('datasource test', () => {
         .reply(200, expected);
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           form: {
@@ -69,7 +69,7 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       const response = await compiled.request();
       expect(response).toEqual(expected);
@@ -84,19 +84,19 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       const expectedMsg = 'request-logger: Request data: ';
       const expectedData = {
+        body: '{"password":"1234"}',
         headers:
-          '{"user-agent":"got/9.3.1 (https://github.com/sindresorhus/got)","connection":"keep-alive","accept":"application/json","accept-encoding":"gzip, deflate","content-type":"application/json","content-length":19}',
+          '{"user-agent":"bautaJS","connection":"keep-alive","accept":"application/json","accept-encoding":"gzip, deflate","content-type":"application/json","content-length":19}',
         method: 'GET',
-        url: 'https://axa.com/v1/policies',
-        body: '{"password":"1234"}'
+        url: 'https://pets.com/v1/policies'
       };
 
-      nock('https://axa.com')
+      nock('https://pets.com')
         .get('/v1/policies')
         .reply(200, { bender: 'ok' });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'GET',
         options: {
           json: {
@@ -105,33 +105,33 @@ describe('datasource test', () => {
         }
       };
       const debugLogs = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         debug(...params) {
           debugLogs.push(params);
         },
         info() {},
         warn() {}
       };
-      const dataSource = createDataSource(template);
-      const compiled = dataSource({ logger });
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
-
       expect(debugLogs[0][0]).toEqual(expectedMsg);
       expect(debugLogs[0][1]).toEqual(expectedData);
     });
 
     test('should log the requests method and url info mode', async () => {
       process.env.LOG_LEVEL = 'info';
-      const expectedMsg = 'request-logger: Request to [POST] https://axa.com/v1/policies';
+      const expectedMsg = 'request-logger: Request to [POST] https://pets.com/v1/policies';
 
-      nock('https://axa.com')
+      nock('https://pets.com')
         .post('/v1/policies', {
           field1: 'value'
         })
         .reply(200, { bender: 'ok' });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           json: {
@@ -140,15 +140,16 @@ describe('datasource test', () => {
         }
       };
       const infoLogs = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         info: (...params) => {
           infoLogs.push(params);
         },
         debug() {},
         warn() {}
       };
-      const dataSource = createDataSource(template);
-      const compiled = dataSource({ logger });
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(infoLogs[0][0]).toEqual(expectedMsg);
     });
@@ -157,19 +158,19 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       const expectedMsg = 'request-logger: Request data: ';
       const expectedData = {
+        body: 'someString',
         headers:
-          '{"user-agent":"got/9.3.1 (https://github.com/sindresorhus/got)","accept":"application/json","connection":"keep-alive","accept-encoding":"gzip, deflate","content-length":10}',
+          '{"user-agent":"bautaJS","accept":"application/json","connection":"keep-alive","accept-encoding":"gzip, deflate","content-length":10}',
         method: 'GET',
-        url: 'https://axa.com/v1/policies',
-        body: 'someString'
+        url: 'https://pets.com/v1/policies'
       };
 
-      nock('https://axa.com')
+      nock('https://pets.com')
         .get('/v1/policies')
         .reply(200, { bender: 'ok' });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'GET',
         options: {
           json: false,
@@ -180,15 +181,16 @@ describe('datasource test', () => {
         }
       };
       const debugLogs = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         debug(...params) {
           debugLogs.push(params);
         },
         info() {},
         warn() {}
       };
-      const dataSource = createDataSource(template);
-      const compiled = dataSource({ logger });
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
 
       expect(debugLogs[0][0]).toEqual(expectedMsg);
@@ -204,21 +206,22 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'request-logger: Response for [undefined]  https://axa.com/v1/policies: ',
+        'request-logger: Response for [undefined]  https://pets.com/v1/policies: ',
         { body: '{"bender":1}', headers: '{"content-type":"application/json"}', statusCode: 200 }
       ];
 
-      nock('https://axa.com/v1')
+      nock('https://pets.com/v1')
         .get('/policies')
         .reply(200, { bender: 1 });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'GET'
       };
       const debugConsole = [];
       const infoConsole = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         debug: (...params) => {
           debugConsole.push(params);
         },
@@ -227,8 +230,8 @@ describe('datasource test', () => {
         },
         warn() {}
       };
-      const dataSource = createDataSource(template);
-      const compiled = dataSource({ logger });
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(debugConsole[1]).toEqual(expectedMsg);
     });
@@ -236,25 +239,26 @@ describe('datasource test', () => {
     test('should log the response time', async () => {
       process.env.LOG_LEVEL = 'info';
       const expectedMsg = new RegExp(
-        'request-logger: The request to https://axa.com/v1/policies taked: (.*) ms'
+        'request-logger: The request to https://pets.com/v1/policies taked: (.*) ms'
       );
 
-      nock('https://axa.com/v1')
+      nock('https://pets.com/v1')
         .get('/policies')
         .reply(200, { bender: 1 });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'GET'
       };
       const infoConsole = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         info: (...params) => {
           infoConsole.push(params);
         }
       };
-      const dataSource = createDataSource(template);
-      const compiled = dataSource({ logger });
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(infoConsole[1][0]).toMatch(expectedMsg);
     });
@@ -263,7 +267,7 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'request-logger: Response for [undefined]  https://axa.com/v1/policies: ',
+        'request-logger: Response for [undefined]  https://pets.com/v1/policies: ',
         {
           body: '<html><div></div></html>',
           headers: '{"content-type":"text/html"}',
@@ -271,14 +275,14 @@ describe('datasource test', () => {
         }
       ];
 
-      nock('https://axa.com/v1')
+      nock('https://pets.com/v1')
         .get('/policies')
         .reply(200, '<html><div></div></html>', {
           'content-type': 'text/html'
         });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'GET',
         options: {
           json: false
@@ -286,7 +290,8 @@ describe('datasource test', () => {
       };
       const debugConsole = [];
       const infoConsole = [];
-      const logger = {
+      const loggerMock = {
+        ...logger,
         debug: (...params) => {
           debugConsole.push(params);
         },
@@ -295,8 +300,8 @@ describe('datasource test', () => {
         },
         warn() {}
       };
-      const dataSource = createDataSource(template);
-      const compiled = dataSource({ logger });
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(debugConsole[1]).toEqual(expectedMsg);
     });
@@ -333,7 +338,7 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'POST',
         options: {
           form: {
@@ -341,7 +346,7 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -360,7 +365,7 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'POST',
         options: {
           form: {
@@ -368,13 +373,13 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
 
     test('should support not using proxy', done => {
-      const host = 'axa.com';
+      const host = 'pets.com';
 
       http.request = options => {
         expect(options.agent.options.host).toBeUndefined();
@@ -393,7 +398,7 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -415,7 +420,7 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'POST',
         options: {
           form: {
@@ -428,7 +433,7 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -448,7 +453,7 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           form: {
@@ -456,7 +461,7 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -475,7 +480,7 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'POST',
         options: {
           form: {
@@ -483,7 +488,7 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -502,7 +507,7 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'POST',
         options: {
           form: {
@@ -510,7 +515,7 @@ describe('datasource test', () => {
           }
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -518,7 +523,7 @@ describe('datasource test', () => {
 
   describe('Multipart request', () => {
     test('Should build a new multipart request if the multipart options is set', async () => {
-      nock('https://axa.com/v1')
+      nock('https://pets.com/v1')
         .post(
           '/policies',
           body =>
@@ -530,7 +535,7 @@ describe('datasource test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           headers: {
@@ -540,7 +545,7 @@ describe('datasource test', () => {
           postambleCRLF: true
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       // Multipart won't work directly on the datasource template, because of the parsing
       const compiled = dataSource({});
       const response = await compiled.request({
@@ -557,7 +562,11 @@ describe('datasource test', () => {
               })
             },
             { body: 'I am an attachment' },
-            { body: fs.createReadStream(path.resolve(__dirname, '../fixtures/test-schema.json')) }
+            {
+              body: fs.createReadStream(
+                path.resolve(__dirname, '../fixtures/test-path-schema.json')
+              )
+            }
           ]
         }
       });
@@ -566,7 +575,7 @@ describe('datasource test', () => {
     });
 
     test('Should build a new multipart request if multipart do not have data object', async () => {
-      nock('https://axa.com/v1')
+      nock('https://pets.com/v1')
         .post(
           '/policies',
           body =>
@@ -578,7 +587,7 @@ describe('datasource test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           headers: {
@@ -588,7 +597,7 @@ describe('datasource test', () => {
           postambleCRLF: true
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       // Multipart won't work directly on the datasource template, because of the parsing
       const compiled = dataSource({});
       const response = await compiled.request({
@@ -603,7 +612,9 @@ describe('datasource test', () => {
             })
           },
           { body: 'I am an attachment' },
-          { body: fs.createReadStream(path.resolve(__dirname, '../fixtures/test-schema.json')) }
+          {
+            body: fs.createReadStream(path.resolve(__dirname, '../fixtures/test-path-schema.json'))
+          }
         ]
       });
 
@@ -611,7 +622,7 @@ describe('datasource test', () => {
     });
 
     test('Should add the content type multipart related if is not set', async () => {
-      nock('https://axa.com/v1', {
+      nock('https://pets.com/v1', {
         reqheaders(headers) {
           return headers['content-type'].includes('multipart/related');
         }
@@ -627,14 +638,14 @@ describe('datasource test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           preambleCRLF: true,
           postambleCRLF: true
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       // Multipart won't work directly on the datasource template, because of the parsing
       const compiled = dataSource({});
       const response = await compiled.request({
@@ -649,7 +660,9 @@ describe('datasource test', () => {
             })
           },
           { body: 'I am an attachment' },
-          { body: fs.createReadStream(path.resolve(__dirname, '../fixtures/test-schema.json')) }
+          {
+            body: fs.createReadStream(path.resolve(__dirname, '../fixtures/test-path-schema.json'))
+          }
         ]
       });
 
@@ -659,7 +672,7 @@ describe('datasource test', () => {
 
   describe('Form-data request', () => {
     test('Should allow a multipart/form-data request', async () => {
-      nock('https://axa.com/v1')
+      nock('https://pets.com/v1')
         .post(
           '/policies',
           body =>
@@ -670,20 +683,20 @@ describe('datasource test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           preambleCRLF: true,
           postambleCRLF: true
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       // Multipart won't work directly on the datasource template, because of the parsing
       const compiled = dataSource({});
       const response = await compiled.request({
         formData: {
           my_field: 'my_value',
-          my_file: fs.createReadStream(path.resolve(__dirname, '../fixtures/test-schema.json'))
+          my_file: fs.createReadStream(path.resolve(__dirname, '../fixtures/test-path-schema.json'))
         }
       });
 
@@ -691,7 +704,7 @@ describe('datasource test', () => {
     });
 
     test('Should allow a multipart/form-data request with options and attachements', async () => {
-      nock('https://axa.com/v1')
+      nock('https://pets.com/v1')
         .post(
           '/policies',
           body =>
@@ -705,28 +718,30 @@ describe('datasource test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'POST',
         options: {
           preambleCRLF: true,
           postambleCRLF: true
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       // Multipart won't work directly on the datasource template, because of the parsing
       const compiled = dataSource({});
       const response = await compiled.request({
         formData: {
           my_field: 'my_value',
           custom_file: {
-            value: fs.createReadStream(path.resolve(__dirname, '../fixtures/test-schema.json')),
+            value: fs.createReadStream(
+              path.resolve(__dirname, '../fixtures/test-path-schema.json')
+            ),
             options: {
               filename: 'my-file.jpg',
               contentType: 'image/jpeg'
             }
           },
           attachments: [
-            fs.createReadStream(path.resolve(__dirname, '../fixtures/test-schema.json')),
+            fs.createReadStream(path.resolve(__dirname, '../fixtures/test-path-schema.json')),
             fs.createReadStream(path.resolve(__dirname, '../fixtures/test-datasource.json'))
           ]
         }
@@ -759,13 +774,13 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'GET',
         options: {
           timeout: '5000'
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -779,13 +794,13 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'GET',
         options: {
           timeout: '5000'
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -799,14 +814,14 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'GET',
         options: {
           timeout: '5000',
           rejectUnauthorized: true
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
@@ -821,7 +836,7 @@ describe('datasource test', () => {
       };
 
       const template = {
-        url: 'http://axa.com/v1/policies',
+        url: 'http://pets.com/v1/policies',
         method: 'GET',
         options: {
           timeout: '5000',
@@ -829,23 +844,25 @@ describe('datasource test', () => {
           key: '123'
         }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       compiled.request();
     });
 
     test('Should allow get the full response object', async () => {
       const expectedBody = { ok: true };
-      nock('https://axa.com')
+      nock('https://pets.com')
         .get('/v1/policies')
         .reply(200, expectedBody);
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'GET',
-        fullResponse: true
+        options: {
+          resolveBodyOnly: false
+        }
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       const response = await compiled.request();
 
@@ -855,11 +872,11 @@ describe('datasource test', () => {
 
     test('Should throw an error if a request is done without url', async () => {
       const template = {
-        name: 'myads',
+        id: 'myads',
         method: 'GET',
         fullResponse: true
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       expect(() => compiled.request()).toThrowError(
         'URL is a mandatory parameter for a datasource request on operation: myads'
@@ -873,10 +890,10 @@ describe('datasource test', () => {
         .reply(200, expectedBody);
 
       const template = {
-        url: 'https://axa.com/v1/policies',
+        url: 'https://pets.com/v1/policies',
         method: 'GET'
       };
-      const dataSource = createDataSource(template);
+      const dataSource = buildDataSource(template);
       const compiled = dataSource({});
       const response = await compiled.request({ url: 'https://google.com/v1/policies' });
 

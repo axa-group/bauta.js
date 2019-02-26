@@ -1,0 +1,36 @@
+{
+  "name": "bautajs-express",
+  "version": "0.0.0",
+  "description": "A bautaJS express plugin. Allows auto exposing the bautaJS services.",
+  "main": "bauta-express.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "example": "node ./examples/server.js",
+    "documentation": "npx documentation build \"{,!(node_modules)/**/}*.js\" --config documentation.yml --sort-order=alpha -f md -o README.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+  },
+  "keywords": [
+    "bautajs",
+    "express",
+    "middleware"
+  ],
+  "author": "mit@axa-groupsolutions.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "bautajs": "^0.0.0",
+    "body-parser": "^1.18.3",
+    "chalk": "^2.4.2",
+    "compression": "^1.7.3",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "helmet": "^3.15.1",
+    "morgan": "^1.9.1",
+    "route-order": "^0.1.0"
+  }
+}

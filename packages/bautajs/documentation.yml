@@ -121,56 +121,42 @@ toc:
         ```
   - name: Features
     children:
-      - name: Store
-        description: |
-          `bautajs` provides a built-in 'Map' singleton. Add data and get data from everywhere.
-          The singleton life is related to the life of the Node.js process. 
-
-          ```js
-            const { store } = require('bautajs');
-
-            store.set('data', { foo: boo });
-
-            const data = store.get('data');
-          ```
-      - name: Config
-        description: |
-          By default `bautajs` will add the configuration you send in the initialization moment into a global store. So you can access the config
-          inside all the loaders by doing:
-
-          ```js
-            const { store } = require('bautajs');
-
-            store.get('config');
-          ```
       - name: Request Validation
         description: |
-          `bautajs` comes with a default request validation using the [openAPI schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). By default, it is set to false.
-          By adding `validateRequest: true` on the operation datasource, request validation will be enabled.
+          `bautajs` comes with a default request validation using the [openAPI schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). By default, it is set to true.
+          This feature is always enabled while you have a valid openAPI schema inputs. To disable it for one endpoint just add validateRequest to false inside the path definition.
 
           ### Example
            
-            This is a datasource example:
+            This is a path schema example:
             
             ```json
             {
-              "testService":{
-                "operations":[
+              "/test":{
+                "get":{
+                  "validateRequest": false,
+                  "parameters": [
                   {
-                    "name":"test",
-                    "url":"http://myserver.com",
-                    "validateRequest": true
+                    "name": "limit",
+                    "in": "query",
+                    "description": "How many items to return at one time (max 100)",
+                    "required": false,
+                    "schema": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
                   }
-                ]
+                 ]
+                }
               }
             }
             ```
 
-            Alternative you can also validate inside every loader by accesing to the context `this.validate(this.req)` sending a req body or query.
+            Alternative you can also validate inside every resolver by accesing to the context `ctx.validate()`.
             
             ```js
-              services.cats.v1.find.previous(function pFn() {
-                const error = this.validate(this.req);
+              services.cats.v1.find.push(function pFn(_, ctx) {
+                const error = ctx.validate();
                 if(error) {
                   throw error;
                 }
@@ -217,7 +203,7 @@ toc:
           ### Dynamic datasources
 
           Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `req`, `config` and `env` (environment variables) objects. 
-          See the template syntax format at [json-templates](https://github.com/datavis-tech/json-templates).
+          See the template syntax format at [stjs](https://www.npmjs.com/package/stjs).
           to retrieve dynamic data.
 
           ```json
@@ -230,8 +216,11 @@ toc:
                   "options":{
                     "json": true,
                     "headers": {
-                      "Accept-Language": "{{req.headers.accept-language:ES_es}}",
-                      "x-axa-user-agent": "{{req.headers.x-axa-user-agent:My default user agent}}"
+                      "Accept-Language": [{
+                        "{{#if !req.headers.accept-language}}": "my default lang",
+                        "{{#else}}":"{{req.headers.accept-language}}"
+                      }]",
+                      "x-axa-user-agent": "{{req.headers.x-axa-user-agent}}"
                     }
                   }
                 }
@@ -241,55 +230,44 @@ toc:
           ```
           `Once the dynamic data is resolved, the fields with `undefined` or `null` values, are removed from the request as [got definitions](https://github.com/sindresorhus/got).
 
-          ### Accessing compiled datasources from loader
+          ### Accessing compiled datasources from my resolvers (steps)
 
-          Is possible to access to compiled datasources from the operations loaders.
+          Is possible to access to compiled datasources from the operations resolvers.
 
           ```js
+            const compileDataSource = require('bautajs/decorators/compile-datasource');
+
             // Launching the operation datasource request.
-            services.cats.v1.find.setLoader(function myLoader() {
-              return this.dataSource.request();
-            });
+            services.cats.v1.find.push(compileDataSource((_, ctx) => {
+              return ctx.dataSource.request();
+            }));
             // Launching the operation datasource request with custom option.
             // They will be merged with the definition options.
-            services.cats.v1.findById.setLoader(function myLoader() {
+            services.cats.v1.find.push(compileDataSource((_, ctx) => {
               const customOptions = { json: false };
-              return this.dataSource.request(customOptions);
-            });
+              return ctx.dataSource.request(customOptions);
+            }));
           ````
 
           ```js
             // Launching other operation datasource request
-            services.cats.v1.find.setLoader(function myLoader() {
-              return services.documents.v1.find.dataSource(this.req).request();
+            services.cats.v1.find.push((_, ctx) => {
+              return services.documents.v1.find.dataSource(ctx.req).request();
             });
           ````
 
           By default, `bautajs`, uses [got](https://github.com/sindresorhus/got) library to launch the operation datasources requests.
           However, is possible to use your preferred request module using the datasources definitions.
           ```js
+            const compileDataSource = require('bautajs/decorators/compile-datasource');
             const request = require('request');
-            services.cats.v1.find.setLoader(function myLoader(cb){
-              const { method, url, options } = services.dogs.v1.find.dataSource(this.req);
+
+            services.cats.v1.find.push(compileDataSource(_, ctx, cb) =>{
+              const { method, url, options } = ctx.dataSource;
 
               return request({ method, url, ...options }, cb);
-            });
+            }));
           ````
-
-          ### Accessing a datasource from previous and middleware hooks
-
-          Accessing from a `previous` hook (see [Previous](/#previous)) the datasource is not compiled yet. 
-          Is possible to add/modify datasources template options (e.g. headers) on the previous hooks.
-           
-          On the other hand, is possible to compile the operation datasource in a previous hook. 
-          Even that, it will be compiled again on the loader phase as well.
-
-          ```js
-              services.cats.v1.previous(function prev() {
-                const compiled = this.dataSource({req:this.req});
-                // do something with compiled
-              })
-          ```
 
       - name: multipart/related requests
         description: |
@@ -299,7 +277,7 @@ toc:
 
           ```text
             Do not add the multipart configuration in the operation datasource definition if it has streams (fs.createReadStream).
-            It must be passed in the loader definition
+            It must be passed in the resolver definition
           ```
 
           ```json
@@ -322,10 +300,11 @@ toc:
           ```
 
           ```js
-          // my-loader.js
+          const compileDataSource = require('bautajs/decorators/compile-datasource');
+          // my-resolver.js
           // multipart/related with stream
-          services.tstService.v1.operation1.setLoader(function loader(){
-            return this.dataSource.requests({
+          services.testService.v1.operation1.setLoader(compileDataSource((_, ctx) =>{
+            return ctx.dataSource.request({
               multipart: [
                 {
                   'content-type': 'application/json',
@@ -368,7 +347,7 @@ toc:
                 }
               ]
             }})
-          })
+          }))
           ```
 
       - name: multipart/form-data requests
@@ -377,17 +356,14 @@ toc:
 
           ```text
             Do not add the multipart configuration in the operation datasource definition if it has streams (fs.createReadStream).
-            It must be passed in the loader definition
+            It must be passed in the resolver definition
           ```
-
-
-
           ```json
           // my-datasource.json
           // multipart/related without streams
           {
             "testService": {
-              "operations":  [
+              "operations": [
                 {
                   "name": "operation1"
                 }
@@ -396,9 +372,9 @@ toc:
           ```
 
           ```js
-          // my-loader.js
+          // my-resolver.js
           // multipart/related with streams
-          services.testService.v1.operation1.setLoader(function loader(){
+          services.testService.v1.operation1.setLoader(compileDataSource((_, ctx) => {
             const formData = {
               // Pass a simple key-value pair
               my_field: 'my_value',
@@ -422,8 +398,8 @@ toc:
                 }
               }
             };
-            return this.dataSource.request({ formData });
-          });
+            return ctx.dataSource.request({ formData });
+          }));
           ```
 
       - name: Request like features
@@ -510,12 +486,6 @@ toc:
           ]
           ```
 
-      - name: next, previous and fork hooks
-        description: |
-          Another `bautajs` cool feature are hooks. Modify and add new behaviours before/after the data is being requested/received. 
-          Also it accepts to fork the request chain to process hooks in parallel.
-          See full examples on [Next](/#next), [Fork](/#fork) and [Previous](/#previous)
-
       - name: API versioning
         description: |
           The `bautajs` has API versioning out of the box to version the services and datasources easily.
@@ -529,39 +499,47 @@ toc:
           This is an example of API definitions for two API versions:
 
           ```json
+          // api-definitions.json
           [
             {
-              "versionId": "v1",
-              "swagger": "2.0",
+              "openapi": "3.0.0",
               "apiVersion": "1.0",
               "info": {
                 "description": "A new API",
-                "version": "1.0.0",
+                "version": "v1",
                 "title": "CORE API"
               },
-              "basePath": "/v1/api/"
+              "servers": [
+                {
+                  "url":"/v1/api/"
+               }
+              ]
             },
             {
-              "versionId": "v2",
-              "swagger": "2.0",
+              "openapi": "3.0.0",
               "apiVersion": "2.0",
               "info": {
                 "description": "A new API",
-                "version": "1.0.0",
+                "version": "v2",
                 "title": "CORE API"
               },
-              "basePath": "/v2/api/"
+              "servers": [
+                {
+                  "url":"/v1/api/"
+               }
+              ]
             }
           ]
           ```
 
           API versions are accesible by code too:
-
+            
           ```js
-          const { services } = require('bautajs');
-
-          services.cats.v1.find.exec();
-          services.cats.v2.find.exec();
+          // my-resolver.js
+          module.exports = (services) => {
+            services.cats.v1.find.exec();
+            services.cats.v2.find.exec();
+          }
           ```
 
           In this example the `cats.v2` is inheriting automatically the behaviour of `cats.v1`
@@ -570,74 +548,34 @@ toc:
 
           This is an example of API definitions for two API versions without inheritance:
 
+          - Using the previous example api-definitions.json, we can specify on the v2 data source what we don't want to inherit:
           ```json
-          [
-            {
-              "versionId": "v1",
-              "swagger": "2.0",
-              "apiVersion": "1.0",
-              "info": {
-                "description": "A new API",
-                "version": "1.0.0",
-                "title": "CORE API"
-              },
-              "basePath": "/v1/api/"
-            },
-            {
-              "versionId": "v2",
-              "swagger": "2.0",
-              "apiVersion": "2.0",
-              "info": {
-                "description": "A new API",
-                "version": "1.0.0",
-                "title": "CORE API"
-              },
-              "basePath": "/v2/api/",
-              "noInheritance":{
-                "cats":["find"]
-              }
+          // v2-datasource.json
+          {
+            "cats": {
+              "operations": [
+                {
+                  "id":"find",
+                  "inherit": false
+                }
+              ]
             }
-          ]
+          }
           ```
 
           Then the two versions will have a different behaviour:
 
           ```js
-          const { services } = require('bautajs');
-
-          services.cats.v1.find.exec();
-          services.cats.v2.find.exec(); // The result of this will be different from the v1
+          // my-resolver.js
+          module.exports = (services) => {
+            services.cats.v1.find.exec();
+            services.cats.v2.find.exec(); // The result of this will be different from the v1
+          }
           ```
 
           ### Example of different datasources by version
 
           This is an example of API definitions for two API versions without inheritance:
-          ```json
-          [
-            {
-              "versionId": "v1",
-              "swagger": "2.0",
-              "apiVersion": "1.0",
-              "info": {
-                "description": "A new API",
-                "version": "1.0.0",
-                "title": "CORE API"
-              },
-              "basePath": "/v1/api/"
-            },
-            {
-              "versionId": "v2",
-              "swagger": "2.0",
-              "apiVersion": "2.0",
-              "info": {
-                "description": "A new API",
-                "version": "1.0.0",
-                "title": "CORE API"
-              },
-              "basePath": "/v2/api/"
-            }
-          ]
-          ```
 
           This will be the datasource for the different versions:
 
@@ -652,19 +590,19 @@ toc:
                 {
                   "name":"find",
                   "url":"http://facebook.es",
-                  "versionId":"v2"
+                  "version":"v2"
                 }
               ]
             }
           }
           ```
           So as you can see here the v1 `cats.find` will fetch the data from google.es and v2 will fetch data from facebook.com.
-          Datasources without `versionId` will be applied to all the API versions. Also, `versionId` must match with the API definition `versionId`.
+          Datasources without `version` will be linked to the first api-definition version. Also, `version` must match with the API definition `info.version`.
       - name: Set an Operation schema (endpoint schema)
         description: |
           bautajs provides the way to associate an [OPENAPI](https://github.com/OAI/OpenAPI-Specification) definition to one operation. Later this
           will have multiple uses:
-            - As an input validation if the option validateRequest is set to true or if the `this.validate()` function is called inside the loader.
+            - As an input validation if the option validateRequest is set to true or if the `this.validate()` function is called inside the resolver.
             - To expose the service through an API endpoint.
             - To add the endpoint on the swagger explorer
             - Your imagination ;)
@@ -687,6 +625,7 @@ toc:
                       "required": true,
                       "type": "string",
                       "description": "The identifier of the cat"
+                    }
                   ],
                   "operationId": "get-cats-catsId",
                   "produces": ["application/json"],
@@ -719,7 +658,7 @@ toc:
               }
             }
           ```
-          some-loader.js
+          some-resolver.js
           ```js
             const mySchema = require('./my-schema.json')
             module.exports = (services) => {
@@ -727,19 +666,73 @@ toc:
             }
 
           ```
+      - name: Using lodash FP functions
+        description: |
+          Lodash FP functions can be pushed to the execution chain.
+          ```js
+          // my-resolver.js
+          const flow = require('lodash/fp/flow');
+          const map = require('lodash/fp/map');
+          const filter = require('lodash/fp/filter');
+          const request = require('bautajs/decorators/request');
+
+          module.export = (services) => {
+            services.test.v1.op1
+              .push(request)
+              .push(flow(
+                  map(['id':'myIdMapped']),
+                  filter(['tag','dogs'])
+                )
+              )
+            // Use it without flow (not recomended sice push will create a promise always)
+            services.test.v1.op1
+                .push(request)
+                .push(map(['id':'myIdMapped']))
+                .push(filter(['tag','dogs']))
+          }
+
+          ```
+  - name: Decorators
+    description: A set of decorators to be used as a helpers of your resolvers
+    children:
+      - name: Usage
+        description: |
+          To access to the decorators you just have to import them one by one:
+          ```js
+            const compileDataSource = require('bautajs/decorators/compile-datasource');
+
+            services.v1.cats.op1.push(compileDataSource((_, ctx) => {
+              return ctx.dataSource.request();
+            }));
+          ```
+      - name: Create your own decorator
+        description: |
+          To create your own decorator just take in account that BautaJS push function will inject the previous value, the context(ctx) containing the req, res... and a done function.
+          Example:
+          ```js
+            const Step = require('bautajs/core/Step');
+
+            module.exports = fn => async (value, ctx) => {
+              const step = new Step(fn);
+              return step.run({ ...ctx, dataSource: ctx.dataSource(ctx.req) }, value);
+            };
+          ```
+          Remember use Step to wrap the given function, it will helps on the managment of the Promise/callback/simple value usage.
+
+      - request
+      - compileDataSource
+      - flow
+      - template
+      - parallel
   - name: Public API
     children:
-      - services
-      - requireAll
-      - store
-      - batuajs
-      - deref
+      - BautaJS
       - name: Artifacts
         description: |
           A set of artifacts that bautajs provides when use its public API
         children:
           - Operation
-          - Fork
           - Step
           - Service
           - Version
+          - Logger
