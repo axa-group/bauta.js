@@ -55,7 +55,7 @@ function requestHooks(log) {
     logResponse(response) {
       if (process.env.LOG_LEVEL === 'debug') {
         log.debug(
-          `request-logger: Response for [${response.req.method}]  ${response.requestUrl}: `,
+          `request-logger: Response for [${response.request.method}]  ${response.requestUrl}: `,
           {
             headers: prepareToLog(response.headers),
             statusCode: response.statusCode,
@@ -64,9 +64,9 @@ function requestHooks(log) {
         );
       }
       log.info(
-        `request-logger: The request to ${response.requestUrl} taked: ${
-          response.timings.phases.total
-        } ms`
+        `request-logger: The request to ${response.requestUrl} took: ${
+          response.timings ? response.timings.phases.total : 0
+        } ms. From cache: ${!!response.fromCache}`
       );
       log.events.emit(log.eventTypes.DATASOURCE_RESPONSE, response);
 
@@ -190,12 +190,12 @@ function compileDatasource(dataSourceTemplate, context) {
       // add request id
       updateOptions.headers['x-request-id'] = context.id;
 
-      // GOT 5.0 will include this
+      // GOT 10 will include this
       if (updateOptions.stram === true || initOptions.stream === true) {
         return gotInstace(url, { agent, ...updateOptions });
       }
 
-      // GOT 5.0 will include this
+      // GOT 10 will include this
       return gotInstace(url, { agent, ...updateOptions }).then(response => {
         if (updateOptions.resolveBodyOnly === true || initOptions.resolveBodyOnly === true) {
           return parseBody(updateOptions.responseType || initOptions.responseType, response.body);

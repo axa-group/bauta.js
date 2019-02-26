@@ -30,5 +30,5 @@ const Step = require('../core/Step');
  */
 module.exports = fn => async (value, ctx) => {
   const step = new Step(fn);
-  return step.run({ ...ctx, dataSource: ctx.dataSource(ctx.req) }, value);
+  return step.run({ ...ctx, dataSource: ctx.dataSource(ctx) }, value);
 };

@@ -419,6 +419,6 @@ module.exports = class Operation {
 
         return result;
       })
-      .catch(this.error.handler.bind(context));
+      .catch(e => this.error.handler(e, context));
   }
 };

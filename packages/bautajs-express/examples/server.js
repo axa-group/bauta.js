@@ -23,6 +23,8 @@ bautaJS.app.use((req, res, next) => next(notFound()));
 // Error handler
 /* eslint-disable-next-line no-unused-vars */
 bautaJS.app.use((err, req, res, next) => {
+  // eslint-disable-next-line no-console
+  console.error(err);
   res.status(err.output ? err.output.statusCode : 500).json(err.output ? err.output.payload : err);
 });
 
