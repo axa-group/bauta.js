@@ -1,6 +1,6 @@
 {
   "name": "native-proxy-agent",
-  "version": "0.0.0",
+  "version": "1.0.0-alpha.0",
   "description": "A native proxy agent that uses the native nodejs http.Agent and https.Agent to proxy the requests, no dependencies",
   "main": "agent.js",
   "scripts": {
@@ -12,9 +12,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.axa.com/Digital/bauta-nodejs.git"
-  },
-  "publishConfig": {
-    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
   },
   "keywords": [
     "agent",
