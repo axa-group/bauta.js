@@ -721,7 +721,7 @@ toc:
 
       - request
       - compileDataSource
-      - batch
+      - flow
       - template
       - parallel
   - name: Public API

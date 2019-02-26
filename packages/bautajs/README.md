@@ -24,7 +24,7 @@
     -   [compileDataSource][20]
         -   [Parameters][21]
         -   [Examples][22]
-    -   [batch][23]
+    -   [flow][23]
         -   [Parameters][24]
         -   [Examples][25]
     -   [template][26]
@@ -789,7 +789,7 @@ services.v1.test.op1.push(compileDataSource((_, ctx) => {
 }))
 ```
 
-### batch
+### flow
 
 Execute the given steps in serial. It's another way to add the steps without have to do .push().push() ...
 
@@ -801,27 +801,34 @@ Execute the given steps in serial. It's another way to add the steps without hav
 
 ```javascript
 const compileDataSource = require('batuajs/decorators/compile-datasource');
-const batch = require('batuajs/decorators/batch');
+const flow = require('batuajs/decorators/flow');
 
-services.v1.test.op1.push(batch(compileDataSource((_, ctx) => {
-  return ctx.dataSource.request();
-})), (result) => {
-  return {
-    id: result.id
-  }
-});
+services.v1.test.op1.push(
+ flow(
+   compileDataSource((_, ctx) => {
+     return ctx.dataSource.request();
+   })),
+   (result) => {
+     return {
+       id: result.id
+     }
+   }
+ )
+);
 
 // add as an array
-services.v1.test.op1.push(batch([
- compileDataSource((_, ctx) => {
-   return ctx.dataSource.request();
- })),
- (result) => {
-   return {
-     id: result.id
+services.v1.test.op1.push(
+ flow([
+   compileDataSource((_, ctx) => {
+     return ctx.dataSource.request();
+   })),
+   (result) => {
+     return {
+       id: result.id
+     }
    }
- }
-])
+ ])
+);
 ```
 
 ### template
@@ -1472,7 +1479,7 @@ Type: {debug, trace, log, info, warn, error, events, eventTypes}
 
 [22]: #examples-1
 
-[23]: #batch
+[23]: #flow
 
 [24]: #parameters-2
 

@@ -20,32 +20,39 @@ function runInSerial(array) {
 
 /**
  * Execute the given steps in serial. It's another way to add the steps without have to do .push().push() ...
- * @function batch
+ * @function flow
  * @async
  * @param {...function} fn - the array functions/steps to execute
  * @example
  * const compileDataSource = require('batuajs/decorators/compile-datasource');
- * const batch = require('batuajs/decorators/batch');
+ * const flow = require('batuajs/decorators/flow');
  *
- * services.v1.test.op1.push(batch(compileDataSource((_, ctx) => {
- *   return ctx.dataSource.request();
- * })), (result) => {
- *   return {
- *     id: result.id
- *   }
- * });
+ * services.v1.test.op1.push(
+ *  flow(
+ *    compileDataSource((_, ctx) => {
+ *      return ctx.dataSource.request();
+ *    })),
+ *    (result) => {
+ *      return {
+ *        id: result.id
+ *      }
+ *    }
+ *  )
+ * );
  *
  * // add as an array
- * services.v1.test.op1.push(batch([
- *  compileDataSource((_, ctx) => {
- *    return ctx.dataSource.request();
- *  })),
- *  (result) => {
- *    return {
- *      id: result.id
+ * services.v1.test.op1.push(
+ *  flow([
+ *    compileDataSource((_, ctx) => {
+ *      return ctx.dataSource.request();
+ *    })),
+ *    (result) => {
+ *      return {
+ *        id: result.id
+ *      }
  *    }
- *  }
- * ])
+ *  ])
+ * );
  */
 module.exports = (...args) => async ctx =>
   runInSerial(args.map(step => value => new Step(step).run(ctx, value)));
