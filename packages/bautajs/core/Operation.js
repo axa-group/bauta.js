@@ -393,13 +393,13 @@ module.exports = class Operation {
 
     return promise
       .then(result => {
-        if (index + 1 < this.steps.length) {
-          return this.run(index + 1, result, context);
-        }
-
         // if res.send,res.json or res.end was called in the function chain, stop the chain.
         if (context.res && (context.res.headersSent || context.res.finished)) {
           return null;
+        }
+
+        if (index + 1 < this.steps.length) {
+          return this.run(index + 1, result, context);
         }
 
         if (this.schema && this.apiDefinition.validateResponse) {

@@ -464,6 +464,37 @@ describe('Operation class tests', () => {
     });
   });
 
+  describe('Operation.exec stop chain with res.end', () => {
+    test('should stop the chain with an res.end', async () => {
+      const operationTest = new Operation(
+        'operation1',
+        [
+          () => 'bender',
+          (_, ctx) => {
+            ctx.res.end('end request');
+          },
+          (_, ctx) => {
+            ctx.res.end('this wont be executed');
+          }
+        ],
+        testDataource.testService.operations[0],
+        testApiDefinition,
+        'testService'
+      );
+      const req = {};
+      const res = {
+        end(result) {
+          this.finished = true;
+          this.result = result;
+        }
+      };
+
+      await operationTest.exec(req, res);
+
+      expect(res.result).toEqual('end request');
+    });
+  });
+
   describe('Operation.exec with loopback filters', () => {
     test('should apply the loopback filters to a an step array', async () => {
       const operationTest = new Operation(
