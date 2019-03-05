@@ -89,11 +89,11 @@ class BautaJSExpress extends BautaJS {
           res.status(200);
         }
 
-        const resHeaders = responses[res.statusCode] && responses[res.statusCode].headers;
-        if (resHeaders) {
-          res.set({ 'Content-Type': 'application/json', ...resHeaders });
-        } else {
-          res.set({ 'Content-Type': 'application/json' });
+        if (responses[res.statusCode]) {
+          res.set({
+            'Content-type': Object.keys(responses[res.statusCode].content)[0],
+            ...responses[res.statusCode].headers
+          });
         }
 
         res.json(response || {});
