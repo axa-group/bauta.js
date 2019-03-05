@@ -231,15 +231,7 @@ class BautaJSExpress extends BautaJS {
       .sort(specificity)
       .forEach(this.addRoute.bind(this));
 
-    if (explorer === true) {
-      this.apiDefinitions.forEach(apiDefinition =>
-        this.app.use(
-          `/${apiDefinition.info.version}/explorer`,
-          swaggerUi.serve,
-          swaggerUi.setup(apiDefinition)
-        )
-      );
-    } else if (explorer) {
+    if (explorer) {
       this.apiDefinitions.forEach(apiDefinition =>
         this.app.use(
           `/${apiDefinition.info.version}/${explorer.path || 'explorer'}`,
