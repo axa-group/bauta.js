@@ -33,9 +33,9 @@ const logger = require('./logger');
  */
 function registerServices(apiDefinitions, dataSources) {
   const services = {};
-  const dataSourceServices = Object.keys(dataSources);
+  const dataSourceServices = Object.keys(dataSources.services);
   dataSourceServices.forEach(serviceId => {
-    const serviceTemplate = dataSources[serviceId];
+    const serviceTemplate = dataSources.services[serviceId];
     services[serviceId] = Object.freeze(new Service(serviceId, serviceTemplate, apiDefinitions));
   });
 

@@ -16,7 +16,7 @@
 const Operation = require('../../core/Operation');
 const Step = require('../../core/Step');
 
-const { testService } = require('../fixtures/test-datasource.json');
+const { services } = require('../fixtures/test-datasource.json');
 const [testApiDefinition] = require('../fixtures/test-api-definitions.json');
 const testDataource = require('../fixtures/test-datasource.json');
 
@@ -27,7 +27,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         stepUndefined,
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -39,7 +39,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [],
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -52,7 +52,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         steps,
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -67,7 +67,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         stepUndefined,
-        testService.operations[0],
+        services.testService.operations[0],
         null,
         'testService'
       );
@@ -80,7 +80,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         steps,
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -93,7 +93,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         steps,
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -106,7 +106,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [stepUndefined],
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -134,7 +134,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [stepUndefined],
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -155,11 +155,11 @@ describe('Operation class tests', () => {
 
     test('should convert the datasource in a compilable datasource by the request parameter', () => {
       const stepUndefined = () => 'Someloader';
-      const operationSource = testDataource.testService.operations[0];
+      const operationSource = testDataource.services.testService.operations[0];
       const operationTest = new Operation(
         'operation1',
         [stepUndefined],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -172,7 +172,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [stepUndefined],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -186,7 +186,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [stepUndefined],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -208,7 +208,7 @@ describe('Operation class tests', () => {
       operationTest = new Operation(
         'operation1',
         steps,
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -234,7 +234,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [stepUndefined],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -251,7 +251,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [step],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -273,7 +273,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [step1, step2, step3, step4],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -293,14 +293,14 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [step],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
       const operationV2 = new Operation(
         'operation2',
         [step],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -331,7 +331,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [stepUndefined],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -345,7 +345,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [stepUndefined],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -362,7 +362,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [() => 'bender'],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -379,7 +379,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [() => 'bender'],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -399,7 +399,7 @@ describe('Operation class tests', () => {
             });
           }
         ],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -410,7 +410,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [(val, ctx, cb) => cb(null, 'bender')],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -425,7 +425,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [(val, ctx, cb) => cb(new Error('bender'))],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -442,7 +442,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         [() => Promise.resolve('bender')],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -457,7 +457,7 @@ describe('Operation class tests', () => {
       const operationTest = new Operation(
         'operation1',
         ['bender'],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -499,7 +499,7 @@ describe('Operation class tests', () => {
             ctx.res.end('this wont be executed');
           }
         ],
-        testDataource.testService.operations[0],
+        testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );

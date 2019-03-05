@@ -72,6 +72,13 @@ module.exports = class Operation {
   constructor(id, steps, dataSourceTemplate, apiDefinition, serviceId) {
     Object.defineProperties(this, {
       /** @memberof Operation#
+       * @property {Object} private - Specify if the operation is private or not
+       */
+      private: {
+        value: dataSourceTemplate.private,
+        writable: true
+      },
+      /** @memberof Operation#
        * @property {Object} schema - operation OpenAPI schema
        */
       schema: {

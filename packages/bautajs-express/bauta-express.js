@@ -51,6 +51,7 @@ function getSchemaData(schema) {
  * @class BautaJSExpress
  * @extends BautaJS
  * @param {Object[]|Object} apiDefinitions - An array of [OpenAPI 3.0/2.0](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) definitions. See the valid schema @see {@link ./lib/validators/api-definition-schema-json}.
+ * @param {Object} [options]
  * @param {string|string[]} [options.dataSourcesPath='./server/services/../.datasource.?(js|json)'] - A [node-glob](https://github.com/isaacs/node-glob) path to your dataSources.
  * @param {string|string[]} [options.loadersPath='./server/services/../.loader.js'] - A [node-glob](https://github.com/isaacs/node-glob) path to your loaders definitions.
  * @param {any} [options.dataSourceCtx={}] - Object to be injected on the dataSources in run time
@@ -90,10 +91,12 @@ class BautaJSExpress extends BautaJS {
 
         const resHeaders = responses[res.statusCode] && responses[res.statusCode].headers;
         if (resHeaders) {
-          res.set(resHeaders);
+          res.set({ 'Content-Type': 'application/json', ...resHeaders });
+        } else {
+          res.set({ 'Content-Type': 'application/json' });
         }
-        res.json(response || {});
 
+        res.json(response || {});
         const finalTime = new Date().getTime() - startTime.getTime();
 
         this.logger.info(
@@ -143,7 +146,7 @@ class BautaJSExpress extends BautaJS {
         const apiVersion = this.apiDefinitions.find(ad => ad.info.version === versionId);
         version.operationIds.forEach(operationId => {
           const operation = version[operationId];
-          if (operation.schema) {
+          if (operation.schema && !operation.private) {
             const path = Object.keys(operation.schema)[0];
             this.routes[path] = operation;
             apiVersion.paths[path] = {
