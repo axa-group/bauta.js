@@ -53,21 +53,26 @@ function requestHooks(log) {
       }
     },
     logResponse(response) {
-      if (process.env.LOG_LEVEL === 'debug') {
-        log.debug(
-          `request-logger: Response for [${response.req.method}]  ${response.requestUrl}: `,
-          {
-            headers: prepareToLog(response.headers),
-            statusCode: response.statusCode,
-            body: prepareToLog(response.body)
-          }
+      if (response.fromCache) {
+        log.info(`request-logger: Response for ${response.requestUrl} is cached`);
+      } else {
+        if (process.env.LOG_LEVEL === 'debug') {
+          log.debug(
+            `request-logger: Response for [${response.req.method}]  ${response.requestUrl}: `,
+            {
+              headers: prepareToLog(response.headers),
+              statusCode: response.statusCode,
+              body: prepareToLog(response.body)
+            }
+          );
+        }
+        log.info(
+          `request-logger: The request to ${response.requestUrl} taked: ${
+            response.timings.phases.total
+          } ms`
         );
       }
-      log.info(
-        `request-logger: The request to ${response.requestUrl} taked: ${
-          response.timings.phases.total
-        } ms`
-      );
+
       log.events.emit(log.eventTypes.DATASOURCE_RESPONSE, response);
 
       return response;
