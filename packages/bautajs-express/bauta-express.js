@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const swaggerUi = require('swagger-ui-express');
 const BautaJS = require('bautajs');
 const helmetMw = require('helmet');
 const corsMw = require('cors');
@@ -62,9 +63,10 @@ function getSchemaData(schema) {
  * bautaJS.listen();
  */
 class BautaJSExpress extends BautaJS {
-  constructor(apiDefinition, options) {
-    super(apiDefinition, options);
+  constructor(apiDefinitions, options) {
+    super(apiDefinitions, options);
     this.routes = [];
+    this.apiDefinitions = apiDefinitions.map(ad => ({ ...ad, paths: {} }));
     this.app = express();
   }
 
@@ -138,11 +140,16 @@ class BautaJSExpress extends BautaJS {
       const service = this.services[serviceId];
       Object.keys(service).forEach(versionId => {
         const version = service[versionId];
+        const apiVersion = this.apiDefinitions.find(ad => ad.info.version === versionId);
         version.operationIds.forEach(operationId => {
           const operation = version[operationId];
           if (operation.schema) {
             const path = Object.keys(operation.schema)[0];
             this.routes[path] = operation;
+            apiVersion.paths[path] = {
+              ...apiVersion.paths[path],
+              ...operation.schema[path]
+            };
           } else {
             this.logger.warn(
               `[NOT] ${operation.serviceId}.${operation.operationId} operation definition not found`
@@ -159,13 +166,20 @@ class BautaJSExpress extends BautaJS {
    * Add the standard express middlewares and create the created services routes using the given OpenAPI definition.
    * @param {Object} [options={}] - Optional triggers for express middlewares
    * @param {Object|boolean} [options.cors=true] - Set as false to not add it. Set as an object to pass options to the cors middleware.
+   * @param {Object|boolean} [options.explorer=true] - Set as false to not add it. Set as an object to pass options to the explorer middleware.
    * @param {Object|boolean} [options.bodyParser=true] - Set as false to not add it. Set as an object to pass options to the body parse middleware.
    * @param {Object|boolean} [options.helmet=true] - Set as false to not add it. Set as an object to pass options to the helmet middleware.
    * @param {Object|boolean} [options.morgan=true] - Set as false to not add it. Set as an object to pass options to the morgan middleware.
    * @returns {BautaJSExpress}
    * @memberof BautaJSExpress#
    */
-  applyMiddlewares({ cors = true, bodyParser = true, helmet = true, morgan = true } = {}) {
+  applyMiddlewares({
+    cors = true,
+    bodyParser = true,
+    helmet = true,
+    morgan = true,
+    explorer = true
+  } = {}) {
     if (morgan === true) {
       this.app.use(
         morganMw(logFormat, {
@@ -216,6 +230,16 @@ class BautaJSExpress extends BautaJS {
     Object.keys(this.routes)
       .sort(specificity)
       .forEach(this.addRoute.bind(this));
+
+    if (explorer) {
+      this.apiDefinitions.forEach(apiDefinition =>
+        this.app.use(
+          `/${apiDefinition.info.version}/${explorer.path || 'explorer'}`,
+          swaggerUi.serve,
+          swaggerUi.setup(apiDefinition, explorer)
+        )
+      );
+    }
 
     return this;
   }
