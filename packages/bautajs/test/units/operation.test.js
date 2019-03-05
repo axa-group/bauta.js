@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test, beforeEach */
+/* global expect, describe, test, beforeEach, jest */
 const Operation = require('../../core/Operation');
 const Step = require('../../core/Step');
 
@@ -246,7 +246,7 @@ describe('Operation class tests', () => {
     });
 
     test('should set the given error handler', async () => {
-      const errorHandler = () => 'error';
+      const errorHandler = () => Promise.reject(new Error('error'));
       const step = () => Promise.reject(new Error('crashhh!!!'));
       const operationTest = new Operation(
         'operation1',
@@ -255,7 +255,7 @@ describe('Operation class tests', () => {
         testApiDefinition,
         'testService'
       );
-      const expected = 'error';
+      const expected = new Error('error');
       operationTest.setErrorHandler(errorHandler);
       try {
         await operationTest.exec({});
@@ -264,9 +264,31 @@ describe('Operation class tests', () => {
       }
     });
 
+    test('should be called only onces', async () => {
+      const errorHandler = jest.fn().mockRejectedValue(new Error('error'));
+      const step1 = () => 'bender';
+      const step2 = () => 'bender3';
+      const step3 = () => Promise.reject(new Error('crashhh!!!'));
+      const step4 = () => 'bender4';
+      const operationTest = new Operation(
+        'operation1',
+        [step1, step2, step3, step4],
+        testDataource.testService.operations[0],
+        testApiDefinition,
+        'testService'
+      );
+      operationTest.setErrorHandler(errorHandler);
+      try {
+        await operationTest.exec({});
+      } catch (e) {
+        expect(errorHandler.mock.calls.length).toBe(1);
+        expect(e).toEqual(new Error('error'));
+      }
+    });
+
     test('should set the error handler to the inherit operation diferent from the first operation', async () => {
-      const errorHandler = () => 'error';
-      const errorHandlerV2 = () => 'errorV2';
+      const errorHandler = () => Promise.reject(new Error('error'));
+      const errorHandlerV2 = () => Promise.reject(new Error('errorV2'));
       const step = () => Promise.reject(new Error('crashhh!!!'));
       const operationTest = new Operation(
         'operation1',
@@ -289,13 +311,13 @@ describe('Operation class tests', () => {
       try {
         await operationTest.exec({});
       } catch (e) {
-        expect(e).toEqual('error');
+        expect(e).toEqual(new Error('error'));
       }
 
       try {
         await operationV2.exec({});
       } catch (e) {
-        expect(e).toEqual('errorV2');
+        expect(e).toEqual(new Error('errorV2'));
       }
     });
   });
