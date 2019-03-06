@@ -1,6 +1,6 @@
 {
   "name": "bautajs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple library to make middlewares",
   "main": "bauta.js",
   "scripts": {
@@ -37,8 +37,8 @@
     "got": "9.6.0",
     "loopback-filters": "1.0.0",
     "merge-deep": "3.0.2",
-    "multipart-request-builder": "1.0.0",
-    "native-proxy-agent": "1.0.0",
+    "multipart-request-builder": "1.0.1",
+    "native-proxy-agent": "1.0.1",
     "openapi-default-setter": "2.0.3",
     "openapi-request-validator": "3.5.0",
     "openapi-response-validator": "3.6.0",

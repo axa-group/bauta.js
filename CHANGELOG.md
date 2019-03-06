@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](http://github.axa.com/Digital/bauta-nodejs/compare/v1.0.0...v1.0.1) (2019-03-06)
+
+
+### Bug Fixes
+
+* **bautajs:** throw an error if operation id is not ([199b17d](http://github.axa.com/Digital/bauta-nodejs/commit/199b17d)), closes [#22](http://github.axa.com/Digital/bauta-nodejs/issues/22)
+* **bautajs-express:** routes with different methods were being override it ([3f645e1](http://github.axa.com/Digital/bauta-nodejs/commit/3f645e1)), closes [#24](http://github.axa.com/Digital/bauta-nodejs/issues/24)
+* **bautajs-express:** use the express path instead of the swagger route ([6d8b6cc](http://github.axa.com/Digital/bauta-nodejs/commit/6d8b6cc)), closes [#23](http://github.axa.com/Digital/bauta-nodejs/issues/23)
+
+
+
+
+
 # [1.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v1.0.0-alpha.0...v1.0.0) (2019-03-06)
 
 
