@@ -41,8 +41,8 @@ function getSchemaData(schema) {
     .join('/');
 
   const method = Object.keys(schema[route])[0];
-  const { responses } = schema[route][method];
-  return { path, method, responses };
+  const { responses, produces } = schema[route][method];
+  return { path, method, responses, produces };
 }
 
 /**
@@ -73,7 +73,7 @@ class BautaJSExpress extends BautaJS {
 
   addRoute(route) {
     const operation = this.routes[route];
-    const { method, path, responses } = getSchemaData(operation.schema);
+    const { method, path, responses, produces } = getSchemaData(operation.schema);
     const basePath =
       operation.apiDefinition.servers && operation.apiDefinition.servers[0].url
         ? operation.apiDefinition.servers[0].url
@@ -90,8 +90,11 @@ class BautaJSExpress extends BautaJS {
         }
 
         if (responses[res.statusCode]) {
+          const contentType = operation.apiDefinition.openapi
+            ? Object.keys(responses[res.statusCode].content)[0]
+            : produces[0];
           res.set({
-            'Content-type': Object.keys(responses[res.statusCode].content)[0],
+            'Content-type': contentType,
             ...responses[res.statusCode].headers
           });
         }

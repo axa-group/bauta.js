@@ -16,6 +16,7 @@
 const request = require('supertest');
 const path = require('path');
 const apiDefinitions = require('../fixtures/test-api-definitions.json');
+const apiDefinitionsSwagger2 = require('../fixtures/test-api-definitions-swagger-2.json');
 
 const BautaJSExpress = require('../../bauta-express');
 
@@ -58,6 +59,99 @@ describe('BautaJS express', () => {
       .expect(404)
       .end(err => {
         if (err) throw err;
+        done();
+      });
+  });
+
+  test('Should not send the response again if already has been sent', done => {
+    const bautajs = new BautaJSExpress(apiDefinitions, {
+      dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
+      resolversPath: path.resolve(
+        __dirname,
+        '../fixtures/test-resolvers/test-operation-resolver-send-response.js'
+      )
+    });
+
+    bautajs.applyMiddlewares();
+
+    request(bautajs.app)
+      .get('/api/v1/test')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) throw err;
+        expect(res.body).toEqual({ ok: 'finished early' });
+        done();
+      });
+  });
+
+  test('Should allow swagger 2.0', done => {
+    const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
+      dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
+      resolversPath: path.resolve(
+        __dirname,
+        '../fixtures/test-resolvers/test-operation-resolver.js'
+      )
+    });
+
+    bautajs.applyMiddlewares();
+
+    request(bautajs.app)
+      .get('/api/v1/test')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) throw err;
+        expect(res.body).toEqual({ ok: 'benderTest' });
+        done();
+      });
+  });
+
+  test('Should left error handling to express error handler', done => {
+    const bautajs = new BautaJSExpress(apiDefinitions, {
+      dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
+      resolversPath: path.resolve(
+        __dirname,
+        '../fixtures/test-resolvers/test-operation-resolver-error.js'
+      )
+    });
+
+    bautajs.applyMiddlewares();
+
+    // eslint-disable-next-line no-unused-vars
+    bautajs.app.use((err, req, res, next) => {
+      res.json({ message: err.message, status: res.statusCode }).end();
+    });
+
+    request(bautajs.app)
+      .get('/api/v1/test')
+      .expect('Content-Type', /json/)
+      .expect(500)
+      .end((err, res) => {
+        if (err) throw err;
+        expect(res.body).toEqual({ message: 'some error', status: 500 });
+        done();
+      });
+  });
+
+  test('Should expose the given swagger with an express API', done => {
+    const bautajs = new BautaJSExpress(apiDefinitions, {
+      dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
+      resolversPath: path.resolve(
+        __dirname,
+        '../fixtures/test-resolvers/test-operation-resolver.js'
+      )
+    });
+
+    bautajs.applyMiddlewares();
+
+    request(bautajs.app)
+      .get('/api/v1/test')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) throw err;
+        expect(res.body).toEqual({ ok: 'benderTest' });
         done();
       });
   });
