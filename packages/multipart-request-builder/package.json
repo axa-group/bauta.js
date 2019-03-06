@@ -20,10 +20,10 @@
   "author": "myaxa.mit@axa-groupsolutions.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "combined-stream": "^1.0.7",
+    "combined-stream": "1.0.7",
     "is-stream": "1.1.0",
-    "safe-buffer": "^5.1.2",
-    "uuid": "^3.3.2"
+    "safe-buffer": "5.1.2",
+    "uuid": "3.3.2"
   },
   "engines": {
     "node": ">=8",

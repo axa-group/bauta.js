@@ -24,14 +24,14 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "bautajs": "1.0.0",
-    "body-parser": "^1.18.3",
-    "chalk": "^2.4.2",
-    "compression": "^1.7.3",
-    "cors": "^2.8.5",
-    "express": "^4.16.4",
-    "helmet": "^3.15.1",
-    "morgan": "^1.9.1",
-    "route-order": "^0.1.0",
-    "swagger-ui-express": "^4.0.2"
+    "body-parser": "1.18.3",
+    "chalk": "2.4.2",
+    "compression": "1.7.3",
+    "cors": "2.8.5",
+    "express": "4.16.4",
+    "helmet": "3.15.1",
+    "morgan": "1.9.1",
+    "route-order": "0.1.0",
+    "swagger-ui-express": "4.0.2"
   }
 }
