@@ -1,6 +1,6 @@
 {
   "name": "bautajs-express",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0",
   "description": "A bautaJS express plugin. Allows auto exposing the bautaJS services.",
   "main": "bauta-express.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "author": "mit@axa-groupsolutions.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "bautajs": "1.0.0-alpha.0",
+    "bautajs": "1.0.0",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.2",
     "compression": "^1.7.3",

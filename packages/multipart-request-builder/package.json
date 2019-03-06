@@ -1,6 +1,6 @@
 {
   "name": "multipart-request-builder",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0",
   "description": "Build a multipart/related requests ready to inject to a nodejs request",
   "main": "Multipart.js",
   "scripts": {
