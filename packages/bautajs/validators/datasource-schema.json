@@ -9,6 +9,10 @@
       "required": ["operations"],
       "description": "The service id use it to define the access to the service, like 'cats', then you will access like 'services.cats'",
       "properties": {
+        "options": {
+          "type": "object",
+          "description": "Add the got module properties here, see 'https://github.com/sindresorhus/got', this options will be merge it with the operation options, prioritizing the operation options"
+        },
         "operations": {
           "type": "array",
           "items": {
