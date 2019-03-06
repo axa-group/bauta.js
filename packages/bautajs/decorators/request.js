@@ -23,4 +23,4 @@
  *
  * services.v1.test.op1.push(request())
  */
-module.exports = options => (value, ctx) => ctx.dataSource(ctx.req).request(options);
+module.exports = options => async (value, ctx) => ctx.dataSource(ctx).request(options);

@@ -903,7 +903,7 @@ To use bautaJS with the default configuration we will need to create the followi
         -   v1
             -   cats
                 -   cats-datasource.json
-                -   cats-loader.js
+                -   cats-resolver.js
                 -   cats-schema.json
     -   server.js
     -   api-definitions.json
@@ -923,50 +923,20 @@ To use bautaJS with the default configuration we will need to create the followi
 }
 ```
 
-// cats-loader.js
+// cats-resolver.js
 
 ```js
+  const compileDataSource = require('bautajs/decorators/compile-datasource');
   const catsSchema = require('./cats-schema.json');
 
   module.exports = services => {
     services.cats.v1.find
-      .setSchema(catsSchema)
-      .setLoader(function catLoaders(){
-        this.req.logger.info('Fetching some cats');
+      .push(compileDataSource((_, ctx) => {
+        ctx.logger.info('Fetching some cats');
 
-        return this.dataSource.request();
-      })
+        return ctx.dataSource.request();
+      }))
   };
-```
-
-// cats-schema.json
-
-```json
-  {
-    "/cats": {
-      "get": {
-        "tags": ["cats"],
-        "summary": "Get the list of cats",
-        "operationId": "get-cats",
-        "produces": ["application/json"],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "Object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
 ```
 
 // api-definitions.json
@@ -974,16 +944,42 @@ To use bautaJS with the default configuration we will need to create the followi
 ```json
   [
     {
-      "versionId": "v1",
       "openapi": "3.0",
       "apiVersion": "1.0",
       "swaggerVersion": "1.0",
       "info": {
         "description": "API for cool cats",
-        "version": "1.0.0",
+        "version": "v1",
         "title": "MyAXA API"
       },
-      "basePath": "/v1/api/"
+      "servers": [{
+        "url":"/v1/api/"
+      }],
+      "paths": {
+        "/cats": {
+          "get": {
+            "tags": ["cats"],
+            "summary": "Get the list of cats",
+            "operationId": "find",
+            "produces": ["application/json"],
+            "responses": {
+              "200": {
+                "description": "successful operation",
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "Object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
     }
   ]
 ```
@@ -991,14 +987,10 @@ To use bautaJS with the default configuration we will need to create the followi
 // server.js
 
 ```js
-    const bautaJS = require('bautajs');
+    const BautaJS = require('bautajs');
     const apiDefinitions = require('./api-definitions.json');
-    
-    const config = {
-      endpoint:'http://coolcats.com'
-    }
 
-    bautaJS(config, apiDefinitions);
+    const bautaJS = new BautaJS(apiDefinitions);
 
     await bautaJS.services.cats.v1.find.exec({});
 ```

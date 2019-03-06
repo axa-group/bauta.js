@@ -72,7 +72,6 @@ function requestHooks(log) {
           } ms`
         );
       }
-
       log.events.emit(log.eventTypes.DATASOURCE_RESPONSE, response);
 
       return response;
@@ -195,12 +194,12 @@ function compileDatasource(dataSourceTemplate, context) {
       // add request id
       updateOptions.headers['x-request-id'] = context.id;
 
-      // GOT 5.0 will include this
+      // GOT 10 will include this
       if (updateOptions.stram === true || initOptions.stream === true) {
         return gotInstace(url, { agent, ...updateOptions });
       }
 
-      // GOT 5.0 will include this
+      // GOT 10 will include this
       return gotInstace(url, { agent, ...updateOptions }).then(response => {
         if (updateOptions.resolveBodyOnly === true || initOptions.resolveBodyOnly === true) {
           return parseBody(updateOptions.responseType || initOptions.responseType, response.body);

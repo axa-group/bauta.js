@@ -366,7 +366,7 @@ module.exports = class Operation {
       }
     }
 
-    return this.run(0, values, context);
+    return this.run(0, values, context).catch(e => this.error.handler(e, context));
   }
 
   /**
@@ -391,34 +391,32 @@ module.exports = class Operation {
       return Promise.resolve(value);
     }
 
-    return promise
-      .then(result => {
-        if (index + 1 < this.steps.length) {
-          return this.run(index + 1, result, context);
-        }
+    return promise.then(result => {
+      // if res.send,res.json or res.end was called in the function chain, stop the chain.
+      if (context.res && (context.res.headersSent || context.res.finished)) {
+        return null;
+      }
 
-        // if res.send,res.json or res.end was called in the function chain, stop the chain.
-        if (context.res && (context.res.headersSent || context.res.finished)) {
-          return null;
-        }
+      if (index + 1 < this.steps.length) {
+        return this.run(index + 1, result, context);
+      }
 
-        if (this.schema && this.apiDefinition.validateResponse) {
-          const error = this.validateResponse(
-            result,
-            context.res ? context.res.statusCode : undefined
-          );
-          if (error && error.errors.length > 0) {
-            throw error.errors;
-          }
+      if (this.schema && this.apiDefinition.validateResponse) {
+        const error = this.validateResponse(
+          result,
+          context.res ? context.res.statusCode : undefined
+        );
+        if (error && error.errors.length > 0) {
+          throw error.errors;
         }
+      }
 
-        // Apply loopback filter to the services that have the applyLoopackFilters toggle to true
-        if (this.dataSource.template.applyLoopbackFilters === true) {
-          return loopbackFilter(result, context.req.query && context.req.query.filter);
-        }
+      // Apply loopback filter to the services that have the applyLoopackFilters toggle to true
+      if (this.dataSource.template.applyLoopbackFilters === true) {
+        return loopbackFilter(result, context.req.query && context.req.query.filter);
+      }
 
-        return result;
-      })
-      .catch(this.error.handler.bind(context));
+      return result;
+    });
   }
 };

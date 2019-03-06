@@ -239,7 +239,7 @@ describe('datasource test', () => {
     test('should log the response time', async () => {
       process.env.LOG_LEVEL = 'info';
       const expectedMsg = new RegExp(
-        'request-logger: The request to https://pets.com/v1/policies taked: (.*) ms'
+        'request-logger: The request to https://pets.com/v1/policies took: (.*) ms'
       );
 
       nock('https://pets.com/v1')

@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const mergeDeep = require('merge-deep');
 const Operation = require('./Operation');
 const Version = require('./Version');
 const logger = require('../logger');
@@ -29,7 +30,7 @@ const logger = require('../logger');
 module.exports = class Service {
   constructor(serviceId, datasourceTemplate, apiDefinitions = []) {
     // Define the operations
-    const { operations } = datasourceTemplate || { operations: [] };
+    const { operations, options } = datasourceTemplate || { operations: [] };
     // Create API versions
     apiDefinitions.forEach(API => {
       this[API.info.version] = new Version(API.info.version);
@@ -45,7 +46,7 @@ module.exports = class Service {
           const operation = new Operation(
             operationTemplate.id,
             [],
-            operationTemplate,
+            { ...operationTemplate, options: mergeDeep(options, operationTemplate.options) },
             apiDefinition,
             serviceId
           );

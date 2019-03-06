@@ -1,16 +1,10 @@
-const compileDataSource = require('bautajs/decorators/compile-datasource');
+const request = require('bautajs/decorators/request');
 
 module.exports = services => {
-  services.test.v1.operation1.push(
-    compileDataSource((_, ctx) => {
-      ctx.logger.info(ctx.dataSource);
-      return [
-        {
-          id: '1',
-          name: 'yiye',
-          tag: 'maltes'
-        }
-      ];
-    })
-  );
+  services.test.v1.operation1
+    .push(request())
+    .push(
+      (response, ctx) =>
+        ctx.req.query.title ? response.filter(r => r.title.includes(ctx.req.query.title)) : response
+    );
 };

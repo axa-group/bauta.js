@@ -31,7 +31,7 @@ function prepareToLog(object) {
 
 function defaultLoader(_, ctx) {
   if (ctx.dataSource) {
-    return ctx.dataSource(ctx.req).request();
+    return ctx.dataSource(ctx).request();
   }
   const error = new Error('Not found');
   return Promise.reject(Object.assign(error, { statusCode: 404 }));
