@@ -74,7 +74,7 @@ describe('Core tests', () => {
       ).toThrowError(`Invalid API definitions, "" should have required property 'swagger'`);
     });
 
-    test('should throw en erro for a not valid datasource', () => {
+    test('should throw en error for a not valid datasource', () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -88,6 +88,20 @@ describe('Core tests', () => {
       ).toThrowError(
         `Invalid or not found dataSources, "" should have required property '.services'`
       );
+    });
+
+    test('should throw en error for a not valid operation', () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+
+      expect(
+        () =>
+          new BautaJS(testApiDefinitions, {
+            dataSourcesPath: path.resolve(__dirname, '../fixtures/not-valid-operation.json'),
+            dataSourceCtx: config
+          })
+      ).toThrowError(`Operation id is a mandatory parameter on test`);
     });
 
     test('should load the datasources from the default path', () => {

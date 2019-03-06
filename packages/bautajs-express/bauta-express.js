@@ -72,72 +72,73 @@ class BautaJSExpress extends BautaJS {
   }
 
   addRoute(route) {
-    const operation = this.routes[route];
-    const { method, path, responses, produces } = getSchemaData(operation.schema);
-    const basePath =
-      operation.apiDefinition.servers && operation.apiDefinition.servers[0].url
-        ? operation.apiDefinition.servers[0].url
-        : operation.apiDefinition.basePath;
-    this.app[method](basePath + route, (req, res, next) => {
-      const startTime = new Date();
-      const resolverWraper = response => {
-        if (res.headersSent || res.finished) {
-          return null;
-        }
+    Object.keys(this.routes[route]).forEach(method => {
+      const { operation, responses, produces } = this.routes[route][method];
+      const basePath =
+        operation.apiDefinition.servers && operation.apiDefinition.servers[0].url
+          ? operation.apiDefinition.servers[0].url
+          : operation.apiDefinition.basePath;
+      this.app[method](basePath + route, (req, res, next) => {
+        const startTime = new Date();
+        const resolverWraper = response => {
+          if (res.headersSent || res.finished) {
+            return null;
+          }
 
-        if (!res.statusCode) {
-          res.status(200);
-        }
+          if (!res.statusCode) {
+            res.status(200);
+          }
 
-        if (responses[res.statusCode]) {
-          const contentType = operation.apiDefinition.openapi
-            ? Object.keys(responses[res.statusCode].content)[0]
-            : produces[0];
-          res.set({
-            'Content-type': contentType,
-            ...responses[res.statusCode].headers
-          });
-        }
+          if (responses[res.statusCode]) {
+            const contentType = operation.apiDefinition.openapi
+              ? Object.keys(responses[res.statusCode].content)[0]
+              : produces[0];
+            res.set({
+              'Content-type': contentType,
+              ...responses[res.statusCode].headers
+            });
+          }
 
-        res.json(response || {});
-        const finalTime = new Date().getTime() - startTime.getTime();
+          res.json(response || {});
+          const finalTime = new Date().getTime() - startTime.getTime();
 
-        this.logger.info(
-          `The operation execution of ${basePath}/${path} took: ${
-            typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
-          } ms`
-        );
-        return res.end();
-      };
-      const rejectWraper = response => {
-        res.status(response.statusCode || 500);
-        const finalTime = new Date().getTime() - startTime.getTime();
-        this.logger.info(
-          `The operation execution of ${basePath}/${path} took: ${
-            typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
-          } ms`
-        );
+          this.logger.info(
+            `The operation execution of ${basePath}/${route} took: ${
+              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
+            } ms`
+          );
+          return res.end();
+        };
+        const rejectWraper = response => {
+          res.status(response.statusCode || 500);
+          const finalTime = new Date().getTime() - startTime.getTime();
+          this.logger.info(
+            `The operation execution of ${basePath}/${route} took: ${
+              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
+            } ms`
+          );
 
-        return next(response);
-      };
+          return next(response);
+        };
 
-      operation
-        .exec(req, res)
-        .then(resolverWraper)
-        .catch(rejectWraper);
-    });
+        operation
+          .exec(req, res)
+          .then(resolverWraper)
+          .catch(rejectWraper);
+      });
 
-    this.logger.info(
-      '[OK]',
-      chalk.yellowBright(
-        `[${method.toUpperCase()}] ${basePath + route} operation exposed on the API from ${
-          operation.serviceId
-        }.${operation.apiDefinition.info.version}.${operation.operationId}`
-      )
-    );
-    this.logger.events.emit(this.logger.eventTypes.EXPOSE_OPERATION, {
-      route: basePath + path,
-      operation
+      this.logger.info(
+        '[OK]',
+        chalk.yellowBright(
+          `[${method.toUpperCase()}] ${basePath + route} operation exposed on the API from ${
+            operation.serviceId
+          }.${operation.apiDefinition.info.version}.${operation.operationId}`
+        )
+      );
+      this.logger.events.emit(this.logger.eventTypes.EXPOSE_OPERATION, {
+        route: basePath + route,
+        operation
+      });
     });
   }
 
@@ -150,8 +151,12 @@ class BautaJSExpress extends BautaJS {
         version.operationIds.forEach(operationId => {
           const operation = version[operationId];
           if (operation.schema && !operation.private) {
-            const path = Object.keys(operation.schema)[0];
-            this.routes[path] = operation;
+            const { method, path, responses, produces } = getSchemaData(operation.schema);
+            if (!this.routes[path]) {
+              this.routes[path] = {};
+            }
+
+            this.routes[path][method] = { operation, responses, produces };
             apiVersion.paths[path] = {
               ...apiVersion.paths[path],
               ...operation.schema[path]

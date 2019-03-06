@@ -37,6 +37,9 @@ module.exports = class Service {
     });
 
     operations.forEach(operationTemplate => {
+      if (!operationTemplate.id) {
+        throw new Error(`Operation id is a mandatory parameter on ${serviceId}`);
+      }
       let previousOperation;
       apiDefinitions.forEach(apiDefinition => {
         if (

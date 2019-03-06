@@ -5,7 +5,7 @@
   "services": {
     "minProperties": 1,
     "additionalProperties": {
-      "type": ["object", "string"],
+      "type": "object",
       "required": ["operations"],
       "description": "The service id use it to define the access to the service, like 'cats', then you will access like 'services.cats'",
       "properties": {
