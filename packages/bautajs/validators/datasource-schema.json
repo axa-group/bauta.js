@@ -1,49 +1,57 @@
 {
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
-  "minProperties": 1,
-  "additionalProperties": {
-    "type": "object",
-    "required": ["operations"],
-    "description": "The service id use it to define the access to the service, like 'cats', then you will access like 'services.cats'",
-    "properties": {
-      "operations": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "description": "The id of the operation"
+  "required": ["services"],
+  "services": {
+    "minProperties": 1,
+    "additionalProperties": {
+      "type": ["object", "string"],
+      "required": ["operations"],
+      "description": "The service id use it to define the access to the service, like 'cats', then you will access like 'services.cats'",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The id of the operation"
+              },
+              "version": {
+                "type": "string",
+                "description": "The id of the info.version related with this data source/operation, if not provided by default will be linked to the first api-definition info.version",
+                "example": "v1"
+              },
+              "private": {
+                "type": "boolean",
+                "description": "If set to true the operation will not be exposed even if there is set on the api swagger",
+                "default": false
+              },
+              "method": {
+                "type": "string",
+                "description": "The HTTP method that will be use to request the data using 'https://github.com/sindresorhus/got'"
+              },
+              "url": {
+                "type": "string",
+                "description": "The URL that will be use to request the data using 'https://github.com/sindresorhus/got'"
+              },
+              "inherit": {
+                "type": "boolean",
+                "default": true,
+                "description": "Determine if this operation behaviour will inherit from the previus version operation with the same id"
+              },
+              "applyLoopbackFilter": {
+                "type": "boolean",
+                "description": "Whether or not allow the application of loopback filters to the operation result data"
+              },
+              "options": {
+                "type": "object",
+                "description": "Add the got module properties here, see 'https://github.com/sindresorhus/got'"
+              }
             },
-            "version": {
-              "type": "string",
-              "description": "The id of the info.version related with this data source/operation, if not provided by default will be linked to the first api-definition info.version",
-              "example": "v1"
-            },
-            "method": {
-              "type": "string",
-              "description": "The HTTP method that will be use to request the data using 'https://github.com/sindresorhus/got'"
-            },
-            "url": {
-              "type": "string",
-              "description": "The URL that will be use to request the data using 'https://github.com/sindresorhus/got'"
-            },
-            "inherit": {
-              "type": "boolean",
-              "default": true,
-              "description": "Determine if this operation behaviour will inherit from the previus version operation with the same id"
-            },
-            "applyLoopbackFilter": {
-              "type": "boolean",
-              "description": "Whether or not allow the application of loopback filters to the operation result data"
-            },
-            "options": {
-              "type": "object",
-              "description": "Add the got module properties here, see 'https://github.com/sindresorhus/got'"
-            }
-          },
-          "required": ["id"]
+            "required": ["id"]
+          }
         }
       }
     }

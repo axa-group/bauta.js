@@ -12,17 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module.exports = () => ({
-  $schema: '../../validators/datasource-schema.json',
-  services: {
-    testService: {
-      operations: [
-        {
-          name: 'test',
-          someVariableOption: '{{ctx.req.variableOption}}',
-          url: 'https://google.com/'
-        }
-      ]
-    }
-  }
-});
+module.exports = services => {
+  services.testService.v1.operation1.push(() => Promise.reject(new Error('some error')));
+};

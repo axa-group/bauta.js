@@ -16,7 +16,7 @@
 const Version = require('../../core/Version');
 const Step = require('../../core/Step');
 const Operation = require('../../core/Operation');
-const { testService } = require('../fixtures/test-datasource.json');
+const { services } = require('../fixtures/test-datasource.json');
 const [testApiDefinition] = require('../fixtures/test-api-definitions.json');
 
 describe('Version class tests', () => {
@@ -66,7 +66,7 @@ describe('Version class tests', () => {
       testVersion.a = new Operation(
         'operation1',
         [],
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
@@ -74,7 +74,7 @@ describe('Version class tests', () => {
       testVersion.b = new Operation(
         'operation1',
         [],
-        testService.operations[0],
+        services.testService.operations[0],
         testApiDefinition,
         'testService'
       );

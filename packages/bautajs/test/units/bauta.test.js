@@ -86,7 +86,7 @@ describe('Core tests', () => {
             dataSourceCtx: config
           })
       ).toThrowError(
-        'Invalid or not found dataSources, "" should NOT have fewer than 1 properties'
+        `Invalid or not found dataSources, "" should have required property '.services'`
       );
     });
 
