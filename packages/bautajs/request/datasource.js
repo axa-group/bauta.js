@@ -67,7 +67,7 @@ function requestHooks(log) {
           );
         }
         log.info(
-          `request-logger: The request to ${response.requestUrl} taked: ${
+          `request-logger: The request to ${response.requestUrl} took: ${
             response.timings.phases.total
           } ms`
         );
