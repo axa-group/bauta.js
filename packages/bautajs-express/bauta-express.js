@@ -78,7 +78,7 @@ class BautaJSExpress extends BautaJS {
       operation.apiDefinition.servers && operation.apiDefinition.servers[0].url
         ? operation.apiDefinition.servers[0].url
         : operation.apiDefinition.basePath;
-    this.app[method](basePath + route, (req, res, next) => {
+    this.app[method](basePath + path, (req, res, next) => {
       const startTime = new Date();
       const resolverWraper = response => {
         if (res.headersSent || res.finished) {
