@@ -24,3 +24,4 @@ npm-shrinkwrap.json
 .history/
 .settings/
 junit.xml
+package-lock.json

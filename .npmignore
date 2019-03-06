@@ -17,4 +17,3 @@ target/
 *.swp
 *.swo
 *.tgz
-package-lock.json
