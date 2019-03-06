@@ -1,0 +1,11 @@
+{
+  "services": {
+    "test": {
+      "operations": [
+        {
+          "name": 2
+        }
+      ]
+    }
+  }
+}
