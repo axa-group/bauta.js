@@ -18,6 +18,7 @@ const Step = require('../core/Step');
  * Compile the ctx data source with the given request, resolving all the data source variables
  * In your function you can access to the compiled data source throught ctx.dataSource and do a request using
  * ctx.dataSource.request();
+ * In the datasources all the ctx variables (ctx.req...) and ctx.previousValue will be available.
  * @function compileDataSource
  * @async
  * @param {function} fn - the function to execute after compile the data source
@@ -30,5 +31,5 @@ const Step = require('../core/Step');
  */
 module.exports = fn => async (value, ctx) => {
   const step = new Step(fn);
-  return step.run({ ...ctx, dataSource: ctx.dataSource(ctx) }, value);
+  return step.run({ ...ctx, dataSource: ctx.dataSource({ ...ctx, previousValue: value }) }, value);
 };

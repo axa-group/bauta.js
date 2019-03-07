@@ -15,6 +15,7 @@
 
 /**
  * Compile the data source and do a request to the operation service
+ * In the datasources all the ctx variables (ctx.req...) and ctx.previousValue will be available.
  * @function request
  * @async
  * @param {Object} options - the got request options
@@ -23,4 +24,5 @@
  *
  * services.v1.test.op1.push(request())
  */
-module.exports = options => async (value, ctx) => ctx.dataSource(ctx).request(options);
+module.exports = options => async (value, ctx) =>
+  ctx.dataSource({ ...ctx, previousValue: value }).request(options);
