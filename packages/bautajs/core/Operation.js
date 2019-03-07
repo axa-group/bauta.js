@@ -289,7 +289,10 @@ module.exports = class Operation {
       !!this.apiDefinition.openapi && !!this.apiDefinition.components
         ? this.apiDefinition.components.schemas
         : this.apiDefinition.definitions;
+
     const validateRequest = new OpenAPIRequestValidator({
+      // BUG: https://github.com/kogosoftwarellc/open-api/issues/381
+      parameters: [],
       ...endpointDefinition,
       schemas
     });
@@ -299,7 +302,8 @@ module.exports = class Operation {
     });
 
     this.schema = schema;
-    const defaultSetter = new OpenAPIDefaultSetter(endpointDefinition);
+    // BUG: https://github.com/kogosoftwarellc/open-api/issues/381
+    const defaultSetter = new OpenAPIDefaultSetter({ parameters: [], ...endpointDefinition });
     this.validateRequest = req => {
       defaultSetter.handle(req);
       if (!req.headers) {
