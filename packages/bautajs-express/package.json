@@ -1,6 +1,6 @@
 {
   "name": "bautajs-express",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A bautaJS express plugin. Allows auto exposing the bautaJS services.",
   "main": "bauta-express.js",
   "scripts": {
