@@ -33,16 +33,16 @@ function toExpressParams(part) {
 }
 
 function getSchemaData(schema) {
-  const route = Object.keys(schema)[0];
-  const path = route
+  const swaggerPath = Object.keys(schema)[0];
+  const expressRoute = swaggerPath
     .substring(1)
     .split('/')
     .map(toExpressParams)
     .join('/');
 
-  const method = Object.keys(schema[route])[0];
-  const { responses, produces } = schema[route][method];
-  return { path, method, responses, produces };
+  const method = Object.keys(schema[swaggerPath])[0];
+  const { responses, produces } = schema[swaggerPath][method];
+  return { expressRoute, method, responses, produces, swaggerPath };
 }
 
 /**
@@ -71,14 +71,14 @@ class BautaJSExpress extends BautaJS {
     this.app = express();
   }
 
-  addRoute(route) {
-    Object.keys(this.routes[route]).forEach(method => {
-      const { operation, responses, produces } = this.routes[route][method];
+  addRoute(expressRoute) {
+    Object.keys(this.routes[expressRoute]).forEach(method => {
+      const { operation, responses, produces } = this.routes[expressRoute][method];
       const basePath =
         operation.apiDefinition.servers && operation.apiDefinition.servers[0].url
           ? operation.apiDefinition.servers[0].url
           : operation.apiDefinition.basePath;
-      this.app[method](basePath + route, (req, res, next) => {
+      this.app[method](basePath + expressRoute, (req, res, next) => {
         const startTime = new Date();
         const resolverWraper = response => {
           if (res.headersSent || res.finished) {
@@ -103,7 +103,7 @@ class BautaJSExpress extends BautaJS {
           const finalTime = new Date().getTime() - startTime.getTime();
 
           this.logger.info(
-            `The operation execution of ${basePath}/${route} took: ${
+            `The operation execution of ${basePath}/${expressRoute} took: ${
               typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
             } ms`
           );
@@ -113,7 +113,7 @@ class BautaJSExpress extends BautaJS {
           res.status(response.statusCode || 500);
           const finalTime = new Date().getTime() - startTime.getTime();
           this.logger.info(
-            `The operation execution of ${basePath}/${route} took: ${
+            `The operation execution of ${basePath}/${expressRoute} took: ${
               typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
             } ms`
           );
@@ -130,13 +130,13 @@ class BautaJSExpress extends BautaJS {
       this.logger.info(
         '[OK]',
         chalk.yellowBright(
-          `[${method.toUpperCase()}] ${basePath + route} operation exposed on the API from ${
+          `[${method.toUpperCase()}] ${basePath + expressRoute} operation exposed on the API from ${
             operation.serviceId
           }.${operation.apiDefinition.info.version}.${operation.operationId}`
         )
       );
       this.logger.events.emit(this.logger.eventTypes.EXPOSE_OPERATION, {
-        route: basePath + route,
+        route: basePath + expressRoute,
         operation
       });
     });
@@ -151,15 +151,18 @@ class BautaJSExpress extends BautaJS {
         version.operationIds.forEach(operationId => {
           const operation = version[operationId];
           if (operation.schema && !operation.private) {
-            const { method, path, responses, produces } = getSchemaData(operation.schema);
-            if (!this.routes[path]) {
-              this.routes[path] = {};
+            const { method, expressRoute, responses, produces, swaggerPath } = getSchemaData(
+              operation.schema
+            );
+            if (!this.routes[expressRoute]) {
+              this.routes[expressRoute] = {};
             }
 
-            this.routes[path][method] = { operation, responses, produces };
-            apiVersion.paths[path] = {
-              ...apiVersion.paths[path],
-              ...operation.schema[path]
+            this.routes[expressRoute][method] = { operation, responses, produces };
+
+            apiVersion.paths[swaggerPath] = {
+              ...apiVersion.paths[swaggerPath],
+              ...operation.schema[swaggerPath]
             };
           } else {
             this.logger.warn(
