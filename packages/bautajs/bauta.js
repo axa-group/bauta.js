@@ -93,17 +93,21 @@ module.exports = class Batuajs {
       );
     }
 
-    // Merge all the required dataSources-
-    const dataSources = STJS.select(options.dataSourceCtx)
-      .transformWith(
-        mergeDeep(
-          ...Batuajs.requireAll(
-            options.dataSourcesPath || './server/services/**/*datasource.?(js|json)',
-            true
-          )
-        )
+    // Merge all the required dataSources
+    const dataSourcesTemplates = mergeDeep(
+      ...Batuajs.requireAll(
+        options.dataSourcesPath || './server/services/**/*datasource.?(js|json)',
+        true
       )
-      .root();
+    );
+    // Maintain the not resolved templates
+    const dataSources = mergeDeep(
+      dataSourcesTemplates,
+      STJS.select(options.dataSourceCtx)
+        .transformWith(dataSourcesTemplates)
+        .root()
+    );
+
     error = validate(dataSources, dataSourceSchema);
     if (error) {
       throw new Error(
