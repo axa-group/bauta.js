@@ -13,5 +13,10 @@
  * limitations under the License.
  */
 module.exports = services => {
-  services.testService.v1.operation1.push('benderTest1');
+  services.testService.v1.operation1.push([
+    {
+      id: 132,
+      name: 'pet1'
+    }
+  ]);
 };

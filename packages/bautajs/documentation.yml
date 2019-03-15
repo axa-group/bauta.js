@@ -116,44 +116,97 @@ toc:
     children:
       - name: Request Validation
         description: |
-          `bautajs` comes with a default request validation using the [openAPI schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). By default, it is set to true.
-          This feature is always enabled while you have a valid openAPI schema inputs. To disable it for one endpoint just add validateRequest to false inside the path definition.
+          `bautajs` comes with a default request validation using the [openAPI schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). ***BY DEFAULT IT'S SET TO TRUE***.
+          This feature is always enabled while you have a valid openAPI schema inputs. You can disable it globally setting up `validateRequest: false` on your API swagger definition or disable it locally for every operation
+          using `services.myService.v1.operation1.validateRequest(false);`
+
+          ***It's recomended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors), you are free to convert them to a 400 or 422 errors***
 
           ### Example
            
-            This is a path schema example:
+            This is a open api schema:
             
             ```json
             {
-              "/test":{
-                "get":{
-                  "validateRequest": false,
-                  "parameters": [
-                  {
-                    "name": "limit",
-                    "in": "query",
-                    "description": "How many items to return at one time (max 100)",
-                    "required": false,
-                    "schema": {
-                      "type": "integer",
-                      "format": "int32"
-                    }
+              {
+                "openapi": "3.0.0",
+                "info": {
+                  "version": "v1",
+                  "title": "Swagger Petstore",
+                  "license": {
+                    "name": "MIT"
                   }
-                 ]
+                },
+                "servers": [
+                  {
+                    "url": "http://petstore.swagger.io/v1"
+                  }
+                ],
+                "validateRequest": true,
+                "paths": {
+                  ...
                 }
-              }
             }
             ```
 
-            Alternative you can also validate inside every resolver by accesing to the context `ctx.validate()`.
+            Alternative you can also validate inside every resolver by accesing to the context `ctx.validateRequest()`.
             
             ```js
               services.cats.v1.find.push(function pFn(_, ctx) {
-                const error = ctx.validate();
-                if(error) {
-                  throw error;
+                ctx.validateRequest();
+                // if the request is not valid this will throw an [AJV](https://www.npmjs.com/package/ajv#validation-errors) error
+              });
+            ```
+      - name: Response Validation
+        description: |
+          `bautajs` comes with a default response validation using the [openAPI schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). ***BY DEFAULT IT'S SET TO TRUE***.
+          This feature is always enabled while you have a valid openAPI schema response schema. You can disable it globally setting up `validateResponse: false` on your API swagger definition or disable it locally for every operation
+          using `services.myService.v1.operation1.validateResponse(false);`
+
+          ***It's recomended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors), you are free to convert them to a 400 or 422 errors***
+
+          ### Example
+           
+            This is a open api schema:
+            
+            ```json
+            {
+              {
+                "openapi": "3.0.0",
+                "info": {
+                  "version": "v1",
+                  "title": "Swagger Petstore",
+                  "license": {
+                    "name": "MIT"
+                  }
+                },
+                "servers": [
+                  {
+                    "url": "http://petstore.swagger.io/v1"
+                  }
+                ],
+                "validateResponse": true,
+                "paths": {
+                  ...
                 }
-              })
+            }
+            ```
+
+            Alternative you can also validate inside every resolver by accesing to the context `ctx.validateResponse()`.
+            
+            ```js
+              services.cats.v1.find.push(function pFn(response, ctx) {
+                ctx.validateResponse(response);
+                // if the response is not valid this will throw an [AJV](https://www.npmjs.com/package/ajv#validation-errors) error 
+              });
+            ```
+
+            Alternative you can also set what is the valid response status that you want to validate to.
+            
+            ```js
+              services.cats.v1.find.push(function pFn(response, ctx) {
+                ctx.validateResponse(response, 201);
+              });
             ```
       - name: datasources
         description: |

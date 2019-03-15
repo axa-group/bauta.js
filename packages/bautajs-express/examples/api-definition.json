@@ -16,9 +16,9 @@
     "paths": {
       "/test": {
         "get": {
-          "summary": "List all pets",
+          "summary": "List all articles",
           "operationId": "operation1",
-          "tags": ["pets"],
+          "tags": ["articles"],
           "parameters": [
             {
               "name": "limit",
@@ -33,7 +33,7 @@
           ],
           "responses": {
             "200": {
-              "description": "A paged array of pets",
+              "description": "A paged array of articles",
               "headers": {
                 "x-next": {
                   "description": "A link to the next page of responses",
@@ -45,7 +45,7 @@
               "content": {
                 "application/json": {
                   "schema": {
-                    "$ref": "#/components/schemas/Pets"
+                    "$ref": "#/components/schemas/Articles"
                   }
                 }
               }
@@ -66,29 +66,33 @@
     },
     "components": {
       "schemas": {
-        "Pet": {
-          "required": ["id", "name"],
+        "Article": {
+          "required": ["userId", "title"],
           "properties": {
+            "userId": {
+              "type": "integer",
+              "format": "int64"
+            },
             "id": {
               "type": "integer",
               "format": "int64"
             },
-            "name": {
+            "title": {
               "type": "string"
             },
-            "tag": {
+            "body": {
               "type": "string"
             }
           }
         },
-        "Pets": {
+        "Articles": {
           "type": "array",
           "items": {
-            "$ref": "#/components/schemas/Pet"
+            "$ref": "#/components/schemas/Article"
           }
         },
         "Error": {
-          "required": ["code", "message"],
+          "required": ["message"],
           "properties": {
             "code": {
               "type": "integer",

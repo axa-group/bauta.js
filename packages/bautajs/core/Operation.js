@@ -85,48 +85,15 @@ module.exports = class Operation {
         value: null,
         writable: true
       },
-      /**
-       * Validate the given request.
-       * @param {any} [req] - the request object. If not set the given context request will be validated.
-       * @throw {Error} a 400 error if the given request is not valid
-       * @memberof Operation#
-       * @example
-       * const { services } = require('bautajs');
-       *
-       * services.cats.v1.find.previous(function(previousValue){
-       *  const error = this.validateRequest();
-       *  if(error) {
-       *    throw error;
-       *  }
-       *
-       *  return 'value';
-       * });
-       */
-      validateRequest: {
-        value: null,
-        writable: true
-      },
-      /**
-       * Validate the given response
-       * @param {any} response - the response object.
-       * @throw {Error} a 500 error if the given response is not valid
-       * @memberof Operation#
-       * @example
-       * const { services } = require('bautajs');
-       *
-       * services.cats.v1.find.next(function(response){
-       *  const error = this.validateResponse(response);
-       *  if(error) {
-       *    this.logger.error(`Error on validate the response ${error}`);
-       *    throw error;
-       *  }
-       *
-       *  return 'value';
-       * });
-       */
-      validateResponse: {
-        value: null,
-        writable: true
+      validation: {
+        value: {
+          validateReqBuilder: null,
+          validateResBuilder: null,
+          validateReqEnabled: false,
+          validateResEnabled: false
+        },
+        writable: true,
+        enumerable: false
       },
       /**
        * @memberof Operation#
@@ -268,6 +235,40 @@ module.exports = class Operation {
   }
 
   /**
+   * Enable or disable the request validation
+   * @param {boolean} toggle - false to disable the request validation that is enabled by default
+   * @returns {Operation} An instance of the operation
+   * @memberof Operation#
+   * @example
+   * const { services } = require('bautajs');
+   * conmst mySchema = require('./some-schema.json');
+   *
+   * services.cats.v1.find.validateRequest(false);
+   */
+  validateRequest(toggle) {
+    this.validation.validateReqEnabled = toggle;
+
+    return this;
+  }
+
+  /**
+   * Enable or disable the response validation
+   * @param {boolean} toggle - false to disable the response validation that is enabled by default
+   * @returns {Operation} An instance of the operation
+   * @memberof Operation#
+   * @example
+   * const { services } = require('bautajs');
+   * conmst mySchema = require('./some-schema.json');
+   *
+   * services.cats.v1.find.validateResponse(false);
+   */
+  validateResponse(toggle) {
+    this.validation.validateResEnabled = toggle;
+
+    return this;
+  }
+
+  /**
    * Override the operation schema
    * @param {Object} schema - the [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification) path schema @see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example
    * @returns {Operation} An instance of the operation
@@ -298,30 +299,46 @@ module.exports = class Operation {
     });
     const validateResponse = new OpenAPIResponseValidator({
       ...endpointDefinition,
+      components: { schemas },
       definitions: schemas
     });
 
     this.schema = schema;
     // BUG: https://github.com/kogosoftwarellc/open-api/issues/381
     const defaultSetter = new OpenAPIDefaultSetter({ parameters: [], ...endpointDefinition });
-    this.validateRequest = req => {
+    this.validation.validateReqBuilder = req => {
       defaultSetter.handle(req);
       if (!req.headers) {
         // if is not a Nodejs request set the content-type to force validation
         req.headers = { 'content-type': 'application/json' };
       }
       const verror = validateRequest.validate(req);
-      if (verror && verror.errors.length > 0) {
-        return Object.assign(
-          new Error(`${verror.errors[0].path || ''} ${verror.errors[0].message}`.trim()),
-          verror
-        );
+      if (verror && verror.errors && verror.errors.length > 0) {
+        throw verror;
       }
 
       return null;
     };
-    this.validateResponse = (res, statusCode = 200) =>
-      validateResponse.validateResponse(statusCode, res);
+    this.validation.validateResBuilder = (res, statusCode = 200) => {
+      const verror = validateResponse.validateResponse(statusCode, res);
+
+      if (verror) {
+        throw verror;
+      }
+    };
+    if (
+      this.apiDefinition.validateRequest === undefined ||
+      this.apiDefinition.validateRequest === true
+    ) {
+      this.validateRequest(true);
+    }
+
+    if (
+      this.apiDefinition.validateResponse === undefined ||
+      this.apiDefinition.validateResponse === true
+    ) {
+      this.validateResponse(true);
+    }
 
     // Propagate the definitions to the next versions
     if (this.nextVersionOperation) {
@@ -353,8 +370,8 @@ module.exports = class Operation {
   exec(req, res, initialData = {}) {
     const values = Object.assign({}, initialData);
     const context = {
-      validateRequest: request => this.validateRequest(request || req),
-      validateResponse: response => this.validateResponse(response),
+      validateRequest: request => this.validation.validateReqBuilder(request || req),
+      validateResponse: this.validation.validateResBuilder,
       dataSource: this.dataSource,
       metadata: {
         version: this.dataSource.template.version,
@@ -370,8 +387,8 @@ module.exports = class Operation {
     }
 
     // Validate the request
-    if (this.schema && this.apiDefinition.validateRequest === true) {
-      const error = this.validateRequest(req);
+    if (this.validation.validateReqEnabled === true) {
+      const error = this.validation.validateReqBuilder(req);
       if (error) {
         throw error;
       }
@@ -412,12 +429,12 @@ module.exports = class Operation {
         return this.run(index + 1, result, context);
       }
 
-      if (this.schema && this.apiDefinition.validateResponse) {
+      if (this.validation.validateResEnabled === true) {
         const error = this.validateResponse(
           result,
           context.res ? context.res.statusCode : undefined
         );
-        if (error && error.errors.length > 0) {
+        if (error && error.errors && error.errors.length > 0) {
           throw error.errors;
         }
       }

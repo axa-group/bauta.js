@@ -145,6 +145,142 @@ describe('Core tests', () => {
     });
   });
 
+  describe('Validate request globally', () => {
+    beforeEach(() => {
+      nock('https://google.com')
+        .persist()
+        .get('/')
+        .reply(200, [
+          {
+            id: 1,
+            name: 'pety'
+          }
+        ]);
+    });
+    afterEach(() => {
+      nock.cleanAll();
+    });
+    test('should validate the request by default', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const req = {
+        query: {
+          limit: 'string'
+        }
+      };
+      const res = {};
+
+      const bautaJS = new BautaJS(testApiDefinitions, {
+        dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
+        dataSourceCtx: config
+      });
+
+      try {
+        await bautaJS.services.testService.v1.operation1.exec(req, res);
+      } catch (e) {
+        expect(e).toEqual({
+          errors: [
+            {
+              errorCode: 'type.openapi.validation',
+              location: 'query',
+              message: 'should be integer',
+              path: 'limit'
+            }
+          ],
+          status: 400
+        });
+      }
+    });
+
+    test('should not validate the request if set validateRequest to false', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const req = {
+        query: {
+          limit: 'string'
+        }
+      };
+      const res = {};
+
+      const bautaJS = new BautaJS([{ ...testApiDefinitions[0], validateRequest: false }], {
+        dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
+        dataSourceCtx: config
+      });
+
+      await bautaJS.services.testService.v1.operation1.exec(req, res);
+      expect(await bautaJS.services.testService.v1.operation1.exec(req, res)).toEqual([
+        {
+          id: 1,
+          name: 'pety'
+        }
+      ]);
+    });
+  });
+
+  describe('Validate response globally', () => {
+    beforeEach(() => {
+      nock('https://google.com')
+        .persist()
+        .get('/')
+        .reply(200, {
+          id: 1,
+          name: 'pety'
+        });
+    });
+    afterEach(() => {
+      nock.cleanAll();
+    });
+    test('should validate the response by default', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const req = {
+        query: {
+          limit: 123
+        }
+      };
+      const res = {};
+
+      const bautaJS = new BautaJS(testApiDefinitions, {
+        dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
+        dataSourceCtx: config
+      });
+
+      try {
+        await bautaJS.services.testService.v1.operation1.exec(req, res);
+      } catch (e) {
+        expect(e).toEqual([
+          { errorCode: 'type.openapi.responseValidation', message: 'response should be array' }
+        ]);
+      }
+    });
+
+    test('should not validate the response if set validateResponse to false', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const req = {
+        query: {
+          limit: 123
+        }
+      };
+      const res = {};
+
+      const bautaJS = new BautaJS([{ ...testApiDefinitions[0], validateResponse: false }], {
+        dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource.json'),
+        dataSourceCtx: config
+      });
+
+      await bautaJS.services.testService.v1.operation1.exec(req, res);
+      expect(await bautaJS.services.testService.v1.operation1.exec(req, res)).toEqual({
+        id: 1,
+        name: 'pety'
+      });
+    });
+  });
+
   describe('Load resolvers from path', () => {
     beforeEach(() => {
       nock('https://google.com')
@@ -171,7 +307,12 @@ describe('Core tests', () => {
         dataSourceCtx: config
       });
 
-      expect(await bautaJS.services.testService.v1.operation1.exec({})).toEqual('benderTest');
+      expect(await bautaJS.services.testService.v1.operation1.exec({})).toEqual([
+        {
+          id: 134,
+          name: 'pet2'
+        }
+      ]);
     });
 
     test('should load the resolvers from the given array of paths', async () => {
@@ -188,7 +329,12 @@ describe('Core tests', () => {
         dataSourceCtx: config
       });
 
-      expect(await bautaJS.services.testService.v1.operation1.exec({})).toEqual('benderTest1');
+      expect(await bautaJS.services.testService.v1.operation1.exec({})).toEqual([
+        {
+          id: 132,
+          name: 'pet1'
+        }
+      ]);
       expect(bautaJS.services.testService.v1.operation1.steps.length).toEqual(2);
     });
   });

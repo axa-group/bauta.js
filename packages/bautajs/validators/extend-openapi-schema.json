@@ -1,21 +1,30 @@
 {
   "properties": {
-    "definitions": {
-      "type": "object"
+    "validateRequest": {
+      "type": "boolean",
+      "default": true,
+      "description": "Set to true to validate the given request with the path schema parameters and requestBody"
+    },
+    "validateResponse": {
+      "type": "boolean",
+      "default": true,
+      "description": "Set to true to validate the given response with the path schema response body"
     }
   },
   "definitions": {
-    "operation": {
-      "properties": {
-        "validateRequest": {
-          "type": "boolean",
-          "default": true,
-          "description": "Set to true to validate the given request with the path schema parameters and requestBody"
-        },
-        "validateResponse": {
-          "type": "boolean",
-          "default": true,
-          "description": "Set to true to validate the given response with the path schema response body"
+    "properties": {
+      "operation": {
+        "properties": {
+          "validateRequest": {
+            "type": "boolean",
+            "default": true,
+            "description": "Set to true to validate the given request with the path schema parameters and requestBody"
+          },
+          "validateResponse": {
+            "type": "boolean",
+            "default": true,
+            "description": "Set to true to validate the given response with the path schema response body"
+          }
         }
       }
     }

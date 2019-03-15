@@ -38,7 +38,12 @@ describe('BautaJS express', () => {
       .expect(200)
       .end((err, res) => {
         if (err) throw err;
-        expect(res.body).toEqual({ ok: 'benderTest' });
+        expect(res.body).toEqual([
+          {
+            id: 134,
+            name: 'pet2'
+          }
+        ]);
         done();
       });
   });
@@ -102,7 +107,12 @@ describe('BautaJS express', () => {
       .expect(200)
       .end((err, res) => {
         if (err) throw err;
-        expect(res.body).toEqual({ ok: 'benderTest' });
+        expect(res.body).toEqual([
+          {
+            id: 134,
+            name: 'pet2'
+          }
+        ]);
         done();
       });
   });
@@ -151,7 +161,12 @@ describe('BautaJS express', () => {
       .expect(200)
       .end((err, res) => {
         if (err) throw err;
-        expect(res.body).toEqual({ ok: 'benderTest' });
+        expect(res.body).toEqual([
+          {
+            id: 134,
+            name: 'pet2'
+          }
+        ]);
         done();
       });
   });

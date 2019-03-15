@@ -42,6 +42,14 @@ function registerServices(apiDefinitions, dataSources) {
   return services;
 }
 
+function setDefinitionDefaults(apiDefinition) {
+  return {
+    ...apiDefinition,
+    validateRequest: apiDefinition.validateRequest !== false,
+    validateResponse: apiDefinition.validateResponse !== false
+  };
+}
+
 /**
  * Build the BautaJS services with the given dataSources and resolvers.
  * This services could be accessible from the instance .services after the initialization.
@@ -74,13 +82,15 @@ module.exports = class Batuajs {
     let error;
     if (!Array.isArray(apiDefinitions)) {
       // eslint-disable-next-line no-param-reassign
-      apiDefinitions = [apiDefinitions];
+      apiDefinitions = [setDefinitionDefaults(apiDefinitions)];
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      apiDefinitions = apiDefinitions.map(setDefinitionDefaults);
     }
 
     apiDefinitions.some(apiDefinition => {
       const apiDefinitionValidator = new OpenAPISchemaValidator({
-        version2Extensions: extendOpenAPISchema,
-        version3Extensions: extendOpenAPISchema,
+        extensions: extendOpenAPISchema,
         version: apiDefinition.openapi ? 3 : 2
       });
       error = apiDefinitionValidator.validate(apiDefinition);

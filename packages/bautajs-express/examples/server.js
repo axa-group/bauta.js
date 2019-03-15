@@ -25,7 +25,9 @@ bautaJS.app.use((req, res, next) => next(notFound()));
 bautaJS.app.use((err, req, res, next) => {
   // eslint-disable-next-line no-console
   console.error(err);
-  res.status(err.output ? err.output.statusCode : 500).json(err.output ? err.output.payload : err);
+  res
+    .status(err.output ? err.output.statusCode : err.status)
+    .json(err.errors || { message: err.message });
 });
 
 bautaJS.listen();
