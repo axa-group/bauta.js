@@ -60,7 +60,7 @@ toc:
             "info": {
               "description": "API for cool cats",
               "version": "v1",
-              "title": "MyAXA API"
+              "title": "My API"
             },
             "servers": [{
               "url":"/v1/api/"

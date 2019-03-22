@@ -20,7 +20,7 @@
     "express",
     "middleware"
   ],
-  "author": "mit@axa-groupsolutions.com",
+  "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "bautajs": "1.1.0",

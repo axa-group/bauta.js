@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2018 AXA Shared Services Spain S.A.
+ * Copyright (c) AXA Shared Services Spain S.A.
  *
- * Licensed under the MyAXA inner-source License (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
+ * may not use this file except in compliance with the License.
  * A copy of the License can be found in the LICENSE.TXT file distributed
  * together with this file.
  *

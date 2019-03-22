@@ -20,7 +20,7 @@
     "http-proxy",
     "https-proxy"
   ],
-  "author": "myaxa.mit@axa-groupsolutions.com",
+  "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "devDependencies": {
     "got": "9.4.0"
