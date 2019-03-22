@@ -18,6 +18,7 @@ const OpenAPIRequestValidator = require('openapi-request-validator').default;
 const OpenAPIDefaultSetter = require('openapi-default-setter').default;
 const OpenAPIResponseValidator = require('openapi-response-validator').default;
 
+const ValidationError = require('./ValidationError');
 const validate = require('../validators/validate');
 const apiPathSchema = require('../validators/api-path-schema.json');
 const logger = require('../logger');
@@ -314,7 +315,7 @@ module.exports = class Operation {
       }
       const verror = validateRequest.validate(req);
       if (verror && verror.errors && verror.errors.length > 0) {
-        throw verror;
+        throw new ValidationError(verror.message, verror.errors, verror.statusCode);
       }
 
       return null;
@@ -322,9 +323,11 @@ module.exports = class Operation {
     this.validation.validateResBuilder = (res, statusCode = 200) => {
       const verror = validateResponse.validateResponse(statusCode, res);
 
-      if (verror) {
-        throw verror;
+      if (verror && verror.errors.length > 0) {
+        throw new ValidationError(verror.message, verror.errors, verror.statusCode);
       }
+
+      return null;
     };
     if (
       this.apiDefinition.validateRequest === undefined ||
@@ -388,10 +391,7 @@ module.exports = class Operation {
 
     // Validate the request
     if (this.validation.validateReqEnabled === true) {
-      const error = this.validation.validateReqBuilder(req);
-      if (error) {
-        throw error;
-      }
+      context.validateRequest(req);
     }
 
     return this.run(0, values, context).catch(e => this.error.handler(e, context));
@@ -430,13 +430,7 @@ module.exports = class Operation {
       }
 
       if (this.validation.validateResEnabled === true) {
-        const error = this.validateResponse(
-          result,
-          context.res ? context.res.statusCode : undefined
-        );
-        if (error && error.errors && error.errors.length > 0) {
-          throw error.errors;
-        }
+        context.validateResponse(result, context.res ? context.res.statusCode : undefined);
       }
 
       // Apply loopback filter to the services that have the applyLoopackFilters toggle to true

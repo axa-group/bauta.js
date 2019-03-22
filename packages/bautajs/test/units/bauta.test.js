@@ -179,17 +179,14 @@ describe('Core tests', () => {
       try {
         await bautaJS.services.testService.v1.operation1.exec(req, res);
       } catch (e) {
-        expect(e).toEqual({
-          errors: [
-            {
-              errorCode: 'type.openapi.validation',
-              location: 'query',
-              message: 'should be integer',
-              path: 'limit'
-            }
-          ],
-          status: 400
-        });
+        expect(e.errors).toEqual([
+          {
+            errorCode: 'type.openapi.validation',
+            location: 'query',
+            message: 'should be integer',
+            path: 'limit'
+          }
+        ]);
       }
     });
 
@@ -251,7 +248,7 @@ describe('Core tests', () => {
       try {
         await bautaJS.services.testService.v1.operation1.exec(req, res);
       } catch (e) {
-        expect(e).toEqual([
+        expect(e.errors).toEqual([
           { errorCode: 'type.openapi.responseValidation', message: 'response should be array' }
         ]);
       }

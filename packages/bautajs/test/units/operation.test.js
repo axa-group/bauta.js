@@ -18,6 +18,7 @@ const Step = require('../../core/Step');
 
 const { services } = require('../fixtures/test-datasource.json');
 const [testApiDefinition] = require('../fixtures/test-api-definitions.json');
+const [testApiDefinitionNoArray] = require('../fixtures/test-api-definitions-no-array.json');
 const testDataource = require('../fixtures/test-datasource.json');
 
 describe('Operation class tests', () => {
@@ -115,21 +116,18 @@ describe('Operation class tests', () => {
         }
       };
       const res = {};
-      const expected = {
-        errors: [
-          {
-            errorCode: 'type.openapi.validation',
-            location: 'query',
-            message: 'should be integer',
-            path: 'limit'
-          }
-        ],
-        status: 400
-      };
+      const expected = [
+        {
+          errorCode: 'type.openapi.validation',
+          location: 'query',
+          message: 'should be integer',
+          path: 'limit'
+        }
+      ];
       try {
         await operationTest.exec(req, res);
       } catch (e) {
-        expect(e).toEqual(expected);
+        expect(e.errors).toEqual(expected);
       }
     });
 
@@ -145,20 +143,17 @@ describe('Operation class tests', () => {
         prop: 1
       };
       const res = {};
-      const expected = {
-        errors: [
-          {
-            errorCode: 'type.openapi.responseValidation',
-            message: 'response should be array'
-          }
-        ],
-        message: 'The response was not valid.'
-      };
+      const expected = [
+        {
+          errorCode: 'type.openapi.responseValidation',
+          message: 'response should be array'
+        }
+      ];
 
       try {
         await operationTest.exec(req, res);
       } catch (e) {
-        expect(e).toEqual(expected);
+        expect(e.errors).toEqual(expected);
       }
     });
 
@@ -406,6 +401,8 @@ describe('Operation class tests', () => {
               operationId: 'operation1',
               serviceId: 'testService'
             });
+
+            return [{ id: 1, name: '2' }];
           }
         ],
         testDataource.services.testService.operations[0],
@@ -418,12 +415,12 @@ describe('Operation class tests', () => {
     test('should run with a callback step', async () => {
       const operationTest = new Operation(
         'operation1',
-        [(val, ctx, cb) => cb(null, 'bender')],
+        [(val, ctx, cb) => cb(null, [{ id: 1, name: '2' }])],
         testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
-      const expected = 'bender';
+      const expected = [{ id: 1, name: '2' }];
 
       const res = await operationTest.exec({});
 
@@ -450,12 +447,12 @@ describe('Operation class tests', () => {
     test('should run with a promise step', async () => {
       const operationTest = new Operation(
         'operation1',
-        [() => Promise.resolve('bender')],
+        [() => Promise.resolve([{ id: 1, name: '2' }])],
         testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
-      const expected = 'bender';
+      const expected = [{ id: 1, name: '2' }];
 
       const res = await operationTest.exec({});
 
@@ -465,12 +462,12 @@ describe('Operation class tests', () => {
     test('should run with a simple step', async () => {
       const operationTest = new Operation(
         'operation1',
-        ['bender'],
+        [[{ id: 1, name: '2' }]],
         testDataource.services.testService.operations[0],
         testApiDefinition,
         'testService'
       );
-      const expected = 'bender';
+      const expected = [{ id: 1, name: '2' }];
 
       const res = await operationTest.exec({});
 
@@ -480,7 +477,7 @@ describe('Operation class tests', () => {
     test('dataSource should be accesible from all steps', async () => {
       const operationTest = new Operation(
         'operation1',
-        ['bender'],
+        [[{ id: 1, name: '2' }]],
         {
           id: 'operation1',
           url: '1234'
@@ -488,8 +485,9 @@ describe('Operation class tests', () => {
         testApiDefinition,
         'testService'
       );
-      operationTest.push((_, ctx) => {
+      operationTest.push((previous, ctx) => {
         expect(ctx.dataSource.template.url).toEqual('1234');
+        return previous;
       });
       await operationTest.exec({});
     });
@@ -530,16 +528,7 @@ describe('Operation class tests', () => {
     test('should apply the loopback filters to a an step array', async () => {
       const operationTest = new Operation(
         'operation1',
-        [
-          () => [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ]
-        ],
+        [() => [{ id: 1, name: '2' }, { name: 'ad', id: 2 }]],
         {
           id: 'operation1',
           applyLoopbackFilters: true
@@ -547,16 +536,12 @@ describe('Operation class tests', () => {
         testApiDefinition,
         'testService'
       );
-      const expected = [
-        {
-          code: 'foo'
-        }
-      ];
+      const expected = [{ name: 'ad', id: 2 }];
       const context = {
         query: {
           filter: {
             where: {
-              code: 'foo'
+              id: 2
             }
           }
         }
@@ -568,16 +553,7 @@ describe('Operation class tests', () => {
     test('should apply the loopback filters to a an step array and must be the final "step"', async () => {
       const operationTest = new Operation(
         'operation1',
-        [
-          () => [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ]
-        ],
+        [[{ id: 1, name: '2' }, { name: 'ad', id: 2 }]],
         {
           id: 'operation1',
           applyLoopbackFilters: true
@@ -585,14 +561,14 @@ describe('Operation class tests', () => {
         testApiDefinition,
         'testService'
       );
-      operationTest.push(result => result.filter(r => r.code !== 'foo'));
+      operationTest.push(result => result.filter(r => r.id !== 2));
 
       const expected = [];
       const context = {
         query: {
           filter: {
             where: {
-              code: 'foo'
+              id: 2
             }
           }
         }
@@ -604,27 +580,21 @@ describe('Operation class tests', () => {
     test('should not apply the filter if the result is not an array', async () => {
       const operationTest = new Operation(
         'operation1',
-        [
-          () => ({
-            code: 'boo'
-          })
-        ],
+        [() => ({ id: 1, name: '2' })],
         {
           id: 'operation1',
           applyLoopbackFilters: true
         },
-        testApiDefinition,
+        testApiDefinitionNoArray,
         'testService'
       );
 
-      const expected = {
-        code: 'boo'
-      };
+      const expected = { id: 1, name: '2' };
       const context = {
         query: {
           filter: {
             where: {
-              code: 'foo'
+              id: 2
             }
           }
         }
@@ -636,16 +606,7 @@ describe('Operation class tests', () => {
     test('should not apply the filter if the applyLoopbackFilters flag is equals to false', async () => {
       const operationTest = new Operation(
         'operation1',
-        [
-          () => [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ]
-        ],
+        [() => [{ id: 1, name: '2' }, { id: 3, name: '2' }]],
         {
           id: 'operation1',
           applyLoopbackFilters: false
@@ -654,19 +615,12 @@ describe('Operation class tests', () => {
         'testService'
       );
 
-      const expected = [
-        {
-          code: 'boo'
-        },
-        {
-          code: 'foo'
-        }
-      ];
+      const expected = [{ id: 1, name: '2' }, { id: 3, name: '2' }];
       const context = {
         query: {
           filter: {
             where: {
-              code: 'foo'
+              id: 1
             }
           }
         }
@@ -678,16 +632,7 @@ describe('Operation class tests', () => {
     test('should not apply the filter if the applyLoopbackFilters flag is not present on the datasource', async () => {
       const operationTest = new Operation(
         'operation1',
-        [
-          () => [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ]
-        ],
+        [() => [{ id: 1, name: '2' }, { id: 3, name: '2' }]],
         {
           id: 'operation1'
         },
@@ -695,19 +640,12 @@ describe('Operation class tests', () => {
         'testService'
       );
 
-      const expected = [
-        {
-          code: 'boo'
-        },
-        {
-          code: 'foo'
-        }
-      ];
+      const expected = [{ id: 1, name: '2' }, { id: 3, name: '2' }];
       const context = {
         query: {
           filter: {
             where: {
-              code: 'foo'
+              id: 1
             }
           }
         }
@@ -752,17 +690,14 @@ describe('Operation class tests', () => {
       try {
         await operationTest.exec(context);
       } catch (e) {
-        expect(e).toEqual({
-          errors: [
-            {
-              errorCode: 'type.openapi.validation',
-              location: 'body',
-              message: 'should be string',
-              path: 'username'
-            }
-          ],
-          status: 400
-        });
+        expect(e.errors).toEqual([
+          {
+            errorCode: 'type.openapi.validation',
+            location: 'body',
+            message: 'should be string',
+            path: 'username'
+          }
+        ]);
       }
     });
 
@@ -786,7 +721,6 @@ describe('Operation class tests', () => {
         'testService'
       );
 
-      const expected = new Error('username should be string');
       const query = { username: 'user', password: 'pass' };
       const body = { grant_type: 'password', username: 123, password: 'pass' };
       const context = {
@@ -797,14 +731,28 @@ describe('Operation class tests', () => {
       try {
         await operationTest.exec(context);
       } catch (e) {
-        expect(e).toEqual(
-          Object.assign(expected, {
-            errorCode: 'type.openapi.validation',
-            location: 'body',
-            path: 'username',
-            statusCode: 400
-          })
-        );
+        expect(e.errors).toEqual([
+          {
+            errorCode: 'required.openapi.responseValidation',
+            message: "response[0] should have required property 'id'",
+            path: 'response[0]'
+          },
+          {
+            errorCode: 'required.openapi.responseValidation',
+            message: "response[0] should have required property 'name'",
+            path: 'response[0]'
+          },
+          {
+            errorCode: 'required.openapi.responseValidation',
+            message: "response[1] should have required property 'id'",
+            path: 'response[1]'
+          },
+          {
+            errorCode: 'required.openapi.responseValidation',
+            message: "response[1] should have required property 'name'",
+            path: 'response[1]'
+          }
+        ]);
       }
     });
 
@@ -812,16 +760,7 @@ describe('Operation class tests', () => {
       const testApiDefinitionQueryBody = require('../fixtures/test-schema-query-body.json');
       const operationTest = new Operation(
         'operation1',
-        [
-          () => [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ]
-        ],
+        [() => [{ id: 1, name: '2' }, { id: 3, name: '2' }]],
         {
           id: 'operation1'
         },
@@ -833,14 +772,7 @@ describe('Operation class tests', () => {
       );
       operationTest.setSchema(testApiDefinitionQueryBody);
 
-      const expected = [
-        {
-          code: 'boo'
-        },
-        {
-          code: 'foo'
-        }
-      ];
+      const expected = [{ id: 1, name: '2' }, { id: 3, name: '2' }];
       const query = { grant_type: 'password', username: 'user', password: 'pass' };
       const body = { grant_type: 'password', username: 123, password: 'pass' };
       const context = {
@@ -855,16 +787,7 @@ describe('Operation class tests', () => {
       const testApiDefinitionQueryBody = require('../fixtures/test-schema-query-body.json');
       const operationTest = new Operation(
         'operation1',
-        [
-          () => [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ]
-        ],
+        [() => [{ id: 1, name: '2' }, { id: 3, name: '2' }]],
         {
           id: 'operation1'
         },
@@ -876,14 +799,7 @@ describe('Operation class tests', () => {
       );
       operationTest.setSchema(testApiDefinitionQueryBody);
 
-      const expected = [
-        {
-          code: 'boo'
-        },
-        {
-          code: 'foo'
-        }
-      ];
+      const expected = [{ id: 1, name: '2' }, { id: 3, name: '2' }];
       const query = { grant_type: 'password', username: 'user', password: 'pass' };
       const body = { grant_type: 'password', username: 'user', password: 'pass' };
       const context = {
@@ -918,51 +834,48 @@ describe('Operation class tests', () => {
       );
       operationTest.setSchema(testApiDefinitionBody);
 
-      const expected = {
-        errors: [
-          {
-            location: 'body',
-            message: 'request.body was not present in the request.  Is a body-parser being used?',
-            schema: {
-              properties: {
-                code: {
-                  description:
-                    'The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory',
-                  type: 'string'
-                },
-                grant_type: {
-                  enum: ['password', 'refresh_token', 'authorization_code'],
-                  type: 'string'
-                },
-                password: {
-                  description:
-                    "The resource owner password, e.g. the customer's digital account password",
-                  type: 'string'
-                },
-                refresh_token: {
-                  description:
-                    'The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)',
-                  type: 'string'
-                },
-                username: {
-                  description:
-                    "The resource owner user name, e.g. the customer's digital account login",
-                  type: 'string'
-                }
+      const expected = [
+        {
+          location: 'body',
+          message: 'request.body was not present in the request.  Is a body-parser being used?',
+          schema: {
+            properties: {
+              code: {
+                description:
+                  'The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory',
+                type: 'string'
               },
-              required: ['grant_type'],
-              type: 'object'
-            }
+              grant_type: {
+                enum: ['password', 'refresh_token', 'authorization_code'],
+                type: 'string'
+              },
+              password: {
+                description:
+                  "The resource owner password, e.g. the customer's digital account password",
+                type: 'string'
+              },
+              refresh_token: {
+                description:
+                  'The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)',
+                type: 'string'
+              },
+              username: {
+                description:
+                  "The resource owner user name, e.g. the customer's digital account login",
+                type: 'string'
+              }
+            },
+            required: ['grant_type'],
+            type: 'object'
           }
-        ],
-        status: 400
-      };
+        }
+      ];
       const body = null;
 
       try {
         operationTest.exec({ body, headers: { 'content-type': 'application/json' } }, {});
       } catch (e) {
-        expect(e).toEqual(expected);
+        expect(e.errors).toEqual(expected);
       }
     });
 
@@ -990,51 +903,48 @@ describe('Operation class tests', () => {
       );
       operationTest.setSchema(testApiDefinitionBody);
 
-      const expected = {
-        errors: [
-          {
-            location: 'body',
-            message: 'request.body was not present in the request.  Is a body-parser being used?',
-            schema: {
-              properties: {
-                code: {
-                  description:
-                    'The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory',
-                  type: 'string'
-                },
-                grant_type: {
-                  enum: ['password', 'refresh_token', 'authorization_code'],
-                  type: 'string'
-                },
-                password: {
-                  description:
-                    "The resource owner password, e.g. the customer's digital account password",
-                  type: 'string'
-                },
-                refresh_token: {
-                  description:
-                    'The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)',
-                  type: 'string'
-                },
-                username: {
-                  description:
-                    "The resource owner user name, e.g. the customer's digital account login",
-                  type: 'string'
-                }
+      const expected = [
+        {
+          location: 'body',
+          message: 'request.body was not present in the request.  Is a body-parser being used?',
+          schema: {
+            properties: {
+              code: {
+                description:
+                  'The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory',
+                type: 'string'
               },
-              required: ['grant_type'],
-              type: 'object'
-            }
+              grant_type: {
+                enum: ['password', 'refresh_token', 'authorization_code'],
+                type: 'string'
+              },
+              password: {
+                description:
+                  "The resource owner password, e.g. the customer's digital account password",
+                type: 'string'
+              },
+              refresh_token: {
+                description:
+                  'The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)',
+                type: 'string'
+              },
+              username: {
+                description:
+                  "The resource owner user name, e.g. the customer's digital account login",
+                type: 'string'
+              }
+            },
+            required: ['grant_type'],
+            type: 'object'
           }
-        ],
-        status: 400
-      };
+        }
+      ];
       const body = null;
 
       try {
         operationTest.exec({ body, headers: { 'content-type': 'application/json' } }, {});
       } catch (e) {
-        expect(e).toEqual(expected);
+        expect(e.errors).toEqual(expected);
       }
     });
 
@@ -1061,23 +971,20 @@ describe('Operation class tests', () => {
         'testService'
       );
       operationTest.setSchema(testApiDefinitionBody);
-      const expected = {
-        errors: [
-          {
-            errorCode: 'enum.openapi.validation',
-            location: 'body',
-            message: 'should be equal to one of the allowed values',
-            path: 'grant_type'
-          }
-        ],
-        status: 400
-      };
+      const expected = [
+        {
+          errorCode: 'enum.openapi.validation',
+          location: 'body',
+          message: 'should be equal to one of the allowed values',
+          path: 'grant_type'
+        }
+      ];
       const body = { grant_type: 'not valid', username: 'user', password: 'pass' };
 
       try {
         await operationTest.exec({ body }, {});
       } catch (e) {
-        expect(e).toEqual(expected);
+        expect(e.errors).toEqual(expected);
       }
     });
 
@@ -1085,7 +992,10 @@ describe('Operation class tests', () => {
       const testApiDefinitionBody = require('../fixtures/test-schema-body.json');
       const operationTest = new Operation(
         'operation1',
-        [(_, ctx) => ctx.validateRequest(), (val, ctx, cb) => cb(null, 'bender')],
+        [
+          (_, ctx) => ctx.validateRequest(),
+          (val, ctx, cb) => cb(null, [{ id: 1, name: '2' }, { id: 3, name: '2' }])
+        ],
         {
           id: 'operation1'
         },
@@ -1093,14 +1003,10 @@ describe('Operation class tests', () => {
         'testService'
       );
       operationTest.setSchema(testApiDefinitionBody);
-      const expected = null;
+      const expected = [{ id: 1, name: '2' }, { id: 3, name: '2' }];
       const body = { grant_type: 'password', username: 'user', password: 'pass' };
 
-      try {
-        await operationTest.exec({ body }, {});
-      } catch (e) {
-        expect(e).toEqual(expected);
-      }
+      expect(await operationTest.exec({ body }, {})).toEqual(expected);
     });
   });
 
@@ -1126,92 +1032,34 @@ describe('Operation class tests', () => {
         'testService'
       );
 
-      const expected = {
-        errors: [
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[0] should have required property 'id'",
-            path: 'response[0]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[0] should have required property 'name'",
-            path: 'response[0]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[1] should have required property 'id'",
-            path: 'response[1]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[1] should have required property 'name'",
-            path: 'response[1]'
-          }
-        ],
-        message: 'The response was not valid.'
-      };
-      const body = { grant_type: 'password', username: 'user', password: 'pass' };
-
-      try {
-        await operationTest.exec({ body, headers: { 'content-type': 'application/json' } }, {});
-      } catch (e) {
-        expect(e).toEqual(expected);
-      }
-    });
-
-    test('should validate an not valid response', async () => {
-      const operationTest = new Operation(
-        'operation1',
-        [
-          () => [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ],
-          (response, ctx) => ctx.validateResponse(response)
-        ],
+      const expected = [
         {
-          id: 'operation1'
+          errorCode: 'required.openapi.responseValidation',
+          message: "response[0] should have required property 'id'",
+          path: 'response[0]'
         },
-        testApiDefinition,
-        'testService'
-      );
-
-      const expected = {
-        errors: [
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[0] should have required property 'id'",
-            path: 'response[0]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[0] should have required property 'name'",
-            path: 'response[0]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[1] should have required property 'id'",
-            path: 'response[1]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[1] should have required property 'name'",
-            path: 'response[1]'
-          }
-        ],
-        message: 'The response was not valid.'
-      };
+        {
+          errorCode: 'required.openapi.responseValidation',
+          message: "response[0] should have required property 'name'",
+          path: 'response[0]'
+        },
+        {
+          errorCode: 'required.openapi.responseValidation',
+          message: "response[1] should have required property 'id'",
+          path: 'response[1]'
+        },
+        {
+          errorCode: 'required.openapi.responseValidation',
+          message: "response[1] should have required property 'name'",
+          path: 'response[1]'
+        }
+      ];
       const body = { grant_type: 'password', username: 'user', password: 'pass' };
 
       try {
         await operationTest.exec({ body, headers: { 'content-type': 'application/json' } }, {});
       } catch (e) {
-        expect(e).toEqual(expected);
+        expect(e.errors).toEqual(expected);
       }
     });
     test('should validate the response by default', async () => {
@@ -1234,37 +1082,34 @@ describe('Operation class tests', () => {
         'testService'
       );
 
-      const expected = {
-        errors: [
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[0] should have required property 'id'",
-            path: 'response[0]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[0] should have required property 'name'",
-            path: 'response[0]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[1] should have required property 'id'",
-            path: 'response[1]'
-          },
-          {
-            errorCode: 'required.openapi.responseValidation',
-            message: "response[1] should have required property 'name'",
-            path: 'response[1]'
-          }
-        ],
-        message: 'The response was not valid.'
-      };
+      const expected = [
+        {
+          errorCode: 'required.openapi.responseValidation',
+          message: "response[0] should have required property 'id'",
+          path: 'response[0]'
+        },
+        {
+          errorCode: 'required.openapi.responseValidation',
+          message: "response[0] should have required property 'name'",
+          path: 'response[0]'
+        },
+        {
+          errorCode: 'required.openapi.responseValidation',
+          message: "response[1] should have required property 'id'",
+          path: 'response[1]'
+        },
+        {
+          errorCode: 'required.openapi.responseValidation',
+          message: "response[1] should have required property 'name'",
+          path: 'response[1]'
+        }
+      ];
       const body = { grant_type: 'password', username: 'user', password: 'pass' };
 
       try {
         await operationTest.exec({ body, headers: { 'content-type': 'application/json' } }, {});
       } catch (e) {
-        expect(e).toEqual(expected);
+        expect(e.errors).toEqual(expected);
       }
     });
 

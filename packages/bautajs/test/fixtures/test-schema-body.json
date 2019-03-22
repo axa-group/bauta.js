@@ -45,7 +45,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/definitions/TokenResponse"
+                "$ref": "#/definitions/Pets"
               }
             }
           }

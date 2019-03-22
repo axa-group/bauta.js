@@ -58,7 +58,16 @@ describe('Service class tests', () => {
 
     test('operations should inheritance from API versions and new operation version should not be froozen', async () => {
       const fn1 = () => 'bender';
-      const fn1V2 = () => 'benderV2';
+      const fn1V2 = () => [
+        {
+          id: 13,
+          name: 'pet'
+        },
+        {
+          id: 45,
+          name: 'pet2'
+        }
+      ];
       const testService = new Service('testService', testDataource.services.testService, [
         { ...testApiDefinition, info: { ...testApiDefinition.info, version: 'v1' } },
         { ...testApiDefinition, info: { ...testApiDefinition.info, version: 'v2' } }
@@ -66,11 +75,29 @@ describe('Service class tests', () => {
       testService.v1.operation1.push(fn1);
       testService.v2.operation1.push(fn1V2);
 
-      expect(await testService.v2.operation1.exec({})).toEqual('benderV2');
+      expect(await testService.v2.operation1.exec({})).toEqual([
+        {
+          id: 13,
+          name: 'pet'
+        },
+        {
+          id: 45,
+          name: 'pet2'
+        }
+      ]);
     });
 
     test('operations should inheritance from API versions', async () => {
-      const fn1 = () => 'bender';
+      const fn1 = () => [
+        {
+          id: 13,
+          name: 'pet'
+        },
+        {
+          id: 45,
+          name: 'pet2'
+        }
+      ];
       const testService = new Service('testService', testDataource.services.testService, [
         { ...testApiDefinition, info: { ...testApiDefinition.info, version: 'v1' } },
         { ...testApiDefinition, info: { ...testApiDefinition.info, version: 'v2' } }
@@ -83,7 +110,26 @@ describe('Service class tests', () => {
     });
 
     test('operations should not inheritance from API versions if is on the noInheritance config', async () => {
-      const fn1 = () => 'bender';
+      const fn1 = () => [
+        {
+          id: 13,
+          name: 'pet'
+        },
+        {
+          id: 45,
+          name: 'pet2'
+        }
+      ];
+      const fn2 = () => [
+        {
+          id: 345,
+          name: 'pe34t'
+        },
+        {
+          id: 656,
+          name: 'pet342'
+        }
+      ];
       const testService = new Service(
         'testService',
         testDataourceNoinheritance.services.testService,
@@ -92,6 +138,7 @@ describe('Service class tests', () => {
           { ...testApiDefinition, info: { ...testApiDefinition.info, version: 'v2' } }
         ]
       );
+      testService.v2.operation1.push(fn2);
       testService.v1.operation1.push(fn1);
 
       expect(await testService.v2.operation1.exec({})).not.toEqual(
