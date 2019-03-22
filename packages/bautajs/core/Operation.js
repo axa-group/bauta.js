@@ -293,8 +293,6 @@ module.exports = class Operation {
         : this.apiDefinition.definitions;
 
     const validateRequest = new OpenAPIRequestValidator({
-      // BUG: https://github.com/kogosoftwarellc/open-api/issues/381
-      parameters: [],
       ...endpointDefinition,
       schemas
     });

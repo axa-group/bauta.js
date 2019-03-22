@@ -40,7 +40,7 @@
     "multipart-request-builder": "1.1.1",
     "native-proxy-agent": "1.1.1",
     "openapi-default-setter": "2.0.4",
-    "openapi-request-validator": "3.6.0",
+    "openapi-request-validator": "3.7.0",
     "openapi-response-validator": "3.7.0",
     "openapi-schema-validator": "3.0.3",
     "stjs": "0.0.5"
