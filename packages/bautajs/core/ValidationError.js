@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 module.exports = class ValidationError extends Error {
-  constructor(message, errors, statusCode) {
+  constructor(message, errors, statusCode = 500) {
     super(message);
     this.errors = errors;
-    this.statusCode = statusCode;
+    this.status = statusCode;
     Error.captureStackTrace(this, ValidationError);
   }
 };

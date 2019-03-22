@@ -323,7 +323,7 @@ module.exports = class Operation {
     this.validation.validateResBuilder = (res, statusCode = 200) => {
       const verror = validateResponse.validateResponse(statusCode, res);
 
-      if (verror && verror.errors.length > 0) {
+      if (verror && verror.errors && verror.errors.length > 0) {
         throw new ValidationError(verror.message, verror.errors, verror.statusCode);
       }
 
