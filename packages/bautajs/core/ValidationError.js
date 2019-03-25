@@ -16,7 +16,7 @@ module.exports = class ValidationError extends Error {
   constructor(message, errors, statusCode = 500) {
     super(message);
     this.errors = errors;
-    this.status = statusCode;
+    this.statusCode = statusCode;
     Error.captureStackTrace(this, ValidationError);
   }
 };

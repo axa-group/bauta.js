@@ -313,7 +313,11 @@ module.exports = class Operation {
       }
       const verror = validateRequest.validate(req);
       if (verror && verror.errors && verror.errors.length > 0) {
-        throw new ValidationError(verror.message, verror.errors, verror.statusCode);
+        throw new ValidationError(
+          verror.message,
+          verror.errors,
+          verror.status === 400 ? 422 : verror.status
+        );
       }
 
       return null;
@@ -322,7 +326,7 @@ module.exports = class Operation {
       const verror = validateResponse.validateResponse(statusCode, res);
 
       if (verror && verror.errors && verror.errors.length > 0) {
-        throw new ValidationError(verror.message, verror.errors, verror.statusCode);
+        throw new ValidationError(verror.message, verror.errors, verror.status);
       }
 
       return null;
