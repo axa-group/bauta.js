@@ -14,7 +14,7 @@
  */
 const chalk = require('chalk');
 const applyFilter = require('loopback-filters');
-const OpenAPIRequestValidator = require('openapi-request-validator').default;
+const OpenAPIRequestValidator = require('@javi11/openapi-request-validator').default;
 const OpenAPIDefaultSetter = require('openapi-default-setter').default;
 const OpenAPIResponseValidator = require('openapi-response-validator').default;
 
@@ -294,7 +294,10 @@ module.exports = class Operation {
 
     const validateRequest = new OpenAPIRequestValidator({
       ...endpointDefinition,
-      schemas
+      schemas,
+      ajvOptions: {
+        nullable: true
+      }
     });
     const validateResponse = new OpenAPIResponseValidator({
       ...endpointDefinition,
@@ -311,6 +314,7 @@ module.exports = class Operation {
         // if is not a Nodejs request set the content-type to force validation
         req.headers = { 'content-type': 'application/json' };
       }
+
       const verror = validateRequest.validate(req);
       if (verror && verror.errors && verror.errors.length > 0) {
         throw new ValidationError(

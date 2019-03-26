@@ -29,6 +29,7 @@
     "npm": ">=5"
   },
   "dependencies": {
+    "@javi11/openapi-request-validator": "3.7.8",
     "ajv": "6.9.1",
     "chalk": "2.4.1",
     "debug": "4.1.1",
@@ -40,7 +41,6 @@
     "multipart-request-builder": "1.1.1",
     "native-proxy-agent": "1.1.1",
     "openapi-default-setter": "2.0.4",
-    "openapi-request-validator": "3.7.0",
     "openapi-response-validator": "3.7.0",
     "openapi-schema-validator": "3.0.3",
     "stjs": "0.0.5"
