@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.4](http://github.axa.com/Digital/bauta-nodejs/compare/v1.1.3...v1.1.4) (2019-03-26)
+
+
+### Bug Fixes
+
+* **bautajs:** Add local scope package for request validator ([7281fd7](http://github.axa.com/Digital/bauta-nodejs/commit/7281fd7)), closes [#41](http://github.axa.com/Digital/bauta-nodejs/issues/41)
+
+
+
+
+
 ## [1.1.3](http://github.axa.com/Digital/bauta-nodejs/compare/v1.1.2...v1.1.3) (2019-03-25)
 
 
