@@ -870,6 +870,27 @@ describe('datasource test', () => {
       expect(response.headers).toEqual({ 'content-type': 'application/json' });
     });
 
+    test('Should allow get the full response object and should not be overrided by local assignament', async () => {
+      const expectedBody = { ok: true };
+      nock('https://pets.com')
+        .get('/v1/policies')
+        .reply(200, expectedBody);
+
+      const template = {
+        url: 'https://pets.com/v1/policies',
+        method: 'GET',
+        options: {
+          resolveBodyOnly: false
+        }
+      };
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({});
+      const response = await compiled.request({ myCustomProp: true });
+
+      expect(response.body).toEqual(expectedBody);
+      expect(response.headers).toEqual({ 'content-type': 'application/json' });
+    });
+
     test('Should throw an error if a request is done without url', async () => {
       const template = {
         id: 'myads',

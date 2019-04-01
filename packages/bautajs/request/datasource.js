@@ -23,12 +23,12 @@ const buildForm = require('./form-data');
 // waiting for GOT 5.0
 function parseBody(responseType, body) {
   if (responseType === 'json') {
-    return JSON.parse(body);
+    return typeof body === 'object' ? body : JSON.parse(body);
   }
   if (responseType === 'buffer') {
     return Buffer.from(body);
   }
-  if (responseType !== 'text' && (responseType !== null || responseType !== undefined)) {
+  if (responseType === null) {
     throw new Error(`Failed to parse body of type '${responseType}'`);
   }
 
@@ -85,7 +85,7 @@ function requestHooks(log) {
 }
 
 function normalizeOptions(options) {
-  const parsedOptions = options;
+  const parsedOptions = { ...options };
 
   if (!parsedOptions.headers) {
     parsedOptions.headers = {};
@@ -102,12 +102,10 @@ function normalizeOptions(options) {
     parsedOptions.responseType = 'json';
   }
 
-  if (typeof options.resolveBodyOnly !== 'boolean') {
-    parsedOptions.resolveBodyOnly = true;
-  }
-
-  if (typeof responseType !== 'string') {
+  if (parsedOptions.responseType && typeof parsedOptions.responseType !== 'string') {
     parsedOptions.responseType = 'text';
+  } else if (parsedOptions.responseType === 'json') {
+    parsedOptions.json = true;
   }
 
   if (!Array.isArray(options.form) && typeof options.form === 'object') {
@@ -201,7 +199,11 @@ function compileDatasource(dataSourceTemplate, context) {
 
       // GOT 10 will include this
       return gotInstace(url, { agent, ...updateOptions }).then(response => {
-        if (updateOptions.resolveBodyOnly === true || initOptions.resolveBodyOnly === true) {
+        if (
+          updateOptions.resolveBodyOnly === true ||
+          initOptions.resolveBodyOnly === true ||
+          (updateOptions.resolveBodyOnly === undefined && initOptions.resolveBodyOnly === undefined)
+        ) {
           return parseBody(updateOptions.responseType || initOptions.responseType, response.body);
         }
 

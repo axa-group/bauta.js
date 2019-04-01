@@ -760,7 +760,7 @@ toc:
 
             module.exports = fn => async (value, ctx) => {
               const step = new Step(fn);
-              return step.run({ ...ctx, dataSource: ctx.dataSource(ctx.req) }, value);
+              return step.run({ ...ctx, dataSource: ctx.dataSource(ctx) }, value);
             };
           ```
           Remember use Step to wrap the given function, it will helps on the managment of the Promise/callback/simple value usage.

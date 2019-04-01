@@ -77,7 +77,7 @@ function setDefinitionDefaults(apiDefinition) {
  * // Assuming we have a dataSource for cats, once bautajs is initialized, you can execute the operation with the following code:
  * await bautaJS.services.cats.v1.find.exec({});
  */
-module.exports = class Batuajs {
+module.exports = class Bautajs {
   constructor(apiDefinitions, options = {}) {
     let error;
     if (!Array.isArray(apiDefinitions)) {
@@ -105,7 +105,7 @@ module.exports = class Batuajs {
 
     // Merge all the required dataSources
     const dataSourcesTemplates = mergeDeep(
-      ...Batuajs.requireAll(
+      ...Bautajs.requireAll(
         options.dataSourcesPath || './server/services/**/*datasource.?(js|json)',
         true
       )
@@ -136,7 +136,7 @@ module.exports = class Batuajs {
     this.logger = logger;
 
     // Load custom resolvers and operations modifiers
-    Batuajs.requireAll(
+    Bautajs.requireAll(
       options.resolversPath || './server/services/**/*resolver.js',
       true,
       this.services
