@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.5](http://github.axa.com/Digital/bauta-nodejs/compare/v1.1.4...v1.1.5) (2019-04-01)
+
+
+### Bug Fixes
+
+* **bautajs:** issue with resolveBodyOnly ([#45](http://github.axa.com/Digital/bauta-nodejs/issues/45)) ([d61325b](http://github.axa.com/Digital/bauta-nodejs/commit/d61325b)), closes [#44](http://github.axa.com/Digital/bauta-nodejs/issues/44) [#43](http://github.axa.com/Digital/bauta-nodejs/issues/43)
+
+
+
+
+
 ## [1.1.4](http://github.axa.com/Digital/bauta-nodejs/compare/v1.1.3...v1.1.4) (2019-03-26)
 
 
