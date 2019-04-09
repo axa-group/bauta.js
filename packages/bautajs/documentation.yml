@@ -249,7 +249,7 @@ toc:
           ### Dynamic datasources
 
           Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `req`, `config` and `env` (environment variables) objects. 
-          See the template syntax format at [stjs](https://www.npmjs.com/package/stjs).
+          See the template syntax format at [json4json](https://github.com/BaffinLee/json4json#syntax).
           to retrieve dynamic data.
 
           ```json

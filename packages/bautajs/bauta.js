@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const STJS = require('stjs');
+const { transform } = require('json4json');
 const glob = require('glob');
 const path = require('path');
 const mergeDeep = require('merge-deep');
@@ -113,9 +113,7 @@ module.exports = class Bautajs {
     // Maintain the not resolved templates
     const dataSources = mergeDeep(
       dataSourcesTemplates,
-      STJS.select(options.dataSourceCtx)
-        .transformWith(dataSourcesTemplates)
-        .root()
+      transform(dataSourcesTemplates, options.dataSourceCtx)
     );
 
     error = validate(dataSources, dataSourceSchema);

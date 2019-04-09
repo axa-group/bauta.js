@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const STJS = require('stjs');
+const { transform } = require('json4json');
 const got = require('got');
 const createAgent = require('native-proxy-agent');
 const Multipart = require('multipart-request-builder');
@@ -137,12 +137,10 @@ function normalizeOptions(options) {
 }
 
 function compileDatasource(dataSourceTemplate, context) {
-  const dataSource = STJS.select({
+  const dataSource = transform(dataSourceTemplate, {
     ctx: context,
     env: process.env
-  })
-    .transformWith(dataSourceTemplate)
-    .root();
+  });
 
   const log = context.logger ? context.logger : sessionFactory(context).logger;
   const hooks = requestHooks(log);
