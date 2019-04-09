@@ -15,13 +15,14 @@
 const { transform } = require('json4json');
 const glob = require('glob');
 const path = require('path');
-const mergeDeep = require('merge-deep');
+const merge = require('deepmerge');
 const OpenAPISchemaValidator = require('openapi-schema-validator').default;
 const validate = require('./validators/validate');
 const Service = require('./core/Service');
 const dataSourceSchema = require('./validators/datasource-schema.json');
 const extendOpenAPISchema = require('./validators/extend-openapi-schema.json');
 const logger = require('./logger');
+const { combineMerge } = require('./utils');
 
 /**
  * Split the datasources in services and register them in to the services object
@@ -103,17 +104,18 @@ module.exports = class Bautajs {
       );
     }
 
-    // Merge all the required dataSources
-    const dataSourcesTemplates = mergeDeep(
-      ...Bautajs.requireAll(
-        options.dataSourcesPath || './server/services/**/*datasource.?(js|json)',
-        true
-      )
+    const dataSourcesTemplates = Bautajs.requireAll(
+      options.dataSourcesPath || './server/services/**/*datasource.?(js|json)',
+      true
     );
-    // Maintain the not resolved templates
-    const dataSources = mergeDeep(
-      dataSourcesTemplates,
-      transform(dataSourcesTemplates, options.dataSourceCtx)
+    
+    // Maintain the not resolved templates that have existence operator (#?)
+    const dataSources = merge.all(
+      [
+        ...dataSourcesTemplates,
+        ...transform(dataSourcesTemplates, options.dataSourceCtx)
+      ],
+      { arrayMerge: combineMerge }
     );
 
     error = validate(dataSources, dataSourceSchema);

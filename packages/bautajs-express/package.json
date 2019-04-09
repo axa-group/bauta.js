@@ -5,7 +5,7 @@
   "main": "bauta-express.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "example": "node ./examples/server.js",
+    "example": "LOG_LEVEL=debug DEBUG=bautajs* node ./examples/server.js",
     "documentation": "npx documentation build \"{,!(node_modules)/**/}*.js\" --config documentation.yml --sort-order=alpha -f md -o README.md"
   },
   "repository": {

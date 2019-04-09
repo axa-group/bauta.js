@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const mergeDeep = require('merge-deep');
+const merge = require('deepmerge');
 const Operation = require('./Operation');
 const Version = require('./Version');
 const logger = require('../logger');
@@ -49,7 +49,10 @@ module.exports = class Service {
           const operation = new Operation(
             operationTemplate.id,
             [],
-            { ...operationTemplate, options: mergeDeep(options, operationTemplate.options) },
+            {
+              ...operationTemplate,
+              options: merge(options || {}, operationTemplate.options || {})
+            },
             apiDefinition,
             serviceId
           );
