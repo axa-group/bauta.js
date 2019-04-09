@@ -163,7 +163,7 @@ toc:
           This feature is always enabled while you have a valid openAPI schema response schema. You can disable it globally setting up `validateResponse: false` on your API swagger definition or disable it locally for every operation
           using `services.myService.v1.operation1.validateResponse(false);`
 
-          ***It's recomended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors), you are free to convert them to a 400 or 422 errors***
+          ***It's recomended to have an error handler since this will throw a {@link ValidationError|ValidationError}, you are free to convert them to a 400 or 422 errors***
 
           ### Example
            
@@ -197,7 +197,7 @@ toc:
             ```js
               services.cats.v1.find.push(function pFn(response, ctx) {
                 ctx.validateResponse(response);
-                // if the response is not valid this will throw an [AJV](https://www.npmjs.com/package/ajv#validation-errors) error 
+                // if the response is not valid this will throw an ValidationError error 
               });
             ```
 
@@ -782,3 +782,4 @@ toc:
           - Service
           - Version
           - Logger
+          - ValidationError

@@ -251,6 +251,10 @@ describe('Core tests', () => {
         expect(e.errors).toEqual([
           { errorCode: 'type.openapi.responseValidation', message: 'response should be array' }
         ]);
+        expect(e.response).toEqual({
+          id: 1,
+          name: 'pety'
+        });
       }
     });
 

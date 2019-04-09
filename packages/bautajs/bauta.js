@@ -108,13 +108,10 @@ module.exports = class Bautajs {
       options.dataSourcesPath || './server/services/**/*datasource.?(js|json)',
       true
     );
-    
+
     // Maintain the not resolved templates that have existence operator (#?)
     const dataSources = merge.all(
-      [
-        ...dataSourcesTemplates,
-        ...transform(dataSourcesTemplates, options.dataSourceCtx)
-      ],
+      [...dataSourcesTemplates, ...transform(dataSourcesTemplates, options.dataSourceCtx)],
       { arrayMerge: combineMerge }
     );
 

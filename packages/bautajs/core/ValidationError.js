@@ -12,11 +12,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * The validation error object
+ * @public
+ * @class ValidationError
+ * @extends Error
+ * @param {string} message - the error message
+ * @param {{location, message}[]} errors - an array of validation errors
+ * @param {number} statusCode - The error status code
+ * @param {Object} response - The response validated
+ */
 module.exports = class ValidationError extends Error {
-  constructor(message, errors, statusCode = 500) {
+  constructor(message, errors, statusCode = 500, response) {
     super(message);
+    /** @memberof ValidationError#
+     * @property {{location, message}[]} errors - an array of validation errors
+     */
     this.errors = errors;
+    /** @memberof ValidationError#
+     * @property {number} statusCode - The error status code
+     */
     this.statusCode = statusCode;
+    /** @memberof ValidationError#
+     * @property {Object} response - The response validated
+     */
+    this.response = response;
     Error.captureStackTrace(this, ValidationError);
   }
 };

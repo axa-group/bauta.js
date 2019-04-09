@@ -102,6 +102,14 @@
                 -   [Parameters][98]
                 -   [Examples][99]
         -   [Logger][100]
+        -   [ValidationError][101]
+            -   [Parameters][102]
+            -   [errors][103]
+                -   [Properties][104]
+            -   [response][105]
+                -   [Properties][106]
+            -   [statusCode][107]
+                -   [Properties][108]
 
 ## bautajs
 
@@ -110,7 +118,7 @@ A library to build easy versionable and self organized middlewares.
 
 ## How to install
 
-Make sure that you have access to [Artifactory][101]
+Make sure that you have access to [Artifactory][109]
 
 ```console
   npm install bautajs
@@ -124,11 +132,11 @@ Make sure that you have access to [Artifactory][101]
 
 ### Request Validation
 
-`bautajs` comes with a default request validation using the [openAPI schema][102]. **_BY DEFAULT IT'S SET TO TRUE_**.
+`bautajs` comes with a default request validation using the [openAPI schema][110]. **_BY DEFAULT IT'S SET TO TRUE_**.
 This feature is always enabled while you have a valid openAPI schema inputs. You can disable it globally setting up `validateRequest: false` on your API swagger definition or disable it locally for every operation
 using `services.myService.v1.operation1.validateRequest(false);`
 
-**_It's recomended to have an error handler since this will throw a [AJV error][103], you are free to convert them to a 400 or 422 errors_**
+**_It's recomended to have an error handler since this will throw a [AJV error][111], you are free to convert them to a 400 or 422 errors_**
 
 ### Example
 
@@ -169,11 +177,11 @@ using `services.myService.v1.operation1.validateRequest(false);`
 
 ### Response Validation
 
-`bautajs` comes with a default response validation using the [openAPI schema][102]. **_BY DEFAULT IT'S SET TO TRUE_**.
+`bautajs` comes with a default response validation using the [openAPI schema][110]. **_BY DEFAULT IT'S SET TO TRUE_**.
 This feature is always enabled while you have a valid openAPI schema response schema. You can disable it globally setting up `validateResponse: false` on your API swagger definition or disable it locally for every operation
 using `services.myService.v1.operation1.validateResponse(false);`
 
-**_It's recomended to have an error handler since this will throw a [AJV error][103], you are free to convert them to a 400 or 422 errors_**
+**_It's recomended to have an error handler since this will throw a [ValidationError][101], you are free to convert them to a 400 or 422 errors_**
 
 ### Example
 
@@ -207,7 +215,7 @@ using `services.myService.v1.operation1.validateResponse(false);`
 ```js
   services.cats.v1.find.push(function pFn(response, ctx) {
     ctx.validateResponse(response);
-    // if the response is not valid this will throw an [AJV](https://www.npmjs.com/package/ajv#validation-errors) error 
+    // if the response is not valid this will throw an ValidationError error 
   });
 ```
 
@@ -227,7 +235,7 @@ The datasources are the main feature of the library. The dataSources define how 
 ### Define a datasource
 
 To define a datasource, create a file into `"services/"` folder with a name ending on `"-datasource.json|js"`. The datasources are loaded automatically by the `bautajs` in bootstrap time.
-A datasource containing a `url` property on its definition, represents a HTTP request (using [Got][104]).           
+A datasource containing a `url` property on its definition, represents a HTTP request (using [Got][112]).           
 
 `By default request are done using [keepAlive](https://nodejs.org/api/http.html#http_new_agent_options)`
 
@@ -235,7 +243,7 @@ Without `url`, a datasource just describe an simple service operation.
 
 ### Datasource structure
 
-`bautajs` datasources must be compliant with [./lib/validators/datasource-schema.json][105].
+`bautajs` datasources must be compliant with [./lib/validators/datasource-schema.json][113].
 
 ### Example
 
@@ -263,7 +271,7 @@ This is a datasource example:
 ### Dynamic datasources
 
 Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `req`, `config` and `env` (environment variables) objects. 
-See the template syntax format at [json4json][106].
+See the template syntax format at [json4json][114].
 to retrieve dynamic data.
 
 ```json
@@ -289,7 +297,7 @@ to retrieve dynamic data.
 }
 ```
 
-`Once the dynamic data is resolved, the fields with`undefined`or`null\` values, are removed from the request as [got definitions][104].
+`Once the dynamic data is resolved, the fields with`undefined`or`null\` values, are removed from the request as [got definitions][112].
 
 ### Accessing compiled datasources from my resolvers (steps)
 
@@ -317,7 +325,7 @@ Is possible to access to compiled datasources from the operations resolvers.
   });
 ```
 
-By default, `bautajs`, uses [got][104] library to launch the operation datasources requests.
+By default, `bautajs`, uses [got][112] library to launch the operation datasources requests.
 However, is possible to use your preferred request module using the datasources definitions.
 
 ```js
@@ -334,9 +342,9 @@ However, is possible to use your preferred request module using the datasources 
 
 ### multipart/related requests
 
-[got][104] do not come with `multipart/related` out of the box.
+[got][112] do not come with `multipart/related` out of the box.
 Thus, `bautajs` add it to be available at the operations datasources requests.
-`bautajs` follows the way [request/request][107] implements `multipart/related` by using [multipart-request-builder][108].
+`bautajs` follows the way [request/request][115] implements `multipart/related` by using [multipart-request-builder][116].
 
 ```text
   Do not add the multipart configuration in the operation datasource definition if it has streams (fs.createReadStream).
@@ -508,12 +516,12 @@ To activate the logs just set debug:
 LOG_LEVEL=debug DEBUG=bautajs*
 ```
 
-Furthemore, if you want to censor some words we strongly recomend use [pino redaction][109]
+Furthemore, if you want to censor some words we strongly recomend use [pino redaction][117]
 
 
 ### LoopbackFilters
 
-The `bautajs` allows to use [loopback filters][110] over arrays.
+The `bautajs` allows to use [loopback filters][118] over arrays.
 Add the applyLoopbackFilters option to datasource operations:
 
 ### Example
@@ -565,7 +573,7 @@ The `bautajs` has API versioning out of the box to version the services and data
 
 ### API definition
 
-The API definition is where are defined API versions, see [./lib/validators/api-definition-schema.json][111]
+The API definition is where are defined API versions, see [./lib/validators/api-definition-schema.json][119]
 
 ### Example
 
@@ -677,7 +685,7 @@ Datasources without `version` will be linked to the first api-definition version
 
 ### Set an Operation schema (endpoint schema)
 
-bautajs provides the way to associate an [OPENAPI][112] definition to one operation. Later this
+bautajs provides the way to associate an [OPENAPI][120] definition to one operation. Later this
 will have multiple uses:
 
 -   As an input validation if the option validateRequest is set to true or if the `this.validate()` function is called inside the resolver.
@@ -818,7 +826,7 @@ In the datasources all the ctx variables (ctx.req...) and ctx.previousValue will
 
 #### Parameters
 
--   `options` **[Object][113]** the got request options
+-   `options` **[Object][121]** the got request options
 
 #### Examples
 
@@ -837,7 +845,7 @@ In the datasources all the ctx variables (ctx.req...) and ctx.previousValue will
 
 #### Parameters
 
--   `fn` **[function][114]** the function to execute after compile the data source
+-   `fn` **[function][122]** the function to execute after compile the data source
 
 #### Examples
 
@@ -855,7 +863,7 @@ Execute the given steps in serial. It's another way to add the steps without hav
 
 #### Parameters
 
--   `fn` **...[function][114]** the array functions/steps to execute
+-   `fn` **...[function][122]** the array functions/steps to execute
 
 #### Examples
 
@@ -893,7 +901,7 @@ services.v1.test.op1.push(
 
 ### template
 
-Compile the json [json4json][115] template with the given ctx, env, and previous value.
+Compile the json [json4json][123] template with the given ctx, env, and previous value.
 The injected variables into the template are:
 
 -   ctx: the current context (req, res...)
@@ -902,7 +910,7 @@ The injected variables into the template are:
 
 #### Parameters
 
--   `template` **[Object][113]?** The [json4json][115] template
+-   `template` **[Object][121]?** The [json4json][123] template
 
 #### Examples
 
@@ -924,7 +932,7 @@ Execute the given steps in parallel.
 
 #### Parameters
 
--   `fn` **...[function][114]** the array functions/steps to execute
+-   `fn` **...[function][122]** the array functions/steps to execute
 
 #### Examples
 
@@ -1078,10 +1086,10 @@ This services could be accessible from the instance .services after the initiali
 
 #### Parameters
 
--   `apiDefinitions` **([Array][116]&lt;[Object][113]> | [Object][113])** An array of [OpenAPI 3.0/2.0][117] definitions. See the valid schema @see [./lib/validators/api-definition-schema-json][118].
--   `options` **[Object][113]?** 
-    -   `options.dataSourcesPath` **([string][119] \| [Array][116]&lt;[string][119]>)** A [node-glob][120] path to your dataSources. (optional, default `'./server/services/../..-datasource.?(js|json)'`)
-    -   `options.resolversPath` **([string][119] \| [Array][116]&lt;[string][119]>)** A [node-glob][120] path to your resolvers definitions. (optional, default `'./server/services/../..-resolver.js'`)
+-   `apiDefinitions` **([Array][124]&lt;[Object][121]> | [Object][121])** An array of [OpenAPI 3.0/2.0][125] definitions. See the valid schema @see [./lib/validators/api-definition-schema-json][126].
+-   `options` **[Object][121]?** 
+    -   `options.dataSourcesPath` **([string][127] \| [Array][124]&lt;[string][127]>)** A [node-glob][128] path to your dataSources. (optional, default `'./server/services/../..-datasource.?(js|json)'`)
+    -   `options.resolversPath` **([string][127] \| [Array][124]&lt;[string][127]>)** A [node-glob][128] path to your resolvers definitions. (optional, default `'./server/services/../..-resolver.js'`)
     -   `options.dataSourceCtx` **any** Object to be injected on the dataSources in run time (optional, default `{}`)
 
 #### Examples
@@ -1108,17 +1116,17 @@ await bautaJS.services.cats.v1.find.exec({});
 
 ##### Properties
 
--   `logger` **[Logger][121]** A [debug][https://www.npmjs.com/package/debug][122] logger instance
+-   `logger` **[Logger][129]** A [debug][https://www.npmjs.com/package/debug][130] logger instance
 
 #### requireAll
 
-Require a bunch of files that matches the given [glob][120] path.
+Require a bunch of files that matches the given [glob][128] path.
 
 ##### Parameters
 
--   `folder` **([string][119] \| [Array][116]&lt;[string][119]>)** the given folder magic path, see [https://github.com/isaacs/node-glob][120]
--   `execute` **[boolean][123]** execute the required files with the given vars if they are functions (optional, default `true`)
--   `vars` **[Object][113]?** optional variables to add as a parameter on the file execution (optional, default `{}`)
+-   `folder` **([string][127] \| [Array][124]&lt;[string][127]>)** the given folder magic path, see [https://github.com/isaacs/node-glob][128]
+-   `execute` **[boolean][131]** execute the required files with the given vars if they are functions (optional, default `true`)
+-   `vars` **[Object][121]?** optional variables to add as a parameter on the file execution (optional, default `{}`)
 
 ##### Examples
 
@@ -1128,13 +1136,13 @@ const { requireAll } = require('bautajs');
 const files = requireAll('./my/path/to/datasources/*.js', true, {someVar:123});
 ```
 
-Returns **[Array][116]&lt;any>** array of required files
+Returns **[Array][124]&lt;any>** array of required files
 
 #### services
 
 ##### Properties
 
--   `services` **[Object][113]&lt;[string][119], [Service][124]>** A services dictionary containing all the created services
+-   `services` **[Object][121]&lt;[string][127], [Service][132]>** A services dictionary containing all the created services
 
 ### Artifacts
 
@@ -1148,23 +1156,23 @@ every where to execute a flow of loaders and hooks.
 
 ##### Parameters
 
--   `id` **[string][119]** the id of the operation
--   `steps` **[Array][116]&lt;[function][114]>** an array of steps to add to the operation
--   `dataSourceTemplate` **[Object][113]** the operation datasource template definition, contains all the request data
--   `apiDefinition` **[Object][113]** An [OpenAPI][102] definition.
--   `serviceId` **[Object][113]?** the service name of the operation, only used for log purposes
+-   `id` **[string][127]** the id of the operation
+-   `steps` **[Array][124]&lt;[function][122]>** an array of steps to add to the operation
+-   `dataSourceTemplate` **[Object][121]** the operation datasource template definition, contains all the request data
+-   `apiDefinition` **[Object][121]** An [OpenAPI][110] definition.
+-   `serviceId` **[Object][121]?** the service name of the operation, only used for log purposes
 
 ##### apiDefinition
 
 ###### Properties
 
--   `apiDefinition` **[Object][113]** the complete API definition related to this operation
+-   `apiDefinition` **[Object][121]** the complete API definition related to this operation
 
 ##### dataSource
 
 ###### Properties
 
--   `dataSource` **[Object][113]** the original operation datasource. Call this.dataSource(context) to get the compiled datasource template with the given context
+-   `dataSource` **[Object][121]** the original operation datasource. Call this.dataSource(context) to get the compiled datasource template with the given context
 
 ##### exec
 
@@ -1173,9 +1181,9 @@ The dataSource is only compiled on the loader step\`
 
 ###### Parameters
 
--   `req` **[Object][113]** the context of the operation, usually the req object
--   `res` **[Object][113]** the response object
--   `initialData` **[Object][113]** the initial data to execute the first flow step (optional, default `{}`)
+-   `req` **[Object][121]** the context of the operation, usually the req object
+-   `res` **[Object][121]** the response object
+-   `initialData` **[Object][121]** the initial data to execute the first flow step (optional, default `{}`)
 
 ###### Examples
 
@@ -1189,19 +1197,19 @@ app.get('/blue', (req, res, next) => {
 })
 ```
 
-Returns **[Promise][125]&lt;([Array][116]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the flow execution value, rejects with the flow execution error
+Returns **[Promise][133]&lt;([Array][124]&lt;[object][121]> | [object][121]), [Error][134]>** resolves with the flow execution value, rejects with the flow execution error
 
 ##### operationId
 
 ###### Properties
 
--   `operationId` **[Object][113]** the operation id
+-   `operationId` **[Object][121]** the operation id
 
 ##### private
 
 ###### Properties
 
--   `private` **[Object][113]** Specify if the operation is private or not
+-   `private` **[Object][121]** Specify if the operation is private or not
 
 ##### push
 
@@ -1236,7 +1244,7 @@ module.exports = (services) => {
 }
 ```
 
-Returns **[Operation][127]** an instance of the operation
+Returns **[Operation][135]** an instance of the operation
 
 ##### run
 
@@ -1244,23 +1252,23 @@ Run the steps chain from the given step index
 
 ###### Parameters
 
--   `index` **[number][128]** the step index
--   `value` **[Object][113]** the value to send to the step
--   `context` **[Object][113]** the context to send to the step
+-   `index` **[number][136]** the step index
+-   `value` **[Object][121]** the value to send to the step
+-   `context` **[Object][121]** the context to send to the step
 
-Returns **[Promise][125]&lt;([Array][116]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the step execution value, rejects with the step execution error
+Returns **[Promise][133]&lt;([Array][124]&lt;[object][121]> | [object][121]), [Error][134]>** resolves with the step execution value, rejects with the step execution error
 
 ##### schema
 
 ###### Properties
 
--   `schema` **[Object][113]** operation OpenAPI schema
+-   `schema` **[Object][121]** operation OpenAPI schema
 
 ##### serviceId
 
 ###### Properties
 
--   `serviceId` **[Object][113]** the service id that this operation belongs
+-   `serviceId` **[Object][121]** the service id that this operation belongs
 
 ##### setErrorHandler
 
@@ -1268,7 +1276,7 @@ Set a custom error handler that will be executed in case of some loader is rejec
 
 ###### Parameters
 
--   `errorHandler` **[function][114]** the error handler function
+-   `errorHandler` **[function][122]** the error handler function
 
 ###### Examples
 
@@ -1278,7 +1286,7 @@ const { services } = require('bautajs');
 services.cats.v1.find.setErrorHandler((err) => Promise.reject(err));
 ```
 
-Returns **[Operation][127]** An instance of the operation
+Returns **[Operation][135]** An instance of the operation
 
 ##### setSchema
 
@@ -1286,7 +1294,7 @@ Override the operation schema
 
 ###### Parameters
 
--   `schema` **[Object][113]** the [OpenAPI][102] path schema @see [https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example][129]
+-   `schema` **[Object][121]** the [OpenAPI][110] path schema @see [https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example][137]
 
 ###### Examples
 
@@ -1297,7 +1305,7 @@ conmst mySchema = require('./some-schema.json');
 services.cats.v1.find.setSchema(mySchema);
 ```
 
-Returns **[Operation][127]** An instance of the operation
+Returns **[Operation][135]** An instance of the operation
 
 ##### validateRequest
 
@@ -1305,7 +1313,7 @@ Enable or disable the request validation
 
 ###### Parameters
 
--   `toggle` **[boolean][123]** false to disable the request validation that is enabled by default
+-   `toggle` **[boolean][131]** false to disable the request validation that is enabled by default
 
 ###### Examples
 
@@ -1316,7 +1324,7 @@ conmst mySchema = require('./some-schema.json');
 services.cats.v1.find.validateRequest(false);
 ```
 
-Returns **[Operation][127]** An instance of the operation
+Returns **[Operation][135]** An instance of the operation
 
 ##### validateResponse
 
@@ -1324,7 +1332,7 @@ Enable or disable the response validation
 
 ###### Parameters
 
--   `toggle` **[boolean][123]** false to disable the response validation that is enabled by default
+-   `toggle` **[boolean][131]** false to disable the response validation that is enabled by default
 
 ###### Examples
 
@@ -1335,7 +1343,7 @@ conmst mySchema = require('./some-schema.json');
 services.cats.v1.find.validateResponse(false);
 ```
 
-Returns **[Operation][127]** An instance of the operation
+Returns **[Operation][135]** An instance of the operation
 
 #### Step
 
@@ -1344,7 +1352,7 @@ The step gets as parameter the context and the previous step value and returns a
 
 ##### Parameters
 
--   `step` **[function][114]** a function that returns a promise
+-   `step` **[function][122]** a function that returns a promise
 
 ##### handleValue
 
@@ -1352,9 +1360,9 @@ Return the step as a promise
 
 ###### Parameters
 
--   `value` **[Object][113]** the input value to send as a result
+-   `value` **[Object][121]** the input value to send as a result
 
-Returns **[Promise][125]&lt;([Array][116]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the step result, rejects with the step error
+Returns **[Promise][133]&lt;([Array][124]&lt;[object][121]> | [object][121]), [Error][134]>** resolves with the step result, rejects with the step error
 
 ##### run
 
@@ -1364,8 +1372,8 @@ The step always returns a promise, but inside the step function you can return a
 
 ###### Parameters
 
--   `ctx` **[Object][113]** the context bind to the step execution
--   `value` **[Object][113]** the input value to send to the step execution
+-   `ctx` **[Object][121]** the context bind to the step execution
+-   `value` **[Object][121]** the input value to send to the step execution
 
 ##### runWithCallback
 
@@ -1373,10 +1381,10 @@ Execute the step and convert the callback returned into a promise
 
 ###### Parameters
 
--   `ctx` **[Object][113]** the context bind to the step execution
--   `value` **[Object][113]** the input value to send to the step execution
+-   `ctx` **[Object][121]** the context bind to the step execution
+-   `value` **[Object][121]** the input value to send to the step execution
 
-Returns **[Promise][125]&lt;([Array][116]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the step result, rejects with the step error
+Returns **[Promise][133]&lt;([Array][124]&lt;[object][121]> | [object][121]), [Error][134]>** resolves with the step result, rejects with the step error
 
 ##### runWithReturn
 
@@ -1384,33 +1392,33 @@ Execute the step and covnert the simple result returned into a promise
 
 ###### Parameters
 
--   `ctx` **[Object][113]** the context bind to the step execution
--   `value` **[Object][113]** the input value to send to the step execution
+-   `ctx` **[Object][121]** the context bind to the step execution
+-   `value` **[Object][121]** the input value to send to the step execution
 
-Returns **[Promise][125]&lt;([Array][116]&lt;[object][113]> | [object][113]), [Error][126]>** resolves with the step result, rejects with the step error
+Returns **[Promise][133]&lt;([Array][124]&lt;[object][121]> | [object][121]), [Error][134]>** resolves with the step result, rejects with the step error
 
 #### Service
 
 The Service is a set of [Version][92]
 
-Type: [Object][113]
+Type: [Object][121]
 
 ##### Parameters
 
--   `serviceId` **[string][119]** the service id
--   `datasourceTemplate` **[Object][113]** a dictionary of services with his operations @see [../validators/datasource-schema.json][130]
--   `apiDefinitions` **[Array][116]&lt;[Object][113]>** Array of [OpenAPI][102] definitions.
--   `optionals` **[Object][113]?** optional stuff
+-   `serviceId` **[string][127]** the service id
+-   `datasourceTemplate` **[Object][121]** a dictionary of services with his operations @see [../validators/datasource-schema.json][138]
+-   `apiDefinitions` **[Array][124]&lt;[Object][121]>** Array of [OpenAPI][110] definitions.
+-   `optionals` **[Object][121]?** optional stuff
 
 #### Version
 
 The Version is a set of [Operation][46]
 
-Type: [Object][113]
+Type: [Object][121]
 
 ##### Parameters
 
--   `versionId` **[string][119]** the version name
+-   `versionId` **[string][127]** the version name
 
 ##### addOperation
 
@@ -1418,8 +1426,8 @@ Create a new operation for the given version service. It is recomended to declar
 
 ###### Parameters
 
--   `id` **[string][119]** The operation id
--   `operation` **[Operation][127]** The operation instance
+-   `id` **[string][127]** The operation id
+-   `operation` **[Operation][135]** The operation instance
 
 ###### Examples
 
@@ -1441,7 +1449,7 @@ const operation = new Operation('myaOperationId', [() => 'hellow world'], dataSo
 services.cats.v1.addOperation(dataSourceTemplate.name, operation);
 ```
 
-Returns **[Version][131]** An instance of the version
+Returns **[Version][139]** An instance of the version
 
 ##### push
 
@@ -1476,13 +1484,44 @@ module.exports = (services) => {
 }
 ```
 
-Returns **[Version][131]** an instance of the operation
+Returns **[Version][139]** an instance of the operation
 
 #### Logger
 
 A logger instance of debug
 
 Type: {debug, trace, log, info, warn, error, events, eventTypes}
+
+#### ValidationError
+
+**Extends Error**
+
+The validation error object
+
+##### Parameters
+
+-   `message` **[string][127]** the error message
+-   `errors` **[Array][124]&lt;{location, message}>** an array of validation errors
+-   `statusCode` **[number][136]** The error status code
+-   `response` **[Object][121]** The response validated
+
+##### errors
+
+###### Properties
+
+-   `errors` **[Array][124]&lt;{location, message}>** an array of validation errors
+
+##### response
+
+###### Properties
+
+-   `response` **[Object][121]** The response validated
+
+##### statusCode
+
+###### Properties
+
+-   `statusCode` **[number][136]** The error status code
 
 [1]: #bautajs
 
@@ -1684,64 +1723,80 @@ Type: {debug, trace, log, info, warn, error, events, eventTypes}
 
 [100]: #logger-1
 
-[101]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
+[101]: #validationerror
 
-[102]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification
+[102]: #parameters-24
 
-[103]: https://www.npmjs.com/package/ajv#validation-errors
+[103]: #errors
 
-[104]: https://github.com/sindresorhus/got
+[104]: #properties-8
 
-[105]: ./lib/validators/datasource-schema.json
+[105]: #response
 
-[106]: https://github.com/BaffinLee/json4json#syntax
+[106]: #properties-9
 
-[107]: https://github.com/request/request#multipartrelated
+[107]: #statuscode
 
-[108]: https://github.axa.com/Digital/bauta-nodejs/tree/master/packages/multipart-request-builder
+[108]: #properties-10
 
-[109]: https://github.com/pinojs/pino/blob/master/docs/redaction.md
+[109]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
 
-[110]: https://loopback.io/doc/en/lb3/Querying-data.html
+[110]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification
 
-[111]: ./lib/validators/api-definition-schema.json
+[111]: https://www.npmjs.com/package/ajv#validation-errors
 
-[112]: https://github.com/OAI/OpenAPI-Specification
+[112]: https://github.com/sindresorhus/got
 
-[113]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[113]: ./lib/validators/datasource-schema.json
 
-[114]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[114]: https://github.com/BaffinLee/json4json#syntax
 
-[115]: https://github.com/BaffinLee/json4json
+[115]: https://github.com/request/request#multipartrelated
 
-[116]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[116]: https://github.axa.com/Digital/bauta-nodejs/tree/master/packages/multipart-request-builder
 
-[117]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md
+[117]: https://github.com/pinojs/pino/blob/master/docs/redaction.md
 
-[118]: ./lib/validators/api-definition-schema-json
+[118]: https://loopback.io/doc/en/lb3/Querying-data.html
 
-[119]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[119]: ./lib/validators/api-definition-schema.json
 
-[120]: https://github.com/isaacs/node-glob
+[120]: https://github.com/OAI/OpenAPI-Specification
 
-[121]: #logger
+[121]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[122]: https://www.npmjs.com/package/debug
+[122]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
 
-[123]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[123]: https://github.com/BaffinLee/json4json
 
-[124]: #service
+[124]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[125]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[125]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md
 
-[126]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error
+[126]: ./lib/validators/api-definition-schema-json
 
-[127]: #operation
+[127]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[128]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[128]: https://github.com/isaacs/node-glob
 
-[129]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example
+[129]: #logger
 
-[130]: ../validators/datasource-schema.json
+[130]: https://www.npmjs.com/package/debug
 
-[131]: #version
+[131]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+
+[132]: #service
+
+[133]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+[134]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error
+
+[135]: #operation
+
+[136]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+
+[137]: https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#paths-object-example
+
+[138]: ../validators/datasource-schema.json
+
+[139]: #version

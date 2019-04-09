@@ -1110,6 +1110,14 @@ describe('Operation class tests', () => {
         await operationTest.exec({ body, headers: { 'content-type': 'application/json' } }, {});
       } catch (e) {
         expect(e.errors).toEqual(expected);
+        expect(e.response).toEqual([
+          {
+            code: 'boo'
+          },
+          {
+            code: 'foo'
+          }
+        ]);
       }
     });
 
