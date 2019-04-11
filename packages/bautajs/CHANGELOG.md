@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](http://github.axa.com/Digital/bauta-nodejs/compare/v1.2.0...v1.2.1) (2019-04-11)
+
+
+### Bug Fixes
+
+* **bautajs:** rollback to stjs ([e73edbd](http://github.axa.com/Digital/bauta-nodejs/commit/e73edbd)), closes [#57](http://github.axa.com/Digital/bauta-nodejs/issues/57)
+
+
+
+
+
 # [1.2.0](http://github.axa.com/Digital/bauta-nodejs/compare/v1.1.5...v1.2.0) (2019-04-11)
 
 
