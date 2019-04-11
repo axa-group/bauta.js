@@ -22,6 +22,7 @@ Because is easy to learn, tested, it's not a framework, it's light and fast and 
 
 - [BautaJS](./packages/bautajs)
 - [BautaJS Express](./packages/bautajs-express)
+- [BautaJS Cache Decorator](./packages/bautajs-cache-decorator)
 - [Multipart request builder](./packages/multipart-request-builder)
 - [Native proxy agent](./packages/native-proxy-agent)
 
