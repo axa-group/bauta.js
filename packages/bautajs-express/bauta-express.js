@@ -55,6 +55,7 @@ function getSchemaData(schema) {
  * @param {string|string[]} [options.dataSourcesPath='./server/services/../.datasource.?(js|json)'] - A [node-glob](https://github.com/isaacs/node-glob) path to your dataSources.
  * @param {string|string[]} [options.loadersPath='./server/services/../.loader.js'] - A [node-glob](https://github.com/isaacs/node-glob) path to your loaders definitions.
  * @param {any} [options.dataSourceCtx={}] - Object to be injected on the dataSources in run time
+ * @param {function} [options.servicesWrapper] - function that have services as entry point and could be used to wrap services with global behaviours
  * @example
  * const BautaJSExpress = require('bauta-express');
  * const apiDefinition = require('../../api-definition.json');

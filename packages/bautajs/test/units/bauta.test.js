@@ -339,4 +339,44 @@ describe('Core tests', () => {
       expect(bautaJS.services.testService.v1.operation1.steps.length).toEqual(2);
     });
   });
+
+  describe('Set global utils', () => {
+    beforeEach(() => {
+      nock('https://google.com')
+        .persist()
+        .get('/')
+        .reply(200, {
+          bender: 'benderGoogle'
+        });
+    });
+    afterEach(() => {
+      nock.cleanAll();
+    });
+    test('should load the operations from the given path', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+
+      const bautaJS = new BautaJS(testApiDefinitions, {
+        dataSourcesPath: path.resolve(__dirname, '../fixtures/test-datasource-two-operations.json'),
+        resolversPath: path.resolve(
+          __dirname,
+          '../fixtures/test-resolvers/global-utils-test-resolver.js'
+        ),
+        dataSourceCtx: config,
+        servicesWrapper: services => ({
+          operation2Wrap: async (previousValue, ctx) => {
+            const res1 = await services.testService.v1.operation2.exec(ctx.req, ctx.res);
+
+            return [...res1, ...previousValue];
+          }
+        })
+      });
+
+      expect(await bautaJS.services.testService.v1.operation1.exec({})).toEqual([
+        { id: 424, name: 'pet5' },
+        { id: 132, name: 'pet1' }
+      ]);
+    });
+  });
 });

@@ -60,7 +60,8 @@ function setDefinitionDefaults(apiDefinition) {
  * @param {Object} [options]
  * @param {string|string[]} [options.dataSourcesPath='./server/services/../..-datasource.?(js|json)'] - A [node-glob](https://github.com/isaacs/node-glob) path to your dataSources.
  * @param {string|string[]} [options.resolversPath='./server/services/../..-resolver.js'] - A [node-glob](https://github.com/isaacs/node-glob) path to your resolvers definitions.
- * @param {any} [options.dataSourceCtx={}] - Object to be injected on the dataSources in run time
+ * @param {Object} [options.dataSourceCtx={}] - Object to be injected on the dataSources in run time
+ * @param {function} [options.servicesWrapper] - function that have services as entry point and could be used to wrap services with global behaviours
  * @example
  * const Bautajs = require('bautajs');
  * const apiDefinitions = require('./open-api-definition.json');
@@ -72,7 +73,14 @@ function setDefinitionDefaults(apiDefinition) {
  *  // Load all the files with datasource in the file name
  *  dataSourcesPath: './services/*-datasource.?(js|json)',
  *  resolversPath:  './services/*-resolver.js',
- *  dataSourceCtx: ctx
+ *  dataSourceCtx: ctx,
+ *  servicesWrapper: (services) => {
+ *    return {
+ *      wrappedService: (_, ctx) => {
+ *        return services.service.v1.operation.exec(ctx.req, ctx.res);
+ *      }
+ *    }
+ *  }
  * });
  *
  * // Assuming we have a dataSource for cats, once bautajs is initialized, you can execute the operation with the following code:
@@ -132,12 +140,15 @@ module.exports = class Bautajs {
      */
     this.logger = logger;
 
+    // Register the global utils
+    const utils =
+      typeof options.servicesWrapper === 'function' ? options.servicesWrapper(this.services) : null;
+
     // Load custom resolvers and operations modifiers
-    Bautajs.requireAll(
-      options.resolversPath || './server/services/**/*resolver.js',
-      true,
-      this.services
-    );
+    Bautajs.requireAll(options.resolversPath || './server/services/**/*resolver.js', true, [
+      this.services,
+      utils
+    ]);
 
     return this;
   }
@@ -149,7 +160,7 @@ module.exports = class Bautajs {
    * @static
    * @param {string|string[]} folder - the given folder magic path, see https://github.com/isaacs/node-glob
    * @param {boolean} [execute=true] - execute the required files with the given vars if they are functions
-   * @param {Object} [vars] - optional variables to add as a parameter on the file execution
+   * @param {Object[]|Object} [vars] - optional variables to add as a parameter on the file execution
    * @returns {any[]} array of required files
    * @example
    * const { requireAll } = require('bautajs');
@@ -163,7 +174,7 @@ module.exports = class Bautajs {
         // eslint-disable-next-line global-require, import/no-dynamic-require
         let data = require(path.resolve(file));
         if (typeof data === 'function' && execute === true) {
-          data = data(vars);
+          data = Array.isArray(vars) ? data(...vars) : data(vars);
         }
 
         result.push(data);

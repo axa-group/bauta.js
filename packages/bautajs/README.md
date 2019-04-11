@@ -1090,7 +1090,8 @@ This services could be accessible from the instance .services after the initiali
 -   `options` **[Object][121]?** 
     -   `options.dataSourcesPath` **([string][127] \| [Array][124]&lt;[string][127]>)** A [node-glob][128] path to your dataSources. (optional, default `'./server/services/../..-datasource.?(js|json)'`)
     -   `options.resolversPath` **([string][127] \| [Array][124]&lt;[string][127]>)** A [node-glob][128] path to your resolvers definitions. (optional, default `'./server/services/../..-resolver.js'`)
-    -   `options.dataSourceCtx` **any** Object to be injected on the dataSources in run time (optional, default `{}`)
+    -   `options.dataSourceCtx` **[Object][121]** Object to be injected on the dataSources in run time (optional, default `{}`)
+    -   `options.servicesWrapper` **[function][122]?** function that have services as entry point and could be used to wrap services with global behaviours
 
 #### Examples
 
@@ -1105,7 +1106,14 @@ const bautaJS = new Bautajs(apiDefinitions, {
  // Load all the files with datasource in the file name
  dataSourcesPath: './services/*-datasource.?(js|json)',
  resolversPath:  './services/*-resolver.js',
- dataSourceCtx: ctx
+ dataSourceCtx: ctx,
+ servicesWrapper: (services) => {
+   return {
+     wrappedService: (_, ctx) => {
+       return services.service.v1.operation.exec(ctx.req, ctx.res);
+     }
+   }
+ }
 });
 
 // Assuming we have a dataSource for cats, once bautajs is initialized, you can execute the operation with the following code:
@@ -1126,7 +1134,7 @@ Require a bunch of files that matches the given [glob][128] path.
 
 -   `folder` **([string][127] \| [Array][124]&lt;[string][127]>)** the given folder magic path, see [https://github.com/isaacs/node-glob][128]
 -   `execute` **[boolean][131]** execute the required files with the given vars if they are functions (optional, default `true`)
--   `vars` **[Object][121]?** optional variables to add as a parameter on the file execution (optional, default `{}`)
+-   `vars` **([Array][124]&lt;[Object][121]> | [Object][121])?** optional variables to add as a parameter on the file execution (optional, default `{}`)
 
 ##### Examples
 
