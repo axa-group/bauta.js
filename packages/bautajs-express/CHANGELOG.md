@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v1.1.5...v1.2.0) (2019-04-11)
+
+
+### Features
+
+* **bautajs:** Inject to resolvers ([#54](https://github.axa.com/Digital/bauta-nodejs/issues/54)) ([c4a730e](https://github.axa.com/Digital/bauta-nodejs/commit/c4a730e)), closes [#46](https://github.axa.com/Digital/bauta-nodejs/issues/46)
+* **bautajs:** replace mergeDeep with deepMerge ([#51](https://github.axa.com/Digital/bauta-nodejs/issues/51)) ([5d2db11](https://github.axa.com/Digital/bauta-nodejs/commit/5d2db11)), closes [#47](https://github.axa.com/Digital/bauta-nodejs/issues/47)
+
+
+
+
+
 ## [1.1.5](https://github.axa.com/Digital/bauta-nodejs/compare/v1.1.4...v1.1.5) (2019-04-01)
 
 **Note:** Version bump only for package bautajs-express

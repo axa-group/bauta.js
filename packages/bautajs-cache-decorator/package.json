@@ -1,6 +1,6 @@
 {
   "name": "bautajs-cache-decorator",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "A bautaJS cache decorator",
   "main": "bauta-express.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "bautajs": "1.1.5",
+    "bautajs": "1.2.0",
     "memoizee": "0.4.14"
   }
 }

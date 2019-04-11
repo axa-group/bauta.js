@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](http://github.axa.com/Digital/bauta-nodejs/compare/v1.1.5...v1.2.0) (2019-04-11)
+
+
+### Features
+
+* **bautajs:** add response on validation response error ([#50](http://github.axa.com/Digital/bauta-nodejs/issues/50)) ([163eb9c](http://github.axa.com/Digital/bauta-nodejs/commit/163eb9c)), closes [#48](http://github.axa.com/Digital/bauta-nodejs/issues/48)
+* **bautajs:** Inject to resolvers ([#54](http://github.axa.com/Digital/bauta-nodejs/issues/54)) ([c4a730e](http://github.axa.com/Digital/bauta-nodejs/commit/c4a730e)), closes [#46](http://github.axa.com/Digital/bauta-nodejs/issues/46)
+* **bautajs:** replace mergeDeep with deepMerge ([#51](http://github.axa.com/Digital/bauta-nodejs/issues/51)) ([5d2db11](http://github.axa.com/Digital/bauta-nodejs/commit/5d2db11)), closes [#47](http://github.axa.com/Digital/bauta-nodejs/issues/47)
+* **bautajs:** start using json4json instead of stjs ([#52](http://github.axa.com/Digital/bauta-nodejs/issues/52)) ([e525464](http://github.axa.com/Digital/bauta-nodejs/commit/e525464)), closes [#32](http://github.axa.com/Digital/bauta-nodejs/issues/32)
+* **bautajs-cache-decorator:** add a cache decorator ([#56](http://github.axa.com/Digital/bauta-nodejs/issues/56)) ([692a46b](http://github.axa.com/Digital/bauta-nodejs/commit/692a46b)), closes [#54](http://github.axa.com/Digital/bauta-nodejs/issues/54) [#55](http://github.axa.com/Digital/bauta-nodejs/issues/55)
+
+
+
+
+
 ## [1.1.5](http://github.axa.com/Digital/bauta-nodejs/compare/v1.1.4...v1.1.5) (2019-04-01)
 
 
