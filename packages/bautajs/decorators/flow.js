@@ -14,8 +14,11 @@
  */
 const Step = require('../core/Step');
 
-function runInSerial(array) {
-  return array.reduce((chain, next) => chain.then(value => next(value)), Promise.resolve());
+function runInSerial(array, firstValue) {
+  return array.reduce(
+    (chain, next) => chain.then(value => next(value)),
+    Promise.resolve(firstValue)
+  );
 }
 
 /**
@@ -54,5 +57,13 @@ function runInSerial(array) {
  *  ])
  * );
  */
-module.exports = (...args) => async ctx =>
-  runInSerial(args.map(step => value => new Step(step).run(ctx, value)));
+module.exports = (fn, ...args) => async (firstValue, ctx) => {
+  let fns;
+  if (args.length > 0) {
+    fns = [fn, ...args];
+  } else {
+    fns = fn;
+  }
+
+  return runInSerial(fns.map(step => value => new Step(step).run(ctx, value)), firstValue);
+};

@@ -48,5 +48,13 @@ function runInParallel(array) {
  *  }))
  * ])
  */
-module.exports = (...args) => async ctx =>
-  runInParallel(args.map(step => value => new Step(step).run(ctx, value)));
+module.exports = (fn, ...args) => async (firstValue, ctx) => {
+  let fns;
+  if (args.length > 0) {
+    fns = [fn, ...args];
+  } else {
+    fns = fn;
+  }
+
+  return runInParallel(fns.map(step => new Step(step).run(ctx, firstValue)));
+};

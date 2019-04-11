@@ -1,0 +1,29 @@
+{
+  "name": "bautajs-cache-decorator",
+  "version": "1.1.5",
+  "description": "A bautaJS cache decorator",
+  "main": "bauta-express.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "example": "LOG_LEVEL=debug DEBUG=bautajs* node ./examples/server.js",
+    "documentation": "npx documentation build \"{,!(node_modules)/**/}*.js\" --config documentation.yml --sort-order=alpha -f md -o README.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+  },
+  "keywords": [
+    "bautajs",
+    "cache",
+    "middleware"
+  ],
+  "author": "javier.blanco@axa.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "bautajs": "1.1.5",
+    "memoizee": "0.4.14"
+  }
+}

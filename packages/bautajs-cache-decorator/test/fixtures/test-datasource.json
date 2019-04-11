@@ -1,0 +1,14 @@
+{
+  "$schema": "../../validators/datasource-schema.json",
+  "services": {
+    "testService": {
+      "operations": [
+        {
+          "id": "operation1",
+          "someVariableOption": "{{ctx.req.variableOption}}",
+          "url": "https://google.com/"
+        }
+      ]
+    }
+  }
+}
