@@ -12,17 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { transform } = require('json4json');
+const STJS = require('stjs');
 
 /**
- * Compile the json {@link https://github.com/BaffinLee/json4json|json4json} template with the given ctx, env, and previous value.
+ * Compile the json {@link https://www.npmjs.com/package/stjs|stjs} template with the given ctx, env, and previous value.
  * The injected variables into the template are:
  * - ctx: the current context (req, res...)
  * - previousValue: the previous result
  * - env: the environment variable
  * @function template
  * @async
- * @param {Object} [template] - The {@link https://github.com/BaffinLee/json4json|json4json} template
+ * @param {Object} [template] - The {@link https://www.npmjs.com/package/stjs|stjs} template
  * @example
  * const template = require('batuajs/decorators/template');
  *
@@ -35,8 +35,10 @@ const { transform } = require('json4json');
  * services.v1.test.op1.push(template(myTemplate));
  */
 module.exports = template => (value, ctx) =>
-  transform(template, {
+  STJS.select({
     ctx,
     previousValue: value,
     env: process.env
-  });
+  })
+    .transformWith(template)
+    .root();

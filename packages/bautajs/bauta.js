@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { transform } = require('json4json');
+const STJS = require('stjs');
 const glob = require('glob');
 const path = require('path');
 const merge = require('deepmerge');
@@ -119,7 +119,12 @@ module.exports = class Bautajs {
 
     // Maintain the not resolved templates that have existence operator (#?)
     const dataSources = merge.all(
-      [...dataSourcesTemplates, ...transform(dataSourcesTemplates, options.dataSourceCtx)],
+      [
+        ...dataSourcesTemplates,
+        ...STJS.select(options.dataSourceCtx)
+          .transformWith(dataSourcesTemplates)
+          .root()
+      ],
       { arrayMerge: combineMerge }
     );
 

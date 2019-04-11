@@ -921,4 +921,37 @@ describe('datasource test', () => {
       expect(response).toEqual(expectedBody);
     });
   });
+
+  describe('Datasource compile', () => {
+    test('Datasource must compile complex templating properly', () => {
+      const expected = {
+        url: 'http://pets.com/v1/policies/toto/documents',
+        method: 'GET',
+        options: {
+          timeout: '5000'
+        },
+        json: {
+          foo: 'bar dead live & robots bar'
+        }
+      };
+      const template = {
+        url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
+        method: 'GET',
+        options: {
+          timeout: '5000'
+        },
+        json: {
+          foo: '{{ctx.bar}} dead live & robots {{ctx.bar}}'
+        }
+      };
+      const dataSource = buildDataSource(template);
+      const {
+        url,
+        json: { foo }
+      } = dataSource({ req: { id: 'toto' }, bar: 'bar' });
+
+      expect(url).toEqual(expected.url);
+      expect(foo).toEqual(expected.json.foo);
+    });
+  });
 });
