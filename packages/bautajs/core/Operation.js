@@ -25,7 +25,14 @@ const logger = require('../logger');
 const Step = require('./Step');
 const buildDataSource = require('../request/datasource');
 const sessionFactory = require('../session-factory');
-const { defaultLoader } = require('../utils');
+
+function defaultResolver(_, ctx) {
+  if (ctx.dataSource) {
+    return ctx.dataSource(ctx).request();
+  }
+  const error = new Error('Not found');
+  return Promise.reject(Object.assign(error, { statusCode: 404 }));
+}
 
 function loopbackFilter(data, queryFilter) {
   return !Array.isArray(data) || !queryFilter ? data : applyFilter(data, queryFilter);
@@ -420,7 +427,7 @@ module.exports = class Operation {
       // step instance
       promise = step.run(context, value);
     } else if (this.steps.length === 0) {
-      promise = new Step(defaultLoader).run(context, value);
+      promise = new Step(defaultResolver).run(context, value);
     } else {
       return Promise.resolve(value);
     }

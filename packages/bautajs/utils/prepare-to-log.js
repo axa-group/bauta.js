@@ -12,6 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const config = require('../../jest.config.base');
+const safeStringify = require('fast-safe-stringify');
 
-module.exports = Object.assign({ name: 'bautajs' }, config);
+function truncate(string, limit) {
+  if (string.length > limit) {
+    return `${string.substring(0, limit)}...`;
+  }
+  return string;
+}
+
+module.exports = function prepareToLog(object) {
+  if (typeof object === 'object') {
+    return truncate(safeStringify(object), 3200);
+  }
+
+  return truncate(object, 32000);
+};

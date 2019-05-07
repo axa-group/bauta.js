@@ -22,7 +22,7 @@ const Service = require('./core/Service');
 const dataSourceSchema = require('./validators/datasource-schema.json');
 const extendOpenAPISchema = require('./validators/extend-openapi-schema.json');
 const logger = require('./logger');
-const { combineMerge } = require('./utils');
+const combineMerge = require('./utils/combine-merge');
 
 /**
  * Split the datasources in services and register them in to the services object

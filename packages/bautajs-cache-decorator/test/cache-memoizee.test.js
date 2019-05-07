@@ -50,21 +50,31 @@ describe('Cache push', () => {
     expect(fn.mock.calls.length).toBe(1);
   });
 
-  test('Should allow memoizee options', async done => {
+  test('Should allow memoizee options', done => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
     service.v1.operation1.push(
       cache([request(), result => ({ ...result, new: 1 }), fn], ([, ctx]) => ctx.id, {
-        maxAge: 1000
+        maxAge: 500
       })
     );
 
-    await service.v1.operation1.exec({ id: 1 }, {});
-    setTimeout(async () => {
-      await service.v1.operation1.exec({ id: 1 }, {});
-
-      expect(fn.mock.calls.length).toBe(2);
-      done();
-    }, 2000);
+    service.v1.operation1
+      .exec({ id: 1 }, {})
+      .then(() => {
+        setTimeout(() => {
+          service.v1.operation1
+            .exec({ id: 1 }, {})
+            .then(() => {
+              expect(fn.mock.calls.length).toBe(2);
+              // Wait to expire again not left open setTimeout on test execution
+              setTimeout(() => {
+                done();
+              }, 1000);
+            })
+            .catch(done);
+        }, 1000);
+      })
+      .catch(done);
   });
 
   test('Should throw an error if normalizer function is not specified', async () => {

@@ -24,6 +24,7 @@ const http = require('http');
 const morganMw = require('morgan');
 const chalk = require('chalk');
 const specificity = require('route-order')();
+const strictDefinition = require('bautajs/utils/strict-definitions');
 
 const logFormat =
   ':method :url. Main headers: Time-Zone::req[Time-Zone], Accept-Language::req[Accept-Language],  device::req[device],  mana-version::req[mana-version], platform-version::req[platform-version]';
@@ -174,7 +175,7 @@ class BautaJSExpress extends BautaJS {
       });
     });
 
-    return this.routes;
+    this.apiDefinitions = this.apiDefinitions.map(apiDefinition => strictDefinition(apiDefinition));
   }
 
   /**
