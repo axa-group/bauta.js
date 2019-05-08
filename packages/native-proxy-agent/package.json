@@ -1,6 +1,6 @@
 {
   "name": "native-proxy-agent",
-  "version": "1.1.1",
+  "version": "1.2.2",
   "description": "A native proxy agent that uses the native nodejs http.Agent and https.Agent to proxy the requests, no dependencies",
   "main": "agent.js",
   "scripts": {

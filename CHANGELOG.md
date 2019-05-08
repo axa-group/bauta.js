@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](http://github.axa.com/Digital/bauta-nodejs/compare/v1.2.1...v1.2.2) (2019-05-08)
+
+
+### Bug Fixes
+
+* **bautajs-express:** Remove duplicate slash ([#61](http://github.axa.com/Digital/bauta-nodejs/issues/61)) ([b9b00b9](http://github.axa.com/Digital/bauta-nodejs/commit/b9b00b9)), closes [#60](http://github.axa.com/Digital/bauta-nodejs/issues/60)
+
+
+### Features
+
+* **batuajs,bautajs-express:** add  strict definition filter for explorer ([#64](http://github.axa.com/Digital/bauta-nodejs/issues/64)) ([02d9a4b](http://github.axa.com/Digital/bauta-nodejs/commit/02d9a4b)), closes [#63](http://github.axa.com/Digital/bauta-nodejs/issues/63)
+
+
+
+
+
 ## [1.2.1](http://github.axa.com/Digital/bauta-nodejs/compare/v1.2.0...v1.2.1) (2019-04-11)
 
 
