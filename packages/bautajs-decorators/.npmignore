@@ -1,8 +1,7 @@
-*
-!dist/**/*
-dist/**/*.test.*
-!src/**/*
-!package.json
-!CHANGELOG.md
-!README.md
-!LICENSE.TXT
+docs/
+src/
+node_modules/
+documentation.md
+jest.config.js
+tsconfig.json
+examples/
