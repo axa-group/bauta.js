@@ -5,9 +5,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "./dist/**/*.js",
-    "./dist/**/*.d.ts",
-    "./dist/index.d.ts"
+    "dist/**/*"
   ],
   "scripts": {
     "example": "LOG_LEVEL=debug DEBUG=bautajs* node ./examples/server.js",
