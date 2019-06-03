@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { GotEmitter, GotPromise } from 'got';
+import { GotEmitter, Response } from 'got';
 import * as nodeStream from 'stream';
 import {
   FullResponseRequestOptions,
@@ -24,10 +24,10 @@ import {
 export interface RequestFn {
   request<TReq, TRes, TIn>(
     options?: RequestOptions
-  ): StepFn<TReq, TRes, TIn, Promise<Buffer | string | object>>;
+  ): StepFn<TReq, TRes, TIn, Buffer | string | object>;
   request<TReq, TRes, TIn>(
     options: FullResponseRequestOptions
-  ): StepFn<TReq, TRes, TIn, GotPromise<Buffer | string | object>>;
+  ): StepFn<TReq, TRes, TIn, Response<Buffer | string | object>>;
   request<TReq, TRes, TIn>(
     options: StreamRequestOptions
   ): StepFn<TReq, TRes, TIn, GotEmitter & nodeStream.Duplex>;

@@ -46,7 +46,7 @@ Make sure that you have access to [Artifactory](https://axags.jfrog.io/axags/api
 
 **Ƭ NativeAgentOptions**: *[NativeHttpAgentOptions](interfaces/nativehttpagentoptions.md) \| [NativeHttpsAgentOptions](interfaces/nativehttpsagentoptions.md)*
 
-*Defined in [types.ts:48](https://github.axa.com/Digital/bauta-nodejs/blob/af04a7f/packages/native-proxy-agent/src/types.ts#L48)*
+*Defined in [types.ts:48](https://github.axa.com/Digital/bauta-nodejs/blob/b71f37b/packages/native-proxy-agent/src/types.ts#L48)*
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 ▸ **createAgent**(target: *`string`*, options?: *[NativeAgentOptions](#nativeagentoptions)*): [HttpsAgent](classes/httpsagent.md) \| [HttpAgent](classes/httpagent.md)
 
-*Defined in [agent.ts:33](https://github.axa.com/Digital/bauta-nodejs/blob/af04a7f/packages/native-proxy-agent/src/agent.ts#L33)*
+*Defined in [agent.ts:33](https://github.axa.com/Digital/bauta-nodejs/blob/b71f37b/packages/native-proxy-agent/src/agent.ts#L33)*
 
 Get the needed proxy agent depending of the given proxy options and target. Also try to gets the proxy from the http/s\_proxy env variables
 
