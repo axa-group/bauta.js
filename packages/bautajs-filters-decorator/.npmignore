@@ -1,0 +1,8 @@
+*
+!dist/**/*
+dist/**/*.test.*
+!src/**/*
+!package.json
+!CHANGELOG.md
+!README.md
+!LICENSE.TXT

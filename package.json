@@ -18,12 +18,35 @@
   },
   "homepage": "https://github.axa.com/Digital/bauta-nodejs#readme",
   "devDependencies": {
-    "eslint": "5.5.0",
-    "eslint-config-airbnb-base": "13.1.0",
-    "eslint-config-prettier": "3.0.1",
-    "eslint-plugin-import": "2.14.0",
-    "eslint-plugin-prettier": "2.6.2",
-    "jest": "24.8.0",
+    "@types/body-parser": "1.17.0",
+    "@types/compression": "0.0.36",
+    "@types/cors": "2.8.5",
+    "@types/debug": "4.1.4",
+    "@types/deepmerge": "2.2.0",
+    "@types/express": "4.16.1",
+    "@types/form-data": "2.2.1",
+    "@types/glob": "7.1.1",
+    "@types/got": "9.4.2",
+    "@types/helmet": "0.0.43",
+    "@types/jest": "24.0.12",
+    "@types/memoizee": "0.4.2",
+    "@types/morgan": "1.7.35",
+    "@types/nock": "10.0.2",
+    "@types/node": "11.13.4",
+    "@types/supertest": "2.0.7",
+    "@types/swagger-ui-express": "3.0.0",
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "1.9.0",
+    "clean": "4.0.2",
+    "eslint": "5.16.0",
+    "eslint-config-airbnb-typescript": "4.0.0",
+    "eslint-config-prettier": "4.3.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "22.5.1",
+    "eslint-plugin-prettier": "3.1.0",
+    "got": "9.4.0",
+    "jest": "24.7.1",
+    "jest-config": "24.8.0",
     "jest-extended": "0.11.1",
     "jest-junit": "6.3.0",
     "lerna": "3.13.1",
@@ -32,42 +55,50 @@
     "nsp": "3.2.1",
     "pre-commit": "1.2.2",
     "prettier": "1.14.2",
-    "supertest": "3.4.2"
+    "prettier-check": "2.0.0",
+    "supertest": "3.4.2",
+    "ts-jest": "24.0.2",
+    "typedoc": "0.14.2",
+    "typedoc-plugin-markdown": "1.2.1",
+    "typescript": "3.4.3"
   },
   "scripts": {
     "lerna": "lerna",
-    "eslint": "eslint",
+    "lint": "eslint '*/**/*.{ts,tsx}' ",
+    "lint-fix": "eslint '*/**/*.{ts,tsx}' --fix",
     "nsp": "nsp",
     "bootstrap": "lerna bootstrap",
-    "postinstall": "lerna bootstrap",
-    "documentation": "lerna exec -- npm run documentation && git add '*/**/README.md'",
-    "clean": "lerna clean --yes",
+    "postinstall": "lerna bootstrap && npm run compile",
+    "documentation": "lerna exec -- npm run documentation",
+    "clean": "lerna clean --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
     "release": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "test": "npm run lint && jest --verbose",
     "coverage": "npm test -- --coverage",
     "test:clean": "jest --clearCache",
     "test:watch": "jest --verbose --watchAll",
     "test:ci": "npm run coverage -- --ci --maxWorkers=2  --reporters=default --reporters=jest-junit",
-    "lint": "eslint .",
     "security": "npm run nsp check -- --reporter summary --threshold 4; lerna exec --concurrency 14 -- npm run security -- --threshold 4",
-    "checkDeps": "lerna exec --concurrency 14 -- npm outdated"
+    "checkDeps": "lerna exec --concurrency 14 -- npm outdated",
+    "compile": "tsc --build tsconfig.build.json",
+    "compile:clean": "tsc --build tsconfig.build.json --clean",
+    "watch": "tsc --build tsconfig.build.json --watch"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
+    "*.ts": [
+      "prettier --write",
       "git add"
-    ]
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/?(*.)+(spec|test|e2e).js?(x)"
     ],
-    "projects": [
-      "<rootDir>/packages/*"
+    "*.js": [
+      "prettier --write",
+      "git add"
     ]
   },
   "pre-commit": [
     "test"
-  ]
+  ],
+  "jest": {
+    "projects": [
+      "<rootDir>/packages/*"
+    ]
+  }
 }

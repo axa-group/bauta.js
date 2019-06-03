@@ -8,7 +8,7 @@ Tell us what failed or needs to be updated
 
 ### Environment
 
-- Packages: bautajs
+- Packages: @bautajs/
 - Version:
 
 ### Steps to reproduce

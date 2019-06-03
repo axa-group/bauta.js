@@ -1,0 +1,34 @@
+{
+  "name": "@bautajs/decorators",
+  "version": "1.2.1",
+  "description": "A bautaJS simple helpfull decorators",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/**/*.js",
+    "./dist/**/*.d.ts",
+    "./dist/index.d.ts"
+  ],
+  "scripts": {
+    "documentation": "typedoc --name @bautajs/decorators ./src",
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+  },
+  "keywords": [
+    "bautajs",
+    "decorators",
+    "middleware"
+  ],
+  "author": "javier.blanco@axa.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@bautajs/core": "1.2.2",
+    "stjs": "0.0.5"
+  }
+}

@@ -2,9 +2,16 @@
   "name": "multipart-request-builder",
   "version": "1.2.2",
   "description": "Build a multipart/related requests ready to inject to a nodejs request",
-  "main": "Multipart.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/**/*.js",
+    "./dist/**/*.d.ts",
+    "./dist/index.d.ts"
+  ],
   "scripts": {
-    "documentation": "npx documentation build --config documentation.yml \"{,!(node_modules)/**/}*.js\" --sort-order=alpha -f md -o README.md"
+    "documentation": "typedoc --name multipart-request-builder ./src",
+    "tsc": "tsc"
   },
   "publishConfig": {
     "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
@@ -21,12 +28,16 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "combined-stream": "1.0.7",
-    "is-stream": "1.1.0",
+    "is-stream": "2.0.0",
     "safe-buffer": "5.1.2",
     "uuid": "3.3.2"
   },
   "engines": {
     "node": ">=8",
     "npm": ">=5"
+  },
+  "devDependencies": {
+    "@types/combined-stream": "^1.0.2",
+    "@types/uuid": "^3.4.4"
   }
 }

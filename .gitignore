@@ -26,3 +26,9 @@ npm-shrinkwrap.json
 junit.xml
 package-lock.json
 */**/package-lock.json
+# Ignore the compiled output.
+dist/
+packages/*/dist
+
+# TypeScript incremental compilation cache
+*.tsbuildinfo

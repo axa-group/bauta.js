@@ -1,0 +1,12 @@
+{
+  "services": {
+    "policies": {
+      "operations": [
+        {
+          "id":"find",
+          "url":"https://jsonplaceholder.typicode.com/todos"
+        }
+      ]
+    }
+  }
+}

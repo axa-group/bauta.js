@@ -1,6 +1,10 @@
 # Bauta Node JS
 
-## What is bauta node js
+## Migrate from 1.x.x to 2.x.x
+
+See [migration guide](./docs/migration-guide.md) or [changelog](./CHANGELOG.md)
+
+## What is bautaJS
 
 BautaJS is mainly a library for build NodeJS middlewares in 'seconds'.
 
@@ -18,11 +22,25 @@ Some of the features of this library are:
 
 Because is easy to learn, tested, it's not a framework, it's light and fast and it comes with a lot of cool features.
 
+## Getting started
+
+To get started with BautaJS:
+
+Install with npm install @bautajs/<integration> or @bautajs/core
+
+There are two ways to install Apollo Server:
+
+  - Standalone: For applications that do not require an existing web framework, use the @bautajs/core package.
+  - Integrations: For applications with a web framework (e.g. express, koa, hapi, etc.), use the appropriate BautaJS integration package.
+
+See the usage at [bautaJS](./packages/bautajs) package.
+
 ## Packages
 
 - [BautaJS](./packages/bautajs)
 - [BautaJS Express](./packages/bautajs-express)
 - [BautaJS Cache Decorator](./packages/bautajs-cache-decorator)
+- [BautaJS Decorators](./packages/bautajs-decorator)
 - [Multipart request builder](./packages/multipart-request-builder)
 - [Native proxy agent](./packages/native-proxy-agent)
 

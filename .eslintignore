@@ -1,4 +1,6 @@
+dist/
 node_modules/
+coverage/
 target/
 *.csv
 *.dat
@@ -11,5 +13,3 @@ target/
 *.swo
 *.swp
 *.tgz
-coverage/
-target/
