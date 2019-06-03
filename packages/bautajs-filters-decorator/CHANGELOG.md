@@ -27,33 +27,3 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * dataSource stream options has been removed, now use use only on the request, dataSource.request({ stream:true })
 * decorators has been moved from 'bautajs/decorators/..' to an standalone package '@bautajs/decorators'
 * context.req and context.res are now mandatory parameters on run the operation pipeline
-
-
-
-
-
-## [1.2.2](https://github.axa.com/Digital/bauta-nodejs/compare/v1.2.1...v1.2.2) (2019-05-08)
-
-
-### Features
-
-* **batuajs,bautajs-express:** add  strict definition filter for explorer ([#64](https://github.axa.com/Digital/bauta-nodejs/issues/64)) ([02d9a4b](https://github.axa.com/Digital/bauta-nodejs/commit/02d9a4b)), closes [#63](https://github.axa.com/Digital/bauta-nodejs/issues/63)
-
-
-
-
-
-## [1.2.1](https://github.axa.com/Digital/bauta-nodejs/compare/v1.2.0...v1.2.1) (2019-04-11)
-
-**Note:** Version bump only for package bautajs-cache-decorator
-
-
-
-
-
-# [1.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v1.1.5...v1.2.0) (2019-04-11)
-
-
-### Features
-
-* **bautajs-cache-decorator:** add a cache decorator ([#56](https://github.axa.com/Digital/bauta-nodejs/issues/56)) ([692a46b](https://github.axa.com/Digital/bauta-nodejs/commit/692a46b)), closes [#54](https://github.axa.com/Digital/bauta-nodejs/issues/54) [#55](https://github.axa.com/Digital/bauta-nodejs/issues/55)

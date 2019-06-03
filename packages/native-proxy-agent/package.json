@@ -1,6 +1,6 @@
 {
   "name": "native-proxy-agent",
-  "version": "1.2.2",
+  "version": "2.0.0-alpha.0",
   "description": "A native proxy agent that uses the native nodejs http.Agent and https.Agent to proxy the requests, no dependencies",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "documentation": "typedoc --name native-proxy-agent ./src",
-    "tsc":"tsc"
+    "tsc": "tsc"
   },
   "publishConfig": {
     "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
