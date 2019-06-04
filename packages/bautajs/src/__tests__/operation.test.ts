@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 /* global expect, describe, test, beforeEach, jest */
+import nock from 'nock';
 import { OperationBuilder } from '../core/operation';
 import { LoggerBuilder } from '../logger';
 import { Context, Metadata, OpenAPIV3Document, Operation } from '../utils/types';
@@ -81,6 +82,7 @@ describe('Operation class tests', () => {
         }
       ];
       const ctx = { req, res };
+      operationTest.setup(p => p.push(() => 1));
       try {
         await operationTest.run(ctx);
       } catch (e) {
@@ -604,6 +606,35 @@ describe('Operation class tests', () => {
       };
 
       expect(await operationTest.run({ req: { body }, res: {} })).toEqual(expected);
+    });
+
+    test('should use default step if setup is not done', async () => {
+      nock('https://google.com')
+        .get('/')
+        .reply(200, {
+          foo: 'boo'
+        });
+
+      const operationTest = OperationBuilder.create(
+        'operation1',
+        testDatasourceJson.services.testService.operations[0],
+        testApiDefinitionsJson[0] as OpenAPIV3Document,
+        'testService'
+      );
+
+      operationTest.setSchema(testSchemaBodyJson).validateResponse(false);
+      const expected = {
+        foo: 'boo'
+      };
+      const body = {
+        grant_type: 'password',
+        username: 'user',
+        password: 'pass'
+      };
+
+      expect(await operationTest.run({ req: { body }, res: {} })).toEqual(expected);
+
+      nock.cleanAll();
     });
   });
 

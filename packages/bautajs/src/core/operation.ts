@@ -92,6 +92,8 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
 
   private accesor = new Accesor<TReq, TRes>();
 
+  private pipelineSetUp: boolean = false;
+
   constructor(
     public readonly operationId: string,
     operationTemplate: OperationTemplate,
@@ -255,7 +257,7 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
     if (context.validateRequest && this.validation.validateReqEnabled === true) {
       context.validateRequest(ctx.req);
     }
-    let result = this.accesor.handler
+    let result = this.pipelineSetUp
       ? this.accesor.handler(undefined, context)
       : defaultResolver(undefined, context);
 
@@ -293,6 +295,8 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
     if (this.nextVersionOperation) {
       this.nextVersionOperation.setup(fn);
     }
+
+    this.pipelineSetUp = true;
 
     return this;
   }
