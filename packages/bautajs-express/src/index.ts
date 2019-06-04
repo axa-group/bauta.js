@@ -186,7 +186,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
           const finalTime = new Date().getTime() - startTime.getTime();
 
           this.logger.info(
-            `The operation execution of ${basePath}/${expressRoute} took: ${
+            `The operation execution of ${basePath}${expressRoute} took: ${
               typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
             } ms`
           );
@@ -196,7 +196,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
           res.status(response.statusCode || 500);
           const finalTime = new Date().getTime() - startTime.getTime();
           this.logger.info(
-            `The operation execution of ${basePath}/${expressRoute} took: ${
+            `The operation execution of ${basePath}${expressRoute} took: ${
               typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
             } ms`
           );
