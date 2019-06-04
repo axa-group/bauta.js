@@ -23,7 +23,7 @@ import { Pipeline } from '../utils/types';
  * @param {Pipeline<TReq, TRes, TIn>} fn
  * @returns
  */
-export function pipeline<TReq, TRes, TIn>(fn: Pipeline<TReq, TRes, TIn>) {
+export function pipeline<TReq, TRes, TIn>(fn: (pipeline: Pipeline<TReq, TRes, TIn>) => void) {
   return fn;
 }
 

@@ -40,7 +40,7 @@ Make sure that you have access to [Artifactory](https://axags.jfrog.io/axags/api
 
 **Ƭ MultipartRequestBody**: *[RequestPart](interfaces/requestpart.md)[] \| [MultipartBody](interfaces/multipartbody.md)*
 
-*Defined in [multipart.ts:38](https://github.axa.com/Digital/bauta-nodejs/blob/b71f37b/packages/multipart-request-builder/src/multipart.ts#L38)*
+*Defined in [multipart.ts:38](https://github.axa.com/Digital/bauta-nodejs/blob/a176f52/packages/multipart-request-builder/src/multipart.ts#L38)*
 
 ___
 

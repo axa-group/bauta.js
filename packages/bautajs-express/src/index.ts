@@ -447,7 +447,7 @@ export function step<TIn, TOut>(fn: StepFn<Request, Response, TIn, TOut>) {
  * @param {Pipeline<Request, Response, TIn>} fn
  * @returns
  */
-export function pipeline<TIn>(fn: Pipeline<Request, Response, TIn>) {
+export function pipeline<TIn>(fn: (pipeline: Pipeline<Request, Response, TIn>) => void) {
   return fn;
 }
 

@@ -38,7 +38,7 @@ const multipartInstance = new Multipart(options); const reqOptions = \[ { body: 
 
 ⊕ **new Multipart**(options?: *[MultipartOptions](../interfaces/multipartoptions.md)*): [Multipart](multipart.md)
 
-*Defined in [multipart.ts:70](https://github.axa.com/Digital/bauta-nodejs/blob/b71f37b/packages/multipart-request-builder/src/multipart.ts#L70)*
+*Defined in [multipart.ts:70](https://github.axa.com/Digital/bauta-nodejs/blob/a176f52/packages/multipart-request-builder/src/multipart.ts#L70)*
 
 **Parameters:**
 
@@ -58,7 +58,7 @@ ___
 
 ▸ **buildRequest**(options: *[MultipartRequestBody](../#multipartrequestbody)*): [RequestPart](../interfaces/requestpart.md)
 
-*Defined in [multipart.ts:178](https://github.axa.com/Digital/bauta-nodejs/blob/b71f37b/packages/multipart-request-builder/src/multipart.ts#L178)*
+*Defined in [multipart.ts:178](https://github.axa.com/Digital/bauta-nodejs/blob/a176f52/packages/multipart-request-builder/src/multipart.ts#L178)*
 
 Allows build the multipart request
 
