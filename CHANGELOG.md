@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-alpha.5](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.4...v2.0.0-alpha.5) (2019-06-04)
+
+
+### Bug Fixes
+
+* **bautajs:** default step was not executed even if setup was not specified ([388e252](http://github.axa.com/Digital/bauta-nodejs/commit/388e252))
+
+
+
+
+
 # [2.0.0-alpha.4](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.3...v2.0.0-alpha.4) (2019-06-04)
 
 
