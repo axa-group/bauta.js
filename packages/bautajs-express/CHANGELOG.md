@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-alpha.6](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.5...v2.0.0-alpha.6) (2019-06-05)
+
+
+### Bug Fixes
+
+* **bautajs-express:** remove slash on express log of execution time ([f67fbfa](https://github.axa.com/Digital/bauta-nodejs/commit/f67fbfa))
+
+
+
+
+
 # [2.0.0-alpha.5](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.4...v2.0.0-alpha.5) (2019-06-04)
 
 **Note:** Version bump only for package @bautajs/express

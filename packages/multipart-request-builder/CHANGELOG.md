@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-alpha.6](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.5...v2.0.0-alpha.6) (2019-06-05)
+
+
+### Bug Fixes
+
+* dataSource from operation must be a private variable ([1bb3f5d](https://github.axa.com/Digital/bauta-nodejs/commit/1bb3f5d))
+* **bautajs:** ctx.data was not transmited between operations on run ([1462734](https://github.axa.com/Digital/bauta-nodejs/commit/1462734))
+
+
+### Features
+
+* **bautajs:** operation.run() req and res are not mandatory anymore ([d6bb9d4](https://github.axa.com/Digital/bauta-nodejs/commit/d6bb9d4))
+
+
+### BREAKING CHANGES
+
+* operation.dataSource(ctx).request() can not be performed anymore. DataSource is only accesible inside the operation pipeline.
+
+Use instead operation.run()
+
+
+
+
+
 # [2.0.0-alpha.4](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.3...v2.0.0-alpha.4) (2019-06-04)
 
 
