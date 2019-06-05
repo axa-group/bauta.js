@@ -145,8 +145,8 @@ export type OperationDataSourceBuilder = {
   template: OperationTemplate;
 } & ((previousValue?: any) => OperationDataSource);
 export interface ContextData<TReq, TRes> {
-  req: TReq;
-  res: TRes;
+  req?: TReq;
+  res?: TRes;
   data?: Dictionary<any>;
 }
 export interface Context<TReq, TRes> extends ContextData<TReq, TRes>, Session {

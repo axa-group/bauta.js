@@ -327,30 +327,35 @@ describe('Operation class tests', () => {
   });
 
   describe('Operation.run tests', () => {
-    test('should throw an error if there is no context req', () => {
+    test('should allow a context without req', async () => {
       const operationTest = OperationBuilder.create(
         'operation1',
         testDatasourceJson.services.testService.operations[0],
         testApiDefinitionsJson[0] as OpenAPIV3Document,
         'testService'
       );
-      const expected = new Error('The context(req) parameter is mandatory');
 
-      // @ts-ignore
-      expect(() => operationTest.run({ res: {} })).toThrow(expected);
+      operationTest
+        .validateResponse(false)
+        .validateRequest(false)
+        .setup(p => p.push(() => 'good'));
+
+      expect(await operationTest.run({ res: {} })).toEqual('good');
     });
 
-    test('should throw an error if there is no context res', () => {
+    test('should allow a context without res', async () => {
       const operationTest = OperationBuilder.create(
         'operation1',
         testDatasourceJson.services.testService.operations[0],
         testApiDefinitionsJson[0] as OpenAPIV3Document,
         'testService'
       );
-      const expected = new Error('The context(res) parameter is mandatory');
+      operationTest
+        .validateResponse(false)
+        .validateRequest(false)
+        .setup(p => p.push(() => 'good'));
 
-      // @ts-ignore
-      expect(() => operationTest.run({ req: {} })).toThrow(expected);
+      expect(await operationTest.run({ req: {} })).toEqual('good');
     });
 
     test('should add the metadata operationId and serviceId on the context', async () => {

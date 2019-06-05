@@ -224,11 +224,11 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
 
   public run(ctx: ContextData<TReq, TRes>): Promise<any> {
     if (!ctx.req) {
-      throw new Error('The context(req) parameter is mandatory');
+      ctx.req = {} as TReq;
     }
 
     if (!ctx.res) {
-      throw new Error('The context(res) parameter is mandatory');
+      ctx.res = {} as TRes;
     }
 
     const context: Context<TReq, TRes> = {

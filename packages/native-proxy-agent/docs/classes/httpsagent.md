@@ -127,7 +127,7 @@ ___
 
 ▸ **createConnection**(options: *[NativeHttpsAgentOptions](../interfaces/nativehttpsagentoptions.md)*, cb: *[ICallback](../interfaces/icallback.md)*): `void`
 
-*Defined in [https-agent.ts:64](https://github.axa.com/Digital/bauta-nodejs/blob/f67fbfa/packages/native-proxy-agent/src/https-agent.ts#L64)*
+*Defined in [https-agent.ts:64](https://github.axa.com/Digital/bauta-nodejs/blob/4798ac7/packages/native-proxy-agent/src/https-agent.ts#L64)*
 
 **Parameters:**
 

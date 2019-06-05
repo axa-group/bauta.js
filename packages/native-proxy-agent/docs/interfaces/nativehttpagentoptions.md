@@ -31,7 +31,7 @@
 
 **● headers**: *`any`*
 
-*Defined in [types.ts:38](https://github.axa.com/Digital/bauta-nodejs/blob/f67fbfa/packages/native-proxy-agent/src/types.ts#L38)*
+*Defined in [types.ts:38](https://github.axa.com/Digital/bauta-nodejs/blob/4798ac7/packages/native-proxy-agent/src/types.ts#L38)*
 
 ___
 <a id="httpthroughproxy"></a>
@@ -40,7 +40,7 @@ ___
 
 **● httpThroughProxy**: *`undefined` \| `false` \| `true`*
 
-*Defined in [types.ts:39](https://github.axa.com/Digital/bauta-nodejs/blob/f67fbfa/packages/native-proxy-agent/src/types.ts#L39)*
+*Defined in [types.ts:39](https://github.axa.com/Digital/bauta-nodejs/blob/4798ac7/packages/native-proxy-agent/src/types.ts#L39)*
 
 ___
 <a id="keepalive"></a>
@@ -101,7 +101,7 @@ ___
 
 **● proxy**: *[HttpProxy](httpproxy.md) \| [HttpProxy](httpproxy.md)*
 
-*Defined in [types.ts:37](https://github.axa.com/Digital/bauta-nodejs/blob/f67fbfa/packages/native-proxy-agent/src/types.ts#L37)*
+*Defined in [types.ts:37](https://github.axa.com/Digital/bauta-nodejs/blob/4798ac7/packages/native-proxy-agent/src/types.ts#L37)*
 
 ___
 <a id="timeout"></a>
