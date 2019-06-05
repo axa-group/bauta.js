@@ -11,4 +11,13 @@ Make sure that you have access to [Artifactory][1]
   npm install native-proxy-agent
 ```
 
+## Usage
+
+```js
+const { createAgent } = require('native-proxy-agent');
+const got = require('got');
+
+ got('http://requestUrl.com/service/1', { agent : createAgent('http://requestUrl.com/service/1') });
+```
+
 [1]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/

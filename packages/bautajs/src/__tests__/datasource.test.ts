@@ -259,7 +259,7 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'response-logger: Response for [undefined]  https://pets.com/v1/policies: ',
+        'response-logger: Response for [GET]  https://pets.com/v1/policies: ',
         {
           body: '{"bender":1}',
           headers: '{"content-type":"application/json"}',
@@ -343,7 +343,7 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'response-logger: Response for [undefined]  https://pets.com/v1/policies: ',
+        'response-logger: Response for [GET]  https://pets.com/v1/policies: ',
         {
           body: '<html><div></div></html>',
           headers: '{"content-type":"text/html"}',
