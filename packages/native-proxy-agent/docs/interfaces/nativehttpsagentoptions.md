@@ -171,7 +171,7 @@ ___
 
 **● headers**: *`any`*
 
-*Defined in [types.ts:44](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/native-proxy-agent/src/types.ts#L44)*
+*Defined in [types.ts:44](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/native-proxy-agent/src/types.ts#L44)*
 
 ___
 <a id="honorcipherorder"></a>
@@ -202,7 +202,7 @@ ___
 
 **● hostname**: *`undefined` \| `string`*
 
-*Defined in [types.ts:45](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/native-proxy-agent/src/types.ts#L45)*
+*Defined in [types.ts:45](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/native-proxy-agent/src/types.ts#L45)*
 
 ___
 <a id="keepalive"></a>
@@ -377,7 +377,7 @@ ___
 
 **● proxy**: *[HttpProxy](httpproxy.md) \| [HttpProxy](httpproxy.md)*
 
-*Defined in [types.ts:43](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/native-proxy-agent/src/types.ts#L43)*
+*Defined in [types.ts:43](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/native-proxy-agent/src/types.ts#L43)*
 
 ___
 <a id="rejectunauthorized"></a>

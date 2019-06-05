@@ -77,7 +77,7 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
 
   public schema: PathsObject | null = null;
 
-  public dataSource: OperationDataSourceBuilder;
+  private dataSource: OperationDataSourceBuilder;
 
   public nextVersionOperation: null | Operation<TReq, TRes> = null;
 

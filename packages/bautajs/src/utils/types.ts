@@ -103,7 +103,6 @@ export type ErrorHandler<TReq, TRes> = ((err: Error, ctx: Context<TReq, TRes>) =
 export interface Operation<TReq, TRes> {
   private: boolean;
   schema: PathsObject | null;
-  dataSource: OperationDataSourceBuilder;
   nextVersionOperation: null | Operation<TReq, TRes>;
   readonly operationId: string;
   readonly apiDefinition: Document;

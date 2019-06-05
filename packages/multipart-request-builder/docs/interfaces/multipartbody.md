@@ -23,7 +23,7 @@
 
 **● chunked**: *`boolean`*
 
-*Defined in [multipart.ts:31](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/multipart-request-builder/src/multipart.ts#L31)*
+*Defined in [multipart.ts:31](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/multipart-request-builder/src/multipart.ts#L31)*
 
 ___
 <a id="data"></a>
@@ -32,7 +32,7 @@ ___
 
 **● data**: *[MultipartData](multipartdata.md)[]*
 
-*Defined in [multipart.ts:32](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/multipart-request-builder/src/multipart.ts#L32)*
+*Defined in [multipart.ts:32](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/multipart-request-builder/src/multipart.ts#L32)*
 
 ___
 

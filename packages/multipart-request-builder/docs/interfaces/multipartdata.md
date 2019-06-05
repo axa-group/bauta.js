@@ -23,7 +23,7 @@
 
 **● body**: *`any`*
 
-*Defined in [multipart.ts:24](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/multipart-request-builder/src/multipart.ts#L24)*
+*Defined in [multipart.ts:24](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/multipart-request-builder/src/multipart.ts#L24)*
 
 ___
 <a id="content_type"></a>
@@ -32,7 +32,7 @@ ___
 
 **● content-type**: *`undefined` \| `string`*
 
-*Defined in [multipart.ts:23](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/multipart-request-builder/src/multipart.ts#L23)*
+*Defined in [multipart.ts:23](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/multipart-request-builder/src/multipart.ts#L23)*
 
 ___
 
