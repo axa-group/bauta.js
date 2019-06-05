@@ -83,7 +83,9 @@
     "compile:clean": "tsc --build tsconfig.build.json --clean",
     "watch": "tsc --build tsconfig.build.json --watch"
   },
-  "engines" : { "node" : ">=8" },
+  "engines": {
+    "node": ">=8"
+  },
   "lint-staged": {
     "*.ts": [
       "prettier --write",
