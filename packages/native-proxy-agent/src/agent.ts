@@ -34,6 +34,10 @@ export function createAgent(
   target: string,
   options: NativeAgentOptions = {}
 ): HttpsAgent | HttpAgent {
+  if (typeof target !== 'string') {
+    throw new Error('Target must be defined.');
+  }
+
   if (options.proxy === undefined) {
     const { http_proxy: httpProxy, https_proxy: httpsProxy, HTTP_PROXY, HTTPS_PROXY } = process.env;
     const proxy: string = httpsProxy || HTTPS_PROXY || httpProxy || HTTP_PROXY || '';
