@@ -149,7 +149,9 @@ export interface ContextData<TReq, TRes> {
   res?: TRes;
   data?: Dictionary<any>;
 }
-export interface Context<TReq, TRes> extends ContextData<TReq, TRes>, Session {
+export interface Context<TReq, TRes> extends Session {
+  req: TReq;
+  res: TRes;
   validateRequest: ValidationReqBuilder<TReq>;
   validateResponse: ValidationResBuilder<TRes>;
 

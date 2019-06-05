@@ -232,8 +232,9 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
     }
 
     const context: Context<TReq, TRes> = {
-      data: {},
-      ...ctx,
+      data: ctx.data || {},
+      req: ctx.req,
+      res: ctx.res,
       dataSource: this.dataSource,
       metadata: {
         operationId: this.operationId,

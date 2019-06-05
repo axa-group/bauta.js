@@ -33,7 +33,7 @@
 
 **● auth**: *`any`*
 
-*Defined in [types.ts:32](https://github.axa.com/Digital/bauta-nodejs/blob/4798ac7/packages/native-proxy-agent/src/types.ts#L32)*
+*Defined in [types.ts:32](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/native-proxy-agent/src/types.ts#L32)*
 
 ___
 <a id="family"></a>
@@ -53,7 +53,7 @@ ___
 
 **● headers**: *`any`*
 
-*Defined in [types.ts:31](https://github.axa.com/Digital/bauta-nodejs/blob/4798ac7/packages/native-proxy-agent/src/types.ts#L31)*
+*Defined in [types.ts:31](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/native-proxy-agent/src/types.ts#L31)*
 
 ___
 <a id="hints"></a>
@@ -128,7 +128,7 @@ ___
 
 **● protocol**: *`undefined` \| `string`*
 
-*Defined in [types.ts:33](https://github.axa.com/Digital/bauta-nodejs/blob/4798ac7/packages/native-proxy-agent/src/types.ts#L33)*
+*Defined in [types.ts:33](https://github.axa.com/Digital/bauta-nodejs/blob/d6bb9d4/packages/native-proxy-agent/src/types.ts#L33)*
 
 ___
 
