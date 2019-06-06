@@ -131,12 +131,6 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
   private routes: Dictionary<Dictionary<Route<Request, Response>>> = {};
 
   /**
-   * @type {Document[]}
-   * @memberof BautaJSExpress
-   */
-  public apiDefinitions: Document[];
-
-  /**
    * @type {Application}
    * @memberof BautaJSExpress
    */
@@ -144,7 +138,6 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
 
   constructor(apiDefinitions: Document[], options: BautaJSOptions<Request, Response>) {
     super(apiDefinitions, options);
-    this.apiDefinitions = apiDefinitions.map(ad => ({ ...ad, paths: {} }));
     this.app = express();
   }
 
@@ -153,8 +146,8 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
       const { operation, responses, produces }: Route<Request, Response> = this.routes[
         expressRoute
       ][method];
-      const openAPIV3Def = operation.apiDefinition as OpenAPIV3Document;
-      const openAPIV2Def = operation.apiDefinition as OpenAPIV2Document;
+      const openAPIV3Def = operation.schema as OpenAPIV3Document;
+      const openAPIV2Def = operation.schema as OpenAPIV2Document;
       const basePath: string | undefined =
         openAPIV3Def.servers && openAPIV3Def.servers[0].url
           ? openAPIV3Def.servers[0].url
@@ -172,7 +165,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
           }
 
           if (responses[res.statusCode]) {
-            const openAPIV3 = operation.apiDefinition as OpenAPIV3Document;
+            const openAPIV3 = operation.schema as OpenAPIV3Document;
             const contentType = openAPIV3.openapi
               ? Object.keys(responses[res.statusCode].content)[0]
               : produces[0];
@@ -215,7 +208,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
         chalk.yellowBright(
           `[${method.toUpperCase()}] ${basePath + expressRoute} operation exposed on the API from ${
             operation.serviceId
-          }.${operation.apiDefinition.info.version}.${operation.operationId}`
+          }.${operation.schema.info.version}.${operation.operationId}`
         )
       );
       this.logger.events.emit(EventTypes.EXPOSE_OPERATION, {
@@ -238,9 +231,9 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
         } else {
           Object.keys(version).forEach((operationId: string) => {
             const operation = version[operationId];
-            if (operation.schema && !operation.private) {
-              const { method, expressRoute, responses, produces, swaggerPath } = getSchemaData(
-                operation.schema
+            if (Object.keys(operation.schema.paths).length > 0 && !operation.private) {
+              const { method, expressRoute, responses, produces } = getSchemaData(
+                operation.schema.paths
               );
               if (!this.routes[expressRoute]) {
                 this.routes[expressRoute] = {};
@@ -250,11 +243,6 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
                 operation,
                 responses,
                 produces
-              };
-
-              apiVersion.paths[swaggerPath] = {
-                ...apiVersion.paths[swaggerPath],
-                ...operation.schema[swaggerPath]
               };
             } else {
               this.logger.warn(

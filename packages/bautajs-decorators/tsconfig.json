@@ -17,6 +17,6 @@
     "includeDeclarations": true,
     "excludeNotExported": true,
     "excludeExternals": true,
-    "toc": true
+    "exclude":"**/*.test.ts"
   }
 }

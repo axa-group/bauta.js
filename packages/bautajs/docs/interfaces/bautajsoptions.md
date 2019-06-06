@@ -28,7 +28,7 @@
 
 **● dataSourceCtx**: *`any`*
 
-*Defined in [utils/types.ts:81](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L81)*
+*Defined in [utils/types.ts:87](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L87)*
 
 ___
 <a id="datasourcespath"></a>
@@ -37,7 +37,7 @@ ___
 
 **● dataSourcesPath**: *`string` \| `string`[]*
 
-*Defined in [utils/types.ts:79](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L79)*
+*Defined in [utils/types.ts:85](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L85)*
 
 ___
 <a id="resolverspath"></a>
@@ -46,7 +46,7 @@ ___
 
 **● resolversPath**: *`string` \| `string`[]*
 
-*Defined in [utils/types.ts:80](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L80)*
+*Defined in [utils/types.ts:86](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L86)*
 
 ___
 <a id="serviceswrapper"></a>
@@ -55,7 +55,7 @@ ___
 
 **● servicesWrapper**: *`undefined` \| `function`*
 
-*Defined in [utils/types.ts:82](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L82)*
+*Defined in [utils/types.ts:88](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L88)*
 
 ___
 

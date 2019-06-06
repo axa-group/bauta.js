@@ -27,7 +27,7 @@
 
 **● id**: *`undefined` \| `string`*
 
-*Defined in [utils/types.ts:176](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L176)*
+*Defined in [utils/types.ts:182](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L182)*
 
 ___
 <a id="logger"></a>
@@ -36,7 +36,7 @@ ___
 
 **● logger**: *[Logger](logger.md)*
 
-*Defined in [utils/types.ts:178](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L178)*
+*Defined in [utils/types.ts:184](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L184)*
 
 ___
 <a id="url"></a>
@@ -45,7 +45,7 @@ ___
 
 **● url**: *`string` \| `undefined`*
 
-*Defined in [utils/types.ts:179](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L179)*
+*Defined in [utils/types.ts:185](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L185)*
 
 ___
 <a id="userid"></a>
@@ -54,7 +54,7 @@ ___
 
 **● userId**: *`undefined` \| `string`*
 
-*Defined in [utils/types.ts:177](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L177)*
+*Defined in [utils/types.ts:183](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L183)*
 
 ___
 

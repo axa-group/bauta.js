@@ -24,7 +24,7 @@
 
 **● resolveBodyOnly**: *`false`*
 
-*Defined in [utils/types.ts:215](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L215)*
+*Defined in [utils/types.ts:221](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L221)*
 
 ___
 

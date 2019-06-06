@@ -28,9 +28,9 @@
 * [statusCode](validationerror.md#statuscode)
 * [Error](validationerror.md#error)
 
-### Accessors
+### Methods
 
-* [__@toStringTag](validationerror.md#___tostringtag)
+* [toJSON](validationerror.md#tojson)
 
 ---
 
@@ -42,7 +42,7 @@
 
 ⊕ **new ValidationError**(message: *`string`*, errors: *[LocationError](../interfaces/locationerror.md)[]*, statusCode?: *`number`*, response?: *`any`*): [ValidationError](validationerror.md)
 
-*Defined in [core/validation-error.ts:22](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/core/validation-error.ts#L22)*
+*Defined in [core/validation-error.ts:23](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/validation-error.ts#L23)*
 
 **Parameters:**
 
@@ -67,7 +67,7 @@ ___
 
 *Implementation of [IValidationError](../interfaces/ivalidationerror.md).[errors](../interfaces/ivalidationerror.md#errors)*
 
-*Defined in [core/validation-error.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/core/validation-error.ts#L18)*
+*Defined in [core/validation-error.ts:19](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/validation-error.ts#L19)*
 
 ___
 <a id="message"></a>
@@ -104,7 +104,7 @@ ___
 
 *Implementation of [IValidationError](../interfaces/ivalidationerror.md).[response](../interfaces/ivalidationerror.md#response)*
 
-*Defined in [core/validation-error.ts:22](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/core/validation-error.ts#L22)*
+*Defined in [core/validation-error.ts:23](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/validation-error.ts#L23)*
 
 ___
 <a id="stack"></a>
@@ -130,7 +130,7 @@ ___
 
 *Implementation of [IValidationError](../interfaces/ivalidationerror.md).[statusCode](../interfaces/ivalidationerror.md#statuscode)*
 
-*Defined in [core/validation-error.ts:20](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/core/validation-error.ts#L20)*
+*Defined in [core/validation-error.ts:21](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/validation-error.ts#L21)*
 
 ___
 <a id="error"></a>
@@ -143,17 +143,17 @@ ___
 
 ___
 
-## Accessors
+## Methods
 
-<a id="___tostringtag"></a>
+<a id="tojson"></a>
 
-###  __@toStringTag
+###  toJSON
 
-**get __@toStringTag**(): `string`
+▸ **toJSON**(): `object`
 
-*Defined in [core/validation-error.ts:35](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/core/validation-error.ts#L35)*
+*Defined in [core/validation-error.ts:40](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/validation-error.ts#L40)*
 
-**Returns:** `string`
+**Returns:** `object`
 
 ___
 

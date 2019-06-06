@@ -126,7 +126,7 @@ ___
 
 **● responseType**: *[ResponseType](../enums/responsetype.md)*
 
-*Defined in [utils/types.ts:218](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L218)*
+*Defined in [utils/types.ts:224](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L224)*
 
 ___
 <a id="retry"></a>

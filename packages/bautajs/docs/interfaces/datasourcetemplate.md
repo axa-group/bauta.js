@@ -22,7 +22,7 @@
 
 **● services**: *[Dictionary](dictionary.md)<[ServiceTemplate](servicetemplate.md)>*
 
-*Defined in [utils/types.ts:221](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L221)*
+*Defined in [utils/types.ts:227](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L227)*
 
 ___
 

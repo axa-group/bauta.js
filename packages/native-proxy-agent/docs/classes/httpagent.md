@@ -37,7 +37,7 @@
 
 *Overrides Agent.__constructor*
 
-*Defined in [http-agent.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/native-proxy-agent/src/http-agent.ts#L18)*
+*Defined in [http-agent.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/native-proxy-agent/src/http-agent.ts#L18)*
 
 **Parameters:**
 

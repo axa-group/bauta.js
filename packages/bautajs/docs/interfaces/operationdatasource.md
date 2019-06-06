@@ -33,7 +33,7 @@
 
 *Inherited from [OperationTemplate](operationtemplate.md).[id](operationtemplate.md#id)*
 
-*Defined in [utils/types.ts:128](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L128)*
+*Defined in [utils/types.ts:132](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L132)*
 
 ___
 <a id="inherit"></a>
@@ -44,7 +44,7 @@ ___
 
 *Inherited from [OperationTemplate](operationtemplate.md).[inherit](operationtemplate.md#inherit)*
 
-*Defined in [utils/types.ts:133](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L133)*
+*Defined in [utils/types.ts:137](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L137)*
 
 ___
 <a id="method"></a>
@@ -55,7 +55,7 @@ ___
 
 *Inherited from [OperationTemplate](operationtemplate.md).[method](operationtemplate.md#method)*
 
-*Defined in [utils/types.ts:131](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L131)*
+*Defined in [utils/types.ts:135](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L135)*
 
 ___
 <a id="options"></a>
@@ -66,7 +66,7 @@ ___
 
 *Inherited from [OperationTemplate](operationtemplate.md).[options](operationtemplate.md#options)*
 
-*Defined in [utils/types.ts:134](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L134)*
+*Defined in [utils/types.ts:138](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L138)*
 
 ___
 <a id="private"></a>
@@ -77,7 +77,7 @@ ___
 
 *Inherited from [OperationTemplate](operationtemplate.md).[private](operationtemplate.md#private)*
 
-*Defined in [utils/types.ts:130](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L130)*
+*Defined in [utils/types.ts:134](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L134)*
 
 ___
 <a id="request"></a>
@@ -86,7 +86,7 @@ ___
 
 **● request**: *[RequestFn](requestfn.md)*
 
-*Defined in [utils/types.ts:142](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L142)*
+*Defined in [utils/types.ts:146](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L146)*
 
 ___
 <a id="url"></a>
@@ -97,7 +97,7 @@ ___
 
 *Inherited from [OperationTemplate](operationtemplate.md).[url](operationtemplate.md#url)*
 
-*Defined in [utils/types.ts:132](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L132)*
+*Defined in [utils/types.ts:136](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L136)*
 
 ___
 <a id="version"></a>
@@ -108,7 +108,7 @@ ___
 
 *Inherited from [OperationTemplate](operationtemplate.md).[version](operationtemplate.md#version)*
 
-*Defined in [utils/types.ts:129](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L129)*
+*Defined in [utils/types.ts:133](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L133)*
 
 ___
 

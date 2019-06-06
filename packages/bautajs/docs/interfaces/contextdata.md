@@ -9,8 +9,6 @@
 
 **ContextData**
 
-↳  [Context](context.md)
-
 ## Index
 
 ### Properties
@@ -29,25 +27,25 @@
 
 **● data**: *[Dictionary](dictionary.md)<`any`>*
 
-*Defined in [utils/types.ts:150](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L150)*
+*Defined in [utils/types.ts:154](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L154)*
 
 ___
 <a id="req"></a>
 
-###  req
+### `<Optional>` req
 
-**● req**: *`TReq`*
+**● req**: *[TReq]()*
 
-*Defined in [utils/types.ts:148](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L148)*
+*Defined in [utils/types.ts:152](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L152)*
 
 ___
 <a id="res"></a>
 
-###  res
+### `<Optional>` res
 
-**● res**: *`TRes`*
+**● res**: *[TRes]()*
 
-*Defined in [utils/types.ts:149](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L149)*
+*Defined in [utils/types.ts:153](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L153)*
 
 ___
 

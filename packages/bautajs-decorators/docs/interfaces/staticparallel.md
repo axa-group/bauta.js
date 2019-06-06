@@ -40,7 +40,7 @@
 
 ▸ **parallel**<`TReq`,`TRes`,`TIn`>(...args: *`StepFn`<`TReq`, `TRes`, `TIn`, `any`>[]*): `StepFn`<`TReq`, `TRes`, `TIn`, `any`[]>
 
-*Defined in [decorators/parallel.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L18)*
+*Defined in [decorators/parallel.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L18)*
 
 **Type parameters:**
 
@@ -58,7 +58,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`]>
 
-*Defined in [decorators/parallel.ts:23](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L23)*
+*Defined in [decorators/parallel.ts:23](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L23)*
 
 **Type parameters:**
 
@@ -78,7 +78,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`, `TOut3`]>
 
-*Defined in [decorators/parallel.ts:29](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L29)*
+*Defined in [decorators/parallel.ts:29](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L29)*
 
 **Type parameters:**
 
@@ -100,7 +100,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`, `TOut3`, `TOut4`]>
 
-*Defined in [decorators/parallel.ts:36](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L36)*
+*Defined in [decorators/parallel.ts:36](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L36)*
 
 **Type parameters:**
 
@@ -124,7 +124,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`, `TOut3`, `TOut4`, `TOut5`]>
 
-*Defined in [decorators/parallel.ts:44](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L44)*
+*Defined in [decorators/parallel.ts:44](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L44)*
 
 **Type parameters:**
 
@@ -150,7 +150,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`, `TOut3`, `TOut4`, `TOut5`, `TOut6`]>
 
-*Defined in [decorators/parallel.ts:53](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L53)*
+*Defined in [decorators/parallel.ts:53](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L53)*
 
 **Type parameters:**
 
@@ -178,7 +178,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`, `TOut3`, `TOut4`, `TOut5`, `TOut6`, `TOut7`]>
 
-*Defined in [decorators/parallel.ts:63](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L63)*
+*Defined in [decorators/parallel.ts:63](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L63)*
 
 **Type parameters:**
 
@@ -208,7 +208,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`, `TOut3`, `TOut4`, `TOut5`, `TOut6`, `TOut7`, `TOut8`]>
 
-*Defined in [decorators/parallel.ts:74](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L74)*
+*Defined in [decorators/parallel.ts:74](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L74)*
 
 **Type parameters:**
 
@@ -240,7 +240,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`, `TOut3`, `TOut4`, `TOut5`, `TOut6`, `TOut7`, `TOut8`, `TOut9`]>
 
-*Defined in [decorators/parallel.ts:86](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L86)*
+*Defined in [decorators/parallel.ts:86](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L86)*
 
 **Type parameters:**
 
@@ -274,7 +274,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, [`TOut1`, `TOut2`, `TOut3`, `TOut4`, `TOut5`, `TOut6`, `TOut7`, `TOut8`, `TOut9`, `TOut10`]>
 
-*Defined in [decorators/parallel.ts:104](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-decorators/src/decorators/parallel.ts#L104)*
+*Defined in [decorators/parallel.ts:104](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L104)*
 
 **Type parameters:**
 

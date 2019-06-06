@@ -22,7 +22,6 @@ import stjs from 'stjs';
 import { ServiceBuilder } from './core/service';
 import { logger } from './logger';
 import { isMergeableObject } from './utils/is-mergeable-datasource';
-import { getStrictDefinition } from './utils/strict-definitions';
 import {
   BautaJSBuilder,
   BautaJSOptions,
@@ -31,9 +30,10 @@ import {
   Logger,
   Services
 } from './utils/types';
-import datasourceSchemaJson from './validators/datasource-schema.json';
-import extendOpenapiSchemaJson from './validators/extend-openapi-schema.json';
 import { validate } from './validators/validate';
+
+const datasourceSchemaJson = require('./validators/datasource-schema.json');
+const extendOpenapiSchemaJson = require('./validators/extend-openapi-schema.json');
 
 function registerServices<TReq, TRes>(
   apiDefinitions: Document[],
@@ -108,8 +108,10 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
    */
   public readonly logger: Logger;
 
+  public readonly apiDefinitions: Document[];
+
   constructor(apiDefinitions: Document[], options: BautaJSOptions<TReq, TRes> = {}) {
-    const strictApiDefinitions = apiDefinitions.map((apiDefinition: Document) => {
+    const defaultApiDefinitions = apiDefinitions.map((apiDefinition: Document) => {
       // eslint-disable-next-line no-param-reassign
       apiDefinition = setDefinitionDefaults(apiDefinition);
       const apiDefinitionValidator = new OpenapiSchemaValidator({
@@ -126,7 +128,7 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
         );
       }
 
-      return getStrictDefinition(apiDefinition);
+      return apiDefinition;
     });
 
     const dataSourcesTemplates: DataSourceTemplate[] = BautaJS.requireAll(
@@ -155,7 +157,7 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
      * @memberof BautaJS#
      * @property {Object.<string, Service>} services - A services dictionary containing all the created services
      */
-    this.services = registerServices(strictApiDefinitions, dataSources);
+    this.services = registerServices(defaultApiDefinitions, dataSources);
     /**
      * @memberof BautaJS#
      * @property {Logger} logger - A [debug]{@link https://www.npmjs.com/package/debug} logger instance
@@ -172,6 +174,22 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
       true,
       [this.services, utils]
     );
+
+    // Once all api definitions are filtered from the operations merge it all again
+    this.apiDefinitions = this.mergeApiDefinitions();
+  }
+
+  private mergeApiDefinitions() {
+    return Object.values(this.services).map(version => {
+      const definitionsPices: Document[] = [];
+      Object.values(version).forEach(operations => {
+        Object.values(operations).forEach(operation => {
+          definitionsPices.push(operation.schema);
+        });
+      });
+
+      return deepmerge.all(definitionsPices) as Document;
+    });
   }
 
   /**

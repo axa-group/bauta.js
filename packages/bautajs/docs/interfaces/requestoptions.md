@@ -73,7 +73,7 @@ ___
 
 **● body**: *`string` \| `Buffer` \| `nodeStream.Readable` \| `object` \| `Record`<`string`, `any`>*
 
-*Defined in [utils/types.ts:196](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L196)*
+*Defined in [utils/types.ts:202](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L202)*
 
 ___
 <a id="cache"></a>
@@ -137,7 +137,7 @@ ___
 
 **● form**: *`boolean` \| `object`*
 
-*Defined in [utils/types.ts:197](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L197)*
+*Defined in [utils/types.ts:203](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L203)*
 
 ___
 <a id="formdata"></a>
@@ -146,7 +146,7 @@ ___
 
 **● formData**: *[Dictionary](dictionary.md)<`any`>*
 
-*Defined in [utils/types.ts:202](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L202)*
+*Defined in [utils/types.ts:208](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L208)*
 
 ___
 <a id="headers"></a>
@@ -155,7 +155,7 @@ ___
 
 **● headers**: *`IncomingHttpHeaders`*
 
-*Defined in [utils/types.ts:199](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L199)*
+*Defined in [utils/types.ts:205](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L205)*
 
 ___
 <a id="hooks"></a>
@@ -164,7 +164,7 @@ ___
 
 **● hooks**: *`Hooks`<`GotOptions`<`string` \| `null`>, `object`>*
 
-*Defined in [utils/types.ts:207](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L207)*
+*Defined in [utils/types.ts:213](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L213)*
 
 ___
 <a id="href"></a>
@@ -173,7 +173,7 @@ ___
 
 **● href**: *`undefined` \| `string`*
 
-*Defined in [utils/types.ts:198](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L198)*
+*Defined in [utils/types.ts:204](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L204)*
 
 ___
 <a id="json"></a>
@@ -182,7 +182,7 @@ ___
 
 **● json**: *`boolean` \| `object`*
 
-*Defined in [utils/types.ts:203](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L203)*
+*Defined in [utils/types.ts:209](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L209)*
 
 ___
 <a id="multipart"></a>
@@ -191,7 +191,7 @@ ___
 
 **● multipart**: *`RequestPart`[] \| `MultipartBody`*
 
-*Defined in [utils/types.ts:201](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L201)*
+*Defined in [utils/types.ts:207](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L207)*
 
 ___
 <a id="postamblecrlf"></a>
@@ -200,7 +200,7 @@ ___
 
 **● postambleCRLF**: *`undefined` \| `false` \| `true`*
 
-*Defined in [utils/types.ts:206](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L206)*
+*Defined in [utils/types.ts:212](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L212)*
 
 ___
 <a id="preamblecrlf"></a>
@@ -209,7 +209,7 @@ ___
 
 **● preambleCRLF**: *`undefined` \| `false` \| `true`*
 
-*Defined in [utils/types.ts:205](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L205)*
+*Defined in [utils/types.ts:211](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L211)*
 
 ___
 <a id="proxy"></a>
@@ -218,7 +218,7 @@ ___
 
 **● proxy**: *`HttpProxy` \| `HttpsProxy`*
 
-*Defined in [utils/types.ts:204](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L204)*
+*Defined in [utils/types.ts:210](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L210)*
 
 ___
 <a id="query"></a>
@@ -238,7 +238,7 @@ ___
 
 **● resolveBodyOnly**: *`undefined` \| `true`*
 
-*Defined in [utils/types.ts:209](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L209)*
+*Defined in [utils/types.ts:215](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L215)*
 
 ___
 <a id="responsetype"></a>
@@ -247,7 +247,7 @@ ___
 
 **● responseType**: *[ResponseType](../enums/responsetype.md)*
 
-*Defined in [utils/types.ts:200](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L200)*
+*Defined in [utils/types.ts:206](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L206)*
 
 ___
 <a id="retry"></a>
@@ -267,7 +267,7 @@ ___
 
 **● stream**: *`undefined` \| `false`*
 
-*Defined in [utils/types.ts:208](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L208)*
+*Defined in [utils/types.ts:214](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L214)*
 
 ___
 <a id="throwhttperrors"></a>

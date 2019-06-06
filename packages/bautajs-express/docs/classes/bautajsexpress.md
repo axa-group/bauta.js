@@ -59,7 +59,7 @@ const bautJSExpress = new BautaJSExpress(apiDefinition, {}); bautJSExpress.apply
 
 *Overrides BautaJS.__constructor*
 
-*Defined in [index.ts:142](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L142)*
+*Defined in [index.ts:137](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L137)*
 
 **Parameters:**
 
@@ -80,11 +80,9 @@ ___
 
 **● apiDefinitions**: *`Document`[]*
 
-*Defined in [index.ts:136](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L136)*
+*Inherited from BautaJS.apiDefinitions*
 
-*__type__*: {Document\[\]}
-
-*__memberof__*: BautaJSExpress
+*Defined in /Users/jblanco/axa/bauta-nodejs/packages/bautajs-express/node_modules/@bautajs/core/dist/bauta.d.ts:5*
 
 ___
 <a id="app"></a>
@@ -93,7 +91,7 @@ ___
 
 **● app**: *`Application`*
 
-*Defined in [index.ts:142](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L142)*
+*Defined in [index.ts:137](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L137)*
 
 *__type__*: {Application}
 
@@ -131,7 +129,7 @@ ___
 
 ▸ **applyMiddlewares**(options?: *[MiddlewareOptions](../interfaces/middlewareoptions.md)*): `this`
 
-*Defined in [index.ts:296](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L296)*
+*Defined in [index.ts:285](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L285)*
 
 Add the standard express middlewares and create the created services routes using the given OpenAPI definition.
 
@@ -152,7 +150,7 @@ ___
 
 ▸ **listen**(port?: *`number`*, host?: *`string`*, httpsEnabled?: *`boolean`*, httpsOptions?: *`object`*): `Server` \| `Server`
 
-*Defined in [index.ts:395](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L395)*
+*Defined in [index.ts:384](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L384)*
 
 Start the express server as http/https listener
 
@@ -179,7 +177,7 @@ ___
 
 *Inherited from BautaJS.requireAll*
 
-*Defined in /Users/jblanco/axa/bauta-nodejs/packages/bautajs-express/node_modules/@bautajs/core/dist/bauta.d.ts:6*
+*Defined in /Users/jblanco/axa/bauta-nodejs/packages/bautajs-express/node_modules/@bautajs/core/dist/bauta.d.ts:8*
 
 **Type parameters:**
 

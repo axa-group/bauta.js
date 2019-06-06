@@ -29,7 +29,7 @@
 
 **● handler**: *[StepFn](../#stepfn)<`TReq`, `TRes`, `any`, `any`>*
 
-*Defined in [utils/types.ts:191](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L191)*
+*Defined in [utils/types.ts:197](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L197)*
 
 ___
 

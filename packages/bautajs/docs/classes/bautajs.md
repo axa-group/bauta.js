@@ -41,6 +41,7 @@ const bautaJS = new BautaJS(apiDefinitions, { // Load all the files with datasou
 
 ### Properties
 
+* [apiDefinitions](bautajs.md#apidefinitions)
 * [logger](bautajs.md#logger)
 * [services](bautajs.md#services)
 
@@ -58,7 +59,7 @@ const bautaJS = new BautaJS(apiDefinitions, { // Load all the files with datasou
 
 ⊕ **new BautaJS**(apiDefinitions: *[Document](../#document)[]*, options?: *[BautaJSOptions](../interfaces/bautajsoptions.md)<`TReq`, `TRes`>*): [BautaJS](bautajs.md)
 
-*Defined in [bauta.ts:110](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/bauta.ts#L110)*
+*Defined in [bauta.ts:111](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/bauta.ts#L111)*
 
 **Parameters:**
 
@@ -73,6 +74,17 @@ ___
 
 ## Properties
 
+<a id="apidefinitions"></a>
+
+###  apiDefinitions
+
+**● apiDefinitions**: *[Document](../#document)[]*
+
+*Implementation of [BautaJSBuilder](../interfaces/bautajsbuilder.md).[apiDefinitions](../interfaces/bautajsbuilder.md#apidefinitions)*
+
+*Defined in [bauta.ts:111](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/bauta.ts#L111)*
+
+___
 <a id="logger"></a>
 
 ###  logger
@@ -81,7 +93,7 @@ ___
 
 *Implementation of [BautaJSBuilder](../interfaces/bautajsbuilder.md).[logger](../interfaces/bautajsbuilder.md#logger)*
 
-*Defined in [bauta.ts:110](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/bauta.ts#L110)*
+*Defined in [bauta.ts:109](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/bauta.ts#L109)*
 
 A debug instance logger
 
@@ -98,7 +110,7 @@ ___
 
 *Implementation of [BautaJSBuilder](../interfaces/bautajsbuilder.md).[services](../interfaces/bautajsbuilder.md#services)*
 
-*Defined in [bauta.ts:103](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/bauta.ts#L103)*
+*Defined in [bauta.ts:102](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/bauta.ts#L102)*
 
 *__type__*: {Services<TReq, TRes>}
 
@@ -114,7 +126,7 @@ ___
 
 ▸ **requireAll**<`T`>(folder: *`string` \| `string`[]*, execute?: *`boolean`*, vars?: *[T]()*): `any`
 
-*Defined in [bauta.ts:192](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/bauta.ts#L192)*
+*Defined in [bauta.ts:209](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/bauta.ts#L209)*
 
 Require a bunch of files that matches the given [glob](https://github.com/isaacs/node-glob) path.
 

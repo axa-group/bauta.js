@@ -55,7 +55,7 @@ With the given request '/pets?filter\[where\]\[a\]=foo' the result will be:
 
 ▸ **queryFilters**<`TReq`,`TRes`,`TIn`>(): `StepFn`<`TReq`, `TRes`, `TIn`[], `TIn`[]>
 
-*Defined in [index.ts:43](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-filters-decorator/src/index.ts#L43)*
+*Defined in [index.ts:43](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-filters-decorator/src/index.ts#L43)*
 
 Allow to filter the current request using loopback query filters. This decorator will filter the previous pushed value using the req.query.filter parameter of the request
 

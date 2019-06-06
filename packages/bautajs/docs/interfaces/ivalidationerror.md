@@ -23,6 +23,7 @@
 * [response](ivalidationerror.md#response)
 * [stack](ivalidationerror.md#stack)
 * [statusCode](ivalidationerror.md#statuscode)
+* [toJSON](ivalidationerror.md#tojson)
 
 ---
 
@@ -43,7 +44,7 @@ ___
 
 **● errors**: *[LocationError](locationerror.md)[]*
 
-*Defined in [utils/types.ts:37](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L37)*
+*Defined in [utils/types.ts:42](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L42)*
 
 ___
 <a id="message"></a>
@@ -74,7 +75,7 @@ ___
 
 **● response**: *`any`*
 
-*Defined in [utils/types.ts:39](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L39)*
+*Defined in [utils/types.ts:44](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L44)*
 
 ___
 <a id="stack"></a>
@@ -96,7 +97,21 @@ ___
 
 **● statusCode**: *`number`*
 
-*Defined in [utils/types.ts:38](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L38)*
+*Defined in [utils/types.ts:43](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L43)*
+
+___
+<a id="tojson"></a>
+
+###  toJSON
+
+**● toJSON**: *`function`*
+
+*Defined in [utils/types.ts:45](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L45)*
+
+#### Type declaration
+▸(): [ValidationErrorJSON](validationerrorjson.md)
+
+**Returns:** [ValidationErrorJSON](validationerrorjson.md)
 
 ___
 

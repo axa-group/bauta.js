@@ -30,7 +30,7 @@
 
 ▸ **push**<`TOut`>(fn: *[StepFn](../#stepfn)<`TReq`, `TRes`, `TIn`, `TOut`>*): [Pipeline](pipeline.md)<`TReq`, `TRes`, `TOut`>
 
-*Defined in [utils/types.ts:188](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L188)*
+*Defined in [utils/types.ts:194](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L194)*
 
 **Type parameters:**
 

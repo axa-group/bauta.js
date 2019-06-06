@@ -23,7 +23,7 @@
 
 **● postambleCRLF**: *`undefined` \| `false` \| `true`*
 
-*Defined in [multipart.ts:28](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/multipart-request-builder/src/multipart.ts#L28)*
+*Defined in [multipart.ts:28](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/multipart-request-builder/src/multipart.ts#L28)*
 
 ___
 <a id="preamblecrlf"></a>
@@ -32,7 +32,7 @@ ___
 
 **● preambleCRLF**: *`undefined` \| `false` \| `true`*
 
-*Defined in [multipart.ts:27](https://github.axa.com/Digital/bauta-nodejs/blob/c21a44f/packages/multipart-request-builder/src/multipart.ts#L27)*
+*Defined in [multipart.ts:27](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/multipart-request-builder/src/multipart.ts#L27)*
 
 ___
 

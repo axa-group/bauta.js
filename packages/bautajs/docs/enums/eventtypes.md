@@ -22,7 +22,7 @@
 
 **DATASOURCE_REQUEST**:  = "3"
 
-*Defined in [utils/types.ts:44](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L44)*
+*Defined in [utils/types.ts:50](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L50)*
 
 ___
 <a id="datasource_response"></a>
@@ -31,7 +31,7 @@ ___
 
 **DATASOURCE_RESPONSE**:  = "4"
 
-*Defined in [utils/types.ts:45](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L45)*
+*Defined in [utils/types.ts:51](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L51)*
 
 ___
 <a id="expose_operation"></a>
@@ -40,7 +40,7 @@ ___
 
 **EXPOSE_OPERATION**:  = "5"
 
-*Defined in [utils/types.ts:46](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L46)*
+*Defined in [utils/types.ts:52](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L52)*
 
 ___
 <a id="push_step"></a>
@@ -49,7 +49,7 @@ ___
 
 **PUSH_STEP**:  = "1"
 
-*Defined in [utils/types.ts:42](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L42)*
+*Defined in [utils/types.ts:48](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L48)*
 
 ___
 <a id="register_service"></a>
@@ -58,7 +58,7 @@ ___
 
 **REGISTER_SERVICE**:  = "2"
 
-*Defined in [utils/types.ts:43](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L43)*
+*Defined in [utils/types.ts:49](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L49)*
 
 ___
 

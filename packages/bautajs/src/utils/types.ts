@@ -33,10 +33,16 @@ export interface LocationError {
   location: string;
   message: string;
 }
+export interface ValidationErrorJSON extends Error {
+  errors: LocationError[];
+  statusCode: number;
+  response: any;
+}
 export interface IValidationError extends Error {
   errors: LocationError[];
   statusCode: number;
   response: any;
+  toJSON: () => ValidationErrorJSON;
 }
 export enum EventTypes {
   PUSH_STEP = '1',
@@ -84,6 +90,7 @@ export interface BautaJSOptions<TReq, TRes> {
 export interface BautaJSBuilder<TReq, TRes> {
   readonly services: Services<TReq, TRes>;
   readonly logger: Logger;
+  readonly apiDefinitions: Document[];
 }
 
 // Service
@@ -102,19 +109,17 @@ export type Version<TReq, TRes> = Dictionary<Operation<TReq, TRes>>;
 export type ErrorHandler<TReq, TRes> = ((err: Error, ctx: Context<TReq, TRes>) => any);
 export interface Operation<TReq, TRes> {
   private: boolean;
-  schema: PathsObject | null;
+  schema: Document;
   nextVersionOperation: null | Operation<TReq, TRes>;
   readonly operationId: string;
-  readonly apiDefinition: Document;
   readonly serviceId: string;
   setErrorHandler(
     errorHandler: (err: Error, ctx: Context<TReq, TRes>) => any
   ): Operation<TReq, TRes>;
   validateRequest(toggle: boolean): Operation<TReq, TRes>;
   validateResponse(toggle: boolean): Operation<TReq, TRes>;
-  setSchema(schema: PathsObject): Operation<TReq, TRes>;
   setup(fn: (pipeline: Pipeline<TReq, TRes, undefined>) => void): Operation<TReq, TRes>;
-  run(ctx: ContextData<TReq, TRes>): Promise<any>;
+  run(ctx?: ContextData<TReq, TRes>): Promise<any>;
 }
 export type ValidationReqBuilder<TReq> = (req?: TReq) => null;
 export type ValidationResBuilder<TRes> = (res: TRes, statusCode?: number) => null;

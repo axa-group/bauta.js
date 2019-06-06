@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "target": "es6"
+    "target": "es6",
   },
   "include": ["src/**/*", "src/**/*.json"],
   "exclude": ["**/__tests__", "**/__mocks__"],
@@ -17,6 +17,6 @@
     "includeDeclarations": true,
     "excludeNotExported": true,
     "excludeExternals": true,
-    "toc": true
+    "exclude":"**/*.test.ts"
   }
 }

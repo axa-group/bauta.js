@@ -25,7 +25,7 @@
 
 **● enabled**: *`boolean`*
 
-*Defined in [index.ts:59](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L59)*
+*Defined in [index.ts:60](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L60)*
 
 ___
 <a id="options"></a>
@@ -34,7 +34,7 @@ ___
 
 **● options**: *[T]()*
 
-*Defined in [index.ts:60](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L60)*
+*Defined in [index.ts:61](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L61)*
 
 ___
 

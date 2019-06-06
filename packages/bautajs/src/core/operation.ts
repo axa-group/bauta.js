@@ -16,9 +16,11 @@ import OpenapiDefaultSetter from 'openapi-default-setter';
 import OpenapiRequestValidator from 'openapi-request-validator';
 import OpenapiResponseValidator from 'openapi-response-validator';
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import { logger } from '../logger';
 import { buildDataSource } from '../request/datasource';
 import { sessionFactory } from '../session-factory';
 import { defaultResolver } from '../utils/default-resolver';
+import { getStrictDefinition } from '../utils/strict-definitions';
 import {
   Context,
   ContextData,
@@ -31,23 +33,21 @@ import {
   PathsObject,
   Pipeline
 } from '../utils/types';
-import apiPathSchemaJson from '../validators/api-path-schema.json';
-import { validate } from '../validators/validate';
 import { Accesor, PipelineBuilder } from './pipeline';
 import { ValidationError } from './validation-error';
 
-function findOperation(id: string, paths: PathsObject): PathsObject | null {
-  let schema: PathsObject | null = null;
+function filterPaths(id: string, apiDefinition: Document): Document {
+  const paths: PathsObject = {};
 
-  Object.keys(paths).some((pathKey: string) =>
-    Object.keys(paths[pathKey]).some((methodKey: string) => {
-      const pathItem: PathItemObject = paths[pathKey] as PathItemObject;
+  Object.keys(apiDefinition.paths).some((pathKey: string) =>
+    Object.keys(apiDefinition.paths[pathKey]).some((methodKey: string) => {
+      const pathItem: PathItemObject = apiDefinition.paths[pathKey] as PathItemObject;
       const operationObject: OpenAPI.Operation = pathItem[
         methodKey as keyof PathItemObject
       ] as OpenAPI.Operation;
 
       if (operationObject.operationId === id) {
-        schema = { [pathKey]: { [methodKey]: operationObject } };
+        paths[pathKey] = { [methodKey]: operationObject };
         return true;
       }
 
@@ -55,7 +55,7 @@ function findOperation(id: string, paths: PathsObject): PathsObject | null {
     })
   );
 
-  return schema;
+  return { ...apiDefinition, paths };
 }
 
 export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
@@ -75,7 +75,7 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
 
   public private: boolean = false;
 
-  public schema: PathsObject | null = null;
+  public schema: Document;
 
   private dataSource: OperationDataSourceBuilder;
 
@@ -97,19 +97,13 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
   constructor(
     public readonly operationId: string,
     operationTemplate: OperationTemplate,
-    public readonly apiDefinition: Document,
+    apiDefinition: Document,
     public readonly serviceId: string
   ) {
     this.dataSource = buildDataSource<TReq, TRes>(operationTemplate);
     this.private = operationTemplate.private as boolean;
     this.errorHandler = (err: Error) => Promise.reject(err);
-
-    if (apiDefinition) {
-      const schema: PathsObject | null = findOperation(this.operationId, apiDefinition.paths);
-      if (schema) {
-        this.setSchema(schema);
-      }
-    }
+    this.schema = this.getSchema(apiDefinition);
   }
 
   public setErrorHandler(errorHandler: ErrorHandler<TReq, TRes>): Operation<TReq, TRes> {
@@ -142,87 +136,73 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
     return this;
   }
 
-  public setSchema(schema: PathsObject): Operation<TReq, TRes> {
-    const error = validate(schema, apiPathSchemaJson);
-    if (error) {
-      throw new Error(`Invalid schema, "${error[0].dataPath}" ${error[0].message}`);
-    }
-    const [endpointDefinition] = Object.values(Object.values(schema)[0]);
-    // Determine OpenAPI version
-    const openApiV3ApiDefinition = this.apiDefinition as OpenAPIV3.Document;
-    const opernApiV2ApiDefinition = this.apiDefinition as OpenAPIV2.Document;
+  private getSchema(apiDefinition: Document): Document {
+    const strictSchema = getStrictDefinition(filterPaths(this.operationId, apiDefinition));
 
-    const schemas =
-      !!openApiV3ApiDefinition.openapi && !!openApiV3ApiDefinition.components
-        ? openApiV3ApiDefinition.components.schemas
-        : opernApiV2ApiDefinition.definitions;
+    if (Object.keys(strictSchema.paths).length === 0) {
+      logger.warn(`[Not] Path not found for operation "${this.operationId}"`);
+    } else {
+      const [endpointDefinition] = Object.values(Object.values(strictSchema.paths)[0]);
+      // Determine OpenAPI version
+      const openApiV3ApiDefinition = apiDefinition as OpenAPIV3.Document;
+      const opernApiV2ApiDefinition = apiDefinition as OpenAPIV2.Document;
 
-    const validateRequest = new OpenapiRequestValidator({
-      ...endpointDefinition,
-      schemas
-    });
-    const validateResponse = new OpenapiResponseValidator({
-      ...endpointDefinition,
-      components: { schemas },
-      definitions: schemas
-    });
+      const schemas =
+        !!openApiV3ApiDefinition.openapi && !!openApiV3ApiDefinition.components
+          ? openApiV3ApiDefinition.components.schemas
+          : opernApiV2ApiDefinition.definitions;
 
-    this.schema = schema;
-    // BUG: https://github.com/kogosoftwarellc/open-api/issues/381
-    const defaultSetter = new OpenapiDefaultSetter({
-      parameters: [],
-      ...endpointDefinition
-    });
-    this.validation.validateReqBuilder = (req: any) => {
-      defaultSetter.handle(req);
-      if (!req.headers) {
-        // if is not a Nodejs request set the content-type to force validation
-        req.headers = { 'content-type': 'application/json' };
+      const validateRequest = new OpenapiRequestValidator({
+        ...endpointDefinition,
+        schemas
+      });
+      const validateResponse = new OpenapiResponseValidator({
+        ...endpointDefinition,
+        components: { schemas },
+        definitions: schemas
+      });
+
+      const defaultSetter = new OpenapiDefaultSetter(endpointDefinition);
+      this.validation.validateReqBuilder = (req: any) => {
+        defaultSetter.handle(req);
+        if (!req.headers) {
+          // if is not a Nodejs request set the content-type to force validation
+          req.headers = { 'content-type': 'application/json' };
+        }
+
+        const verror = validateRequest.validate(req);
+        if (verror && verror.errors && verror.errors.length > 0) {
+          throw new ValidationError(
+            'The request was not valid',
+            verror.errors,
+            verror.status === 400 ? 422 : verror.status
+          );
+        }
+
+        return null;
+      };
+      this.validation.validateResBuilder = (res: TRes, statusCode: number = 200) => {
+        const verror = validateResponse.validateResponse(statusCode, res);
+
+        if (verror && verror.errors && verror.errors.length > 0) {
+          throw new ValidationError(verror.message, verror.errors, 500, res);
+        }
+
+        return null;
+      };
+      if (apiDefinition.validateRequest === undefined || apiDefinition.validateRequest === true) {
+        this.validateRequest(true);
       }
 
-      const verror = validateRequest.validate(req);
-      if (verror && verror.errors && verror.errors.length > 0) {
-        throw new ValidationError(
-          verror.message,
-          verror.errors,
-          verror.status === 400 ? 422 : verror.status
-        );
+      if (apiDefinition.validateResponse === undefined || apiDefinition.validateResponse === true) {
+        this.validateResponse(true);
       }
-
-      return null;
-    };
-    this.validation.validateResBuilder = (res: TRes, statusCode: number = 200) => {
-      const verror = validateResponse.validateResponse(statusCode, res);
-
-      if (verror && verror.errors && verror.errors.length > 0) {
-        throw new ValidationError(verror.message, verror.errors, 500, res);
-      }
-
-      return null;
-    };
-    if (
-      this.apiDefinition.validateRequest === undefined ||
-      this.apiDefinition.validateRequest === true
-    ) {
-      this.validateRequest(true);
     }
 
-    if (
-      this.apiDefinition.validateResponse === undefined ||
-      this.apiDefinition.validateResponse === true
-    ) {
-      this.validateResponse(true);
-    }
-
-    // Propagate the definitions to the next versions
-    if (this.nextVersionOperation) {
-      this.nextVersionOperation.setSchema(schema);
-    }
-
-    return this;
+    return strictSchema;
   }
 
-  public run(ctx: ContextData<TReq, TRes>): Promise<any> {
+  public run(ctx: ContextData<TReq, TRes> = {}): Promise<any> {
     if (!ctx.req) {
       ctx.req = {} as TReq;
     }
@@ -239,17 +219,22 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
       metadata: {
         operationId: this.operationId,
         serviceId: this.serviceId,
-        version: this.apiDefinition.info.version
+        version: this.schema.info.version
       },
       ...sessionFactory(ctx.req),
       validateRequest: (request: any = ctx.req) => request,
       validateResponse: (response: any) => response
     };
 
-    if (this.schema) {
+    if (this.validation.validateReqBuilder) {
       Object.assign(context, {
         validateRequest: (request: any = ctx.req) =>
-          this.validation.validateReqBuilder && this.validation.validateReqBuilder(request),
+          this.validation.validateReqBuilder && this.validation.validateReqBuilder(request)
+      });
+    }
+
+    if (this.validation.validateResBuilder) {
+      Object.assign(context, {
         validateResponse: this.validation.validateResBuilder
       });
     }
@@ -288,7 +273,7 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
       new PipelineBuilder<TReq, TRes, undefined>(
         this.accesor,
         this.serviceId,
-        this.apiDefinition.info.version,
+        this.schema.info.version,
         this.operationId
       )
     );

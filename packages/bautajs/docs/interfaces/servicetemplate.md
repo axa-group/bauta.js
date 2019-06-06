@@ -23,7 +23,7 @@
 
 **● operations**: *[OperationTemplate](operationtemplate.md)[]*
 
-*Defined in [utils/types.ts:94](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L94)*
+*Defined in [utils/types.ts:101](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L101)*
 
 ___
 <a id="options"></a>
@@ -32,7 +32,7 @@ ___
 
 **● options**: *[RequestOptions](requestoptions.md)*
 
-*Defined in [utils/types.ts:93](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L93)*
+*Defined in [utils/types.ts:100](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L100)*
 
 ___
 

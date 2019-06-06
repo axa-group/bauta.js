@@ -20,7 +20,7 @@
 
 **BUFFER**:  = "buffer"
 
-*Defined in [utils/types.ts:73](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L73)*
+*Defined in [utils/types.ts:79](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L79)*
 
 ___
 <a id="json"></a>
@@ -29,7 +29,7 @@ ___
 
 **JSON**:  = "json"
 
-*Defined in [utils/types.ts:72](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L72)*
+*Defined in [utils/types.ts:78](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L78)*
 
 ___
 <a id="text"></a>
@@ -38,7 +38,7 @@ ___
 
 **TEXT**:  = "text"
 
-*Defined in [utils/types.ts:74](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L74)*
+*Defined in [utils/types.ts:80](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L80)*
 
 ___
 

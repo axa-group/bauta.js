@@ -41,6 +41,7 @@ As [BautaJSExpress](classes/bautajsexpress.md) extends from [BautaJS](../../baut
 
 ### Functions
 
+* [pipeline](#pipeline)
 * [resolver](#resolver)
 * [step](#step)
 
@@ -48,31 +49,49 @@ As [BautaJSExpress](classes/bautajsexpress.md) extends from [BautaJS](../../baut
 
 ## Functions
 
-<a id="resolver"></a>
+<a id="pipeline"></a>
 
-###  resolver
+###  pipeline
 
-▸ **resolver**<`TReq`,`TRes`>(fn: *`Resolver`<`TReq`, `TRes`>*): `function`
+▸ **pipeline**<`TIn`>(fn: *`function`*): `function`
 
-*Defined in [index.ts:428](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L428)*
+*Defined in [index.ts:438](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L438)*
 
-A decorator to allow have intellicense on resolver files for non typescript projects
+A decorator to allow intellisense on pipeline on non typescript files
 
 *__export__*: 
 
-*__template__*: TReq
-
-*__template__*: TRes
+*__template__*: TIn
 
 **Type parameters:**
 
-#### TReq 
-#### TRes 
+#### TIn 
 **Parameters:**
 
 | Name | Type | Description |
 | ------ | ------ | ------ |
-| fn | `Resolver`<`TReq`, `TRes`> |  \- |
+| fn | `function` |  \- |
+
+**Returns:** `function`
+
+___
+<a id="resolver"></a>
+
+###  resolver
+
+▸ **resolver**(fn: *`Resolver`<`Request`, `Response`>*): `function`
+
+*Defined in [index.ts:415](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L415)*
+
+A decorator to allow have intellisense on resolver files for non typescript projects
+
+*__export__*: 
+
+**Parameters:**
+
+| Name | Type | Description |
+| ------ | ------ | ------ |
+| fn | `Resolver`<`Request`, `Response`> |  \- |
 
 **Returns:** `function`
 
@@ -81,17 +100,13 @@ ___
 
 ###  step
 
-▸ **step**<`TReq`,`TRes`,`TIn`,`TOut`>(fn: *`StepFn`<`TReq`, `TRes`, `TIn`, `TOut`>*): `function`
+▸ **step**<`TIn`,`TOut`>(fn: *`StepFn`<`Request`, `Response`, `TIn`, `TOut`>*): `function`
 
-*Defined in [index.ts:442](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-express/src/index.ts#L442)*
+*Defined in [index.ts:427](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L427)*
 
-A decorator to allow intellicense on pushed steps on non typescript files
+A decorator to allow intellisense on pushed steps on non typescript files
 
 *__export__*: 
-
-*__template__*: TReq
-
-*__template__*: TRes
 
 *__template__*: TIn
 
@@ -99,15 +114,13 @@ A decorator to allow intellicense on pushed steps on non typescript files
 
 **Type parameters:**
 
-#### TReq 
-#### TRes 
 #### TIn 
 #### TOut 
 **Parameters:**
 
 | Name | Type | Description |
 | ------ | ------ | ------ |
-| fn | `StepFn`<`TReq`, `TRes`, `TIn`, `TOut`> |  \- |
+| fn | `StepFn`<`Request`, `Response`, `TIn`, `TOut`> |  \- |
 
 **Returns:** `function`
 

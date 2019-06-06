@@ -13,7 +13,7 @@
 
 ▸ **__call**(localOptions: *[StreamRequestOptions](streamrequestoptions.md)*): `GotEmitter` & `nodeStream.Duplex`
 
-*Defined in [utils/types.ts:136](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L136)*
+*Defined in [utils/types.ts:140](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L140)*
 
 **Parameters:**
 
@@ -23,7 +23,7 @@
 
 **Returns:** `Promise`<`Buffer` \| `string` \| `object`>
 
-*Defined in [utils/types.ts:137](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L137)*
+*Defined in [utils/types.ts:141](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L141)*
 
 **Parameters:**
 
@@ -33,7 +33,7 @@
 
 **Returns:** `GotPromise`<`Buffer` \| `string` \| `object`>
 
-*Defined in [utils/types.ts:138](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L138)*
+*Defined in [utils/types.ts:142](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L142)*
 
 **Parameters:**
 

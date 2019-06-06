@@ -22,7 +22,7 @@
 
 **● filter**: *`Filter`*
 
-*Defined in [index.ts:19](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs-filters-decorator/src/index.ts#L19)*
+*Defined in [index.ts:19](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-filters-decorator/src/index.ts#L19)*
 
 ___
 

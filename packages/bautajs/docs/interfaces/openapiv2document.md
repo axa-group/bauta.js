@@ -205,7 +205,7 @@ ___
 
 **● validateRequest**: *`undefined` \| `false` \| `true`*
 
-*Defined in [utils/types.ts:60](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L60)*
+*Defined in [utils/types.ts:66](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L66)*
 
 ___
 <a id="validateresponse"></a>
@@ -214,7 +214,7 @@ ___
 
 **● validateResponse**: *`undefined` \| `false` \| `true`*
 
-*Defined in [utils/types.ts:61](https://github.axa.com/Digital/bauta-nodejs/blob/9a199d7/packages/bautajs/src/utils/types.ts#L61)*
+*Defined in [utils/types.ts:67](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L67)*
 
 ___
 
