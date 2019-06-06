@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-alpha.7](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.6...v2.0.0-alpha.7) (2019-06-06)
+
+
+### Bug Fixes
+
+* **bautajs, bautajs/express:** No more crash on create documentation. Get ride of the not used schema definitions. ([1f2bf7f](https://github.axa.com/Digital/bauta-nodejs/commit/1f2bf7f)), closes [#68](https://github.axa.com/Digital/bauta-nodejs/issues/68) [#67](https://github.axa.com/Digital/bauta-nodejs/issues/67)
+
+
+
+
+
 # [2.0.0-alpha.6](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.5...v2.0.0-alpha.6) (2019-06-05)
 
 

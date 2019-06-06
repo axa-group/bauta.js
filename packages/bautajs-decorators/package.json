@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/decorators",
-  "version": "2.0.0-alpha.6",
+  "version": "2.0.0-alpha.7",
   "description": "A bautaJS simple helpfull decorators",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -26,7 +26,7 @@
   "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "2.0.0-alpha.6",
+    "@bautajs/core": "2.0.0-alpha.7",
     "stjs": "0.0.5"
   }
 }
