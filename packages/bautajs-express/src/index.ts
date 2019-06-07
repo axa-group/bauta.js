@@ -93,7 +93,7 @@ export interface MiddlewareOptions {
 }
 
 const logFormat =
-  ':method :url. Main headers: Time-Zone::req[Time-Zone], Accept-Language::req[Accept-Language],  device::req[device],  mana-version::req[mana-version], platform-version::req[platform-version]';
+  ':method :url. Main headers: Time-Zone::req[Time-Zone], Accept-Language::req[Accept-Language]';
 
 function toExpressParams(part: string) {
   return part.replace(/\{([^}]+)}/g, ':$1');
