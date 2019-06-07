@@ -301,7 +301,10 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
       }
     }
   ) {
-    if (options.morgan && options.morgan.enabled === true && !options.morgan.options) {
+    if (
+      !options.morgan ||
+      (options.morgan && options.morgan.enabled === true && !options.morgan.options)
+    ) {
       this.app.use(
         morgan(logFormat, {
           immediate: true
@@ -321,20 +324,26 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
       );
     }
 
-    if (options.helmet && options.helmet.enabled === true && !options.helmet.options) {
+    if (
+      !options.helmet ||
+      (options.helmet && options.helmet.enabled === true && !options.helmet.options)
+    ) {
       this.app.use(helmet());
     } else if (options.helmet && options.helmet.options) {
       this.app.use(helmet(options.helmet.options));
     }
 
-    if (options.cors && options.cors.enabled === true && !options.cors.options) {
+    if (!options.cors || (options.cors && options.cors.enabled === true && !options.cors.options)) {
       this.app.use(cors());
     } else if (options.cors && options.cors.options) {
       this.app.use(cors(options.cors.options));
     }
     this.app.use(compression());
 
-    if (options.bodyParser && options.bodyParser.enabled === true && !options.bodyParser.options) {
+    if (
+      !options.bodyParser ||
+      (options.bodyParser && options.bodyParser.enabled === true && !options.bodyParser.options)
+    ) {
       this.app.use(bodyParser.json({ limit: '50mb' }));
       this.app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
     } else if (options.bodyParser && options.bodyParser.options) {
@@ -348,7 +357,10 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
       .sort(routeOrder())
       .forEach(this.addRoute.bind(this));
 
-    if (options.explorer && options.explorer.enabled === true && !options.explorer.options) {
+    if (
+      !options.explorer ||
+      (options.explorer && options.explorer.enabled === true && !options.explorer.options)
+    ) {
       this.apiDefinitions.forEach(apiDefinition =>
         this.app.use(
           `/${apiDefinition.info.version}/explorer`,
