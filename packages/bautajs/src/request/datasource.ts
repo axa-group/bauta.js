@@ -85,6 +85,14 @@ function requestHooks(log: Logger = new LoggerBuilder('')): any {
               body: prepareToLog(response.body)
             }
           );
+        } else {
+          log.error(
+            `response-logger: Error for  [${response.req.method}]  ${response.requestUrl}:`,
+            {
+              statusCode: response.statusCode,
+              body: prepareToLog(response.body)
+            }
+          );
         }
         log.info(
           `response-logger: The request to ${response.requestUrl} took: ${
