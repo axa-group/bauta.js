@@ -92,9 +92,6 @@ export interface MiddlewareOptions {
   };
 }
 
-const logFormat =
-  ':method :url. Main headers: Time-Zone::req[Time-Zone], Accept-Language::req[Accept-Language]';
-
 function toExpressParams(part: string) {
   return part.replace(/\{([^}]+)}/g, ':$1');
 }
@@ -306,7 +303,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
       (options.morgan && options.morgan.enabled === true && !options.morgan.options)
     ) {
       this.app.use(
-        morgan(logFormat, {
+        morgan('tiny', {
           immediate: true
         })
       );
