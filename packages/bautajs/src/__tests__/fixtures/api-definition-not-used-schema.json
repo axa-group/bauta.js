@@ -31,20 +31,14 @@
     }
   ],
   "paths": {
-    "/test": {
+    "/test/{documentId}": {
       "get": {
         "summary": "List all pets",
         "operationId": "operation1",
         "tags": ["pets"],
         "parameters": [
           {
-            "name": "limit",
-            "in": "query",
-            "description": "How many items to return at one time (max 100)",
-            "required": false,
-            "schema": {
-              "type": "integer"
-            }
+            "$ref": "#/components/parameters/DocumentId"
           }
         ],
         "responses": {
@@ -66,15 +60,8 @@
               }
             }
           },
-          "default": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+          "304": {
+            "$ref": "#/components/responses/304"
           }
         }
       }
@@ -124,6 +111,40 @@
           },
           "message": {
             "type": "string"
+          }
+        }
+      },
+      "DocumentId": {
+        "required": ["code", "message"],
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "DocumentId": {
+        "name": "documentId",
+        "in": "path",
+        "description": "Document.id",
+        "schema": {
+          "$ref": "#/components/schemas/DocumentId"
+        },
+        "required": true
+      }
+    },
+    "responses": {
+      "304": {
+        "description": "Not modified",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
           }
         }
       }

@@ -42,12 +42,29 @@ function filterTags(
   return tags.filter(t => usedTags.includes(t.name));
 }
 
-function filterSchemas(schemas: any, operations: OpenAPI.Operation[]): any {
+function filterSchemas(
+  schemas: any,
+  operations: OpenAPI.Operation[],
+  parameters?: {
+    [key: string]: OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject;
+  },
+  responses?: OpenAPIV3.ResponsesObject
+): any {
   const find = findSchemas(schemas);
 
   let lastRefs = [];
   let refs = getRefTypes(operations);
   let usedSchemas;
+
+  if (parameters) {
+    const paramsRefs = getRefTypes(parameters);
+    refs = [...refs, ...paramsRefs];
+  }
+
+  if (responses) {
+    const respRefs = getRefTypes(responses);
+    refs = [...refs, ...respRefs];
+  }
 
   do {
     usedSchemas = find(refs);
@@ -58,13 +75,15 @@ function filterSchemas(schemas: any, operations: OpenAPI.Operation[]): any {
   return usedSchemas;
 }
 
-function filterComponents(
-  components: OpenAPIV3.ComponentsObject | undefined,
-  operations: OpenAPI.Operation[]
-) {
+function filterComponents(components: OpenAPIV3.ComponentsObject, operations: OpenAPI.Operation[]) {
   return {
     ...components,
-    schemas: filterSchemas(components && components.schemas, operations)
+    schemas: filterSchemas(
+      components.schemas,
+      operations,
+      components.parameters,
+      components.responses
+    )
   };
 }
 
@@ -75,7 +94,10 @@ export function getStrictDefinition<T extends Document>(definition: T): T {
     ...definition,
     tags: definition.tags ? filterTags(definition.tags, operations) : undefined,
     components: (definition as OpenAPIV3.Document).components
-      ? filterComponents((definition as OpenAPIV3.Document).components, operations)
+      ? filterComponents(
+          (definition as OpenAPIV3.Document).components as OpenAPIV3.ComponentsObject,
+          operations
+        )
       : undefined,
     definitions: (definition as OpenAPIV2.Document).definitions
       ? filterSchemas((definition as OpenAPIV2.Document).definitions, operations)

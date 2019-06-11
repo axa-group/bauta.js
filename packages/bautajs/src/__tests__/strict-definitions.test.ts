@@ -37,4 +37,16 @@ describe('Strict definition test', () => {
     const result = getStrictDefinition(apiDefinitionNotUsedSchemaSwagger2Json as any);
     expect(result.definitions && result.definitions.notUsedSchema).toBeUndefined();
   });
+
+  test('should take in account the responses and parameters on components', () => {
+    const result = getStrictDefinition(apiDefinitionNotUsedSchemaJson as any);
+
+    expect(
+      result.components && result.components.schemas && result.components.schemas.Error
+    ).toBeInstanceOf(Object);
+
+    expect(
+      result.components && result.components.schemas && result.components.schemas.DocumentId
+    ).toBeInstanceOf(Object);
+  });
 });
