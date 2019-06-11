@@ -26,7 +26,7 @@
 
 ▸ **request**<`TReq`,`TRes`,`TIn`>(options: *`StreamRequestOptions`*): `StepFn`<`TReq`, `TRes`, `TIn`, `GotEmitter` & `nodeStream.Duplex`>
 
-*Defined in [decorators/request.ts:25](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/request.ts#L25)*
+*Defined in [decorators/request.ts:25](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/request.ts#L25)*
 
 **Type parameters:**
 
@@ -41,7 +41,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, `Buffer` \| `string` \| `object`>
 
-*Defined in [decorators/request.ts:28](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/request.ts#L28)*
+*Defined in [decorators/request.ts:28](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/request.ts#L28)*
 
 **Type parameters:**
 
@@ -56,7 +56,7 @@
 
 **Returns:** `StepFn`<`TReq`, `TRes`, `TIn`, `Response`<`Buffer` \| `string` \| `object`>>
 
-*Defined in [decorators/request.ts:31](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/request.ts#L31)*
+*Defined in [decorators/request.ts:31](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/request.ts#L31)*
 
 **Type parameters:**
 

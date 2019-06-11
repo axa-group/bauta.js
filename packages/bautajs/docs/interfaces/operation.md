@@ -41,7 +41,7 @@
 
 **● nextVersionOperation**: *`null` \| [Operation](operation.md)<`TReq`, `TRes`>*
 
-*Defined in [utils/types.ts:113](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L113)*
+*Defined in [utils/types.ts:125](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L125)*
 
 ___
 <a id="operationid"></a>
@@ -50,7 +50,7 @@ ___
 
 **● operationId**: *`string`*
 
-*Defined in [utils/types.ts:114](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L114)*
+*Defined in [utils/types.ts:126](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L126)*
 
 ___
 <a id="private"></a>
@@ -59,7 +59,7 @@ ___
 
 **● private**: *`boolean`*
 
-*Defined in [utils/types.ts:111](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L111)*
+*Defined in [utils/types.ts:123](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L123)*
 
 ___
 <a id="schema"></a>
@@ -68,7 +68,7 @@ ___
 
 **● schema**: *[Document](../#document)*
 
-*Defined in [utils/types.ts:112](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L112)*
+*Defined in [utils/types.ts:124](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L124)*
 
 ___
 <a id="serviceid"></a>
@@ -77,7 +77,7 @@ ___
 
 **● serviceId**: *`string`*
 
-*Defined in [utils/types.ts:115](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L115)*
+*Defined in [utils/types.ts:127](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L127)*
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 ▸ **run**(ctx?: *[ContextData](contextdata.md)<`TReq`, `TRes`>*): `Promise`<`any`>
 
-*Defined in [utils/types.ts:122](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L122)*
+*Defined in [utils/types.ts:134](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L134)*
 
 **Parameters:**
 
@@ -106,7 +106,7 @@ ___
 
 ▸ **setErrorHandler**(errorHandler: *`function`*): [Operation](operation.md)<`TReq`, `TRes`>
 
-*Defined in [utils/types.ts:116](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L116)*
+*Defined in [utils/types.ts:128](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L128)*
 
 **Parameters:**
 
@@ -123,7 +123,7 @@ ___
 
 ▸ **setup**(fn: *`function`*): [Operation](operation.md)<`TReq`, `TRes`>
 
-*Defined in [utils/types.ts:121](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L121)*
+*Defined in [utils/types.ts:133](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L133)*
 
 **Parameters:**
 
@@ -140,7 +140,7 @@ ___
 
 ▸ **validateRequest**(toggle: *`boolean`*): [Operation](operation.md)<`TReq`, `TRes`>
 
-*Defined in [utils/types.ts:119](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L119)*
+*Defined in [utils/types.ts:131](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L131)*
 
 **Parameters:**
 
@@ -157,7 +157,7 @@ ___
 
 ▸ **validateResponse**(toggle: *`boolean`*): [Operation](operation.md)<`TReq`, `TRes`>
 
-*Defined in [utils/types.ts:120](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L120)*
+*Defined in [utils/types.ts:132](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L132)*
 
 **Parameters:**
 

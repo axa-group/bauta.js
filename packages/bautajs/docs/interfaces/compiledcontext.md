@@ -28,7 +28,7 @@
 
 **● dataSource**: *`T`*
 
-*Defined in [utils/types.ts:179](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L179)*
+*Defined in [utils/types.ts:191](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L191)*
 
 ___
 

@@ -23,7 +23,7 @@
 
 **● body**: *`any`*
 
-*Defined in [multipart.ts:36](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/multipart-request-builder/src/multipart.ts#L36)*
+*Defined in [multipart.ts:36](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/multipart-request-builder/src/multipart.ts#L36)*
 
 ___
 <a id="headers"></a>
@@ -32,7 +32,7 @@ ___
 
 **● headers**: *`Headers`*
 
-*Defined in [multipart.ts:35](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/multipart-request-builder/src/multipart.ts#L35)*
+*Defined in [multipart.ts:35](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/multipart-request-builder/src/multipart.ts#L35)*
 
 ___
 

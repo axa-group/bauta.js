@@ -32,7 +32,7 @@
 
 **● debug**: *`Debugger`*
 
-*Defined in [utils/types.ts:55](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L55)*
+*Defined in [utils/types.ts:55](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L55)*
 
 ___
 <a id="error"></a>
@@ -41,7 +41,7 @@ ___
 
 **● error**: *`Debugger`*
 
-*Defined in [utils/types.ts:60](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L60)*
+*Defined in [utils/types.ts:60](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L60)*
 
 ___
 <a id="events"></a>
@@ -50,7 +50,7 @@ ___
 
 **● events**: *`EventEmitter`*
 
-*Defined in [utils/types.ts:61](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L61)*
+*Defined in [utils/types.ts:61](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L61)*
 
 ___
 <a id="info"></a>
@@ -59,7 +59,7 @@ ___
 
 **● info**: *`Debugger`*
 
-*Defined in [utils/types.ts:58](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L58)*
+*Defined in [utils/types.ts:58](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L58)*
 
 ___
 <a id="log"></a>
@@ -68,7 +68,7 @@ ___
 
 **● log**: *`Debugger`*
 
-*Defined in [utils/types.ts:57](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L57)*
+*Defined in [utils/types.ts:57](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L57)*
 
 ___
 <a id="trace"></a>
@@ -77,7 +77,7 @@ ___
 
 **● trace**: *`Debugger`*
 
-*Defined in [utils/types.ts:56](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L56)*
+*Defined in [utils/types.ts:56](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L56)*
 
 ___
 <a id="warn"></a>
@@ -86,7 +86,7 @@ ___
 
 **● warn**: *`Debugger`*
 
-*Defined in [utils/types.ts:59](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L59)*
+*Defined in [utils/types.ts:59](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L59)*
 
 ___
 

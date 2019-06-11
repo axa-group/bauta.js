@@ -22,7 +22,7 @@
 
 ▸ **create**<`TReq`,`TRes`>(serviceId: *`string`*, datasourceTemplate: *[ServiceTemplate](../interfaces/servicetemplate.md)*, apiDefinitions?: *[Document](../#document)[]*): [Service](../#service)<`TReq`, `TRes`>
 
-*Defined in [core/service.ts:22](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/service.ts#L22)*
+*Defined in [core/service.ts:22](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/core/service.ts#L22)*
 
 **Type parameters:**
 

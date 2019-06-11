@@ -59,7 +59,7 @@ const bautJSExpress = new BautaJSExpress(apiDefinition, {}); bautJSExpress.apply
 
 *Overrides BautaJS.__constructor*
 
-*Defined in [index.ts:137](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L137)*
+*Defined in [index.ts:140](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L140)*
 
 **Parameters:**
 
@@ -91,7 +91,7 @@ ___
 
 **● app**: *`Application`*
 
-*Defined in [index.ts:137](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L137)*
+*Defined in [index.ts:140](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L140)*
 
 *__type__*: {Application}
 
@@ -129,7 +129,7 @@ ___
 
 ▸ **applyMiddlewares**(options?: *[MiddlewareOptions](../interfaces/middlewareoptions.md)*): `this`
 
-*Defined in [index.ts:285](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L285)*
+*Defined in [index.ts:274](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L274)*
 
 Add the standard express middlewares and create the created services routes using the given OpenAPI definition.
 
@@ -150,7 +150,7 @@ ___
 
 ▸ **listen**(port?: *`number`*, host?: *`string`*, httpsEnabled?: *`boolean`*, httpsOptions?: *`object`*): `Server` \| `Server`
 
-*Defined in [index.ts:384](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L384)*
+*Defined in [index.ts:385](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L385)*
 
 Start the express server as http/https listener
 

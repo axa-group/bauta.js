@@ -24,7 +24,7 @@
 
 **● location**: *`string`*
 
-*Defined in [utils/types.ts:33](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L33)*
+*Defined in [utils/types.ts:33](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L33)*
 
 ___
 <a id="message"></a>
@@ -33,7 +33,7 @@ ___
 
 **● message**: *`string`*
 
-*Defined in [utils/types.ts:34](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L34)*
+*Defined in [utils/types.ts:34](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L34)*
 
 ___
 <a id="path"></a>
@@ -42,7 +42,7 @@ ___
 
 **● path**: *`string`*
 
-*Defined in [utils/types.ts:32](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L32)*
+*Defined in [utils/types.ts:32](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L32)*
 
 ___
 

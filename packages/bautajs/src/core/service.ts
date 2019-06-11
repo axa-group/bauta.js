@@ -33,7 +33,6 @@ export class ServiceBuilder {
     apiDefinitions.forEach(API => {
       service[API.info.version] = {};
     });
-
     operations.forEach(operationTemplate => {
       if (!operationTemplate.id) {
         throw new Error(`Operation id is a mandatory parameter on ${serviceId}`);

@@ -24,7 +24,7 @@
 
 **● operationId**: *`string`*
 
-*Defined in [utils/types.ts:129](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L129)*
+*Defined in [utils/types.ts:141](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L141)*
 
 ___
 <a id="serviceid"></a>
@@ -33,7 +33,7 @@ ___
 
 **● serviceId**: *`string`*
 
-*Defined in [utils/types.ts:128](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L128)*
+*Defined in [utils/types.ts:140](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L140)*
 
 ___
 <a id="version"></a>
@@ -42,7 +42,7 @@ ___
 
 **● version**: *`string`*
 
-*Defined in [utils/types.ts:127](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L127)*
+*Defined in [utils/types.ts:139](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L139)*
 
 ___
 

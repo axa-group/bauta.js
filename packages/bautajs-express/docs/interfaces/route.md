@@ -27,7 +27,7 @@
 
 **● operation**: *`Operation`<`TReq`, `TRes`>*
 
-*Defined in [index.ts:54](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L54)*
+*Defined in [index.ts:53](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L53)*
 
 ___
 <a id="produces"></a>
@@ -36,7 +36,7 @@ ___
 
 **● produces**: *`OpenAPIV2.MimeTypes`*
 
-*Defined in [index.ts:56](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L56)*
+*Defined in [index.ts:55](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L55)*
 
 ___
 <a id="responses"></a>
@@ -45,7 +45,7 @@ ___
 
 **● responses**: *`ResponsesObject` \| `ResponsesObject`*
 
-*Defined in [index.ts:55](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L55)*
+*Defined in [index.ts:54](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L54)*
 
 ___
 

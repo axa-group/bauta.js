@@ -37,7 +37,7 @@
 
 **● data**: *[Dictionary](dictionary.md)<`any`>*
 
-*Defined in [utils/types.ts:176](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L176)*
+*Defined in [utils/types.ts:188](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L188)*
 
 A dictionary to add custom data to pass between steps
 
@@ -52,7 +52,7 @@ ___
 
 **● dataSource**: *[OperationDataSourceBuilder](../#operationdatasourcebuilder)*
 
-*Defined in [utils/types.ts:168](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L168)*
+*Defined in [utils/types.ts:180](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L180)*
 
 The dataSource object where your request data is.
 
@@ -69,7 +69,7 @@ ___
 
 *Inherited from [Session](session.md).[id](session.md#id)*
 
-*Defined in [utils/types.ts:182](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L182)*
+*Defined in [utils/types.ts:194](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L194)*
 
 ___
 <a id="logger"></a>
@@ -80,7 +80,7 @@ ___
 
 *Inherited from [Session](session.md).[logger](session.md#logger)*
 
-*Defined in [utils/types.ts:184](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L184)*
+*Defined in [utils/types.ts:196](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L196)*
 
 ___
 <a id="metadata"></a>
@@ -89,7 +89,7 @@ ___
 
 **● metadata**: *[Metadata](metadata.md)*
 
-*Defined in [utils/types.ts:169](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L169)*
+*Defined in [utils/types.ts:181](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L181)*
 
 ___
 <a id="req"></a>
@@ -98,7 +98,7 @@ ___
 
 **● req**: *`TReq`*
 
-*Defined in [utils/types.ts:157](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L157)*
+*Defined in [utils/types.ts:169](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L169)*
 
 ___
 <a id="res"></a>
@@ -107,7 +107,7 @@ ___
 
 **● res**: *`TRes`*
 
-*Defined in [utils/types.ts:158](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L158)*
+*Defined in [utils/types.ts:170](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L170)*
 
 ___
 <a id="url"></a>
@@ -118,7 +118,7 @@ ___
 
 *Inherited from [Session](session.md).[url](session.md#url)*
 
-*Defined in [utils/types.ts:185](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L185)*
+*Defined in [utils/types.ts:197](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L197)*
 
 ___
 <a id="userid"></a>
@@ -129,7 +129,7 @@ ___
 
 *Inherited from [Session](session.md).[userId](session.md#userid)*
 
-*Defined in [utils/types.ts:183](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L183)*
+*Defined in [utils/types.ts:195](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L195)*
 
 ___
 <a id="validaterequest"></a>
@@ -138,7 +138,7 @@ ___
 
 **● validateRequest**: *[ValidationReqBuilder](../#validationreqbuilder)<`TReq`>*
 
-*Defined in [utils/types.ts:159](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L159)*
+*Defined in [utils/types.ts:171](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L171)*
 
 ___
 <a id="validateresponse"></a>
@@ -147,7 +147,7 @@ ___
 
 **● validateResponse**: *[ValidationResBuilder](../#validationresbuilder)<`TRes`>*
 
-*Defined in [utils/types.ts:160](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L160)*
+*Defined in [utils/types.ts:172](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L172)*
 
 ___
 

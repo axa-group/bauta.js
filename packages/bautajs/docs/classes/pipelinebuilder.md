@@ -38,7 +38,7 @@
 
 ⊕ **new PipelineBuilder**(accesor: *[HandlerAccesor](../interfaces/handleraccesor.md)<`TReq`, `TRes`>*, serviceId: *`string`*, version: *`string`*, operationId: *`string`*): [PipelineBuilder](pipelinebuilder.md)
 
-*Defined in [core/pipeline.ts:30](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/pipeline.ts#L30)*
+*Defined in [core/pipeline.ts:30](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/core/pipeline.ts#L30)*
 
 **Parameters:**
 
@@ -61,7 +61,7 @@ ___
 
 **● accesor**: *[HandlerAccesor](../interfaces/handleraccesor.md)<`TReq`, `TRes`>*
 
-*Defined in [core/pipeline.ts:33](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/pipeline.ts#L33)*
+*Defined in [core/pipeline.ts:33](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/core/pipeline.ts#L33)*
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 *Implementation of [Pipeline](../interfaces/pipeline.md).[push](../interfaces/pipeline.md#push)*
 
-*Defined in [core/pipeline.ts:39](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/pipeline.ts#L39)*
+*Defined in [core/pipeline.ts:39](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/core/pipeline.ts#L39)*
 
 **Type parameters:**
 

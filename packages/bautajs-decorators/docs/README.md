@@ -70,7 +70,7 @@ Available decorators
 
 **Ƭ StepFnCallback**: *`function`*
 
-*Defined in [decorators/as-callback.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/as-callback.ts#L18)*
+*Defined in [decorators/as-callback.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/as-callback.ts#L18)*
 
 #### Type declaration
 ▸(prev: *`TIn`*, ctx: *`Context`<`TReq`, `TRes`>*, callback: *`function`*): `void`
@@ -92,7 +92,7 @@ ___
 
 **Ƭ StepFnCompiled**: *`function`*
 
-*Defined in [decorators/compile-datasource.ts:20](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/compile-datasource.ts#L20)*
+*Defined in [decorators/compile-datasource.ts:20](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/compile-datasource.ts#L20)*
 
 #### Type declaration
 ▸(prev: *`TIn`*, ctx: *[CompiledContext](interfaces/compiledcontext.md)<`TReq`, `TRes`>*): `TOut` \| `Promise`<`TOut`>
@@ -116,7 +116,7 @@ ___
 
 **● parallel**: *[parallel](interfaces/staticparallel.md#parallel)*
 
-*Defined in [decorators/parallel.ts:145](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/parallel.ts#L145)*
+*Defined in [decorators/parallel.ts:145](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/parallel.ts#L145)*
 
 ___
 <a id="request"></a>
@@ -125,7 +125,7 @@ ___
 
 **● request**: *[request](interfaces/requestfn.md#request)*
 
-*Defined in [decorators/request.ts:58](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/request.ts#L58)*
+*Defined in [decorators/request.ts:58](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/request.ts#L58)*
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 ▸ **asCallback**<`TReq`,`TRes`,`TIn`,`TOut`>(fn: *[StepFnCallback](#stepfncallback)<`TReq`, `TRes`, `TIn`, `TOut`>*): `StepFn`<`TReq`, `TRes`, `TIn`, `TOut`>
 
-*Defined in [decorators/as-callback.ts:40](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/as-callback.ts#L40)*
+*Defined in [decorators/as-callback.ts:40](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/as-callback.ts#L40)*
 
 Allow you to use a callback style async operation
 
@@ -176,7 +176,7 @@ ___
 
 ▸ **asValue**<`TReq`,`TRes`,`TIn`,`TOut`>(someValue: *`TOut`*): `StepFn`<`TReq`, `TRes`, `TIn`, `TOut`>
 
-*Defined in [decorators/as-value.ts:32](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/as-value.ts#L32)*
+*Defined in [decorators/as-value.ts:32](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/as-value.ts#L32)*
 
 Allow to pass directly a value to the resolver
 
@@ -215,7 +215,7 @@ ___
 
 ▸ **compileDataSource**<`TReq`,`TRes`,`TIn`,`TOut`>(fn: *[StepFnCompiled](#stepfncompiled)<`TReq`, `TRes`, `TIn`, `TOut`>*): `StepFn`<`TReq`, `TRes`, `TIn`, `TOut`>
 
-*Defined in [decorators/compile-datasource.ts:44](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/compile-datasource.ts#L44)*
+*Defined in [decorators/compile-datasource.ts:44](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/compile-datasource.ts#L44)*
 
 Compile the ctx data source with the given request, resolving all the data source variables In your function you can access to the compiled data source throught ctx.dataSource and do a request using ctx.dataSource.request(); In the datasources all the ctx variables (ctx.req...) and ctx.previousValue will be available.
 
@@ -254,7 +254,7 @@ ___
 
 ▸ **template**<`TReq`,`TRes`,`TIn`,`TOut`>(currentTemplate: *`TOut`*): `StepFn`<`TReq`, `TRes`, `TIn`, `TOut`>
 
-*Defined in [decorators/template.ts:42](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-decorators/src/decorators/template.ts#L42)*
+*Defined in [decorators/template.ts:42](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-decorators/src/decorators/template.ts#L42)*
 
 Compile the json [stjs](https://www.npmjs.com/package/stjs) template with the given ctx, env, and previous value. The injected variables into the template are:
 

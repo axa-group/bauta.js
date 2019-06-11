@@ -84,7 +84,19 @@ export enum ResponseType {
 export interface BautaJSOptions<TReq, TRes> {
   dataSourcesPath?: string | string[];
   resolversPath?: string | string[];
-  dataSourceCtx?: any;
+  /**
+   *
+   *  The dataSource static context that will be use to do a first parse to the dataSource on run time.
+   * @type {any}
+   * @memberof BautaJSOptions
+   */
+  dataSourceStaticCtx?: any;
+  /**
+   *
+   * Add service utils available on every resolver.
+   * @type {(services: Services<TReq, TRes>) => any}
+   * @memberof BautaJSOptions
+   */
   servicesWrapper?: (services: Services<TReq, TRes>) => any;
 }
 export interface BautaJSBuilder<TReq, TRes> {

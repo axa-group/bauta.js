@@ -31,11 +31,11 @@
 
 **set handler**(fn: *[StepFn](../#stepfn)<`TReq`, `TRes`, `any`, `any`>*): `void`
 
-*Defined in [core/pipeline.ts:21](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/pipeline.ts#L21)*
+*Defined in [core/pipeline.ts:21](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/core/pipeline.ts#L21)*
 
 **Returns:** [StepFn](../#stepfn)<`TReq`, `TRes`, `any`, `any`>
 
-*Defined in [core/pipeline.ts:25](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/core/pipeline.ts#L25)*
+*Defined in [core/pipeline.ts:25](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/core/pipeline.ts#L25)*
 
 **Parameters:**
 

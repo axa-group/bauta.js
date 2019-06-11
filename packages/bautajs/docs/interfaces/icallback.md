@@ -9,7 +9,7 @@
 ## Callable
 ▸ **__call**(error?: *`Error` \| `null`*, result?: *`any`*): `void`
 
-*Defined in [utils/types.ts:25](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L25)*
+*Defined in [utils/types.ts:25](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L25)*
 
 **Parameters:**
 

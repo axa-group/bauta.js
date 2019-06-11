@@ -9,7 +9,7 @@
 ## Callable
 ▸ **__call**(error?: *`Error` \| `null`*, result?: *`any`*): `void`
 
-*Defined in [types.ts:20](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/native-proxy-agent/src/types.ts#L20)*
+*Defined in [types.ts:20](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/native-proxy-agent/src/types.ts#L20)*
 
 **Parameters:**
 

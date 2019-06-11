@@ -26,7 +26,7 @@
 
 **● bodyParser**: *`undefined` \| `object`*
 
-*Defined in [index.ts:66](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L66)*
+*Defined in [index.ts:65](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L65)*
 
 ___
 <a id="cors"></a>
@@ -35,7 +35,7 @@ ___
 
 **● cors**: *[MiddlewareOption](middlewareoption.md)<`CorsOptions`>*
 
-*Defined in [index.ts:65](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L65)*
+*Defined in [index.ts:64](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L64)*
 
 ___
 <a id="explorer"></a>
@@ -44,7 +44,7 @@ ___
 
 **● explorer**: *`undefined` \| `object`*
 
-*Defined in [index.ts:81](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L81)*
+*Defined in [index.ts:80](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L80)*
 
 ___
 <a id="helmet"></a>
@@ -53,7 +53,7 @@ ___
 
 **● helmet**: *[MiddlewareOption](middlewareoption.md)<`IHelmetConfiguration`>*
 
-*Defined in [index.ts:73](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L73)*
+*Defined in [index.ts:72](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L72)*
 
 ___
 <a id="morgan"></a>
@@ -62,7 +62,7 @@ ___
 
 **● morgan**: *`undefined` \| `object`*
 
-*Defined in [index.ts:74](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L74)*
+*Defined in [index.ts:73](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L73)*
 
 ___
 

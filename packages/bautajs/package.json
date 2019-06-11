@@ -43,6 +43,7 @@
     "is-plain-object": "3.0.0",
     "multipart-request-builder": "2.0.0-alpha.7",
     "native-proxy-agent": "2.0.0-alpha.7",
+    "object-path": "0.11.4",
     "openapi-default-setter": "2.0.4",
     "openapi-request-validator": "3.8.1",
     "openapi-response-validator": "3.7.0",

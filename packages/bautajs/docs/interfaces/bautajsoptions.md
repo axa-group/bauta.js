@@ -13,7 +13,7 @@
 
 ### Properties
 
-* [dataSourceCtx](bautajsoptions.md#datasourcectx)
+* [dataSourceStaticCtx](bautajsoptions.md#datasourcestaticctx)
 * [dataSourcesPath](bautajsoptions.md#datasourcespath)
 * [resolversPath](bautajsoptions.md#resolverspath)
 * [servicesWrapper](bautajsoptions.md#serviceswrapper)
@@ -22,13 +22,19 @@
 
 ## Properties
 
-<a id="datasourcectx"></a>
+<a id="datasourcestaticctx"></a>
 
-### `<Optional>` dataSourceCtx
+### `<Optional>` dataSourceStaticCtx
 
-**● dataSourceCtx**: *`any`*
+**● dataSourceStaticCtx**: *`any`*
 
-*Defined in [utils/types.ts:87](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L87)*
+*Defined in [utils/types.ts:93](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L93)*
+
+The dataSource static context that will be use to do a first parse to the dataSource on run time.
+
+*__type__*: {any}
+
+*__memberof__*: BautaJSOptions
 
 ___
 <a id="datasourcespath"></a>
@@ -37,7 +43,7 @@ ___
 
 **● dataSourcesPath**: *`string` \| `string`[]*
 
-*Defined in [utils/types.ts:85](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L85)*
+*Defined in [utils/types.ts:85](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L85)*
 
 ___
 <a id="resolverspath"></a>
@@ -46,7 +52,7 @@ ___
 
 **● resolversPath**: *`string` \| `string`[]*
 
-*Defined in [utils/types.ts:86](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L86)*
+*Defined in [utils/types.ts:86](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L86)*
 
 ___
 <a id="serviceswrapper"></a>
@@ -55,7 +61,13 @@ ___
 
 **● servicesWrapper**: *`undefined` \| `function`*
 
-*Defined in [utils/types.ts:88](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L88)*
+*Defined in [utils/types.ts:100](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L100)*
+
+Add service utils available on every resolver.
+
+*__type__*: {(services: Services<TReq, TRes>) => any}
+
+*__memberof__*: BautaJSOptions
 
 ___
 

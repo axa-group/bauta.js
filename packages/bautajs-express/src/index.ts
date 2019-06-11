@@ -34,7 +34,6 @@ import {
   OpenAPIV2Document,
   OpenAPIV3Document,
   Operation,
-  PathsObject,
   Pipeline,
   Resolver,
   StepFn
@@ -96,17 +95,24 @@ function toExpressParams(part: string) {
   return part.replace(/\{([^}]+)}/g, ':$1');
 }
 
-function getSchemaData(schema: PathsObject) {
-  const swaggerPath = Object.keys(schema)[0];
+function getSchemaData(schema: Document) {
+  const openAPIV3Def = schema as OpenAPIV3Document;
+  const openAPIV2Def = schema as OpenAPIV2Document;
+  const basePath: string | undefined =
+    openAPIV3Def.servers && openAPIV3Def.servers[0].url
+      ? openAPIV3Def.servers[0].url
+      : openAPIV2Def.basePath;
+
+  const swaggerPath = Object.keys(schema.paths)[0];
   const expressRoute = swaggerPath
     .substring(1)
     .split('/')
     .map(toExpressParams)
     .join('/');
 
-  const method = Object.keys(schema[swaggerPath])[0];
-  const { responses, produces } = schema[swaggerPath][method];
-  return { expressRoute, method, responses, produces, swaggerPath };
+  const method = Object.keys(schema.paths[swaggerPath])[0];
+  const { responses, produces } = schema.paths[swaggerPath][method];
+  return { expressRoute: basePath + expressRoute, method, responses, produces, swaggerPath };
 }
 
 /**
@@ -143,14 +149,8 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
       const { operation, responses, produces }: Route<Request, Response> = this.routes[
         expressRoute
       ][method];
-      const openAPIV3Def = operation.schema as OpenAPIV3Document;
-      const openAPIV2Def = operation.schema as OpenAPIV2Document;
-      const basePath: string | undefined =
-        openAPIV3Def.servers && openAPIV3Def.servers[0].url
-          ? openAPIV3Def.servers[0].url
-          : openAPIV2Def.basePath;
       // @ts-ignore
-      this.app[method](basePath + expressRoute, (req: Request, res: Response, next: ICallback) => {
+      this.app[method](expressRoute, (req: Request, res: Response, next: ICallback) => {
         const startTime = new Date();
         const resolverWraper = (response: any) => {
           if (res.headersSent || res.finished) {
@@ -176,7 +176,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
           const finalTime = new Date().getTime() - startTime.getTime();
 
           this.logger.info(
-            `The operation execution of ${basePath}${expressRoute} took: ${
+            `The operation execution of ${expressRoute} took: ${
               typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
             } ms`
           );
@@ -186,7 +186,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
           res.status(response.statusCode || 500);
           const finalTime = new Date().getTime() - startTime.getTime();
           this.logger.info(
-            `The operation execution of ${basePath}${expressRoute} took: ${
+            `The operation execution of ${expressRoute} took: ${
               typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
             } ms`
           );
@@ -203,14 +203,14 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
       this.logger.info(
         '[OK]',
         chalk.yellowBright(
-          `[${method.toUpperCase()}] ${basePath + expressRoute} operation exposed on the API from ${
+          `[${method.toUpperCase()}] ${expressRoute} operation exposed on the API from ${
             operation.serviceId
           }.${operation.schema.info.version}.${operation.operationId}`
         )
       );
       this.logger.events.emit(EventTypes.EXPOSE_OPERATION, {
         operation,
-        route: basePath + expressRoute
+        route: expressRoute
       });
     });
   }
@@ -220,36 +220,28 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
       const service = this.services[serviceId];
       Object.keys(service).forEach(versionId => {
         const version = service[versionId];
-        const apiVersion = this.apiDefinitions.find(ad => ad.info.version === versionId);
-        if (!apiVersion) {
-          this.logger.warn(
-            `[WARN] ${serviceId}.${apiVersion} version not found on the given api definitions`
-          );
-        } else {
-          Object.keys(version).forEach((operationId: string) => {
-            const operation = version[operationId];
-            if (Object.keys(operation.schema.paths).length > 0 && !operation.private) {
-              const { method, expressRoute, responses, produces } = getSchemaData(
-                operation.schema.paths
-              );
-              if (!this.routes[expressRoute]) {
-                this.routes[expressRoute] = {};
-              }
+        Object.keys(version).forEach((operationId: string) => {
+          const operation = version[operationId];
+          if (Object.keys(operation.schema.paths).length > 0 && !operation.private) {
+            const { method, expressRoute, responses, produces } = getSchemaData(operation.schema);
 
-              this.routes[expressRoute][method] = {
-                operation,
-                responses,
-                produces
-              };
-            } else {
-              this.logger.warn(
-                `[WARN] ${operation.serviceId}.${
-                  operation.operationId
-                } operation definition not found`
-              );
+            if (!this.routes[expressRoute]) {
+              this.routes[expressRoute] = {};
             }
-          });
-        }
+
+            this.routes[expressRoute][method] = {
+              operation,
+              responses,
+              produces
+            };
+          } else {
+            this.logger.warn(
+              `[WARN] ${operation.serviceId}.${
+                operation.operationId
+              } operation definition not found`
+            );
+          }
+        });
       });
     });
 

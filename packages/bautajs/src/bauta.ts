@@ -15,6 +15,7 @@
 import ajv from 'ajv';
 import deepmerge from 'deepmerge';
 import glob from 'glob';
+import objectPath from 'object-path';
 import OpenapiSchemaValidator, { OpenAPISchemaValidatorResult } from 'openapi-schema-validator';
 import { IJsonSchema, OpenAPIV3 } from 'openapi-types';
 import path from 'path';
@@ -137,16 +138,23 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
     ) as DataSourceTemplate[];
 
     // Maintain the not resolved templates that have existence operator (#?)
-    const dataSources: DataSourceTemplate = deepmerge.all(
-      [
-        ...dataSourcesTemplates,
-        ...stjs
-          .select(options.dataSourceCtx)
-          .transformWith(dataSourcesTemplates)
-          .root()
-      ],
-      { isMergeableObject }
-    ) as DataSourceTemplate;
+    const selection = stjs.select(
+      deepmerge.all(dataSourcesTemplates, { isMergeableObject }),
+      (_: string, val: any) => typeof val === 'string' && /{{((?!\$ctx.).)*}}/.test(val)
+    );
+    const context = { $static: options.dataSourceStaticCtx };
+
+    selection.values().forEach((val: string) => {
+      const pathToVar = val.match(/{{#\? (.*)}}/);
+      if (pathToVar) {
+        objectPath.set(context, pathToVar[0], val);
+      }
+    });
+
+    const dataSources: DataSourceTemplate = selection
+      .transform(context)
+      .root() as DataSourceTemplate;
+
     const error: ajv.ErrorObject[] | null | undefined = validate(dataSources, datasourceSchemaJson);
     if (error) {
       throw new Error(

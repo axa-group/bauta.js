@@ -27,7 +27,7 @@
 
 **● data**: *[Dictionary](dictionary.md)<`any`>*
 
-*Defined in [utils/types.ts:154](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L154)*
+*Defined in [utils/types.ts:166](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L166)*
 
 ___
 <a id="req"></a>
@@ -36,7 +36,7 @@ ___
 
 **● req**: *[TReq]()*
 
-*Defined in [utils/types.ts:152](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L152)*
+*Defined in [utils/types.ts:164](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L164)*
 
 ___
 <a id="res"></a>
@@ -45,7 +45,7 @@ ___
 
 **● res**: *[TRes]()*
 
-*Defined in [utils/types.ts:153](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L153)*
+*Defined in [utils/types.ts:165](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L165)*
 
 ___
 

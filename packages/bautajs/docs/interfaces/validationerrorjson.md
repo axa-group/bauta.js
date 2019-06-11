@@ -39,7 +39,7 @@ ___
 
 **● errors**: *[LocationError](locationerror.md)[]*
 
-*Defined in [utils/types.ts:37](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L37)*
+*Defined in [utils/types.ts:37](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L37)*
 
 ___
 <a id="message"></a>
@@ -70,7 +70,7 @@ ___
 
 **● response**: *`any`*
 
-*Defined in [utils/types.ts:39](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L39)*
+*Defined in [utils/types.ts:39](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L39)*
 
 ___
 <a id="stack"></a>
@@ -92,7 +92,7 @@ ___
 
 **● statusCode**: *`number`*
 
-*Defined in [utils/types.ts:38](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L38)*
+*Defined in [utils/types.ts:38](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L38)*
 
 ___
 

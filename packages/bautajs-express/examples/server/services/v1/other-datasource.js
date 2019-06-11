@@ -9,7 +9,7 @@ module.exports = dataSource({
       operations: [
         {
           especialCase: '{{#? ctx.req.notFound}}',
-          especialCaseFound: '{{#? config.someVar}}',
+          especialCaseFound: '{{#? $static.someVar}}',
           id: 'operation3',
           reqId: '{{ctx.req.query.a}}',
           method: 'GET',

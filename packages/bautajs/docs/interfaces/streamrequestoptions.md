@@ -24,7 +24,7 @@
 
 **● stream**: *`true`*
 
-*Defined in [utils/types.ts:218](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L218)*
+*Defined in [utils/types.ts:230](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L230)*
 
 ___
 

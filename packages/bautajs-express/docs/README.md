@@ -55,7 +55,7 @@ As [BautaJSExpress](classes/bautajsexpress.md) extends from [BautaJS](../../baut
 
 ▸ **pipeline**<`TIn`>(fn: *`function`*): `function`
 
-*Defined in [index.ts:438](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L438)*
+*Defined in [index.ts:439](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L439)*
 
 A decorator to allow intellisense on pipeline on non typescript files
 
@@ -81,7 +81,7 @@ ___
 
 ▸ **resolver**(fn: *`Resolver`<`Request`, `Response`>*): `function`
 
-*Defined in [index.ts:415](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L415)*
+*Defined in [index.ts:416](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L416)*
 
 A decorator to allow have intellisense on resolver files for non typescript projects
 
@@ -102,7 +102,7 @@ ___
 
 ▸ **step**<`TIn`,`TOut`>(fn: *`StepFn`<`Request`, `Response`, `TIn`, `TOut`>*): `function`
 
-*Defined in [index.ts:427](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-express/src/index.ts#L427)*
+*Defined in [index.ts:428](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-express/src/index.ts#L428)*
 
 A decorator to allow intellisense on pushed steps on non typescript files
 

@@ -30,7 +30,7 @@
 
 **● id**: *`string`*
 
-*Defined in [utils/types.ts:132](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L132)*
+*Defined in [utils/types.ts:144](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L144)*
 
 ___
 <a id="inherit"></a>
@@ -39,7 +39,7 @@ ___
 
 **● inherit**: *`undefined` \| `false` \| `true`*
 
-*Defined in [utils/types.ts:137](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L137)*
+*Defined in [utils/types.ts:149](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L149)*
 
 ___
 <a id="method"></a>
@@ -48,7 +48,7 @@ ___
 
 **● method**: *`undefined` \| `string`*
 
-*Defined in [utils/types.ts:135](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L135)*
+*Defined in [utils/types.ts:147](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L147)*
 
 ___
 <a id="options"></a>
@@ -57,7 +57,7 @@ ___
 
 **● options**: *[RequestOptions](requestoptions.md)*
 
-*Defined in [utils/types.ts:138](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L138)*
+*Defined in [utils/types.ts:150](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L150)*
 
 ___
 <a id="private"></a>
@@ -66,7 +66,7 @@ ___
 
 **● private**: *`undefined` \| `false` \| `true`*
 
-*Defined in [utils/types.ts:134](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L134)*
+*Defined in [utils/types.ts:146](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L146)*
 
 ___
 <a id="url"></a>
@@ -75,7 +75,7 @@ ___
 
 **● url**: *`undefined` \| `string`*
 
-*Defined in [utils/types.ts:136](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L136)*
+*Defined in [utils/types.ts:148](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L148)*
 
 ___
 <a id="version"></a>
@@ -84,7 +84,7 @@ ___
 
 **● version**: *`undefined` \| `string`*
 
-*Defined in [utils/types.ts:133](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L133)*
+*Defined in [utils/types.ts:145](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L145)*
 
 ___
 

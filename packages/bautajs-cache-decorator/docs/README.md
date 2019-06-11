@@ -48,7 +48,7 @@ Just add it as a normal decorator
 
 **Ƭ Normalizer**: *`function`*
 
-*Defined in [index.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-cache-decorator/src/index.ts#L18)*
+*Defined in [index.ts:18](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-cache-decorator/src/index.ts#L18)*
 
 #### Type declaration
 ▸(value: *[`TIn`, `Context`<`TReq`, `TRes`>]*): `any`
@@ -71,7 +71,7 @@ ___
 
 ▸ **cache**<`TReq`,`TRes`,`TIn`>(fn: *`function`*, normalizer: *[Normalizer](#normalizer)<`TReq`, `TRes`, `TIn`>*, options?: *`Options`*): `StepFn`<`TReq`, `TRes`, `TIn`, `null`>
 
-*Defined in [index.ts:36](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs-cache-decorator/src/index.ts#L36)*
+*Defined in [index.ts:36](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs-cache-decorator/src/index.ts#L36)*
 
 Cache the given steps with [memoizee](https://www.npmjs.com/package/memoizee)
 

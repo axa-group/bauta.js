@@ -780,7 +780,7 @@ module.export = (services) => {
 
 **Ƭ Document**: *[OpenAPIV2Document](interfaces/openapiv2document.md) \| [OpenAPIV3Document](interfaces/openapiv3document.md)*
 
-*Defined in [utils/types.ts:73](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L73)*
+*Defined in [utils/types.ts:73](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L73)*
 
 ___
 <a id="errorhandler"></a>
@@ -789,7 +789,7 @@ ___
 
 **Ƭ ErrorHandler**: *`function`*
 
-*Defined in [utils/types.ts:109](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L109)*
+*Defined in [utils/types.ts:121](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L121)*
 
 #### Type declaration
 ▸(err: *`Error`*, ctx: *[Context](interfaces/context.md)<`TReq`, `TRes`>*): `any`
@@ -810,7 +810,7 @@ ___
 
 **Ƭ Omit**: *`Pick`<`T`, `Exclude`<`keyof T`, `K`>>*
 
-*Defined in [utils/types.ts:24](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L24)*
+*Defined in [utils/types.ts:24](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L24)*
 
 ___
 <a id="operationdatasourcebuilder"></a>
@@ -819,7 +819,7 @@ ___
 
 **Ƭ OperationDataSourceBuilder**: *`object` & `function`*
 
-*Defined in [utils/types.ts:148](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L148)*
+*Defined in [utils/types.ts:160](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L160)*
 
 ___
 <a id="pathitemobject"></a>
@@ -828,7 +828,7 @@ ___
 
 **Ƭ PathItemObject**: *`PathItemObject` \| `PathItemObject`*
 
-*Defined in [utils/types.ts:75](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L75)*
+*Defined in [utils/types.ts:75](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L75)*
 
 ___
 <a id="pathsobject"></a>
@@ -837,7 +837,7 @@ ___
 
 **Ƭ PathsObject**: *`PathsObject` \| `PathObject`*
 
-*Defined in [utils/types.ts:74](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L74)*
+*Defined in [utils/types.ts:74](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L74)*
 
 ___
 <a id="resolver"></a>
@@ -846,7 +846,7 @@ ___
 
 **Ƭ Resolver**: *`function`*
 
-*Defined in [utils/types.ts:103](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L103)*
+*Defined in [utils/types.ts:115](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L115)*
 
 #### Type declaration
 ▸(services: *[Services](#services)<`TReq`, `TRes`>*, utils: *`any`*): `void`
@@ -867,7 +867,7 @@ ___
 
 **Ƭ Service**: *[Dictionary](interfaces/dictionary.md)<[Version](#version)<`TReq`, `TRes`>>*
 
-*Defined in [utils/types.ts:98](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L98)*
+*Defined in [utils/types.ts:110](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L110)*
 
 ___
 <a id="services"></a>
@@ -876,7 +876,7 @@ ___
 
 **Ƭ Services**: *[Dictionary](interfaces/dictionary.md)<[Service](#service)<`TReq`, `TRes`>>*
 
-*Defined in [utils/types.ts:97](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L97)*
+*Defined in [utils/types.ts:109](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L109)*
 
 ___
 <a id="stepfn"></a>
@@ -885,7 +885,7 @@ ___
 
 **Ƭ StepFn**: *`function`*
 
-*Defined in [utils/types.ts:189](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L189)*
+*Defined in [utils/types.ts:201](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L201)*
 
 #### Type declaration
 ▸(prev: *`TIn`*, ctx: *[Context](interfaces/context.md)<`TReq`, `TRes`>*): `TOut` \| `Promise`<`TOut`>
@@ -906,7 +906,7 @@ ___
 
 **Ƭ ValidationReqBuilder**: *`function`*
 
-*Defined in [utils/types.ts:124](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L124)*
+*Defined in [utils/types.ts:136](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L136)*
 
 #### Type declaration
 ▸(req?: *[TReq]()*): `null`
@@ -926,7 +926,7 @@ ___
 
 **Ƭ ValidationResBuilder**: *`function`*
 
-*Defined in [utils/types.ts:125](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L125)*
+*Defined in [utils/types.ts:137](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L137)*
 
 #### Type declaration
 ▸(res: *`TRes`*, statusCode?: *`undefined` \| `number`*): `null`
@@ -947,7 +947,7 @@ ___
 
 **Ƭ Version**: *[Dictionary](interfaces/dictionary.md)<[Operation](interfaces/operation.md)<`TReq`, `TRes`>>*
 
-*Defined in [utils/types.ts:106](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/types.ts#L106)*
+*Defined in [utils/types.ts:118](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L118)*
 
 ___
 
@@ -959,7 +959,7 @@ ___
 
 **● logger**: *[LoggerBuilder](classes/loggerbuilder.md)* =  new LoggerBuilder(moduleName)
 
-*Defined in [logger.ts:52](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/logger.ts#L52)*
+*Defined in [logger.ts:52](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/logger.ts#L52)*
 
 ___
 
@@ -971,7 +971,7 @@ ___
 
 ▸ **buildDataSource**<`TReq`,`TRes`>(operationTemplate: *[OperationTemplate](interfaces/operationtemplate.md)*): [OperationDataSourceBuilder](#operationdatasourcebuilder)
 
-*Defined in [request/datasource.ts:273](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/request/datasource.ts#L273)*
+*Defined in [request/datasource.ts:281](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/request/datasource.ts#L281)*
 
 **Type parameters:**
 
@@ -992,7 +992,7 @@ ___
 
 ▸ **dataSource**(json: *[DataSourceTemplate](interfaces/datasourcetemplate.md)*): [DataSourceTemplate](interfaces/datasourcetemplate.md)
 
-*Defined in [decorators/datasource.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/decorators/datasource.ts#L17)*
+*Defined in [decorators/datasource.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/decorators/datasource.ts#L17)*
 
 **Parameters:**
 
@@ -1009,7 +1009,7 @@ ___
 
 ▸ **defaultResolver**<`TReq`,`TRes`>(value: *`any`*, ctx: *[Context](interfaces/context.md)<`TReq`, `TRes`>*): `any`
 
-*Defined in [utils/default-resolver.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/default-resolver.ts#L17)*
+*Defined in [utils/default-resolver.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/default-resolver.ts#L17)*
 
 **Type parameters:**
 
@@ -1031,7 +1031,7 @@ ___
 
 ▸ **getStrictDefinition**<`T`>(definition: *`T`*): `T`
 
-*Defined in [utils/strict-definitions.ts:71](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/strict-definitions.ts#L71)*
+*Defined in [utils/strict-definitions.ts:90](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/strict-definitions.ts#L90)*
 
 **Type parameters:**
 
@@ -1051,7 +1051,7 @@ ___
 
 ▸ **isMergeableObject**(item: *`any`*): `boolean`
 
-*Defined in [utils/is-mergeable-datasource.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/is-mergeable-datasource.ts#L17)*
+*Defined in [utils/is-mergeable-datasource.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/is-mergeable-datasource.ts#L17)*
 
 **Parameters:**
 
@@ -1068,7 +1068,7 @@ ___
 
 ▸ **pipeline**<`TReq`,`TRes`,`TIn`>(fn: *`function`*): `function`
 
-*Defined in [decorators/pipeline.ts:26](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/decorators/pipeline.ts#L26)*
+*Defined in [decorators/pipeline.ts:26](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/decorators/pipeline.ts#L26)*
 
 A decorator to allow intellisense on pipeline on non typescript files
 
@@ -1100,7 +1100,7 @@ ___
 
 ▸ **prepareToLog**(object: *`any`*): `string`
 
-*Defined in [utils/prepare-to-log.ts:24](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/utils/prepare-to-log.ts#L24)*
+*Defined in [utils/prepare-to-log.ts:24](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/prepare-to-log.ts#L24)*
 
 **Parameters:**
 
@@ -1117,7 +1117,7 @@ ___
 
 ▸ **resolver**<`TReq`,`TRes`>(fn: *[Resolver](#resolver)<`TReq`, `TRes`>*): `function`
 
-*Defined in [decorators/resolver.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/decorators/resolver.ts#L17)*
+*Defined in [decorators/resolver.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/decorators/resolver.ts#L17)*
 
 **Type parameters:**
 
@@ -1138,7 +1138,7 @@ ___
 
 ▸ **step**<`TReq`,`TRes`,`TIn`,`TOut`>(fn: *[StepFn](#stepfn)<`TReq`, `TRes`, `TIn`, `TOut`>*): `function`
 
-*Defined in [decorators/step.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/167ddcc/packages/bautajs/src/decorators/step.ts#L17)*
+*Defined in [decorators/step.ts:17](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/decorators/step.ts#L17)*
 
 **Type parameters:**
 
