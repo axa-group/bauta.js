@@ -90,7 +90,7 @@ export interface BautaJSOptions<TReq, TRes> {
    * @type {any}
    * @memberof BautaJSOptions
    */
-  dataSourceStaticCtx?: any;
+  dataSourceStatic?: any;
   /**
    *
    * Add service utils available on every resolver.

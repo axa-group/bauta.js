@@ -33,7 +33,7 @@ describe('Core tests', () => {
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
         dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
       expect(bautaJS.services.testService.v1.operation1).toBeDefined();
     });
@@ -54,7 +54,7 @@ describe('Core tests', () => {
         ] as OpenAPIV3Document[],
         {
           dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
-          dataSourceCtx: config
+          dataSourceStatic: config
         }
       );
 
@@ -72,7 +72,7 @@ describe('Core tests', () => {
           // @ts-ignore
           new BautaJS([{}], {
             dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
-            dataSourceCtx: config
+            dataSourceStatic: config
           })
       ).toThrow(`Invalid API definitions, "" should have required property 'swagger'`);
     });
@@ -86,7 +86,7 @@ describe('Core tests', () => {
         () =>
           new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
             dataSourcesPath: './fixtures/not-valid.json',
-            dataSourceCtx: config
+            dataSourceStatic: config
           })
       ).toThrow(`Invalid or not found dataSources, "" should have required property '.services'`);
     });
@@ -100,7 +100,7 @@ describe('Core tests', () => {
         () =>
           new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
             dataSourcesPath: path.resolve(__dirname, './fixtures/not-valid-operation.json'),
-            dataSourceCtx: config
+            dataSourceStatic: config
           })
       ).toThrow(`Operation id is a mandatory parameter on test`);
     });
@@ -117,7 +117,7 @@ describe('Core tests', () => {
       };
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
 
       glob.sync = globSync;
@@ -138,7 +138,7 @@ describe('Core tests', () => {
       };
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
 
       glob.sync = globSync;
@@ -176,7 +176,7 @@ describe('Core tests', () => {
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
         dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
 
       try {
@@ -209,7 +209,7 @@ describe('Core tests', () => {
         {
           dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
           resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-          dataSourceCtx: config
+          dataSourceStatic: config
         }
       );
 
@@ -234,7 +234,7 @@ describe('Core tests', () => {
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
         dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
 
       try {
@@ -272,7 +272,7 @@ describe('Core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
         dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
 
       bautaJS.services.testService.v1.operation1.setup(p =>
@@ -312,7 +312,7 @@ describe('Core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
         dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
 
       bautaJS.services.testService.v1.operation1.setup(p => p.push(() => [{ id: '22' }]));
@@ -340,7 +340,7 @@ describe('Core tests', () => {
         {
           dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
           resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-          dataSourceCtx: config
+          dataSourceStatic: config
         }
       );
 
@@ -374,7 +374,7 @@ describe('Core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
         dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
 
       expect(await bautaJS.services.testService.v1.operation1.run({ req: {}, res: {} })).toEqual([
@@ -396,7 +396,7 @@ describe('Core tests', () => {
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver-1.js')
         ],
-        dataSourceCtx: config
+        dataSourceStatic: config
       });
 
       expect(await bautaJS.services.testService.v1.operation1.run({ req: {}, res: {} })).toEqual([
@@ -431,7 +431,7 @@ describe('Core tests', () => {
           __dirname,
           './fixtures/test-resolvers/global-utils-resolver.js'
         ),
-        dataSourceCtx: config,
+        dataSourceStatic: config,
         servicesWrapper: services => ({
           operation2Wrap: async (previousValue: any, ctx: any) => {
             const res1 = await services.testService.v1.operation2.run(ctx);

@@ -74,7 +74,7 @@ function setDefinitionDefaults(apiDefinition: Document): Document {
  * @example
  * const BautaJS = require('@bautajs/core');
  * const apiDefinitions = require('./open-api-definition.json');
- * const ctx = {
+ * const static = {
  *   someProp: 'someVal'
  * };
  *
@@ -82,7 +82,7 @@ function setDefinitionDefaults(apiDefinition: Document): Document {
  *  // Load all the files with datasource in the file name
  *  dataSourcesPath: './services/*-datasource.?(js|json)',
  *  resolversPath:  './services/*-resolver.js',
- *  dataSourceCtx: ctx,
+ *  dataSourceStatic: static,
  *  servicesWrapper: (services) => {
  *    return {
  *      wrappedService: (_, ctx) => {
@@ -140,9 +140,9 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
     // Maintain the not resolved templates that have existence operator (#?)
     const selection = stjs.select(
       deepmerge.all(dataSourcesTemplates, { isMergeableObject }),
-      (_: string, val: any) => typeof val === 'string' && /{{((?!\$ctx.).)*}}/.test(val)
+      (_: string, val: any) => typeof val === 'string' && /{{((?!\$static.).)*}}/.test(val)
     );
-    const context = { $static: options.dataSourceStaticCtx };
+    const context = { $static: options.dataSourceStatic };
 
     selection.values().forEach((val: string) => {
       const pathToVar = val.match(/{{#\? (.*)}}/);

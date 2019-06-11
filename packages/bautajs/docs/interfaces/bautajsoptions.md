@@ -13,7 +13,7 @@
 
 ### Properties
 
-* [dataSourceStaticCtx](bautajsoptions.md#datasourcestaticctx)
+* [dataSourceStatic](bautajsoptions.md#datasourcestatic)
 * [dataSourcesPath](bautajsoptions.md#datasourcespath)
 * [resolversPath](bautajsoptions.md#resolverspath)
 * [servicesWrapper](bautajsoptions.md#serviceswrapper)
@@ -22,11 +22,11 @@
 
 ## Properties
 
-<a id="datasourcestaticctx"></a>
+<a id="datasourcestatic"></a>
 
-### `<Optional>` dataSourceStaticCtx
+### `<Optional>` dataSourceStatic
 
-**● dataSourceStaticCtx**: *`any`*
+**● dataSourceStatic**: *`any`*
 
 *Defined in [utils/types.ts:93](https://github.axa.com/Digital/bauta-nodejs/blob/9b864df/packages/bautajs/src/utils/types.ts#L93)*
 

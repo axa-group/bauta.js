@@ -16,9 +16,9 @@
 
 *__param__*: 
 
-*__example__*: const BautaJS = require('@bautajs/core'); const apiDefinitions = require('./open-api-definition.json'); const ctx = { someProp: 'someVal' };
+*__example__*: const BautaJS = require('@bautajs/core'); const apiDefinitions = require('./open-api-definition.json'); const static = { someProp: 'someVal' };
 
-const bautaJS = new BautaJS(apiDefinitions, { // Load all the files with datasource in the file name dataSourcesPath: './services/_\-datasource.?(js\|json)', resolversPath: './services/_\-resolver.js', dataSourceCtx: ctx, servicesWrapper: (services) => { return { wrappedService: (\_, ctx) => { return services.service.v1.operation.run(ctx); } } } });
+const bautaJS = new BautaJS(apiDefinitions, { // Load all the files with datasource in the file name dataSourcesPath: './services/_\-datasource.?(js\|json)', resolversPath: './services/_\-resolver.js', dataSourceStatic: static, servicesWrapper: (services) => { return { wrappedService: (\_, ctx) => { return services.service.v1.operation.run(ctx); } } } });
 
 // Assuming we have a dataSource for cats, once bautajs is initialized, you can execute the operation with the following code: await bautaJS.services.cats.v1.find.run({});
 

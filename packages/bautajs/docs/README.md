@@ -36,7 +36,7 @@ To use bautaJS with the default configuration we will need to create the followi
       "operations": [
         {
           "name": "find",
-          "url": "{{config.endpoint}}/getsome"
+          "url": "{{$static.config.endpoint}}/getsome"
         }
       ]
     }
@@ -104,6 +104,7 @@ To use bautaJS with the default configuration we will need to create the followi
             }
           }
         }
+      }
     }
   ]
 ```
@@ -114,7 +115,13 @@ To use bautaJS with the default configuration we will need to create the followi
     const BautaJS = require('@bautajs/core');
     const apiDefinitions = require('./api-definitions.json');
 
-    const bautaJS = new BautaJS(apiDefinitions);
+    const bautaJS = new BautaJS(apiDefinitions, {
+      dataSourceStatic: {
+        config: {
+          endpoint:'http://coolcats.com'
+        }
+      }
+    });
 
     await bautaJS.services.cats.v1.find.run({});
 ```
@@ -168,7 +175,6 @@ This is a open api schema:
 
 ```json
 {
-  {
     "openapi": "3.0.0",
     "info": {
       "version": "v1",
@@ -212,7 +218,6 @@ This is a open api schema:
 
 ```json
 {
-  {
     "openapi": "3.0.0",
     "info": {
       "version": "v1",
@@ -297,7 +302,11 @@ This is a datasource example:
 
 ### Dynamic datasources
 
-Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `req`, `config` and `env` (environment variables) objects. See the template syntax format at [stjs](https://www.npmjs.com/package/stjs). to retrieve dynamic data.
+Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `ctx`, `$static` and `env` (environment variables) objects.
+
+*   `ctx`: reference to the current context, see (types)\[./src/utils/types.ts\] Context.
+*   `$static`: reference to the $static generic data coming from the Bautajs constructor parameter dataSourceStaticCtx.
+*   `env`: reference to the current NodeJS process.env. See the template syntax format at [stjs](https://www.npmjs.com/package/stjs). to retrieve dynamic data.
 
 ```json
 {
@@ -306,15 +315,15 @@ Datasources used in every request are compiled on demand. It allow to add dynami
       "operations":[
         {
           "name":"test",
-          "url":"{{config.url}}",
+          "url":"{{$static.config.url}}",
           "options":{
             "json": true,
             "headers": {
               "Accept-Language": [{
-                "{{#if !req.headers.accept-language}}": "my default lang",
-                "{{#else}}":"{{req.headers.accept-language}}"
+                "{{#if !ctx.req.headers.accept-language}}": "my default lang",
+                "{{#else}}":"{{ctx.req.headers.accept-language}}"
               }]",
-              "x-axa-user-agent": "{{req.headers.x-axa-user-agent}}"
+              "x-axa-user-agent": "{{ctx.req.headers.x-axa-user-agent}}"
             }
           }
         }
