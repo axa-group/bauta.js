@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-alpha.8](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.7...v2.0.0-alpha.8) (2019-06-11)
+
+
+### Bug Fixes
+
+* **bautajs:** parameters and responses are now take it in account on get the strict definitions ([9b864df](http://github.axa.com/Digital/bauta-nodejs/commit/9b864df)), closes [#70](http://github.axa.com/Digital/bauta-nodejs/issues/70)
+* **bautajs-express:** on apply middlewares if some property was specified all middlewares were deleted. ([b62802b](http://github.axa.com/Digital/bauta-nodejs/commit/b62802b))
+* **bautajs-express:** set default morgan format to tiny ([e673052](http://github.axa.com/Digital/bauta-nodejs/commit/e673052))
+* **bautajs-express:** standarize morgan default log format ([b3742d4](http://github.axa.com/Digital/bauta-nodejs/commit/b3742d4))
+* **bautajs, bautajs-express:** operations where exposed twice ([4b0afc8](http://github.axa.com/Digital/bauta-nodejs/commit/4b0afc8)), closes [#69](http://github.axa.com/Digital/bauta-nodejs/issues/69)
+
+
+### Features
+
+* **bautajs:** log error response from 3 party API with log level error or more ([2a8bf24](http://github.axa.com/Digital/bauta-nodejs/commit/2a8bf24))
+
+
+### BREAKING CHANGES
+
+* **bautajs, bautajs-express:** dataSourceCtx parameter has becomed dataSourceStatic and can be accessed by `$static.` word inside the dataSources
+
+- Improve express update route algorithm
+
+
+
+
+
 # [2.0.0-alpha.7](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.6...v2.0.0-alpha.7) (2019-06-06)
 
 
