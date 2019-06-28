@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-alpha.9](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.8...v2.0.0-alpha.9) (2019-06-28)
+
+
+### Bug Fixes
+
+* **bautajs:** default open api setter needs to specify empty parameters array ([0984137](http://github.axa.com/Digital/bauta-nodejs/commit/0984137))
+
+
+
+
+
 # [2.0.0-alpha.8](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.7...v2.0.0-alpha.8) (2019-06-11)
 
 
