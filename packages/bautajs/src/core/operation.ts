@@ -162,7 +162,8 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
         definitions: schemas
       });
 
-      const defaultSetter = new OpenapiDefaultSetter(endpointDefinition);
+      // BUG related to: https://github.com/kogosoftwarellc/open-api/issues/381
+      const defaultSetter = new OpenapiDefaultSetter({ parameters: [], ...endpointDefinition });
       this.validation.validateReqBuilder = (req: any) => {
         defaultSetter.handle(req);
         if (!req.headers) {
