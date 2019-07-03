@@ -14,8 +14,8 @@
  */
 const STJS = require('stjs');
 const got = require('got');
-const createAgent = require('native-proxy-agent');
-const Multipart = require('multipart-request-builder');
+const { createAgent } = require('native-proxy-agent');
+const { Multipart } = require('multipart-request-builder');
 const prepareToLog = require('../utils/prepare-to-log');
 const sessionFactory = require('../session-factory');
 const buildForm = require('./form-data');

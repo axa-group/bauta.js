@@ -29,7 +29,6 @@
     "lerna": "3.13.1",
     "lint-staged": "8.1.0",
     "nock": "9.6.1",
-    "nsp": "3.2.1",
     "pre-commit": "1.2.2",
     "prettier": "1.14.2",
     "supertest": "3.4.2"
@@ -37,7 +36,6 @@
   "scripts": {
     "lerna": "lerna",
     "eslint": "eslint",
-    "nsp": "nsp",
     "bootstrap": "lerna bootstrap",
     "postinstall": "lerna bootstrap",
     "documentation": "lerna exec -- npm run documentation && git add '*/**/README.md'",
@@ -49,7 +47,6 @@
     "test:watch": "jest --verbose --watchAll",
     "test:ci": "npm run coverage -- --ci --maxWorkers=2  --reporters=default --reporters=jest-junit",
     "lint": "eslint .",
-    "security": "npm run nsp check -- --reporter summary --threshold 4; lerna exec --concurrency 14 -- npm run security -- --threshold 4",
     "checkDeps": "lerna exec --concurrency 14 -- npm outdated"
   },
   "lint-staged": {
