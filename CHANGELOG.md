@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](http://github.axa.com/Digital/bauta-nodejs/compare/v1.2.2...v1.3.0) (2019-07-03)
+
+
+### Features
+
+* **bautajs:** Allow to override keepAlive ([9bf17df](http://github.axa.com/Digital/bauta-nodejs/commit/9bf17df)), closes [#75](http://github.axa.com/Digital/bauta-nodejs/issues/75)
+
+
+
+
+
 ## [1.2.2](http://github.axa.com/Digital/bauta-nodejs/compare/v1.2.1...v1.2.2) (2019-05-08)
 
 
