@@ -86,7 +86,7 @@ describe('datasource test', () => {
       const expectedData = {
         body: '{"password":"1234"}',
         headers:
-          '{"user-agent":"bautaJS","connection":"keep-alive","accept":"application/json","accept-encoding":"gzip, deflate","content-type":"application/json","content-length":19}',
+          '{"user-agent":"bautaJS","accept":"application/json","accept-encoding":"gzip, deflate","content-type":"application/json","content-length":19}',
         method: 'GET',
         url: 'https://pets.com/v1/policies'
       };
@@ -160,7 +160,7 @@ describe('datasource test', () => {
       const expectedData = {
         body: 'someString',
         headers:
-          '{"user-agent":"bautaJS","accept":"application/json","connection":"keep-alive","accept-encoding":"gzip, deflate","content-length":10}',
+          '{"user-agent":"bautaJS","accept":"application/json","accept-encoding":"gzip, deflate","content-length":10}',
         method: 'GET',
         url: 'https://pets.com/v1/policies'
       };

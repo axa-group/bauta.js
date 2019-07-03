@@ -129,10 +129,6 @@ function normalizeOptions(options) {
     parsedOptions.headers = { ...options.headers, Accept: 'application/json' };
   }
 
-  if (!parsedOptions.headers.connection && !parsedOptions.headers.Connection) {
-    parsedOptions.headers.connection = 'keep-alive';
-  }
-
   return parsedOptions;
 }
 
@@ -146,7 +142,7 @@ function compileDatasource(dataSourceTemplate, context) {
 
   const log = context.logger ? context.logger : sessionFactory(context).logger;
   const hooks = requestHooks(log);
-  const { cert, key, rejectUnauthorized, proxy, ...options } = {
+  const { cert, key, rejectUnauthorized, proxy, keepAliveMsecs, keepAlive, ...options } = {
     method: dataSource.method,
     json: true,
     ...dataSource.options,
@@ -187,7 +183,9 @@ function compileDatasource(dataSourceTemplate, context) {
         cert: cert || params.cert,
         key: key || params.key,
         rejectUnauthorized: strictSSL,
-        proxy
+        proxy,
+        keepAliveMsecs,
+        keepAlive
       });
       // add request id
       updateOptions.headers['x-request-id'] = context.id;
