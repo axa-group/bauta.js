@@ -13,7 +13,15 @@
  * limitations under the License.
  */
 import memoizee from 'memoizee';
-import { Accesor, Context, Pipeline, PipelineBuilder, Services, StepFn } from '@bautajs/core';
+import {
+  Accesor,
+  BautaJSInstance,
+  Context,
+  Pipeline,
+  PipelineBuilder,
+  Services,
+  StepFn
+} from '@bautajs/core';
 
 export type Normalizer<TIn> = (value: [TIn, Context, Services]) => any;
 
@@ -50,7 +58,7 @@ export function cache<TIn>(
     promise: true
   });
 
-  return async (value: TIn, ctx: Context, services: Services) => cached(value, ctx, services);
+  return async (value: TIn, ctx: Context, bautajs: BautaJSInstance) => cached(value, ctx, bautajs);
 }
 
 export default cache;
