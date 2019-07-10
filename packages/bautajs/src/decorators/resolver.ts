@@ -14,7 +14,7 @@
  */
 import { Resolver } from '../utils/types';
 
-export function resolver<TReq, TRes>(fn: Resolver<TReq, TRes>) {
+export function resolver(fn: Resolver) {
   return fn;
 }
 

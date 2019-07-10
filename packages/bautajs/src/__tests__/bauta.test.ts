@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test, jest, beforeEach, afterEach */
+/* global expect, describe, test, jest */
 // eslint-disable-next-line no-unused-vars
 import fastSafeStringify from 'fast-safe-stringify';
 import glob from 'glob';
-import nock from 'nock';
 import path from 'path';
 import { BautaJS } from '../bauta';
 import { OpenAPIV3Document } from '../utils/types';
@@ -32,7 +31,7 @@ describe('Core tests', () => {
       };
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
         dataSourceStatic: config
       });
       expect(bautaJS.services.testService.v1.operation1).toBeDefined();
@@ -53,7 +52,7 @@ describe('Core tests', () => {
           }
         ] as OpenAPIV3Document[],
         {
-          dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+          dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
           dataSourceStatic: config
         }
       );
@@ -71,7 +70,7 @@ describe('Core tests', () => {
         () =>
           // @ts-ignore
           new BautaJS([{}], {
-            dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+            dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
             dataSourceStatic: config
           })
       ).toThrow(`Invalid API definitions, "" should have required property 'swagger'`);
@@ -109,7 +108,7 @@ describe('Core tests', () => {
       // @ts-ignore
       glob.sync = jest.fn(() => ({
         forEach(fn: any) {
-          return fn(path.resolve(__dirname, './fixtures/test-datasource.json'));
+          return fn(path.resolve(__dirname, './fixtures/test-datasource.js'));
         }
       }));
       const config = {
@@ -130,7 +129,7 @@ describe('Core tests', () => {
       // @ts-ignore
       glob.sync = jest.fn(() => ({
         forEach(fn: any) {
-          return fn(path.resolve(__dirname, './fixtures/test-datasource.json'));
+          return fn(path.resolve(__dirname, './fixtures/test-datasource.js'));
         }
       }));
       const config = {
@@ -149,20 +148,6 @@ describe('Core tests', () => {
   });
 
   describe('Validate request globally', () => {
-    beforeEach(() => {
-      nock('https://google.com')
-        .persist()
-        .get('/')
-        .reply(200, [
-          {
-            id: 1,
-            name: 'pety'
-          }
-        ]);
-    });
-    afterEach(() => {
-      nock.cleanAll();
-    });
     test('should validate the request by ./fixtures', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -175,7 +160,7 @@ describe('Core tests', () => {
       const res = {};
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
         dataSourceStatic: config
       });
 
@@ -207,7 +192,7 @@ describe('Core tests', () => {
       const bautaJS = new BautaJS(
         [{ ...testApiDefinitionsJson[0], validateRequest: false }] as OpenAPIV3Document[],
         {
-          dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+          dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
           resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           dataSourceStatic: config
         }
@@ -233,7 +218,7 @@ describe('Core tests', () => {
       const res = {};
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
         dataSourceStatic: config
       });
 
@@ -246,18 +231,6 @@ describe('Core tests', () => {
   });
 
   describe('Validate response globally', () => {
-    beforeEach(() => {
-      nock('https://google.com')
-        .persist()
-        .get('/')
-        .reply(200, {
-          id: 1,
-          name: 'pety'
-        });
-    });
-    afterEach(() => {
-      nock.cleanAll();
-    });
     test('should validate the response by default', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -270,7 +243,7 @@ describe('Core tests', () => {
       const res = {};
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         dataSourceStatic: config
       });
@@ -310,7 +283,7 @@ describe('Core tests', () => {
       const res = {};
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         dataSourceStatic: config
       });
@@ -338,7 +311,7 @@ describe('Core tests', () => {
       const bautaJS = new BautaJS(
         [{ ...testApiDefinitionsJson[0], validateResponse: false }] as OpenAPIV3Document[],
         {
-          dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+          dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
           resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           dataSourceStatic: config
         }
@@ -355,24 +328,13 @@ describe('Core tests', () => {
   });
 
   describe('Load resolvers from path', () => {
-    beforeEach(() => {
-      nock('https://google.com')
-        .persist()
-        .get('/')
-        .reply(200, {
-          bender: 'benderGoogle'
-        });
-    });
-    afterEach(() => {
-      nock.cleanAll();
-    });
     test('should load the operations from the given path', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         dataSourceStatic: config
       });
@@ -391,7 +353,7 @@ describe('Core tests', () => {
       };
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
         resolversPath: [
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver-1.js')
@@ -409,24 +371,13 @@ describe('Core tests', () => {
   });
 
   describe('Set global utils', () => {
-    beforeEach(() => {
-      nock('https://google.com')
-        .persist()
-        .get('/')
-        .reply(200, {
-          bender: 'benderGoogle'
-        });
-    });
-    afterEach(() => {
-      nock.cleanAll();
-    });
     test('should load the operations from the given path', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
-        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource-two-operations.json'),
+        dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource-two-operations.js'),
         resolversPath: path.resolve(
           __dirname,
           './fixtures/test-resolvers/global-utils-resolver.js'

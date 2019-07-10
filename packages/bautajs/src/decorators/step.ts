@@ -14,7 +14,7 @@
  */
 import { StepFn } from '../utils/types';
 
-export function step<TReq, TRes, TIn, TOut>(fn: StepFn<TReq, TRes, TIn, TOut>) {
+export function step<TIn, TOut>(fn: StepFn<TIn, TOut>) {
   return fn;
 }
 

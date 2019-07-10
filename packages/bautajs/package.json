@@ -8,7 +8,6 @@
     "dist/**/*"
   ],
   "scripts": {
-    "documentation": "typedoc --name @bautajs/core ./src",
     "tsc": "tsc"
   },
   "bugs": {
@@ -33,23 +32,18 @@
     "npm": ">=5"
   },
   "dependencies": {
-    "ajv": "6.9.1",
-    "chalk": "2.4.1",
+    "@bautajs/environment": "^2.0.0-alpha.8",
+    "ajv": "6.10.0",
     "debug": "4.1.1",
-    "deepmerge": "3.2.0",
+    "deepmerge": "3.3.0",
     "fast-safe-stringify": "2.0.6",
-    "glob": "7.1.3",
-    "got": "9.6.0",
+    "glob": "7.1.4",
     "is-plain-object": "3.0.0",
-    "multipart-request-builder": "2.0.0-alpha.8",
-    "native-proxy-agent": "2.0.0-alpha.8",
-    "object-path": "0.11.4",
     "openapi-default-setter": "2.0.4",
-    "openapi-request-validator": "3.8.1",
-    "openapi-response-validator": "3.7.0",
+    "openapi-request-validator": "3.8.3",
+    "openapi-response-validator": "3.8.1",
     "openapi-schema-validator": "3.0.3",
-    "openapi-types": "1.3.4",
-    "p-cancelable": "2.0.0",
-    "stjs": "0.0.5"
+    "openapi-types": "1.3.5",
+    "p-cancelable": "2.0.0"
   }
 }

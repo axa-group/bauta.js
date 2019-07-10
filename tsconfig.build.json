@@ -1,17 +1,17 @@
 {
   "extends": "./tsconfig.base",
   "compilerOptions": {
-    "composite": true
+    "composite":true
   },
   "files": [],
   "exclude": ["__tests__"],
   "references": [
-    { "path": "./packages/multipart-request-builder" },
-    { "path": "./packages/native-proxy-agent" },
+    { "path": "./packages/bautajs-environment" },
     { "path": "./packages/bautajs" },
-    { "path": "./packages/bautajs-decorators" },
-    { "path": "./packages/bautajs-cache-decorator" },
-    { "path": "./packages/bautajs-filters-decorator" },
+    { "path": "./packages/bautajs-datasource-rest" },
+    { "path": "./packages/bautajs-decorator-cache" },
+    { "path": "./packages/bautajs-decorator-template" },
+    { "path": "./packages/bautajs-decorator-filter" },
     { "path": "./packages/bautajs-express" }
   ]
 }

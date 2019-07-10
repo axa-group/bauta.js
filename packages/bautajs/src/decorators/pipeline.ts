@@ -17,13 +17,11 @@ import { Pipeline } from '../utils/types';
 /**
  * A decorator to allow intellisense on pipeline on non typescript files
  * @export
- * @template TReq
- * @template TRes
  * @template TIn
- * @param {Pipeline<TReq, TRes, TIn>} fn
+ * @param {Pipeline<TIn>} fn
  * @returns
  */
-export function pipeline<TReq, TRes, TIn>(fn: (pipeline: Pipeline<TReq, TRes, TIn>) => void) {
+export function pipeline<TIn>(fn: (pipeline: Pipeline<TIn>) => void) {
   return fn;
 }
 

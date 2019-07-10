@@ -31,13 +31,13 @@ import {
   Document,
   EventTypes,
   ICallback,
+  LoggerBuilder,
   OpenAPIV2Document,
   OpenAPIV3Document,
-  Operation,
-  Pipeline,
-  Resolver,
-  StepFn
+  Operation
 } from '@bautajs/core';
+
+export * from '@bautajs/core';
 
 swaggerUiExpress.setup();
 
@@ -49,8 +49,8 @@ interface SwaggerOptions {
   [key: string]: any;
 }
 
-export interface Route<TReq, TRes> {
-  operation: Operation<TReq, TRes>;
+export interface Route {
+  operation: Operation;
   responses: OpenAPIV3.ResponsesObject | OpenAPIV2.ResponsesObject;
   produces: OpenAPIV2.MimeTypes;
 }
@@ -120,8 +120,8 @@ function getSchemaData(schema: Document) {
  * @export
  * @class BautaJSExpress
  * @param {Document[]} apiDefinitions
- * @param {BautaJSOptions<Request, Response>} options
- * @extends {BautaJS<Request, Response>}
+ * @param {BautaJSOptions} options
+ * @extends {BautaJS}
  * @example
  * const { BautaJSExpress } = require('@bauta/express');
  * const apiDefinition from'../../api-definition.json');
@@ -130,8 +130,8 @@ function getSchemaData(schema: Document) {
  * bautJSExpress.applyMiddlewares();
  * bautaJS.listen();
  */
-export class BautaJSExpress extends BautaJS<Request, Response> {
-  private routes: Dictionary<Dictionary<Route<Request, Response>>> = {};
+export class BautaJSExpress extends BautaJS {
+  private routes: Dictionary<Dictionary<Route>> = {};
 
   /**
    * @type {Application}
@@ -139,16 +139,17 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
    */
   public app: Application;
 
-  constructor(apiDefinitions: Document[], options: BautaJSOptions<Request, Response>) {
+  public moduleLogger: LoggerBuilder;
+
+  constructor(apiDefinitions: Document[], options: BautaJSOptions) {
     super(apiDefinitions, options);
     this.app = express();
+    this.moduleLogger = LoggerBuilder.create('bautajs-express');
   }
 
   private addRoute(expressRoute: string) {
     Object.keys(this.routes[expressRoute]).forEach((method: string) => {
-      const { operation, responses, produces }: Route<Request, Response> = this.routes[
-        expressRoute
-      ][method];
+      const { operation, responses, produces }: Route = this.routes[expressRoute][method];
       // @ts-ignore
       this.app[method](expressRoute, (req: Request, res: Response, next: ICallback) => {
         const startTime = new Date();
@@ -175,7 +176,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
           res.json(response || {});
           const finalTime = new Date().getTime() - startTime.getTime();
 
-          this.logger.info(
+          this.moduleLogger.info(
             `The operation execution of ${expressRoute} took: ${
               typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
             } ms`
@@ -185,7 +186,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
         const rejectWraper = (response: any) => {
           res.status(response.statusCode || 500);
           const finalTime = new Date().getTime() - startTime.getTime();
-          this.logger.info(
+          this.moduleLogger.info(
             `The operation execution of ${expressRoute} took: ${
               typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
             } ms`
@@ -200,7 +201,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
           .catch(rejectWraper);
       });
 
-      this.logger.info(
+      this.moduleLogger.info(
         '[OK]',
         chalk.yellowBright(
           `[${method.toUpperCase()}] ${expressRoute} operation exposed on the API from ${
@@ -208,7 +209,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
           }.${operation.schema.info.version}.${operation.operationId}`
         )
       );
-      this.logger.events.emit(EventTypes.EXPOSE_OPERATION, {
+      this.moduleLogger.events.emit(EventTypes.EXPOSE_OPERATION, {
         operation,
         route: expressRoute
       });
@@ -235,7 +236,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
               produces
             };
           } else {
-            this.logger.warn(
+            this.moduleLogger.warn(
               `[WARN] ${operation.serviceId}.${
                 operation.operationId
               } operation definition not found`
@@ -396,7 +397,7 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
     server.listen(port, () => {
       const baseUrl = `${protocol + host}:${port}`;
       if (process.env.DEBUG) {
-        this.logger.info(`Server listening on ${baseUrl}`);
+        this.moduleLogger.info(`Server listening on ${baseUrl}`);
       } else {
         // eslint-disable-next-line no-console
         console.info(`Server listening on ${baseUrl}`);
@@ -405,39 +406,6 @@ export class BautaJSExpress extends BautaJS<Request, Response> {
 
     return server;
   }
-}
-
-/**
- * A decorator to allow have intellisense on resolver files for non typescript projects
- * @export
- * @param {Resolver<Request, Response>} fn
- * @returns
- */
-export function resolver(fn: Resolver<Request, Response>) {
-  return fn;
-}
-
-/**
- * A decorator to allow intellisense on pushed steps on non typescript files
- * @export
- * @template TIn
- * @template TOut
- * @param {StepFn<TReq, TRes, TIn, TOut>} fn
- * @returns
- */
-export function step<TIn, TOut>(fn: StepFn<Request, Response, TIn, TOut>) {
-  return fn;
-}
-
-/**
- * A decorator to allow intellisense on pipeline on non typescript files
- * @export
- * @template TIn
- * @param {Pipeline<Request, Response, TIn>} fn
- * @returns
- */
-export function pipeline<TIn>(fn: (pipeline: Pipeline<Request, Response, TIn>) => void) {
-  return fn;
 }
 
 export default BautaJSExpress;

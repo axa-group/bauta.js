@@ -12,35 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test, beforeEach, afterEach */
-import nock from 'nock';
+/* global expect, describe, test  */
 import { ServiceBuilder } from '../core/service';
 import { OpenAPIV3Document } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
-import testDatasourceNoInheritanceJson from './fixtures/test-datasource-no-inheritance.json';
-import testDatasourceOverrideOperationJson from './fixtures/test-datasource-override-operation.json';
-import testDatasourceV2OperationsJson from './fixtures/test-datasource-v2-operations.json';
-import testDatasourceJson from './fixtures/test-datasource.json';
+
+const testDatasourceNoInheritanceJson = require('./fixtures/test-datasource-no-inheritance');
+const testDatasourceOverrideOperationJson = require('./fixtures/test-datasource-override-operation');
+const testDatasourceV2OperationsJson = require('./fixtures/test-datasource-v2-operations');
+const testDatasourceJson = require('./fixtures/test-datasource');
 
 describe('Service class tests', () => {
-  beforeEach(() => {
-    nock('https://google.com')
-      .persist()
-      .get('/')
-      .reply(200, {
-        bender: 'benderGoogle'
-      });
-
-    nock('https://facebook.com')
-      .persist()
-      .get('/')
-      .reply(200, {
-        bender: 'benderFacebook'
-      });
-  });
-  afterEach(() => {
-    nock.cleanAll();
-  });
   describe('Create service test', () => {
     test('should create a new service with the given operations', () => {
       const apiDefinitions = [
@@ -49,7 +31,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
 
       expect(testService.v1).toBeDefined();
@@ -84,7 +68,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
 
       testService.v1.operation1.setup(p => p.push(fn1));
@@ -130,7 +116,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
       testService.v1.operation1.setup(p => p.push(fn1));
       const ctx = { req: {}, res: {} };
@@ -178,7 +166,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceNoInheritanceJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
 
       testService.v2.operation1.setup(p => p.push(fn2));
@@ -210,7 +200,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceV2OperationsJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
       testService.v1.test.setup(p => p.push(fn1));
       testService.v2.testV2.setup(p => p.push(fn1V2));
@@ -240,7 +232,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceOverrideOperationJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
       testService.v1.test.setup(p => p.push(() => 1));
       testService.v2.test.setup(p => p.push(() => 3));
@@ -269,7 +263,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
       const ctx = { req: {}, res: {} };
       const fn1 = () => 5;
@@ -298,7 +294,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceNoInheritanceJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
       const ctx = { req: {}, res: {} };
       const fn1 = (prev: any) => (prev ? prev + 1 : 1);
@@ -334,7 +332,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
 
       const fn1V1 = (prev: any) => prev + 10;
@@ -373,7 +373,9 @@ describe('Service class tests', () => {
       const testService = ServiceBuilder.create(
         'testService',
         testDatasourceJson.services.testService,
-        apiDefinitions
+        apiDefinitions,
+        {},
+        {}
       );
 
       const fn1V1 = () => 1;

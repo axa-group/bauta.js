@@ -13,30 +13,37 @@
  * limitations under the License.
  */
 import { logger } from '../logger';
-import { Context, EventTypes, HandlerAccesor, Pipeline, StepFn } from '../utils/types';
+import {
+  BautaJSInstance,
+  Context,
+  EventTypes,
+  HandlerAccesor,
+  Pipeline,
+  StepFn
+} from '../utils/types';
 
-export class Accesor<TReq, TRes> implements HandlerAccesor<TReq, TRes> {
-  private accesor: StepFn<TReq, TRes, any, any> = () => undefined;
+export class Accesor implements HandlerAccesor {
+  private accesor: StepFn<any, any> = () => undefined;
 
-  get handler(): StepFn<TReq, TRes, any, any> {
+  get handler(): StepFn<any, any> {
     return this.accesor;
   }
 
-  set handler(fn: StepFn<TReq, TRes, any, any>) {
+  set handler(fn: StepFn<any, any>) {
     this.accesor = fn;
   }
 }
 
-export class PipelineBuilder<TReq, TRes, TIn> implements Pipeline<TReq, TRes, TIn> {
+export class PipelineBuilder<TIn> implements Pipeline<TIn> {
   // eslint-disable-next-line no-useless-constructor
   constructor(
-    public readonly accesor: HandlerAccesor<TReq, TRes>,
+    public readonly accesor: HandlerAccesor,
     private readonly serviceId: string,
     private readonly version: string,
     private readonly operationId: string // eslint-disable-next-line no-empty-function
   ) {}
 
-  push<TOut>(fn: StepFn<TReq, TRes, TIn, TOut>): Pipeline<TReq, TRes, TOut> {
+  push<TOut>(fn: StepFn<TIn, TOut>): Pipeline<TOut> {
     if (typeof fn !== 'function') {
       throw new Error(
         `An step can not be undefined on ${this.serviceId}.${this.version}.${this.operationId}`
@@ -57,25 +64,17 @@ export class PipelineBuilder<TReq, TRes, TIn> implements Pipeline<TReq, TRes, TI
       operationId: this.operationId
     });
 
-    return new PipelineBuilder<TReq, TRes, TOut>(
-      this.accesor,
-      this.serviceId,
-      this.version,
-      this.operationId
-    );
+    return new PipelineBuilder<TOut>(this.accesor, this.serviceId, this.version, this.operationId);
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private merge<T, TOut>(
-    fn1: StepFn<TReq, TRes, TIn, T>,
-    fn2: StepFn<TReq, TRes, T, TOut>
-  ): StepFn<TReq, TRes, TIn, TOut> {
-    return (prev: TIn, ctx: Context<TReq, TRes>) => {
-      const res = fn1(prev, ctx);
+  private merge<T, TOut>(fn1: StepFn<TIn, T>, fn2: StepFn<T, TOut>): StepFn<TIn, TOut> {
+    return (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => {
+      const res = fn1(prev, ctx, bautajs);
       if (res instanceof Promise) {
-        return res.then(r => fn2(r, ctx));
+        return res.then(r => fn2(r, ctx, bautajs));
       }
-      return fn2(res, ctx);
+      return fn2(res, ctx, bautajs);
     };
   }
 }

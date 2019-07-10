@@ -1,0 +1,27 @@
+{
+  "name": "@bautajs/environment",
+  "version": "2.0.0-alpha.8",
+  "description": "A bautaJS environment typings",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+  },
+  "keywords": [
+    "bautajs",
+    "cache",
+    "middleware"
+  ],
+  "author": "javier.blanco@axa.com",
+  "license": "SEE LICENSE IN LICENSE.txt"
+}

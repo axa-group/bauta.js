@@ -24,7 +24,7 @@ const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-
 describe('BautaJS express', () => {
   test('Should expose the given swagger with an express API', done => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
-      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
@@ -48,7 +48,7 @@ describe('BautaJS express', () => {
 
   test('Should not expose the endpoints that have the dataSource in private mode', done => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
-      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource-private.json'),
+      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource-private.js'),
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
@@ -65,7 +65,7 @@ describe('BautaJS express', () => {
 
   test('Should not send the response again if already has been sent', done => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
-      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
       resolversPath: path.resolve(
         __dirname,
         './fixtures/test-resolvers/operation-resolver-send-response.js'
@@ -87,7 +87,7 @@ describe('BautaJS express', () => {
 
   test('Should allow swagger 2.0', done => {
     const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
-      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
@@ -111,7 +111,7 @@ describe('BautaJS express', () => {
 
   test('Should left error handling to express error handler', done => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
-      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.json'),
+      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js'),
       resolversPath: path.resolve(
         __dirname,
         './fixtures/test-resolvers/operation-resolver-error.js'

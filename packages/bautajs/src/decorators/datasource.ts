@@ -14,8 +14,8 @@
  */
 import { DataSourceTemplate } from '../utils/types';
 
-export function dataSource(json: DataSourceTemplate): DataSourceTemplate {
-  return json;
+export function dataSource<TIn>(template: DataSourceTemplate<TIn>): DataSourceTemplate<TIn> {
+  return template;
 }
 
 export default dataSource;

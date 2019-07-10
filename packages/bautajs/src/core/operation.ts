@@ -17,11 +17,11 @@ import OpenapiRequestValidator from 'openapi-request-validator';
 import OpenapiResponseValidator from 'openapi-response-validator';
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { logger } from '../logger';
-import { buildDataSource } from '../request/datasource';
 import { sessionFactory } from '../session-factory';
 import { defaultResolver } from '../utils/default-resolver';
 import { getStrictDefinition } from '../utils/strict-definitions';
 import {
+  BautaJSInstance,
   Context,
   ContextData,
   Document,
@@ -33,6 +33,7 @@ import {
   PathsObject,
   Pipeline
 } from '../utils/types';
+import { buildDataSource } from './datasource';
 import { Accesor, PipelineBuilder } from './pipeline';
 import { ValidationError } from './validation-error';
 
@@ -58,30 +59,26 @@ function filterPaths(id: string, apiDefinition: Document): Document {
   return { ...apiDefinition, paths };
 }
 
-export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
-  public static create<TReq, TRes>(
+export class OperationBuilder implements Operation {
+  public static create(
     operationId: string,
-    operationTemplate: OperationTemplate,
+    dataSourceBuilder: OperationTemplate<any, any>,
     apiDefinition: Document,
-    serviceId: string
-  ): Operation<TReq, TRes> {
-    return new OperationBuilder<TReq, TRes>(
-      operationId,
-      operationTemplate,
-      apiDefinition,
-      serviceId
-    );
+    serviceId: string,
+    bautajs: BautaJSInstance
+  ): Operation {
+    return new OperationBuilder(operationId, dataSourceBuilder, apiDefinition, serviceId, bautajs);
   }
 
   public private: boolean = false;
 
   public schema: Document;
 
-  private dataSource: OperationDataSourceBuilder;
+  public dataSourceBuilder: OperationDataSourceBuilder<any>;
 
-  public nextVersionOperation: null | Operation<TReq, TRes> = null;
+  public nextVersionOperation: null | Operation = null;
 
-  private errorHandler: ErrorHandler<TReq, TRes>;
+  private errorHandler: ErrorHandler;
 
   private readonly validation: any = {
     validateReqBuilder: null,
@@ -90,23 +87,24 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
     validateResEnabled: false
   };
 
-  private accesor = new Accesor<TReq, TRes>();
+  private accesor = new Accesor();
 
   private pipelineSetUp: boolean = false;
 
   constructor(
     public readonly operationId: string,
-    operationTemplate: OperationTemplate,
+    operationDataSource: OperationTemplate<any, any>,
     apiDefinition: Document,
-    public readonly serviceId: string
+    public readonly serviceId: string,
+    private readonly bautjas: BautaJSInstance
   ) {
-    this.dataSource = buildDataSource<TReq, TRes>(operationTemplate);
-    this.private = operationTemplate.private as boolean;
+    this.dataSourceBuilder = buildDataSource(operationDataSource, bautjas);
+    this.private = operationDataSource.private as boolean;
     this.errorHandler = (err: Error) => Promise.reject(err);
     this.schema = this.getSchema(apiDefinition);
   }
 
-  public setErrorHandler(errorHandler: ErrorHandler<TReq, TRes>): Operation<TReq, TRes> {
+  public setErrorHandler(errorHandler: ErrorHandler): Operation {
     if (typeof errorHandler !== 'function') {
       throw new Error(
         `The errorHandler must be a function, instead an ${typeof errorHandler} was found`
@@ -122,14 +120,14 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
     return this;
   }
 
-  public validateRequest(toggle: boolean): Operation<TReq, TRes> {
+  public validateRequest(toggle: boolean): Operation {
     if (this.validation) {
       this.validation.validateReqEnabled = toggle;
     }
     return this;
   }
 
-  public validateResponse(toggle: boolean): Operation<TReq, TRes> {
+  public validateResponse(toggle: boolean): Operation {
     if (this.validation) {
       this.validation.validateResEnabled = toggle;
     }
@@ -182,7 +180,7 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
 
         return null;
       };
-      this.validation.validateResBuilder = (res: TRes, statusCode: number = 200) => {
+      this.validation.validateResBuilder = (res: any, statusCode: number = 200) => {
         const verror = validateResponse.validateResponse(statusCode, res);
 
         if (verror && verror.errors && verror.errors.length > 0) {
@@ -203,20 +201,21 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
     return strictSchema;
   }
 
-  public run(ctx: ContextData<TReq, TRes> = {}): Promise<any> {
+  public run(ctx: ContextData = {}): Promise<any> {
     if (!ctx.req) {
-      ctx.req = {} as TReq;
+      ctx.req = {};
     }
 
     if (!ctx.res) {
-      ctx.res = {} as TRes;
+      ctx.res = {};
     }
 
-    const context: Context<TReq, TRes> = {
+    const context: Context = {
       data: ctx.data || {},
+      // @ts-ignore
       req: ctx.req,
       res: ctx.res,
-      dataSource: this.dataSource,
+      dataSourceBuilder: this.dataSourceBuilder,
       metadata: {
         operationId: this.operationId,
         serviceId: this.serviceId,
@@ -245,7 +244,7 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
       context.validateRequest(ctx.req);
     }
     let result = this.pipelineSetUp
-      ? this.accesor.handler(undefined, context)
+      ? this.accesor.handler(undefined, context, this.bautjas)
       : defaultResolver(undefined, context);
 
     if (!(result instanceof Promise)) {
@@ -255,6 +254,7 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
     return result
       .then((finalResult: any) => {
         if (this.validation.validateResEnabled === true && context.validateResponse) {
+          // @ts-ignore
           const { statusCode } = context.res as any;
           context.validateResponse(
             finalResult,
@@ -269,9 +269,9 @@ export class OperationBuilder<TReq, TRes> implements Operation<TReq, TRes> {
       .catch((e: Error) => this.errorHandler(e, context));
   }
 
-  public setup(fn: (pipeline: Pipeline<TReq, TRes, undefined>) => void): Operation<TReq, TRes> {
+  public setup(fn: (pipeline: Pipeline<undefined>) => void): Operation {
     fn(
-      new PipelineBuilder<TReq, TRes, undefined>(
+      new PipelineBuilder<undefined>(
         this.accesor,
         this.serviceId,
         this.schema.info.version,

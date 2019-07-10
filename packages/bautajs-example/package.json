@@ -1,0 +1,24 @@
+{
+  "name": "bautajs-example",
+  "version": "2.0.0-alpha.8",
+  "description": "A bautaJS example",
+  "main": "./server.js",
+  "scripts": {
+    "start": "LOG_LEVEL=debug DEBUG=bautajs* node ./server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "keywords": [
+    "bautajs",
+    "express",
+    "middleware"
+  ],
+  "author": "javier.blanco@axa.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@bautajs/datasource-rest": "^2.0.0-alpha.8",
+    "@bautajs/express": "^2.0.0-alpha.8"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@bautajs/datasource-rest",
+  "version": "2.0.0-alpha.8",
+  "description": "A bautaJS cache decorator",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+  },
+  "keywords": [
+    "bautajs",
+    "cache",
+    "middleware"
+  ],
+  "author": "javier.blanco@axa.com",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@bautajs/core": "2.0.0-alpha.8",
+    "got": "9.6.0",
+    "multipart-request-builder": "2.0.0",
+    "native-proxy-agent": "2.1.0",
+    "stjs": "0.0.5",
+    "@bautajs/environment": "^2.0.0-alpha.8"
+  }
+}

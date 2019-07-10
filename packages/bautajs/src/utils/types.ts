@@ -12,22 +12,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * Copyright (c) AXA Shared Services Spain S.A.
+ *
+ * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
+ * may not use this file except in compliance with the License.
+ * A copy of the License can be found in the LICENSE.TXT file distributed
+ * together with this file.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import { EventEmitter } from 'events';
-import { GotEmitter, GotOptions, GotPromise, Hooks } from 'got';
-import { IncomingHttpHeaders } from 'http';
-import { MultipartBody, RequestPart } from 'multipart-request-builder';
-import { HttpProxy, HttpsProxy } from 'native-proxy-agent';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-import * as nodeStream from 'stream';
+import { Dictionary, TRequest, TResponse } from '@bautajs/environment';
+
+export * from '@bautajs/environment';
+// OpenAPI document
+export interface OpenAPIV2Document extends OpenAPIV2.Document {
+  validateRequest?: boolean;
+  validateResponse?: boolean;
+}
+export interface OpenAPIV3Document extends OpenAPIV3.Document {
+  validateRequest?: boolean;
+  validateResponse?: boolean;
+}
+export type Document = OpenAPIV2Document | OpenAPIV3Document;
+export type PathsObject = OpenAPIV2.PathsObject | OpenAPIV3.PathsObject;
+export type PathItemObject = OpenAPIV2.PathItemObject | OpenAPIV3.PathItemObject;
 
 // Generic
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export interface ICallback {
-  (error?: Error | null, result?: any): void;
-}
-export interface Dictionary<T> {
-  [key: string]: T;
-}
 export interface LocationError {
   path: string;
   location: string;
@@ -47,8 +64,8 @@ export interface IValidationError extends Error {
 export enum EventTypes {
   PUSH_STEP = '1',
   REGISTER_SERVICE = '2',
-  DATASOURCE_REQUEST = '3',
-  DATASOURCE_RESPONSE = '4',
+  DATASOURCE_EXECUTION = '3',
+  DATASOURCE_RESULT = '4',
   EXPOSE_OPERATION = '5'
 }
 export interface Logger {
@@ -61,19 +78,6 @@ export interface Logger {
   events: EventEmitter;
 }
 
-// OpenAPI document
-export interface OpenAPIV2Document extends OpenAPIV2.Document {
-  validateRequest?: boolean;
-  validateResponse?: boolean;
-}
-export interface OpenAPIV3Document extends OpenAPIV3.Document {
-  validateRequest?: boolean;
-  validateResponse?: boolean;
-}
-export type Document = OpenAPIV2Document | OpenAPIV3Document;
-export type PathsObject = OpenAPIV2.PathsObject | OpenAPIV3.PathObject;
-export type PathItemObject = OpenAPIV2.PathItemObject | OpenAPIV3.PathItemObject;
-
 export enum ResponseType {
   JSON = 'json',
   BUFFER = 'buffer',
@@ -81,7 +85,7 @@ export enum ResponseType {
 }
 
 // BautaJS
-export interface BautaJSOptions<TReq, TRes> {
+export interface BautaJSOptions {
   dataSourcesPath?: string | string[];
   resolversPath?: string | string[];
   /**
@@ -94,82 +98,72 @@ export interface BautaJSOptions<TReq, TRes> {
   /**
    *
    * Add service utils available on every resolver.
-   * @type {(services: Services<TReq, TRes>) => any}
+   * @type {(services: Services) => any}
    * @memberof BautaJSOptions
    */
-  servicesWrapper?: (services: Services<TReq, TRes>) => any;
+  servicesWrapper?: (services: Services) => any;
 }
-export interface BautaJSBuilder<TReq, TRes> {
-  readonly services: Services<TReq, TRes>;
+export interface BautaJSInstance {
+  readonly services: Services;
   readonly logger: Logger;
   readonly apiDefinitions: Document[];
 }
 
 // Service
-export type Services<TReq, TRes> = Dictionary<Service<TReq, TRes>>;
-export type Service<TReq, TRes> = Dictionary<Version<TReq, TRes>>;
-export interface ServiceTemplate {
-  options?: RequestOptions;
-  operations: OperationTemplate[];
+export type Services = Dictionary<Service>;
+export type Service = Dictionary<Version>;
+export interface ServiceTemplate<TIn> {
+  operations: OperationTemplate<TIn, any>[];
 }
-export type Resolver<TReq, TRes> = (services: Services<TReq, TRes>, utils: any) => void;
+export type Resolver = (services: Services, utils: any) => void;
 
 // Version
-export type Version<TReq, TRes> = Dictionary<Operation<TReq, TRes>>;
+export type Version = Dictionary<Operation>;
 
 // Operation
-export type ErrorHandler<TReq, TRes> = ((err: Error, ctx: Context<TReq, TRes>) => any);
-export interface Operation<TReq, TRes> {
+export type ErrorHandler = ((err: Error, ctx: Context) => any);
+export interface Operation {
   private: boolean;
   schema: Document;
-  nextVersionOperation: null | Operation<TReq, TRes>;
+  nextVersionOperation: null | Operation;
   readonly operationId: string;
   readonly serviceId: string;
-  setErrorHandler(
-    errorHandler: (err: Error, ctx: Context<TReq, TRes>) => any
-  ): Operation<TReq, TRes>;
-  validateRequest(toggle: boolean): Operation<TReq, TRes>;
-  validateResponse(toggle: boolean): Operation<TReq, TRes>;
-  setup(fn: (pipeline: Pipeline<TReq, TRes, undefined>) => void): Operation<TReq, TRes>;
-  run(ctx?: ContextData<TReq, TRes>): Promise<any>;
+  dataSourceBuilder: OperationDataSourceBuilder<any>;
+  setErrorHandler(errorHandler: (err: Error, ctx: Context) => any): Operation;
+  validateRequest(toggle: boolean): Operation;
+  validateResponse(toggle: boolean): Operation;
+  setup(fn: (pipeline: Pipeline<undefined>) => void): Operation;
+  run(ctx?: ContextData): Promise<any>;
 }
-export type ValidationReqBuilder<TReq> = (req?: TReq) => null;
-export type ValidationResBuilder<TRes> = (res: TRes, statusCode?: number) => null;
+export type ValidationReqBuilder = (req?: TRequest) => null;
+export type ValidationResBuilder = (res: TResponse, statusCode?: number) => null;
 export interface Metadata {
   version: string;
   serviceId: string;
   operationId: string;
 }
-export interface OperationTemplate {
+export interface OperationTemplate<TIn, TOut> {
   id: string;
   version?: string;
   private?: boolean;
-  method?: string;
-  url?: string;
   inherit?: boolean;
-  options?: RequestOptions;
+  staticData?: any;
+  runner: Runner<TIn, TOut>;
 }
-export interface RequestFn {
-  (localOptions?: RequestOptions): Promise<Buffer | string | object>;
-  (localOptions: FullResponseRequestOptions): GotPromise<Buffer | string | object>;
-  (localOptions: StreamRequestOptions): GotEmitter & nodeStream.Duplex;
-}
-export interface OperationDataSource extends OperationTemplate {
-  request: RequestFn;
-}
-export type OperationDataSourceBuilder = {
-  template: OperationTemplate;
-} & ((previousValue?: any) => OperationDataSource);
-export interface ContextData<TReq, TRes> {
-  req?: TReq;
-  res?: TRes;
+export type OperationDataSourceBuilder<TIn> = {
+  template: OperationTemplate<TIn, any>;
+} & ((previousValue?: any) => any);
+
+export interface ContextData {
+  req?: TRequest;
+  res?: TResponse;
   data?: Dictionary<any>;
 }
-export interface Context<TReq, TRes> extends Session {
-  req: TReq;
-  res: TRes;
-  validateRequest: ValidationReqBuilder<TReq>;
-  validateResponse: ValidationResBuilder<TRes>;
+export interface Context extends Session {
+  req: TRequest;
+  res: TResponse;
+  validateRequest: ValidationReqBuilder;
+  validateResponse: ValidationResBuilder;
 
   /**
    *
@@ -177,7 +171,7 @@ export interface Context<TReq, TRes> extends Session {
    * @type {OperationDataSourceBuilder}
    * @memberof Context
    */
-  dataSource: OperationDataSourceBuilder;
+  dataSourceBuilder: OperationDataSourceBuilder<any>;
   metadata: Metadata;
 
   /**
@@ -187,9 +181,7 @@ export interface Context<TReq, TRes> extends Session {
    */
   data: Dictionary<any>;
 }
-export interface CompiledContext<TReq, TRes, T> extends Omit<Context<TReq, TRes>, 'dataSource'> {
-  dataSource: T;
-}
+
 export interface Session {
   id?: string;
   userId?: string;
@@ -198,48 +190,27 @@ export interface Session {
 }
 
 // Step
-export type StepFn<TReq, TRes, TIn, TOut> = (
+export type StepFn<TIn, TOut> = (
   prev: TIn,
-  ctx: Context<TReq, TRes>
+  ctx: Context,
+  bautajs: BautaJSInstance
 ) => TOut | Promise<TOut>;
-export interface Pipeline<TReq, TRes, TIn> {
-  push<TOut>(fn: StepFn<TReq, TRes, TIn, TOut>): Pipeline<TReq, TRes, TOut>;
+export interface Pipeline<TIn> {
+  push<TOut>(fn: StepFn<TIn, TOut>): Pipeline<TOut>;
 }
-export interface HandlerAccesor<TReq, TRes> {
-  handler: StepFn<TReq, TRes, any, any>;
+export interface HandlerAccesor {
+  handler: StepFn<any, any>;
 }
 
 // DataSource
-export interface RequestOptions extends GotOptions<string | null> {
-  body?: string | Buffer | nodeStream.Readable | object | Record<string, any>;
-  form?: boolean | object;
-  href?: string;
-  headers?: IncomingHttpHeaders;
-  responseType?: ResponseType;
-  multipart?: RequestPart[] | MultipartBody;
-  formData?: Dictionary<any>;
-  json?: boolean | object;
-  proxy?: HttpProxy | HttpsProxy;
-  preambleCRLF?: boolean;
-  postambleCRLF?: boolean;
-  hooks?: Hooks<GotOptions<string | null>, object>;
-  stream?: false;
-  resolveBodyOnly?: true;
+export interface DataSourceTemplate<TIn> {
+  services: Dictionary<ServiceTemplate<TIn>>;
 }
-export interface StreamRequestOptions extends Omit<RequestOptions, 'stream'> {
-  stream: true;
-}
-export interface FullResponseRequestOptions extends Omit<RequestOptions, 'resolveBodyOnly'> {
-  resolveBodyOnly: false;
-}
-export interface NormalizedOptions extends GotOptions<any> {
-  responseType?: ResponseType;
-}
-export interface DataSourceTemplate {
-  services: Dictionary<ServiceTemplate>;
-}
-export interface DataSourceData<TReq, TRes, TIn> {
-  previousValue: TIn;
-  env: any;
-  ctx: Context<TReq, TRes>;
-}
+
+export type Runner<TIn, TOut> = (
+  value: TIn,
+  ctx: Context,
+  $static: any,
+  $env: Dictionary<any>,
+  bautajs: BautaJSInstance
+) => TOut;

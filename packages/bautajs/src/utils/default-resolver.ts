@@ -14,9 +14,9 @@
  */
 import { Context } from './types';
 
-export function defaultResolver<TReq, TRes>(value: any, ctx: Context<TReq, TRes>): any {
-  if (ctx.dataSource) {
-    return ctx.dataSource(value).request();
+export function defaultResolver(value: any, ctx: Context): any {
+  if (ctx.dataSourceBuilder) {
+    return ctx.dataSourceBuilder(value);
   }
   const error = new Error('Not found');
   return Promise.reject(Object.assign(error, { statusCode: 404 }));

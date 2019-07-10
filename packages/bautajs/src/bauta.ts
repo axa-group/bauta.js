@@ -15,16 +15,14 @@
 import ajv from 'ajv';
 import deepmerge from 'deepmerge';
 import glob from 'glob';
-import objectPath from 'object-path';
 import OpenapiSchemaValidator, { OpenAPISchemaValidatorResult } from 'openapi-schema-validator';
 import { IJsonSchema, OpenAPIV3 } from 'openapi-types';
 import path from 'path';
-import stjs from 'stjs';
 import { ServiceBuilder } from './core/service';
 import { logger } from './logger';
-import { isMergeableObject } from './utils/is-mergeable-datasource';
+import { isMergeableObject } from './utils/is-mergeable-object';
 import {
-  BautaJSBuilder,
+  BautaJSInstance,
   BautaJSOptions,
   DataSourceTemplate,
   Document,
@@ -35,24 +33,6 @@ import { validate } from './validators/validate';
 
 const datasourceSchemaJson = require('./validators/datasource-schema.json');
 const extendOpenapiSchemaJson = require('./validators/extend-openapi-schema.json');
-
-function registerServices<TReq, TRes>(
-  apiDefinitions: Document[],
-  dataSources: DataSourceTemplate
-): Services<TReq, TRes> {
-  const services: Services<TReq, TRes> = {};
-  const dataSourceServices = Object.keys(dataSources.services);
-  dataSourceServices.forEach(serviceId => {
-    const serviceTemplate = dataSources.services[serviceId];
-    services[serviceId] = ServiceBuilder.create<TReq, TRes>(
-      serviceId,
-      serviceTemplate,
-      apiDefinitions
-    );
-  });
-
-  return services;
-}
 
 function setDefinitionDefaults(apiDefinition: Document): Document {
   return {
@@ -66,11 +46,9 @@ function setDefinitionDefaults(apiDefinition: Document): Document {
  *
  * @export
  * @class BautaJS
- * @implements {BautaJSBuilder<TReq, TRes>}
- * @template TReq
- * @template TRes
+ * @implements {BautaJSBuilder}
  * @param {Document[]} apiDefinitions
- * @param {BautaJSOptions<TReq, TRes>} [options={}]
+ * @param {BautaJSOptions} [options={}]
  * @example
  * const BautaJS = require('@bautajs/core');
  * const apiDefinitions = require('./open-api-definition.json');
@@ -95,12 +73,12 @@ function setDefinitionDefaults(apiDefinition: Document): Document {
  * // Assuming we have a dataSource for cats, once bautajs is initialized, you can execute the operation with the following code:
  * await bautaJS.services.cats.v1.find.run({});
  */
-export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
+export class BautaJS implements BautaJSInstance {
   /**
-   * @type {Services<TReq, TRes>}
+   * @type {Services}
    * @memberof BautaJS
    */
-  public readonly services: Services<TReq, TRes> = {};
+  public readonly services: Services = {};
 
   /**
    * A debug instance logger
@@ -109,9 +87,14 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
    */
   public readonly logger: Logger;
 
+  /**
+   * An array of OpenAPI definitions
+   * @type {Document[]}
+   * @memberof BautaJS
+   */
   public readonly apiDefinitions: Document[];
 
-  constructor(apiDefinitions: Document[], options: BautaJSOptions<TReq, TRes> = {}) {
+  constructor(apiDefinitions: Document[], options: BautaJSOptions = {}) {
     const defaultApiDefinitions = apiDefinitions.map((apiDefinition: Document) => {
       // eslint-disable-next-line no-param-reassign
       apiDefinition = setDefinitionDefaults(apiDefinition);
@@ -132,40 +115,31 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
       return apiDefinition;
     });
 
-    const dataSourcesTemplates: DataSourceTemplate[] = BautaJS.requireAll(
-      options.dataSourcesPath || './server/services/**/*datasource.?(js|json)',
+    const dataSourcesTemplates: DataSourceTemplate<any>[] = BautaJS.requireAll(
+      options.dataSourcesPath || './server/services/**/*datasource.js',
       true
-    ) as DataSourceTemplate[];
+    ) as DataSourceTemplate<any>[];
 
-    // Maintain the not resolved templates that have existence operator (#?)
-    const selection = stjs.select(
-      deepmerge.all(dataSourcesTemplates, { isMergeableObject }),
-      (_: string, val: any) => typeof val === 'string' && /{{((?!\$static.).)*}}/.test(val)
-    );
-    const context = { $static: options.dataSourceStatic };
+    const dataSource: DataSourceTemplate<any> = deepmerge.all(dataSourcesTemplates, {
+      isMergeableObject
+    }) as DataSourceTemplate<any>;
 
-    selection.values().forEach((val: string) => {
-      const pathToVar = val.match(/{{#\? (.*)}}/);
-      if (pathToVar) {
-        objectPath.set(context, pathToVar[0], val);
-      }
-    });
-
-    const dataSources: DataSourceTemplate = selection
-      .transform(context)
-      .root() as DataSourceTemplate;
-
-    const error: ajv.ErrorObject[] | null | undefined = validate(dataSources, datasourceSchemaJson);
+    const error: ajv.ErrorObject[] | null | undefined = validate(dataSource, datasourceSchemaJson);
     if (error) {
       throw new Error(
         `Invalid or not found dataSources, "${error[0].dataPath}" ${error[0].message}`
       );
     }
+
     /**
      * @memberof BautaJS#
      * @property {Object.<string, Service>} services - A services dictionary containing all the created services
      */
-    this.services = registerServices(defaultApiDefinitions, dataSources);
+    this.services = this.registerServices(
+      defaultApiDefinitions,
+      dataSource,
+      options.dataSourceStatic
+    );
     /**
      * @memberof BautaJS#
      * @property {Logger} logger - A [debug]{@link https://www.npmjs.com/package/debug} logger instance
@@ -177,7 +151,7 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
       typeof options.servicesWrapper === 'function' ? options.servicesWrapper(this.services) : null;
 
     // Load custom resolvers and operations modifiers
-    BautaJS.requireAll<[Services<TReq, TRes>, any]>(
+    BautaJS.requireAll<[Services, any]>(
       options.resolversPath || './server/services/**/*resolver.js',
       true,
       [this.services, utils]
@@ -198,6 +172,27 @@ export class BautaJS<TReq, TRes> implements BautaJSBuilder<TReq, TRes> {
 
       return deepmerge.all(definitionsPices) as Document;
     });
+  }
+
+  private registerServices(
+    apiDefinitions: Document[],
+    dataSources: DataSourceTemplate<any>,
+    dataSourceStatic: any
+  ): Services {
+    const services: Services = {};
+    const dataSourceServices = Object.keys(dataSources.services);
+    dataSourceServices.forEach(serviceId => {
+      const serviceTemplate = dataSources.services[serviceId];
+      services[serviceId] = ServiceBuilder.create(
+        serviceId,
+        serviceTemplate,
+        apiDefinitions,
+        dataSourceStatic,
+        this
+      );
+    });
+
+    return services;
   }
 
   /**

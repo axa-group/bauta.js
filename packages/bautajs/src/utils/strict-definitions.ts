@@ -1,5 +1,6 @@
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-import { Dictionary, Document } from './types';
+import { Dictionary } from '@bautajs/environment';
+import { Document } from './types';
 
 const values = <T>(obj: Dictionary<T>): T[] => Object.keys(obj || {}).map(k => obj[k]);
 

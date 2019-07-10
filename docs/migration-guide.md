@@ -39,7 +39,7 @@
 ### dataSource resolveBodyOnly and stream
 
   - before:
-  datasource.json
+  datasource.js
   ```json
     {
       "services":{
@@ -60,12 +60,12 @@
   ```js
       service.myService.version.operation.setup(
         (p) => p.push((value, ctx) => {
-          return ctx.dataSource(value).request({ resolveBodyOnly: true});
+          return ctx.dataSourceBuilder(value).request({ resolveBodyOnly: true});
         })
       );
         service.myService.version.operation2.setup(
         (p) => p.push((value, ctx) => {
-          return ctx.dataSource(value).request({ stream: true });
+          return ctx.dataSourceBuilder(value).request({ stream: true });
         })
       );
   ```
@@ -86,28 +86,51 @@
   ```js
       service.myService.version.operation.setup(
         (p) => p.push((value, ctx) => {
-          return ctx.dataSource(value).request({ resolveBodyOnly: true});
+          return ctx.dataSourceBuilder(value).request({ resolveBodyOnly: true});
         })
       );
         service.myService.version.operation2.setup(
         (p) => p.push((value, ctx) => {
-          return ctx.dataSource().request({ stream: true });
+          return ctx.dataSourceBuilder().request({ stream: true });
         })
       );
+  ```
+
+### CompileDataSource decorator
+
+  - before:
+  datasource.json
+  ```js
+      service.myService.version.operation.setup(
+        (p) => p.push(compileDataSource((value, ctx) => {
+          return ctx.dataSource.request({ resolveBodyOnly: true});
+        })
+      ));
+  ```
+  - now:
+  ```js
+      service.myService.version.operation.setup(
+        (p) => p.push(compileDataSource((value, ctx, dataSource) => {
+          return dataSource.request({ resolveBodyOnly: true});
+        })
+      ));
   ```
 
 ### Decorators
 
   - before:
   ```js
-      const request = require('bautajs/decorators/request');
-      service.myService.version.operation.push(request());
+      const asValue = require('bautajs/decorators/as-value');
+      service.myService.version.operation.push(asValue(1));
   ```
-  - now:
+  - now: 
+    * Raw decorators has been moved to the core module (asCallback, asValue, parallel, datasource, pipeline, resolver, step).
+    * Request related decorators has been moved to @bautajs/datasource-rest module (request, compileDataSource).
+    * Third party dependen decorators has been moved to a separated modules (template, filter, cache).
   ```js
-      const { request } = require('@bautajs/decorators');
+      const { asValue } = require('@bautajs/core');
       service.myService.version.operation.setup(
-        (p) => p.push(request())
+        (p) => p.push(asValue(1))
       );
   ```
 
@@ -129,7 +152,13 @@
   ```
   - now:
   ```js
-    const { queryFilters } = require('@bautajs/filters-decorator');
+    const { queryFilters } = require('@bautajs/decorator-filter');
     const ctx = {req, res};
     service.myService.version.operation.setup((p) => p.push(() => [{a:'1'}]).push(queryFilters()));
   ```
+
+### Datasources
+
+   - before: Datasources where rest connectors that used got library to do requests to third parties API's
+   - now: Default datasources only define operations and data sources. For using datasources as connectors for third parties API's
+   you have to use @bautajs/datasources-rest
