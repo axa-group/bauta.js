@@ -29,7 +29,10 @@ describe('Parallel decorator', () => {
   test('Should execute the promises in parallel', async () => {
     bautajs.services.testService.v1.operation1.setup(p => {
       p.push(
-        parallel(() => Promise.resolve([{ id: 3, name: 'pet3' }]), () => [{ id: 1, name: 'pet' }])
+        parallel(
+          () => Promise.resolve([{ id: 3, name: 'pet3' }]),
+          () => Promise.resolve([{ id: 1, name: 'pet' }])
+        )
       );
     });
 

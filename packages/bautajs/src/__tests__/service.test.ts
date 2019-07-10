@@ -14,6 +14,7 @@
  */
 /* global expect, describe, test  */
 import { ServiceBuilder } from '../core/service';
+import { logger } from '../index';
 import { OpenAPIV3Document } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
@@ -33,7 +34,7 @@ describe('Service class tests', () => {
         testDatasourceJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
 
       expect(testService.v1).toBeDefined();
@@ -70,7 +71,7 @@ describe('Service class tests', () => {
         testDatasourceJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
 
       testService.v1.operation1.setup(p => p.push(fn1));
@@ -118,7 +119,7 @@ describe('Service class tests', () => {
         testDatasourceJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
       testService.v1.operation1.setup(p => p.push(fn1));
       const ctx = { req: {}, res: {} };
@@ -168,7 +169,7 @@ describe('Service class tests', () => {
         testDatasourceNoInheritanceJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
 
       testService.v2.operation1.setup(p => p.push(fn2));
@@ -202,7 +203,7 @@ describe('Service class tests', () => {
         testDatasourceV2OperationsJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
       testService.v1.test.setup(p => p.push(fn1));
       testService.v2.testV2.setup(p => p.push(fn1V2));
@@ -234,7 +235,7 @@ describe('Service class tests', () => {
         testDatasourceOverrideOperationJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
       testService.v1.test.setup(p => p.push(() => 1));
       testService.v2.test.setup(p => p.push(() => 3));
@@ -265,7 +266,7 @@ describe('Service class tests', () => {
         testDatasourceJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
       const ctx = { req: {}, res: {} };
       const fn1 = () => 5;
@@ -296,7 +297,7 @@ describe('Service class tests', () => {
         testDatasourceNoInheritanceJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
       const ctx = { req: {}, res: {} };
       const fn1 = (prev: any) => (prev ? prev + 1 : 1);
@@ -334,7 +335,7 @@ describe('Service class tests', () => {
         testDatasourceJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
 
       const fn1V1 = (prev: any) => prev + 10;
@@ -375,7 +376,7 @@ describe('Service class tests', () => {
         testDatasourceJson.services.testService,
         apiDefinitions,
         {},
-        {}
+        { services: {}, logger, apiDefinitions: [] }
       );
 
       const fn1V1 = () => 1;

@@ -29,7 +29,7 @@ describe('Callback decorator', () => {
 
   test('Should execute as a callaback', async () => {
     bautajs.services.testService.v1.operation1.setup(p => {
-      p.push(asCallback((_, ctx, services, done) => done(null, [{ id: ctx.req.id, name: 'pet' }])));
+      p.push(asCallback((_, ctx, _bautajs, done) => done(null, [{ id: ctx.req.id, name: 'pet' }])));
     });
 
     expect(

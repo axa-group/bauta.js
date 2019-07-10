@@ -25,7 +25,6 @@ describe('Compile datasource decorator', () => {
   const path = 'cats';
   beforeEach(() => {
     nock('https://google.com')
-      .persist()
       .get(`/${path}`)
       .reply(200, [{ id: 3, name: 'pet3' }]);
 
