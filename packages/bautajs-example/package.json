@@ -10,6 +10,7 @@
     "type": "git",
     "url": "https://github.axa.com/Digital/bauta-nodejs"
   },
+  "private": true,
   "keywords": [
     "bautajs",
     "express",
