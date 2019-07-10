@@ -65,5 +65,5 @@ module.exports = (fn, ...args) => async (firstValue, ctx) => {
     fns = fn;
   }
 
-  return runInSerial(fns.map(step => value => new Step(step).run(ctx, value)), firstValue);
+  return runInSerial(fns.map(step => async value => new Step(step).run(ctx, value)), firstValue);
 };
