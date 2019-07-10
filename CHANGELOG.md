@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.2](http://github.axa.com/Digital/bauta-nodejs/compare/v1.3.1...v1.3.2) (2019-07-10)
+
+
+### Bug Fixes
+
+* **bautajs:** maintain the agent between request ([e2bab76](http://github.axa.com/Digital/bauta-nodejs/commit/e2bab76)), closes [#79](http://github.axa.com/Digital/bauta-nodejs/issues/79) [#78](http://github.axa.com/Digital/bauta-nodejs/issues/78)
+* **bautajs:** use flow with async to evade crash ([8719cf1](http://github.axa.com/Digital/bauta-nodejs/commit/8719cf1))
+
+
+
+
+
 ## [1.3.1](http://github.axa.com/Digital/bauta-nodejs/compare/v1.3.0...v1.3.1) (2019-07-03)
 
 
