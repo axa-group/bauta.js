@@ -1,0 +1,2334 @@
+{
+  "program": {
+    "fileInfos": {
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es5.d.ts": {
+        "version": "c8665e66018917580e71792b91022bcaf53fb946fab4aaf8dfb0738ed564db88",
+        "signature": "c8665e66018917580e71792b91022bcaf53fb946fab4aaf8dfb0738ed564db88"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.d.ts": {
+        "version": "7994d44005046d1413ea31d046577cdda33b8b2470f30281fd9c8b3c99fe2d96",
+        "signature": "7994d44005046d1413ea31d046577cdda33b8b2470f30281fd9c8b3c99fe2d96"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2016.d.ts": {
+        "version": "5f217838d25704474d9ef93774f04164889169ca31475fe423a9de6758f058d1",
+        "signature": "5f217838d25704474d9ef93774f04164889169ca31475fe423a9de6758f058d1"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.d.ts": {
+        "version": "459097c7bdd88fc5731367e56591e4f465f2c9de81a35427a7bd473165c34743",
+        "signature": "459097c7bdd88fc5731367e56591e4f465f2c9de81a35427a7bd473165c34743"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.d.ts": {
+        "version": "2edd3ddf436ef8e12df876dcae4ecd6a8748577944c477bf4b20d5596e0c9843",
+        "signature": "2edd3ddf436ef8e12df876dcae4ecd6a8748577944c477bf4b20d5596e0c9843"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.dom.d.ts": {
+        "version": "6994c583b66862deca24d7bbf77297d95b9d3da8160dbd9beef6b847cf7c1376",
+        "signature": "6994c583b66862deca24d7bbf77297d95b9d3da8160dbd9beef6b847cf7c1376"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.core.d.ts": {
+        "version": "384f66a3422d80014c51de2682159bb26f1e35854029880ccd5f6d1f00e6a36d",
+        "signature": "384f66a3422d80014c51de2682159bb26f1e35854029880ccd5f6d1f00e6a36d"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.collection.d.ts": {
+        "version": "dd94d8ef48c562389eb58af8df3a3a34d11367f7c818192aa5f16470d469e3f0",
+        "signature": "dd94d8ef48c562389eb58af8df3a3a34d11367f7c818192aa5f16470d469e3f0"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.generator.d.ts": {
+        "version": "828413486bdcaa342558e8e4570b1b287b776cb61b4b70b0214bd10c5d9a94c3",
+        "signature": "828413486bdcaa342558e8e4570b1b287b776cb61b4b70b0214bd10c5d9a94c3"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.iterable.d.ts": {
+        "version": "4d1f39313a169b8599b8817688f504b56ba8204c2ebafd03f66ff77ddb1899a4",
+        "signature": "4d1f39313a169b8599b8817688f504b56ba8204c2ebafd03f66ff77ddb1899a4"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.promise.d.ts": {
+        "version": "7c07d934680d0e33275a44d22fb11a4ff31d46c8c26a8d056828a478753f1efe",
+        "signature": "7c07d934680d0e33275a44d22fb11a4ff31d46c8c26a8d056828a478753f1efe"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.proxy.d.ts": {
+        "version": "5e72f949a89717db444e3bd9433468890068bb21a5638d8ab15a1359e05e54fe",
+        "signature": "5e72f949a89717db444e3bd9433468890068bb21a5638d8ab15a1359e05e54fe"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.reflect.d.ts": {
+        "version": "f5b242136ae9bfb1cc99a5971cccc44e99947ae6b5ef6fd8aa54b5ade553b976",
+        "signature": "f5b242136ae9bfb1cc99a5971cccc44e99947ae6b5ef6fd8aa54b5ade553b976"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.symbol.d.ts": {
+        "version": "9ae2860252d6b5f16e2026d8a2c2069db7b2a3295e98b6031d01337b96437230",
+        "signature": "9ae2860252d6b5f16e2026d8a2c2069db7b2a3295e98b6031d01337b96437230"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts": {
+        "version": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303",
+        "signature": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2016.array.include.d.ts": {
+        "version": "3f96f1e570aedbd97bf818c246727151e873125d0512e4ae904330286c721bc0",
+        "signature": "3f96f1e570aedbd97bf818c246727151e873125d0512e4ae904330286c721bc0"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.object.d.ts": {
+        "version": "ff8ad203e83338289b0f5defc1a5b5c253fb7d251b464db497383f915a0df3f4",
+        "signature": "ff8ad203e83338289b0f5defc1a5b5c253fb7d251b464db497383f915a0df3f4"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts": {
+        "version": "b8667586a618c5cf64523d4e500ae39e781428abfb28f3de441fc66b56144b6f",
+        "signature": "b8667586a618c5cf64523d4e500ae39e781428abfb28f3de441fc66b56144b6f"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.string.d.ts": {
+        "version": "21df2e0059f14dcb4c3a0e125859f6b6ff01332ee24b0065a741d121250bc71c",
+        "signature": "21df2e0059f14dcb4c3a0e125859f6b6ff01332ee24b0065a741d121250bc71c"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.intl.d.ts": {
+        "version": "c1759cb171c7619af0d2234f2f8fb2a871ee88e956e2ed91bb61778e41f272c6",
+        "signature": "c1759cb171c7619af0d2234f2f8fb2a871ee88e956e2ed91bb61778e41f272c6"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts": {
+        "version": "28569d59e07d4378cb3d54979c4c60f9f06305c9bb6999ffe6cab758957adc46",
+        "signature": "28569d59e07d4378cb3d54979c4c60f9f06305c9bb6999ffe6cab758957adc46"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.asynciterable.d.ts": {
+        "version": "42102aaeb1bfec213be1e9777466a6d551eeba8567fed18c0cdbca8c35e3c6e4",
+        "signature": "42102aaeb1bfec213be1e9777466a6d551eeba8567fed18c0cdbca8c35e3c6e4"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.intl.d.ts": {
+        "version": "1b820b57379c726f94af50cd60053674af53ff9d079c1563cc70071e8b757dd0",
+        "signature": "1b820b57379c726f94af50cd60053674af53ff9d079c1563cc70071e8b757dd0"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.promise.d.ts": {
+        "version": "efe049114bad1035b0aa9a4a0359f50ab776e3897c411521e51d3013079cbd62",
+        "signature": "efe049114bad1035b0aa9a4a0359f50ab776e3897c411521e51d3013079cbd62"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.regexp.d.ts": {
+        "version": "e7780d04cd4120ee554c665829db2bbdd6b947cbaa3c150b7d9ea74df3beb2e8",
+        "signature": "e7780d04cd4120ee554c665829db2bbdd6b947cbaa3c150b7d9ea74df3beb2e8"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.esnext.intl.d.ts": {
+        "version": "f6e0c89daaf72eac38dfb1d5ef0972183f7f26a68da15bfe5bcb7cfccf0c7db8",
+        "signature": "f6e0c89daaf72eac38dfb1d5ef0972183f7f26a68da15bfe5bcb7cfccf0c7db8"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.esnext.bigint.d.ts": {
+        "version": "63b66918290d794f73832a6d0325be5026236674fe8c0cb0b68d162000d7bbe8",
+        "signature": "63b66918290d794f73832a6d0325be5026236674fe8c0cb0b68d162000d7bbe8"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts": {
+        "version": "2ededed48e7d88b78ed7d0212b78aa46c2c4ea96109f38b54185583db888baa9",
+        "signature": "2ededed48e7d88b78ed7d0212b78aa46c2c4ea96109f38b54185583db888baa9"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/deepmerge/index.d.ts": {
+        "version": "f163b1edf76fbde01836f8522fbe646fe2f55e313bb7fdd363891748f9b57c60",
+        "signature": "f163b1edf76fbde01836f8522fbe646fe2f55e313bb7fdd363891748f9b57c60"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/globals.d.ts": {
+        "version": "3af134c0480536f901a30692d216bd29712a3869fe38a7be066ea1eef34a8561",
+        "signature": "3af134c0480536f901a30692d216bd29712a3869fe38a7be066ea1eef34a8561"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/assert.d.ts": {
+        "version": "58a52f282f1dad18179023804c1f3a7536bf875748a0a314abd43f60fd5b244f",
+        "signature": "58a52f282f1dad18179023804c1f3a7536bf875748a0a314abd43f60fd5b244f"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/async_hooks.d.ts": {
+        "version": "138476cfdccbb9e2c7e06602bc216af843a56c4f3469a79106bc660ba94bd66a",
+        "signature": "138476cfdccbb9e2c7e06602bc216af843a56c4f3469a79106bc660ba94bd66a"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/buffer.d.ts": {
+        "version": "fe892fea1e75a442fffb4a604d7eeb451e858787a9f2f01c4e83bf12a3b5048d",
+        "signature": "fe892fea1e75a442fffb4a604d7eeb451e858787a9f2f01c4e83bf12a3b5048d"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/events/index.d.ts": {
+        "version": "400db42c3a46984118bff14260d60cec580057dc1ab4c2d7310beb643e4f5935",
+        "signature": "400db42c3a46984118bff14260d60cec580057dc1ab4c2d7310beb643e4f5935"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/child_process.d.ts": {
+        "version": "c5a3c14cb11afb48d405562e6843145caa67c60be9738f408cd7977ce30a0b00",
+        "signature": "c5a3c14cb11afb48d405562e6843145caa67c60be9738f408cd7977ce30a0b00"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/cluster.d.ts": {
+        "version": "ce629710e5e58724902b753212e97861fd73e2aa09f5d88cb6d55dc763cf8c8a",
+        "signature": "ce629710e5e58724902b753212e97861fd73e2aa09f5d88cb6d55dc763cf8c8a"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/console.d.ts": {
+        "version": "525c8fc510d9632d2a0a9de2d41c3ac1cdd79ff44d3b45c6d81cacabb683528d",
+        "signature": "525c8fc510d9632d2a0a9de2d41c3ac1cdd79ff44d3b45c6d81cacabb683528d"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/constants.d.ts": {
+        "version": "b952021e804dcd9cb5e5552e1ec8bf9f479b61e20da5641e2a542fe77db9a598",
+        "signature": "b952021e804dcd9cb5e5552e1ec8bf9f479b61e20da5641e2a542fe77db9a598"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts": {
+        "version": "a15466cfe77b4f8bcd936634d3d2828ee340819c3f136d31f87d6084e86994d0",
+        "signature": "a15466cfe77b4f8bcd936634d3d2828ee340819c3f136d31f87d6084e86994d0"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dgram.d.ts": {
+        "version": "beedf72ae8a4176d262e464b70544021a8cd765e21f58325eae5d132a3eb359d",
+        "signature": "beedf72ae8a4176d262e464b70544021a8cd765e21f58325eae5d132a3eb359d"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts": {
+        "version": "92bd533d635f967b198fde9bc789996370f0db3322306646d961f64e67ed5b7a",
+        "signature": "92bd533d635f967b198fde9bc789996370f0db3322306646d961f64e67ed5b7a"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/domain.d.ts": {
+        "version": "d5b7c8819ce1bd31a45f7675309e145ec28e3aa1b60a8e0637fd0e8916255baa",
+        "signature": "d5b7c8819ce1bd31a45f7675309e145ec28e3aa1b60a8e0637fd0e8916255baa"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts": {
+        "version": "cff7f1ff41519a28adfedb85b9d91325e13d7993bebcfd0dd9ce30c3ed1240bb",
+        "signature": "cff7f1ff41519a28adfedb85b9d91325e13d7993bebcfd0dd9ce30c3ed1240bb"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts": {
+        "version": "dbe39c84ad40acd4b4259bc035aa5870ab08bcab899d2f7089c7922a434cf02d",
+        "signature": "dbe39c84ad40acd4b4259bc035aa5870ab08bcab899d2f7089c7922a434cf02d"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts": {
+        "version": "61af0c7f7be9887d42de91222b0d758fa9912027c2dbda957b749bcd43427b54",
+        "signature": "61af0c7f7be9887d42de91222b0d758fa9912027c2dbda957b749bcd43427b54"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http2.d.ts": {
+        "version": "28fdca6c7a3d5dd62c738461051ef345b50d167efab39dceb2fcc9a079db1b07",
+        "signature": "28fdca6c7a3d5dd62c738461051ef345b50d167efab39dceb2fcc9a079db1b07"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts": {
+        "version": "dacbe08610729f6343ea9880ea8e737c6d7a6efa4a318d8f6acaf85db4aceed6",
+        "signature": "dacbe08610729f6343ea9880ea8e737c6d7a6efa4a318d8f6acaf85db4aceed6"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/inspector.d.ts": {
+        "version": "7f71142177d3c98370b31751e3d320c9743ed28eee215acb88d8e0d2a31e321e",
+        "signature": "7f71142177d3c98370b31751e3d320c9743ed28eee215acb88d8e0d2a31e321e"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/module.d.ts": {
+        "version": "03394bf8deb8781b490ae9266a843fbdf00647947d79e25fcbf1d89a9e9c8a66",
+        "signature": "03394bf8deb8781b490ae9266a843fbdf00647947d79e25fcbf1d89a9e9c8a66"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts": {
+        "version": "cc5fac2b9e45a6670b96fd32cb42c97e0d4a7b2ee12c87963c6fe0f55fa84f50",
+        "signature": "cc5fac2b9e45a6670b96fd32cb42c97e0d4a7b2ee12c87963c6fe0f55fa84f50"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/os.d.ts": {
+        "version": "1a6016bd905855b2b45881e9edbd7ab8c7175f8bcbb711ff06989c4bcdc75486",
+        "signature": "1a6016bd905855b2b45881e9edbd7ab8c7175f8bcbb711ff06989c4bcdc75486"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/path.d.ts": {
+        "version": "5fb30076f0e0e5744db8993648bfb67aadd895f439edad5cce039127a87a8a36",
+        "signature": "5fb30076f0e0e5744db8993648bfb67aadd895f439edad5cce039127a87a8a36"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/perf_hooks.d.ts": {
+        "version": "27ef4001526ee9d8afa57687a60bb3b59c52b32d29db0a2260094ab64726164f",
+        "signature": "27ef4001526ee9d8afa57687a60bb3b59c52b32d29db0a2260094ab64726164f"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/process.d.ts": {
+        "version": "3a8848a9c307429b861402cc69bc472ffe0c05b86474fc158723169161e16389",
+        "signature": "3a8848a9c307429b861402cc69bc472ffe0c05b86474fc158723169161e16389"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/punycode.d.ts": {
+        "version": "30ec6f9c683b988c3cfaa0c4690692049c4e7ed7dc6f6e94f56194c06b86f5e1",
+        "signature": "30ec6f9c683b988c3cfaa0c4690692049c4e7ed7dc6f6e94f56194c06b86f5e1"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/querystring.d.ts": {
+        "version": "b610b39b7d42b8e8359875ce77c3149d657bbaa6c9058beb655af805efb581b3",
+        "signature": "b610b39b7d42b8e8359875ce77c3149d657bbaa6c9058beb655af805efb581b3"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/readline.d.ts": {
+        "version": "94cf93922adcc9cb4acf11d8d71641af728de919a50ae55d8e83159afea1a42c",
+        "signature": "94cf93922adcc9cb4acf11d8d71641af728de919a50ae55d8e83159afea1a42c"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/repl.d.ts": {
+        "version": "65dbe15ed8a8ed5d4707a63868178dc38111cfc06de28a2e50713ca017a9c157",
+        "signature": "65dbe15ed8a8ed5d4707a63868178dc38111cfc06de28a2e50713ca017a9c157"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts": {
+        "version": "8eb33193516c1805512396183374f3cfe7e0b1b87ec31f210259ea8d9cc13d44",
+        "signature": "8eb33193516c1805512396183374f3cfe7e0b1b87ec31f210259ea8d9cc13d44"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/string_decoder.d.ts": {
+        "version": "17e157df6125098a1a34eb4d201ee4ac03bbe97e471ab5627bb2c40fce555948",
+        "signature": "17e157df6125098a1a34eb4d201ee4ac03bbe97e471ab5627bb2c40fce555948"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/timers.d.ts": {
+        "version": "b40652bf8ce4a18133b31349086523b219724dca8df3448c1a0742528e7ad5b9",
+        "signature": "b40652bf8ce4a18133b31349086523b219724dca8df3448c1a0742528e7ad5b9"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts": {
+        "version": "8fd6756e8a6fac64089e19e4fbe822bcfafa62f79b237172288eaa1379e84083",
+        "signature": "8fd6756e8a6fac64089e19e4fbe822bcfafa62f79b237172288eaa1379e84083"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/trace_events.d.ts": {
+        "version": "978aecd2e6bc2ac094e9a35eda98ff8586713857b3655e7c98ca5ed8f7d50662",
+        "signature": "978aecd2e6bc2ac094e9a35eda98ff8586713857b3655e7c98ca5ed8f7d50662"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tty.d.ts": {
+        "version": "0fd8dac24f12d9fd1fcc275200dd1b6771072f20331a07b18f7dbcbe20f7d3f4",
+        "signature": "0fd8dac24f12d9fd1fcc275200dd1b6771072f20331a07b18f7dbcbe20f7d3f4"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts": {
+        "version": "1e3da92862604b1f7a32265169f9aa712c4567742d42597704e04ae3e07019e7",
+        "signature": "1e3da92862604b1f7a32265169f9aa712c4567742d42597704e04ae3e07019e7"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts": {
+        "version": "45dd52f3123d2189b981f92410c9d5d0ba1b4c257f2f98fdf983c48ec3132ab8",
+        "signature": "45dd52f3123d2189b981f92410c9d5d0ba1b4c257f2f98fdf983c48ec3132ab8"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/v8.d.ts": {
+        "version": "6ad2dd29dbf3aea031062298e9978d4b2a1fadd0997eb9d8caaf95aaa89e7033",
+        "signature": "6ad2dd29dbf3aea031062298e9978d4b2a1fadd0997eb9d8caaf95aaa89e7033"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts": {
+        "version": "f98df5ec124f441b465332271d0b083aeec815cd3c92d9249b9739e6318477a9",
+        "signature": "f98df5ec124f441b465332271d0b083aeec815cd3c92d9249b9739e6318477a9"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/worker_threads.d.ts": {
+        "version": "16de20ae20cd1d948409a56b55832f3d416c66c8cb44bb8475e1e9db14d8e402",
+        "signature": "16de20ae20cd1d948409a56b55832f3d416c66c8cb44bb8475e1e9db14d8e402"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/zlib.d.ts": {
+        "version": "f91189e04264b0e41ee96ff96661c3871e739b90156df2f2288da7a81019dcd9",
+        "signature": "f91189e04264b0e41ee96ff96661c3871e739b90156df2f2288da7a81019dcd9"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/base.d.ts": {
+        "version": "6622f76993bdfeaacb947ba7c4cf26f2e5c5194194d02d792c3cba4174cd8fce",
+        "signature": "6622f76993bdfeaacb947ba7c4cf26f2e5c5194194d02d792c3cba4174cd8fce"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts": {
+        "version": "4f54f0a9dd3b644c99ec32b32f8804d5978bc854799b228ae9c467bf3c84c64c",
+        "signature": "4f54f0a9dd3b644c99ec32b32f8804d5978bc854799b228ae9c467bf3c84c64c"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/globals.d.ts": {
+        "version": "ce6b191c382ee19f23678b8c364484627bcf424e8f408357a2f5530fb8d52a45",
+        "signature": "ce6b191c382ee19f23678b8c364484627bcf424e8f408357a2f5530fb8d52a45"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts": {
+        "version": "765fc34423b93c2ab763670d8d11d99e5f47387c13c161d6f1640dd6d91b7d1c",
+        "signature": "765fc34423b93c2ab763670d8d11d99e5f47387c13c161d6f1640dd6d91b7d1c"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/minimatch/index.d.ts": {
+        "version": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633",
+        "signature": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/glob/index.d.ts": {
+        "version": "d852d6282c8dc8156d26d6bda83ab4bde51fee05ba2fe0ecdc165ddda009d3ee",
+        "signature": "d852d6282c8dc8156d26d6bda83ab4bde51fee05ba2fe0ecdc165ddda009d3ee"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/node_modules/openapi-types/dist/index.d.ts": {
+        "version": "a3df68e71b13adbaea6c9e67414358614ff0122413c01254215f3f66f90db80e",
+        "signature": "a3df68e71b13adbaea6c9e67414358614ff0122413c01254215f3f66f90db80e"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/dist/index.d.ts": {
+        "version": "ca386eb740dca8ca327834a70b8bb2ed6bd8ac9ad753bfe401d261be56a6dda2",
+        "signature": "ca386eb740dca8ca327834a70b8bb2ed6bd8ac9ad753bfe401d261be56a6dda2"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts": {
+        "version": "79399d1e6d88e890d3ddbaa3d91722c242f64c4406ae5b96ebf26bb66eacf9b3",
+        "signature": "79399d1e6d88e890d3ddbaa3d91722c242f64c4406ae5b96ebf26bb66eacf9b3"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/debug/index.d.ts": {
+        "version": "5e36986c4fc3c242013026c0cffdf95f138c25edfd05e80c23d634e5dca4cfef",
+        "signature": "5e36986c4fc3c242013026c0cffdf95f138c25edfd05e80c23d634e5dca4cfef"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs-environment/dist/index.d.ts": {
+        "version": "8f963dd08a24805e2d6c2a351f48988543330d58a205c58b8427dd44c46f2f55",
+        "signature": "8f963dd08a24805e2d6c2a351f48988543330d58a205c58b8427dd44c46f2f55"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts": {
+        "version": "efb7fb6bac36a034d69bc80b09c88660f1020204b8de5f7517980607ee9bf98c",
+        "signature": "a92f84546a2e10298f538aa3f81218e4371293514f5b4c9ba429d83f2a082949"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts": {
+        "version": "6f4a66f4dda5735ecd487073d5d7e41f606d1ee358f1cdcf320d0a642264e087",
+        "signature": "e7cfb622cbbd58eaed43590cd698cf375dc47cdb54d519d2b7b913e88682ae08"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/node_modules/openapi-types/dist/index.d.ts": {
+        "version": "a3df68e71b13adbaea6c9e67414358614ff0122413c01254215f3f66f90db80e",
+        "signature": "a3df68e71b13adbaea6c9e67414358614ff0122413c01254215f3f66f90db80e"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/dist/index.d.ts": {
+        "version": "ed33b297c70d9a296f757b4f60659531ec6b38f09ca11ad380acdf701e0407b6",
+        "signature": "ed33b297c70d9a296f757b4f60659531ec6b38f09ca11ad380acdf701e0407b6"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ts-log/build/src/index.d.ts": {
+        "version": "eed09b7c5ba70de22474b9b92fa037e95ba0a65d5e21c38355c0a6c70812df2f",
+        "signature": "eed09b7c5ba70de22474b9b92fa037e95ba0a65d5e21c38355c0a6c70812df2f"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-request-validator/dist/index.d.ts": {
+        "version": "e524e1f55aca93a13a59c20c892482d0e5099a0dad58ccd4825be310451c2624",
+        "signature": "e524e1f55aca93a13a59c20c892482d0e5099a0dad58ccd4825be310451c2624"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-response-validator/dist/index.d.ts": {
+        "version": "9b459e9362989d3eecc349d190530890bc58bf11123957c58e2c340bb7535220",
+        "signature": "9b459e9362989d3eecc349d190530890bc58bf11123957c58e2c340bb7535220"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/fast-safe-stringify/index.d.ts": {
+        "version": "092620c282aaecd4362b9ca69d0d48ecf731d9643a71a9bf87a94529abd6535a",
+        "signature": "092620c282aaecd4362b9ca69d0d48ecf731d9643a71a9bf87a94529abd6535a"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/session-factory.ts": {
+        "version": "b9f35e4b80663d4cf11380bb8bbe12251dfe1322cd4a5499348a5e691b770c27",
+        "signature": "6066081eb74090eee5a08b88e804358decc1afd25ba51ee42bd642571d9ab500"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/default-resolver.ts": {
+        "version": "a4acc4386cd247d7e1510e0ba9bc83557c1220591f6b98527722213a8476243a",
+        "signature": "ae33c720e17efb16eff471bebfbdfb01744fe541c202ec94e31860f9448f17da"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/strict-definitions.ts": {
+        "version": "0e5ef26d8427a4570440a4489923da1194fdf5c7342fcb1c637e390cdfdfb384",
+        "signature": "b357b79a196ed884558dff6202879ea07dbb3141ab490a921568133b709621aa"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/datasource.ts": {
+        "version": "c880f737d0b4fe5160007d7a7188c883a8fbd4f8a8a8736bf572d8ae8d992477",
+        "signature": "328faec5f0950962070c2c0bd436c08283c16e96cbf58f7c38d95eb52df7c1e7"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/pipeline.ts": {
+        "version": "e249e74f00373905f5d378f5565ed54bb44938912ae056644912c1249d535167",
+        "signature": "0b388fc27ad159ed16ce5d492f65e4c5590b343cfd810d13f84bc44093adb425"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/validation-error.ts": {
+        "version": "1da64dd43de881b489ce0a52206cb290c35f13bbe7cfe11166222c679d15919f",
+        "signature": "e5f15ce2ad0b2334e9791109757f8344604c284ad11a26637e5c80036d9b8cfd"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/operation.ts": {
+        "version": "c8e4ae7854a76826d9d911fd4b3335143bdb117eb4a960d468a9accd41dc0c45",
+        "signature": "28849f40dd8e5505a001f6fca37542c8e7314de89aa9d8cebb8e632e8a774fce"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/service.ts": {
+        "version": "3acada44fabacf9cbfa0f920e701af1bddccb153b772127c7c13f811192239cb",
+        "signature": "d428dea2bef5e7eb5060516653c84b6213c7e15452fb1606853755ade51f4f2a"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/is-plain-object/index.d.ts": {
+        "version": "a56fa09e91377079e45e992c402d987e0bc6ca5ced934af6f072be71d43943b2",
+        "signature": "a56fa09e91377079e45e992c402d987e0bc6ca5ced934af6f072be71d43943b2"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/is-mergeable-object.ts": {
+        "version": "c32a0df7b757397f54856c7b0a8936090eacc83bf3c31d3e7950343960a47fab",
+        "signature": "eb39ac138e92afa265e06367deb2c3861a1fdda33262db5e9d55c617e9078bf9"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/validate.ts": {
+        "version": "cb1db1630b1166a2dc6c57225b333423d7a89368fe302bd59d301447944b7628",
+        "signature": "4d7aff2ba13f4d9aaf013ff667e20eaca7d23908a9625e893684946bb928cda2"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/bauta.ts": {
+        "version": "f34ed558ac5500aed021f4974a7cd66ea43df7a58a1d408b387579ff3ee323d8",
+        "signature": "4ea1ffd97e3ccbebaa8410006a09afe43f7b801f8e85a35190bac60d93decc79"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/prepare-to-log.ts": {
+        "version": "ffc35b499172536453822cbd93d7c7cb30f3316d90490cd6b245ea749bcef25d",
+        "signature": "a76699773d2a19513bbf512822b5cfdfd8b0e927d5b203d7fd8248c7ee14ed0e"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/resolver.ts": {
+        "version": "c804a50c668931682e9bb8245708ebb2e90559d33814a93233f3b841d71932f0",
+        "signature": "34648f88e4835708c7b86d36c3df5b4f930fcb67435c275e6f042822642127a3"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/step.ts": {
+        "version": "d55feb3b333c6734bec7dd57669aa1826ee44fe2606d5b6f2aea2861ca07bcaa",
+        "signature": "05458752ff71a46051f70a6ee9a4be2b4fab25d66c7305f2d6032694f50216f4"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/pipeline.ts": {
+        "version": "65d20000e31812191628f8780e86ca6627deb5d65569ac60eebabddc808b79e8",
+        "signature": "d643d99085f390c5fd2e71d69d4654af152eb9b7cb098535e3163d1b5bb76e96"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/datasource.ts": {
+        "version": "3998695607f1dde47c4569cb53f3c02db3d5db00852d7844101feaf89930ed40",
+        "signature": "02a8eed38427025fcb706f70efbbfe5bc6cadbf9033946c606fe7a35510c8f62"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-callback.ts": {
+        "version": "5cc1230cd19746d1b9ef144e4234ec3e7cab008b7d397b412a40f8df51e68cb1",
+        "signature": "9655758934b356cf719ed7eb35929ff914b6d32a8cc3ee0198a380681dbd053e"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-value.ts": {
+        "version": "1cac19c79256b7a30e13c2637406a03152d85028d27c0df0b8025043bba6822d",
+        "signature": "6234cb99405bba00604fe84e504922c1840257a73a042b2c1b7178e16e4de099"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/parallel.ts": {
+        "version": "469095884e4b217f77f33ce6bfe33a0c16454b1c1a8374d77f5a3b8c4833dbc0",
+        "signature": "28af773677d10abd55dfd510c089eaa967a6274ea49c08804c59129ca811f6e5"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/index.ts": {
+        "version": "7ff49d95d794bd72e5f007169f98eadfbcd9503f415969d0ff0f31d39e0286ac",
+        "signature": "c4bf5ca958f7a9120cdb1d133118dc9768914ba5071195b3bfe7a9b3916b3951"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/datasource-schema.json": {
+        "version": "25f01bf61acec7bba5e94e450038b27be0ee324644772ee028ba835ed10ca70a"
+      },
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/extend-openapi-schema.json": {
+        "version": "4e3bf5fc37a9bb2250bc705dd83b53a80a12ae07fcae4c568b7f3a29dd531b8d"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts": {
+        "version": "9eac0dd4de5669db2b8321dffa400b997f7b21181118efc7a2c1743d93d4be57",
+        "signature": "9eac0dd4de5669db2b8321dffa400b997f7b21181118efc7a2c1743d93d4be57"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__generator/index.d.ts": {
+        "version": "19fb2161edf60fbe73ee3650c1cee889df0525ed852eff2d5fa6e5480c132ae3",
+        "signature": "19fb2161edf60fbe73ee3650c1cee889df0525ed852eff2d5fa6e5480c132ae3"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__traverse/index.d.ts": {
+        "version": "44d81327b8fbb2d7ca0701f5b7bb73e48036eb99a87356acf95f19ed96e907aa",
+        "signature": "44d81327b8fbb2d7ca0701f5b7bb73e48036eb99a87356acf95f19ed96e907aa"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/parser/typings/babel-parser.d.ts": {
+        "version": "67fb81fcd13edc5410665fa72892dd0878654b54946e8b0f10af5adc234bfe8f",
+        "signature": "67fb81fcd13edc5410665fa72892dd0878654b54946e8b0f10af5adc234bfe8f"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__template/index.d.ts": {
+        "version": "3e0a34f7207431d967dc32d593d1cda0c23975e9484bc8895b39d96ffca4a0d8",
+        "signature": "3e0a34f7207431d967dc32d593d1cda0c23975e9484bc8895b39d96ffca4a0d8"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__core/index.d.ts": {
+        "version": "8f279d393b3572c5c0a8428d46d00281c38a5ef52dc9dd513fc861c31a5d6420",
+        "signature": "8f279d393b3572c5c0a8428d46d00281c38a5ef52dc9dd513fc861c31a5d6420"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/connect/index.d.ts": {
+        "version": "c3be42b83b5f57ae2f65280fa395f6d31f61304ac1a29b7b406b6a0e71da8c82",
+        "signature": "c3be42b83b5f57ae2f65280fa395f6d31f61304ac1a29b7b406b6a0e71da8c82"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/body-parser/index.d.ts": {
+        "version": "1b7919dbb6b43ff272f38f6f6522fb9f4e9e854356b2932a36aa4674f4a2fcf2",
+        "signature": "1b7919dbb6b43ff272f38f6f6522fb9f4e9e854356b2932a36aa4674f4a2fcf2"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/range-parser/index.d.ts": {
+        "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
+        "signature": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express-serve-static-core/index.d.ts": {
+        "version": "0e844fd1a3d13a837b300785b632ceb2cdced5797e189183ece36a0785a453e5",
+        "signature": "0e844fd1a3d13a837b300785b632ceb2cdced5797e189183ece36a0785a453e5"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/mime/index.d.ts": {
+        "version": "be27a64e821a3e5af838650e4aa25805c60f057d0c37a9762c378d19d364b3e6",
+        "signature": "be27a64e821a3e5af838650e4aa25805c60f057d0c37a9762c378d19d364b3e6"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/serve-static/index.d.ts": {
+        "version": "b27dd918d8c3f10270cadea529c69e3a9b37ce59db0852945a39068cc5c10fff",
+        "signature": "b27dd918d8c3f10270cadea529c69e3a9b37ce59db0852945a39068cc5c10fff"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts": {
+        "version": "434d7d3188d85bd46c64dcc8268422ffdfdd19fdbc98ec01446d650414fcaa0b",
+        "signature": "434d7d3188d85bd46c64dcc8268422ffdfdd19fdbc98ec01446d650414fcaa0b"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/compression/index.d.ts": {
+        "version": "96540c10532f7cab762185084744738f504244164689dfa11c140008cc321177",
+        "signature": "96540c10532f7cab762185084744738f504244164689dfa11c140008cc321177"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cookiejar/index.d.ts": {
+        "version": "16b7fb094ffaa5d270f934e7406e8baee2f8245cfabf6dcc20f693389f005f56",
+        "signature": "16b7fb094ffaa5d270f934e7406e8baee2f8245cfabf6dcc20f693389f005f56"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cors/index.d.ts": {
+        "version": "bacd29cf2a5a2829856d37f47173dfb7e26c396845e61e0802204cba3e2560f5",
+        "signature": "bacd29cf2a5a2829856d37f47173dfb7e26c396845e61e0802204cba3e2560f5"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/form-data/index.d.ts": {
+        "version": "55f4b87f27e4f2fac4820e2c822f6476dea04317b695c1f3f9fa94a386a6e456",
+        "signature": "55f4b87f27e4f2fac4820e2c822f6476dea04317b695c1f3f9fa94a386a6e456"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/tough-cookie/index.d.ts": {
+        "version": "8437256e19bbeda3c9e062d18971002545c486b1f40e3cfa10199c89808264b7",
+        "signature": "8437256e19bbeda3c9e062d18971002545c486b1f40e3cfa10199c89808264b7"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/got/index.d.ts": {
+        "version": "f826b24456708c86850af6e41950cbc9b07a00e7d69c8cd60d044f12740cb5ac",
+        "signature": "f826b24456708c86850af6e41950cbc9b07a00e7d69c8cd60d044f12740cb5ac"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/helmet/index.d.ts": {
+        "version": "e46513512c05ea291088a7f5580985c457a30a2b73189f1b9ede6192afbb50ef",
+        "signature": "e46513512c05ea291088a7f5580985c457a30a2b73189f1b9ede6192afbb50ef"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-coverage/index.d.ts": {
+        "version": "9e951ec338c4232d611552a1be7b4ecec79a8c2307a893ce39701316fe2374bd",
+        "signature": "9e951ec338c4232d611552a1be7b4ecec79a8c2307a893ce39701316fe2374bd"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-report/index.d.ts": {
+        "version": "70c61ff569aabdf2b36220da6c06caaa27e45cd7acac81a1966ab4ee2eadc4f2",
+        "signature": "70c61ff569aabdf2b36220da6c06caaa27e45cd7acac81a1966ab4ee2eadc4f2"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-reports/index.d.ts": {
+        "version": "93b59bc67329d5add033e3198583c39aa939cef891e6a2b763e0bea2b514ea9b",
+        "signature": "93b59bc67329d5add033e3198583c39aa939cef891e6a2b763e0bea2b514ea9b"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest-diff/index.d.ts": {
+        "version": "6ecb326999da47034eff85653423767152858fbb7acf0433f7603c9abf1e3f06",
+        "signature": "6ecb326999da47034eff85653423767152858fbb7acf0433f7603c9abf1e3f06"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/types.d.ts": {
+        "version": "71ba0678a3c647f5c0706ae975c031ace0d464e60f9ce56eaa7f1678d065aab7",
+        "signature": "71ba0678a3c647f5c0706ae975c031ace0d464e60f9ce56eaa7f1678d065aab7"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/index.d.ts": {
+        "version": "b2c5ded6320c45c5d3e1c481c5d2808adf24dd1a59ffc944b72a418e95da5b17",
+        "signature": "b2c5ded6320c45c5d3e1c481c5d2808adf24dd1a59ffc944b72a418e95da5b17"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest/index.d.ts": {
+        "version": "74b900b2e3ba5885662c0350db00e2f1198c19b21ebd130a3ff47f8fc56393ed",
+        "signature": "74b900b2e3ba5885662c0350db00e2f1198c19b21ebd130a3ff47f8fc56393ed"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/memoizee/index.d.ts": {
+        "version": "a8ab5988c11befae9cb37df9a54c5bc5ad2011965d3396a5035f88a5fb9c7594",
+        "signature": "a8ab5988c11befae9cb37df9a54c5bc5ad2011965d3396a5035f88a5fb9c7594"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/morgan/index.d.ts": {
+        "version": "fc20fb48224b5162c584b7907221cce2c03bd01a1af59036ccbb23e094796350",
+        "signature": "fc20fb48224b5162c584b7907221cce2c03bd01a1af59036ccbb23e094796350"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/nock/index.d.ts": {
+        "version": "53f4a595b3b84fbd7ce6a47370c9ca7533c12ee4e3e4c754eb904d14d32eaabe",
+        "signature": "53f4a595b3b84fbd7ce6a47370c9ca7533c12ee4e3e4c754eb904d14d32eaabe"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/object-path/index.d.ts": {
+        "version": "dc74f9253ba01502aa3e08af9c00908fdb5b1fc297c576afd307d972ee6a5c91",
+        "signature": "dc74f9253ba01502aa3e08af9c00908fdb5b1fc297c576afd307d972ee6a5c91"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/stack-utils/index.d.ts": {
+        "version": "41422586881bcd739b4e62d9b91cd29909f8572aa3e3cdf316b7c50f14708d49",
+        "signature": "41422586881bcd739b4e62d9b91cd29909f8572aa3e3cdf316b7c50f14708d49"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/superagent/index.d.ts": {
+        "version": "e8bd972c3895277d7d9e702262a0408fbe36bb69c733bf26f9f15c396cad34c5",
+        "signature": "e8bd972c3895277d7d9e702262a0408fbe36bb69c733bf26f9f15c396cad34c5"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/supertest/index.d.ts": {
+        "version": "79e8fe7df47b9eee82aba6de491c17ed11759171ed0ee0d804e83971b2a17fc3",
+        "signature": "79e8fe7df47b9eee82aba6de491c17ed11759171ed0ee0d804e83971b2a17fc3"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/swagger-ui-express/index.d.ts": {
+        "version": "074dedf5e15219ad2c7451833e271211e8cb7c4c849d782153b0a74dfaeb96d2",
+        "signature": "074dedf5e15219ad2c7451833e271211e8cb7c4c849d782153b0a74dfaeb96d2"
+      },
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/yargs/index.d.ts": {
+        "version": "8f3237f03af87871a18d49ff52dec94d71eabecca464d5f2a81e34b55fb60bb5",
+        "signature": "8f3237f03af87871a18d49ff52dec94d71eabecca464d5f2a81e34b55fb60bb5"
+      }
+    },
+    "options": {
+      "composite": true,
+      "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "lib": [
+        "lib.es2017.d.ts",
+        "lib.dom.d.ts"
+      ],
+      "moduleResolution": 2,
+      "target": 2,
+      "module": 1,
+      "declaration": true,
+      "strict": true,
+      "removeComments": true,
+      "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "noUnusedParameters": true,
+      "noUnusedLocals": true,
+      "forceConsistentCasingInFileNames": true,
+      "baseUrl": "/Users/jblanco/axa/bauta-nodejs",
+      "paths": {
+        "*": [
+          "types/*"
+        ]
+      },
+      "rootDir": "/Users/jblanco/axa/bauta-nodejs/packages/bautajs/src",
+      "outDir": "/Users/jblanco/axa/bauta-nodejs/packages/bautajs/dist",
+      "configFilePath": "/Users/jblanco/axa/bauta-nodejs/packages/bautajs/tsconfig.json"
+    },
+    "referencedMap": {
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es5.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2016.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.dom.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.core.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.collection.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.generator.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.iterable.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.promise.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.proxy.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.reflect.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.symbol.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2016.array.include.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.object.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.string.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.intl.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.asynciterable.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.intl.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.promise.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.regexp.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.esnext.intl.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.esnext.bigint.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/deepmerge/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/globals.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/assert.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/async_hooks.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/buffer.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/events/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/child_process.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/cluster.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/child_process.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/console.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/constants.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dgram.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/domain.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http2.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/inspector.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/module.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/os.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/path.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/perf_hooks.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/async_hooks.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/process.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/punycode.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/querystring.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/readline.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/repl.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/readline.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/string_decoder.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/timers.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/trace_events.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tty.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/querystring.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/v8.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/worker_threads.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/zlib.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/base.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/globals.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/assert.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/async_hooks.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/buffer.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/child_process.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/cluster.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/console.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/constants.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dgram.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/domain.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http2.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/inspector.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/module.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/os.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/path.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/perf_hooks.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/process.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/punycode.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/querystring.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/readline.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/repl.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/string_decoder.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/timers.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/trace_events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tty.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/v8.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/worker_threads.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/zlib.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/globals.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/globals.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/base.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/globals.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/minimatch/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/glob/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/minimatch/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/node_modules/openapi-types/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/debug/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs-environment/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs-environment/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/debug/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/node_modules/openapi-types/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ts-log/build/src/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-request-validator/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ts-log/build/src/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-response-validator/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/fast-safe-stringify/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/session-factory.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/fast-safe-stringify/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/default-resolver.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/strict-definitions.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs-environment/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/datasource.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/pipeline.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/validation-error.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/fast-safe-stringify/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/operation.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-request-validator/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-response-validator/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/session-factory.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/default-resolver.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/strict-definitions.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/datasource.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/pipeline.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/validation-error.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/service.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/operation.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/is-plain-object/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/is-mergeable-object.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/is-plain-object/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/validate.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/bauta.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/deepmerge/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/glob/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/path.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/service.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/is-mergeable-object.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/validate.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/prepare-to-log.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/fast-safe-stringify/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/resolver.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/step.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/pipeline.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/datasource.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-callback.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-value.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/parallel.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/index.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/is-mergeable-object.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/prepare-to-log.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/bauta.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/validation-error.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/service.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/operation.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/pipeline.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/datasource.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/resolver.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/step.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/pipeline.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/datasource.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-callback.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-value.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/parallel.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/datasource-schema.json": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/extend-openapi-schema.json": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__generator/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__traverse/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/parser/typings/babel-parser.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__template/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/parser/typings/babel-parser.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__core/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__generator/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__traverse/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__template/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/parser/typings/babel-parser.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/connect/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/body-parser/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/connect/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/range-parser/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express-serve-static-core/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/range-parser/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/mime/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/serve-static/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express-serve-static-core/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/mime/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/body-parser/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/serve-static/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express-serve-static-core/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/compression/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cookiejar/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cors/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/form-data/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/tough-cookie/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/got/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/tough-cookie/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/helmet/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-coverage/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-report/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-coverage/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-reports/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-report/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-coverage/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest-diff/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/types.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/types.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest-diff/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/memoizee/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/morgan/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/nock/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/object-path/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/stack-utils/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/superagent/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cookiejar/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/supertest/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/superagent/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/swagger-ui-express/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/serve-static/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/yargs/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ]
+    },
+    "exportedModulesMap": {
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es5.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2016.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.dom.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.core.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.collection.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.generator.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.iterable.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.promise.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.proxy.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.reflect.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.symbol.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2016.array.include.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.object.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.string.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.intl.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.asynciterable.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.intl.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.promise.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.regexp.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.esnext.intl.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.esnext.bigint.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/bauta.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/index.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/bauta.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/validation-error.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/service.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/operation.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/pipeline.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/datasource.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/resolver.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/step.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/pipeline.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/datasource.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-callback.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-value.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/parallel.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/is-mergeable-object.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/prepare-to-log.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/validate.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-response-validator/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/operation.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/service.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-request-validator/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ts-log/build/src/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/deepmerge/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/globals.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/assert.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/base.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/globals.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/assert.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/async_hooks.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/buffer.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/child_process.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/cluster.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/console.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/constants.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dgram.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/domain.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http2.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/inspector.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/module.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/os.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/path.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/perf_hooks.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/process.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/punycode.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/querystring.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/readline.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/repl.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/string_decoder.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/timers.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/trace_events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tty.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/v8.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/worker_threads.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/zlib.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/base.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/globals.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/superagent/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cookiejar/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/supertest/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/superagent/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/nock/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/got/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/tough-cookie/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/form-data/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express-serve-static-core/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/range-parser/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/body-parser/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/serve-static/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express-serve-static-core/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/swagger-ui-express/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/serve-static/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/morgan/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/helmet/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cors/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/compression/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/serve-static/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express-serve-static-core/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/mime/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/body-parser/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/connect/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/connect/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/glob/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/minimatch/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/async_hooks.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/perf_hooks.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/async_hooks.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/buffer.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/events/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/child_process.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/cluster.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/child_process.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/console.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/constants.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http2.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dgram.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tty.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/domain.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/debug/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/pipeline.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/session-factory.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs-environment/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/parallel.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-value.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-callback.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/datasource.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/pipeline.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/step.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/resolver.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/validation-error.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/datasource.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/strict-definitions.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/default-resolver.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/worker_threads.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/zlib.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/v8.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/readline.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/repl.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/readline.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/inspector.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/module.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/os.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/path.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/process.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/punycode.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/querystring.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/querystring.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/string_decoder.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/timers.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/trace_events.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/yargs/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/stack-utils/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/object-path/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/memoizee/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest-diff/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/types.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/types.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest-diff/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-reports/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-report/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-coverage/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-report/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-coverage/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-coverage/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/tough-cookie/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cookiejar/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/mime/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/range-parser/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__core/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__generator/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__traverse/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__template/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/parser/typings/babel-parser.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__template/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/parser/typings/babel-parser.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/parser/typings/babel-parser.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__traverse/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__generator/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/is-plain-object/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/fast-safe-stringify/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ts-log/build/src/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/node_modules/openapi-types/dist/index.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/node_modules/openapi-types/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs-environment/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/debug/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/node_modules/openapi-types/dist/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/minimatch/index.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/globals.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/globals.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts"
+      ],
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts": [
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+        "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts"
+      ]
+    },
+    "semanticDiagnosticsPerFile": [
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es5.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2016.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.dom.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.core.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.collection.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.generator.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.iterable.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.promise.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.proxy.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.reflect.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.symbol.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2016.array.include.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.object.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.string.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.intl.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.asynciterable.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.intl.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.promise.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.es2018.regexp.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.esnext.intl.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/typescript/lib/lib.esnext.bigint.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ajv/lib/ajv.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/deepmerge/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/globals.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/assert.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/async_hooks.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/buffer.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/events/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/child_process.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/cluster.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/console.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/constants.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/crypto.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dgram.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/dns.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/domain.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/events.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/fs.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/http2.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/https.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/inspector.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/module.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/net.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/os.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/path.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/perf_hooks.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/process.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/punycode.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/querystring.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/readline.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/repl.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/stream.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/string_decoder.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/timers.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tls.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/trace_events.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/tty.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/url.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/util.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/v8.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/vm.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/worker_threads.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/zlib.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/base.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/util.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/globals.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/node/ts3.2/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/minimatch/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/glob/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/node_modules/openapi-types/dist/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-schema-validator/dist/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-types/dist/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/debug/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs-environment/dist/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/types.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/logger.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/node_modules/openapi-types/dist/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-default-setter/dist/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/ts-log/build/src/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-request-validator/dist/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/openapi-response-validator/dist/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/fast-safe-stringify/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/session-factory.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/default-resolver.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/strict-definitions.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/datasource.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/pipeline.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/validation-error.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/operation.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/core/service.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/node_modules/is-plain-object/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/is-mergeable-object.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/validate.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/bauta.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/utils/prepare-to-log.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/resolver.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/step.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/pipeline.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/datasource.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-callback.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/as-value.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/decorators/parallel.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/index.ts",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/datasource-schema.json",
+      "/users/jblanco/axa/bauta-nodejs/packages/bautajs/src/validators/extend-openapi-schema.json",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/types/lib/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__generator/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__traverse/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@babel/parser/typings/babel-parser.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__template/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/babel__core/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/connect/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/body-parser/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/range-parser/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express-serve-static-core/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/mime/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/serve-static/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/express/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/compression/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cookiejar/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/cors/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/form-data/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/tough-cookie/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/got/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/helmet/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-coverage/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-lib-report/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/istanbul-reports/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest-diff/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/types.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/jest-diff/build/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/jest/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/memoizee/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/morgan/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/nock/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/object-path/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/stack-utils/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/superagent/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/supertest/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/swagger-ui-express/index.d.ts",
+      "/users/jblanco/axa/bauta-nodejs/node_modules/@types/yargs/index.d.ts"
+    ]
+  },
+  "version": "3.4.3"
+}

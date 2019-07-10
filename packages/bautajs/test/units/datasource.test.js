@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 /* global expect, describe, test, afterEach, beforeEach */
+const { createHttpAgent } = require('native-proxy-agent');
 const nock = require('nock');
 const path = require('path');
 const fs = require('fs');
@@ -20,6 +21,7 @@ const http = require('http');
 const https = require('https');
 const EventEmitter = require('events');
 const buildDataSource = require('../../request/datasource');
+const { clearAgentStoreage } = require('../../request/agent');
 const logger = require('../../logger');
 
 describe('datasource test', () => {
@@ -206,7 +208,7 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'request-logger: Response for [undefined]  https://pets.com/v1/policies: ',
+        'request-logger: Response for [GET]  https://pets.com/v1/policies: ',
         { body: '{"bender":1}', headers: '{"content-type":"application/json"}', statusCode: 200 }
       ];
 
@@ -267,7 +269,7 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'request-logger: Response for [undefined]  https://pets.com/v1/policies: ',
+        'request-logger: Response for [GET]  https://pets.com/v1/policies: ',
         {
           body: '<html><div></div></html>',
           headers: '{"content-type":"text/html"}',
@@ -304,220 +306,6 @@ describe('datasource test', () => {
       const compiled = dataSource({ logger: loggerMock });
       await compiled.request();
       expect(debugConsole[1]).toEqual(expectedMsg);
-    });
-  });
-
-  describe('Proxy env variables', () => {
-    const originalHttpRequest = http.request;
-    const originalHttpsRequest = https.request;
-    let emmiter;
-    beforeEach(() => {
-      process.env.http_proxy = '';
-      process.env.https_proxy = '';
-      process.env.HTTP_PROXY = '';
-      process.env.HTTPS_PROXY = '';
-      emmiter = new EventEmitter();
-      Object.assign(emmiter, { end: () => {} });
-    });
-    afterEach(() => {
-      http.request = originalHttpRequest;
-      https.request = originalHttpsRequest;
-      emmiter.removeAllListeners();
-    });
-    test('should support the http_proxy variable', done => {
-      const host = '192.168.1.5';
-      const port = '3128';
-      process.env.http_proxy = `http://${host}:${port}`;
-
-      http.request = options => {
-        expect(options.agent.options.host).toEqual(host);
-        expect(options.agent.options.port).toEqual(port);
-        done();
-
-        return emmiter;
-      };
-
-      const template = {
-        url: 'http://pets.com/v1/policies',
-        method: 'POST',
-        options: {
-          form: {
-            field1: 'value'
-          }
-        }
-      };
-      const dataSource = buildDataSource(template);
-      const compiled = dataSource({});
-      compiled.request();
-    });
-
-    test('should support the HTTP_PROXY variable', done => {
-      const host = '192.168.1.6';
-      const port = '3128';
-      process.env.HTTP_PROXY = `http://${host}:${port}`;
-
-      http.request = options => {
-        expect(options.agent.options.host).toEqual(host);
-        expect(options.agent.options.port).toEqual(port);
-        done();
-
-        return emmiter;
-      };
-
-      const template = {
-        url: 'http://pets.com/v1/policies',
-        method: 'POST',
-        options: {
-          form: {
-            field1: 'value'
-          }
-        }
-      };
-      const dataSource = buildDataSource(template);
-      const compiled = dataSource({});
-      compiled.request();
-    });
-
-    test('should support not using proxy', done => {
-      const host = 'pets.com';
-
-      http.request = options => {
-        expect(options.agent.options.host).toBeUndefined();
-        expect(options.host).toEqual(host);
-        done();
-
-        return emmiter;
-      };
-
-      const template = {
-        url: `http://${host}/v1/policies`,
-        method: 'POST',
-        options: {
-          form: {
-            field1: 'value'
-          }
-        }
-      };
-      const dataSource = buildDataSource(template);
-      const compiled = dataSource({});
-      compiled.request();
-    });
-
-    test('should support the http_proxy with authentication', done => {
-      const host = '192.168.1.6';
-      const port = '3128';
-      const auth = 'user:passord';
-
-      http.request = options => {
-        expect(options.agent.options.host).toEqual(host);
-        expect(options.agent.options.port).toEqual(port);
-        expect(options.agent.options.headers['Proxy-Authorization']).toEqual(
-          `Basic ${Buffer.from(auth).toString('base64')}`
-        );
-        done();
-
-        return emmiter;
-      };
-
-      const template = {
-        url: 'http://pets.com/v1/policies',
-        method: 'POST',
-        options: {
-          form: {
-            field1: 'value'
-          },
-          proxy: {
-            host,
-            port,
-            auth
-          }
-        }
-      };
-      const dataSource = buildDataSource(template);
-      const compiled = dataSource({});
-      compiled.request();
-    });
-
-    test('should support https request throught a http proxy', done => {
-      const host = '192.168.1.6';
-      const port = '3128';
-      process.env.HTTP_PROXY = `http://${host}:${port}`;
-
-      https.request = options => {
-        expect(options.agent.options.proxy.host).toEqual(host);
-        expect(options.agent.options.proxy.port).toEqual(port);
-
-        done();
-
-        return emmiter;
-      };
-
-      const template = {
-        url: 'https://pets.com/v1/policies',
-        method: 'POST',
-        options: {
-          form: {
-            field1: 'value'
-          }
-        }
-      };
-      const dataSource = buildDataSource(template);
-      const compiled = dataSource({});
-      compiled.request();
-    });
-
-    test('should support the HTTPS_PROXY variable and tunneling https proxy to http request', done => {
-      const host = '192.168.1.7';
-      const port = '3128';
-      process.env.HTTPS_PROXY = `https://${host}:${port}`;
-
-      http.request = options => {
-        expect(options.agent.options.host).toEqual(host);
-        expect(options.agent.options.port).toEqual(port);
-        done();
-
-        return emmiter;
-      };
-
-      const template = {
-        url: 'http://pets.com/v1/policies',
-        method: 'POST',
-        options: {
-          form: {
-            field1: 'value'
-          }
-        }
-      };
-      const dataSource = buildDataSource(template);
-      const compiled = dataSource({});
-      compiled.request();
-    });
-
-    test('should support the HTTP_PROXY variable and tunneling https proxy to http request', done => {
-      const host = '192.168.1.8';
-      const port = '3128';
-      process.env.HTTP_PROXY = `https://${host}:${port}`;
-
-      http.request = options => {
-        expect(options.agent.options.host).toEqual(host);
-        expect(options.agent.options.port).toEqual(port);
-        done();
-
-        return emmiter;
-      };
-
-      const template = {
-        url: 'http://pets.com/v1/policies',
-        method: 'POST',
-        options: {
-          form: {
-            field1: 'value'
-          }
-        }
-      };
-      const dataSource = buildDataSource(template);
-      const compiled = dataSource({});
-      compiled.request();
     });
   });
 
@@ -623,8 +411,8 @@ describe('datasource test', () => {
 
     test('Should add the content type multipart related if is not set', async () => {
       nock('https://pets.com/v1', {
-        reqheaders(headers) {
-          return headers['content-type'].includes('multipart/related');
+        reqheaders: {
+          'content-type': /multipart\/related(.*)/g
         }
       })
         .post(
@@ -952,6 +740,53 @@ describe('datasource test', () => {
 
       expect(url).toEqual(expected.url);
       expect(foo).toEqual(expected.json.foo);
+    });
+  });
+
+  describe('Datasource must reause an agent', () => {
+    beforeEach(() => {
+      createHttpAgent.mockClear();
+      clearAgentStoreage();
+      nock.cleanAll();
+    });
+    test('if same request is done the agent must be reused', async () => {
+      nock('http://pets.com')
+        .persist()
+        .get('/v1/policies')
+        .reply(200, { ok: true });
+
+      const template = {
+        id: 'op1',
+        url: 'http://pets.com/v1/policies',
+        method: 'GET'
+      };
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({});
+      await compiled.request();
+      await compiled.request();
+
+      expect(createHttpAgent).toHaveBeenCalledTimes(1);
+    });
+
+    test('if same request is done with different agent options, agents can not be the same', async () => {
+      nock('http://pets.com')
+        .persist()
+        .get('/v1/policies')
+        .reply(200, { ok: true });
+
+      const template = {
+        id: 'op1',
+        url: 'http://pets.com/v1/policies',
+        method: 'GET'
+      };
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({});
+      await compiled.request();
+      await compiled.request({
+        keepAlive: false
+      });
+
+      expect(createHttpAgent).toHaveBeenCalledTimes(2);
     });
   });
 });

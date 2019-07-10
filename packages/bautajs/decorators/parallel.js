@@ -56,5 +56,5 @@ module.exports = (fn, ...args) => async (firstValue, ctx) => {
     fns = fn;
   }
 
-  return runInParallel(fns.map(step => new Step(step).run(ctx, firstValue)));
+  return runInParallel(fns.map(async step => new Step(step).run(ctx, firstValue)));
 };

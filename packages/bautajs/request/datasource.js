@@ -14,11 +14,11 @@
  */
 const STJS = require('stjs');
 const got = require('got');
-const { createAgent } = require('native-proxy-agent');
 const { Multipart } = require('multipart-request-builder');
 const prepareToLog = require('../utils/prepare-to-log');
 const sessionFactory = require('../session-factory');
 const buildForm = require('./form-data');
+const { createAgent } = require('./agent');
 
 // waiting for GOT 5.0
 function parseBody(responseType, body) {
@@ -75,11 +75,6 @@ function requestHooks(log) {
       log.events.emit(log.eventTypes.DATASOURCE_RESPONSE, response);
 
       return response;
-    },
-    httpRequestThroughtProxy(options) {
-      if (options.agent.options.httpThroughProxy) {
-        Object.assign(options, { path: options.href });
-      }
     }
   };
 }
@@ -151,7 +146,7 @@ function compileDatasource(dataSourceTemplate, context) {
         ? parseInt(dataSource.options.timeout, 10)
         : 10000,
     hooks: {
-      beforeRequest: [hooks.logRequest, hooks.httpRequestThroughtProxy],
+      beforeRequest: [hooks.logRequest],
       afterResponse: [hooks.logResponse, hooks.getResponseBody]
     }
   };
@@ -175,6 +170,14 @@ function compileDatasource(dataSourceTemplate, context) {
         updateOptions = normalizeOptions(params);
       }
 
+      let keepAliveToggle = true;
+      if (keepAlive !== undefined) {
+        keepAliveToggle = keepAlive;
+      }
+      if (params.keepAlive !== undefined) {
+        keepAliveToggle = params.keepAlive;
+      }
+
       const strictSSL =
         rejectUnauthorized === null || rejectUnauthorized === undefined
           ? !!params.rejectUnauthorized
@@ -184,9 +187,10 @@ function compileDatasource(dataSourceTemplate, context) {
         key: key || params.key,
         rejectUnauthorized: strictSSL,
         proxy,
-        keepAliveMsecs,
-        keepAlive
+        keepAliveMsecs: keepAliveMsecs || params.keepAliveMsecs,
+        keepAlive: keepAliveToggle
       });
+
       // add request id
       updateOptions.headers['x-request-id'] = context.id;
 
