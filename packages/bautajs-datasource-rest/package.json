@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/datasource-rest",
-  "version": "2.0.0-alpha.9",
+  "version": "2.0.0-alpha.10",
   "description": "A bautaJS cache decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,11 +25,11 @@
   "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "2.0.0-alpha.9",
+    "@bautajs/core": "2.0.0-alpha.10",
+    "@bautajs/environment": "2.0.0-alpha.10",
     "got": "9.6.0",
     "multipart-request-builder": "2.0.0",
     "native-proxy-agent": "2.1.0",
-    "stjs": "0.0.5",
-    "@bautajs/environment": "^2.0.0-alpha.9"
+    "stjs": "0.0.5"
   }
 }
