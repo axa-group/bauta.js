@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-/* global expect, describe, test, afterEach, beforeEach */
 import Events from 'events';
 import fs from 'fs';
 import http from 'http';
 import https from 'https';
+import { createHttpsAgent } from 'native-proxy-agent';
 import nock from 'nock';
 import path from 'path';
 import { buildDataSource, Context, logger, Logger, LoggerBuilder, Metadata } from '@bautajs/core';
@@ -935,9 +935,9 @@ describe('datasource rest test', () => {
       compiled.request({ resolveBodyOnly: true });
     });
 
-    test('Should allow to set the agent rejectUnauthorized as true', done => {
-      http.request = (options: any) => {
-        expect(options.agent.options.rejectUnauthorized).toEqual(true);
+    test('Should allow to set a custom agent', done => {
+      https.request = (options: any) => {
+        expect(options.agent.keepAliveMsecs).toEqual(5000);
         done();
 
         return emmiter;
@@ -949,12 +949,12 @@ describe('datasource rest test', () => {
               {
                 id: 'op1',
                 options: {
-                  url: 'http://pets.com/v1/policies',
+                  url: 'https://pets.com/v1/policies',
                   method: 'POST',
                   timeout: 5000,
-                  agentOptions: {
-                    rejectUnauthorized: true
-                  }
+                  agent: createHttpsAgent({
+                    keepAliveMsecs: 5000
+                  })
                 }
               }
             ]
@@ -984,7 +984,7 @@ describe('datasource rest test', () => {
       compiled.request({ resolveBodyOnly: true });
     });
 
-    test('Should allow to set the agent certificates', done => {
+    test('Should allow to set the agent certificates by a custom agent', done => {
       http.request = (options: any) => {
         expect(options.agent.options.cert).toEqual('132');
         expect(options.agent.options.key).toEqual('123');
@@ -1003,10 +1003,10 @@ describe('datasource rest test', () => {
                   url: 'http://pets.com/v1/policies',
                   method: 'POST',
                   timeout: 5000,
-                  agentOptions: {
+                  agent: createHttpsAgent({
                     cert: '132',
                     key: '123'
-                  }
+                  })
                 }
               }
             ]

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test */
 // eslint-disable-next-line no-unused-vars
 import { getStrictDefinition } from '../utils/strict-definitions';
 import apiDefinitionNotUsedSchemaSwagger2Json from './fixtures/api-definition-not-used-schema-swagger2.json';

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test */
 // eslint-disable-next-line no-unused-vars
 import deepmerge from 'deepmerge';
 import { isMergeableObject } from '../utils/is-mergeable-object';

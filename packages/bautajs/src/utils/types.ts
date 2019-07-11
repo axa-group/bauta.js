@@ -121,7 +121,7 @@ export type Resolver = (services: Services, utils: any) => void;
 export type Version = Dictionary<Operation>;
 
 // Operation
-export type ErrorHandler = ((err: Error, ctx: Context) => any);
+export type ErrorHandler = (err: Error, ctx: Context) => any;
 export interface Operation {
   private: boolean;
   schema: Document;

@@ -14,10 +14,9 @@
  */
 import { GotEmitter, GotOptions, GotPromise, Hooks } from 'got';
 import { MultipartBody, RequestPart } from 'multipart-request-builder';
-import { NativeHttpAgentOptions, NativeHttpsAgentOptions } from 'native-proxy-agent';
 import * as nodeStream from 'stream';
 import { Context } from '@bautajs/core';
-import { Dictionary, Omit } from '@bautajs/environment';
+import { Dictionary } from '@bautajs/environment';
 
 export enum ResponseType {
   JSON = 'json',
@@ -58,7 +57,6 @@ export interface RequestOptions extends GotOptions<string | null> {
   hooks?: Hooks<GotOptions<string | null>, object>;
   stream?: false;
   resolveBodyOnly?: true;
-  agentOptions?: NativeHttpAgentOptions | NativeHttpsAgentOptions;
 }
 export interface RequestParams extends RequestOptions {
   url?: string;

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test, jest, beforeEach */
 import path from 'path';
 import { BautaJS, Document } from '@bautajs/core';
 import { cache } from '../index';

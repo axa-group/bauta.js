@@ -165,7 +165,8 @@ export class BautaJSExpress extends BautaJS {
           if (responses[res.statusCode]) {
             const openAPIV3 = operation.schema as OpenAPIV3Document;
             const contentType = openAPIV3.openapi
-              ? Object.keys(responses[res.statusCode].content)[0]
+              ? responses[res.statusCode].content &&
+                Object.keys(responses[res.statusCode].content)[0]
               : produces[0];
             res.set({
               'Content-type': contentType,
@@ -237,9 +238,7 @@ export class BautaJSExpress extends BautaJS {
             };
           } else {
             this.moduleLogger.warn(
-              `[WARN] ${operation.serviceId}.${
-                operation.operationId
-              } operation definition not found`
+              `[WARN] ${operation.serviceId}.${operation.operationId} operation definition not found`
             );
           }
         });

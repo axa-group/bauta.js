@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test */
 import { sessionFactory } from '../session-factory';
 
 describe('Session factory tests', () => {

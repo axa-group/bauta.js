@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test  */
 import { ServiceBuilder } from '../core/service';
 import { logger } from '../index';
 import { OpenAPIV3Document } from '../utils/types';

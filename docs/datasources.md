@@ -396,13 +396,15 @@ To help on the transition from `request` to `got`, there are some alias and help
   }
 ```
 
-- Custom `Agent` allowing the following features:
+- How to customize your agent:
+  To customize your agent you can simply add the `agent` field. We recomend to use `createForeverAgent, createHttpForeverAgent and createHttpsForeverAgent` from [native-proxy-agent](https://github.axa.com/Digital/amf-commons-nodejs/tree/master/packages/native-proxy-agent) that give the following features:
     -   http_proxy and https_proxy environment variables
     -   Request using custom certificates throught 'agentOptions.cert' and 'agentOptions.key' native NODEJS fields
-    -   StricSSL enable throught 'agentOptions.rejectUnauthorized' field
-    -   keepAlive option throught 'agentOptions.keepAlive' and 'agentOptions.keepAliveMsec' fields
+    -   StricSSL enable throught 'rejectUnauthorized' field
+    -   keepAlive option by default and 'keepAliveMsec' fields
 ```js
 // my-datasource.js
+const { createHttpForeverAgent } =  require('native-proxy-agent');
 const { restDatasourceTemplate } =  require('@bautajs/datasource-rest');
 module.exports = restDatasourceTemplate({
   "services": {
@@ -411,12 +413,12 @@ module.exports = restDatasourceTemplate({
         {
           id: "operation1",
           options: {
-            url: "http://myhost.com",
-            agentOptions: {
+            url: 'http://myhost.com',
+            agent: createHttpForeverAgent({
               cert:'myCert',
               ket:'myKet',
               proxy: '192.120.3.4:80'
-            }
+            })
           }
         }
       ]
@@ -424,7 +426,7 @@ module.exports = restDatasourceTemplate({
   }
 }) 
 ```
-- To disable the proxy even using proxy env variables just set agent null on the request you need it
+- To disable the proxy even using proxy env variables just set agent null on the request you need it or create a new Agent without proxy
 ```js
 // my-datasource.js
 const { restDatasourceTemplate } =  require('@bautajs/datasource-rest');

@@ -14,9 +14,8 @@
  */
 import deepmerge from 'deepmerge';
 import { extend as gotExtend, Response } from 'got';
-import { Agent } from 'http';
 import { Multipart } from 'multipart-request-builder';
-import { createAgent } from 'native-proxy-agent';
+import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
 import PCancelable from 'p-cancelable';
 import stjs from 'stjs';
 import {
@@ -47,6 +46,9 @@ interface RequestLog {
   headers: string;
   body?: string;
 }
+
+const httpAgent = createHttpAgent();
+const httpsAgent = createHttpsAgent();
 
 function parseBody(responseType: ResponseType | undefined, body: any): string | Buffer | object {
   if (responseType === 'json') {
@@ -101,11 +103,8 @@ function requestHooks(log: Logger = new LoggerBuilder('')): any {
             }
           );
         }
-        log.info(
-          `response-logger: The request to ${response.requestUrl} took: ${
-            response.timings.phases.total
-          } ms`
-        );
+        const totalTime = response.timings.phases.total;
+        log.info(`response-logger: The request to ${response.requestUrl} took: ${totalTime} ms`);
       }
       log.events.emit(EventTypes.DATASOURCE_RESULT, response);
 
@@ -178,7 +177,7 @@ function compileDatasource<TIn>(
   context: Context,
   incomingOptions: RequestParams
 ): RestOperation {
-  const { agentOptions, url, ...options } = incomingOptions;
+  const { url, ...options } = incomingOptions;
   // Add request id
   if (options.headers) {
     options.headers['x-request-id'] = context.id;
@@ -189,13 +188,15 @@ function compileDatasource<TIn>(
   }
 
   const { responseType, ...gotOptions } = normalizeOptions(options);
+  if (url && gotOptions.agent === undefined) {
+    gotOptions.agent = url.indexOf('https:') === 0 ? httpsAgent : httpAgent;
+  }
+
   const gotInstace = gotExtend(gotOptions);
   const request: any = (localOptions: any = {}) => {
     if (typeof url !== 'string') {
       throw new Error(
-        `URL is a mandatory parameter for a datasource request on operation: ${
-          operationTemplate.id
-        }`
+        `URL is a mandatory parameter for a datasource request on operation: ${operationTemplate.id}`
       );
     }
     let updateOptions: NormalizedOptions = {};
@@ -203,28 +204,18 @@ function compileDatasource<TIn>(
       updateOptions = normalizeOptions(<Partial<RequestOptions>>localOptions);
     }
 
-    const agent: Agent = createAgent(url, {
-      ...agentOptions,
-      ...(localOptions.agentOptions ? localOptions.agentOptions : {})
-    });
     // add request id
     if (updateOptions.headers) {
       updateOptions.headers['x-request-id'] = context.id;
     }
 
     if (localOptions.stream === true) {
-      return gotInstace.stream(url, {
-        agent,
-        ...updateOptions
-      });
+      return gotInstace.stream(url, updateOptions);
     }
 
     if (localOptions.resolveBodyOnly === false) {
       return new PCancelable<Response<string | Buffer | object>>((resolve, reject, onCancel) => {
-        const promise = gotInstace(url, {
-          agent,
-          ...updateOptions
-        });
+        const promise = gotInstace(url, updateOptions);
 
         onCancel(() => promise.cancel());
 
@@ -237,10 +228,9 @@ function compileDatasource<TIn>(
       });
     }
 
-    return gotInstace(url, {
-      agent,
-      ...updateOptions
-    }).then(response => parseBody(updateOptions.responseType || responseType, response.body));
+    return gotInstace(url, updateOptions).then(response =>
+      parseBody(updateOptions.responseType || responseType, response.body)
+    );
   };
 
   return {

@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 // Generic
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export interface ICallback {
   (error?: Error | null, result?: any): void;
 }

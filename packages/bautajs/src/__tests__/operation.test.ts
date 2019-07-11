@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test, beforeEach, jest */
 import { OperationBuilder } from '../core/operation';
 import { logger } from '../index';
 import { OpenAPIV3Document, Operation } from '../utils/types';

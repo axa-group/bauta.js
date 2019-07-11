@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global expect, describe, test, jest */
 // eslint-disable-next-line no-unused-vars
 import fastSafeStringify from 'fast-safe-stringify';
 import glob from 'glob';
