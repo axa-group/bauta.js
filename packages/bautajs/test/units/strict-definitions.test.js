@@ -39,4 +39,13 @@ describe('Strict definition test', () => {
     const result = strictDefinitions(apiDefinitionWithNotUsedSchema);
     expect(result.definitions.notUsedSchema).toBeUndefined();
   });
+
+  test('should resolve reference for extra components references', () => {
+    const apiWithComponents = require('../fixtures/api-definition-with-components.json');
+
+    const result = strictDefinitions(apiWithComponents);
+
+    expect(result.components.responses['304'].description).toEqual('Not modified');
+    expect(result.components.schemas.Error.required).toEqual(["code", "message"]);
+  });
 });
