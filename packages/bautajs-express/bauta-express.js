@@ -248,13 +248,24 @@ class BautaJSExpress extends BautaJS {
       .forEach(this.addRoute.bind(this));
 
     if (explorer) {
-      this.apiDefinitions.forEach(apiDefinition =>
+      this.apiDefinitions.forEach(apiDefinition => {
+        const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
+        this.app.get(openAPIPath, (req, res) => {
+          res.json(apiDefinition);
+          res.end();
+        });
         this.app.use(
           `/${apiDefinition.info.version}/${explorer.path || 'explorer'}`,
           swaggerUi.serve,
-          swaggerUi.setup(apiDefinition, explorer)
-        )
-      );
+          swaggerUi.setup(null, {
+            ...explorer,
+            swaggerOptions: {
+              ...(explorer.swaggerOptions ? explorer.swaggerOptions : {}),
+              url: openAPIPath
+            }
+          })
+        );
+      });
     }
 
     return this;
