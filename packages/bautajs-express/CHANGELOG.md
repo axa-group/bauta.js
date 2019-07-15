@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.3](https://github.axa.com/Digital/bauta-nodejs/compare/v1.3.2...v1.3.3) (2019-07-15)
+
+
+### Bug Fixes
+
+* **bautajs:** take components parameter in account on filter schemas ([69038b3](https://github.axa.com/Digital/bauta-nodejs/commit/69038b3)), closes [#80](https://github.axa.com/Digital/bauta-nodejs/issues/80)
+
+
+
+
+
 ## [1.3.2](https://github.axa.com/Digital/bauta-nodejs/compare/v1.3.1...v1.3.2) (2019-07-10)
 
 
