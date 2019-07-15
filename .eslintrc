@@ -9,9 +9,7 @@
     "node": true
   },
   "rules": {
-    "import/no-extraneous-dependencies": {
-      "moduleDirectories": ["./"]
-    },
+    "import/no-extraneous-dependencies": "off",
     "prefer-spread": 0,
     "comma-dangle": ["error", "never"],
     "global-require": 0,

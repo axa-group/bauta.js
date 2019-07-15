@@ -55,9 +55,7 @@ module.exports = class Version {
 
     if (forbiddenNames.includes(id)) {
       throw new Error(
-        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', ${
-          this.versionId
-        } and operationIds`
+        `Can not create an operation with the reserved names, 'addOperation', 'addMiddleware', ${this.versionId} and operationIds`
       );
     }
 

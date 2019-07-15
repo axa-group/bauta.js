@@ -39,9 +39,12 @@ const scanProp = (obj, prop) => {
   return flatMap(props, p => scanProp(obj[p], prop));
 };
 
-const getRefTypes = obj => set(scanProp(obj, '$ref')
-  .filter(n => n.includes('schemas'))
-  .map(n => n.substr(n.lastIndexOf('/') + 1)));
+const getRefTypes = obj =>
+  set(
+    scanProp(obj, '$ref')
+      .filter(n => n.includes('schemas') || n.includes('definitions'))
+      .map(n => n.substr(n.lastIndexOf('/') + 1))
+  );
 
 const findSchemas = schemas => names =>
   names.reduce((acc, cur) => ({ ...acc, [cur]: schemas[cur] }), {});
@@ -51,7 +54,7 @@ function filterTags(tags, operations) {
   return tags.filter(t => usedTags.includes(t.name));
 }
 
-function filterSchemas(operations, {schemas, ...components}) {
+function filterSchemas(operations, { schemas, ...components }) {
   const find = findSchemas(schemas);
 
   let lastRefs = [];
@@ -62,7 +65,7 @@ function filterSchemas(operations, {schemas, ...components}) {
     const paramsRefs = getRefTypes(components[key]);
     refs = [...refs, ...paramsRefs];
   });
-  
+
   do {
     usedSchemas = find(refs);
     lastRefs = refs;
@@ -75,7 +78,7 @@ function filterSchemas(operations, {schemas, ...components}) {
 function filterComponents(components, operations) {
   return {
     ...components,
-    schemas: filterSchemas(operations,components)
+    schemas: filterSchemas(operations, components)
   };
 }
 
@@ -86,6 +89,12 @@ module.exports = function getStrictDefinition(definition) {
     ...definition,
     tags: definition.tags ? filterTags(definition.tags, operations) : null,
     components: definition.components ? filterComponents(definition.components, operations) : null,
-    definitions: definition.definitions ? filterSchemas(definition.definitions, operations) : null
+    definitions: definition.definitions
+      ? filterSchemas(operations, {
+          schemas: definition.definitions,
+          responses: definition.responses,
+          parameters: definition.parameters
+        })
+      : null
   };
 };

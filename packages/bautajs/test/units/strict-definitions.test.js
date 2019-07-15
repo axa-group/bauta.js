@@ -46,6 +46,6 @@ describe('Strict definition test', () => {
     const result = strictDefinitions(apiWithComponents);
 
     expect(result.components.responses['304'].description).toEqual('Not modified');
-    expect(result.components.schemas.Error.required).toEqual(["code", "message"]);
+    expect(result.components.schemas.Error.required).toEqual(['code', 'message']);
   });
 });

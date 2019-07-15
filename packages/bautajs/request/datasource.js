@@ -67,9 +67,7 @@ function requestHooks(log) {
           );
         }
         log.info(
-          `request-logger: The request to ${response.requestUrl} took: ${
-            response.timings.phases.total
-          } ms`
+          `request-logger: The request to ${response.requestUrl} took: ${response.timings.phases.total} ms`
         );
       }
       log.events.emit(log.eventTypes.DATASOURCE_RESPONSE, response);
