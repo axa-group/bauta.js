@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { resolve } from 'path';
 import { BautaJS, Document } from '../../index';
 import { parallel } from '../parallel';
 
@@ -21,12 +20,10 @@ const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 describe('Parallel decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[], {
-      dataSourcesPath: resolve(__dirname, './fixtures/test-datasource.js')
-    });
+    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
   test('Should execute the promises in parallel', async () => {
-    bautajs.services.testService.v1.operation1.setup(p => {
+    bautajs.operations.v1.operation1.setup(p => {
       p.push(
         parallel(
           () => Promise.resolve([{ id: 3, name: 'pet3' }]),
@@ -35,8 +32,9 @@ describe('Parallel decorator', () => {
       );
     });
 
-    expect(
-      await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} })
-    ).toEqual([[{ id: 3, name: 'pet3' }], [{ id: 1, name: 'pet' }]]);
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+      [{ id: 3, name: 'pet3' }],
+      [{ id: 1, name: 'pet' }]
+    ]);
   });
 });

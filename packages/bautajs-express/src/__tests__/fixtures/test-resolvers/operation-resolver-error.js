@@ -12,9 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const { resolver } = require('@bautajs/core');
 
-module.exports = services => {
-  services.testService.v1.operation1.setup(p =>
-    p.push(() => Promise.reject(new Error('some error')))
-  );
-};
+module.exports = resolver(operations => {
+  operations.v1.operation1.setup(p => p.push(() => Promise.reject(new Error('some error'))));
+});

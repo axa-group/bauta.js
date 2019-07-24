@@ -19,11 +19,15 @@ import {
   EventTypes,
   HandlerAccesor,
   Pipeline,
-  StepFn
+  StepFn,
+  ErrorHandler
 } from '../utils/types';
+import defaultResolver from '../utils/default-resolver';
 
 export class Accesor implements HandlerAccesor {
-  private accesor: StepFn<any, any> = () => undefined;
+  private accesor: StepFn<any, any> = defaultResolver;
+
+  private errorAccesor: ErrorHandler = (err: Error) => Promise.reject(err);
 
   get handler(): StepFn<any, any> {
     return this.accesor;
@@ -32,39 +36,59 @@ export class Accesor implements HandlerAccesor {
   set handler(fn: StepFn<any, any>) {
     this.accesor = fn;
   }
+
+  get errorHandler(): ErrorHandler {
+    return this.errorAccesor;
+  }
+
+  set errorHandler(fn: ErrorHandler) {
+    this.errorAccesor = fn;
+  }
 }
 
 export class PipelineBuilder<TIn> implements Pipeline<TIn> {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     public readonly accesor: HandlerAccesor,
-    private readonly serviceId: string,
-    private readonly version: string,
-    private readonly operationId: string // eslint-disable-next-line no-empty-function
+    private readonly operationId: string,
+    private readonly version: string // eslint-disable-next-line no-empty-function
   ) {}
+
+  onError(fn: ErrorHandler): void {
+    if (typeof fn !== 'function') {
+      throw new Error(`The errorHandler must be a function on ${this.version}.${this.operationId}`);
+    }
+
+    this.accesor.errorHandler = fn;
+  }
+
+  pushPipeline<TOut>(fn: (pipeline: Pipeline<TIn>) => void): Pipeline<TOut> {
+    if (typeof fn !== 'function') {
+      throw new Error(`The pipeline must be a function on ${this.version}.${this.operationId}`);
+    }
+
+    fn(new PipelineBuilder<TIn>(this.accesor, this.operationId, this.version));
+
+    return new PipelineBuilder<TOut>(this.accesor, this.operationId, this.version);
+  }
 
   push<TOut>(fn: StepFn<TIn, TOut>): Pipeline<TOut> {
     if (typeof fn !== 'function') {
-      throw new Error(
-        `An step can not be undefined on ${this.serviceId}.${this.version}.${this.operationId}`
-      );
+      throw new Error(`An step must be a function on ${this.version}.${this.operationId}`);
     }
 
     this.accesor.handler = this.merge<any, any>(this.accesor.handler, fn);
 
     logger.info(
-      `[OK] ${fn.name || 'anonymous function'} pushed to ${this.serviceId}.${this.version}.${
-        this.operationId
-      }`
+      `[OK] ${fn.name || 'anonymous function'} pushed to .${this.version}.${this.operationId}`
     );
     logger.events.emit(EventTypes.PUSH_STEP, {
       step: fn,
-      serviceId: this.serviceId,
       version: this.version,
       operationId: this.operationId
     });
 
-    return new PipelineBuilder<TOut>(this.accesor, this.serviceId, this.version, this.operationId);
+    return new PipelineBuilder<TOut>(this.accesor, this.operationId, this.version);
   }
 
   // eslint-disable-next-line class-methods-use-this

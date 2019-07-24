@@ -12,18 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import bodyParser from 'body-parser';
-import chalk from 'chalk';
 import compression from 'compression';
-import cors, { CorsOptions } from 'cors';
+import chalk from 'chalk';
 import express, { Application, Request, Response } from 'express';
-import helmet from 'helmet';
 import http from 'http';
 import https from 'https';
-import morgan from 'morgan';
-import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import routeOrder from 'route-order';
-import swaggerUiExpress from 'swagger-ui-express';
 import {
   BautaJS,
   BautaJSOptions,
@@ -33,86 +27,15 @@ import {
   ICallback,
   LoggerBuilder,
   OpenAPIV2Document,
-  OpenAPIV3Document,
-  Operation
+  OpenAPIV3Document
 } from '@bautajs/core';
+import { Route, MiddlewareOptions } from './types';
+import { initMorgan, initBodyParser, initHelmet, initCors, initExplorer } from './middlewares';
 
-export * from '@bautajs/core';
-
-swaggerUiExpress.setup();
-
-type SwaggerGenericOptions = string | false | null;
-interface SwaggerUiOptions {
-  [key: string]: any;
-}
-interface SwaggerOptions {
-  [key: string]: any;
-}
-
-export interface Route {
-  operation: Operation;
-  responses: OpenAPIV3.ResponsesObject | OpenAPIV2.ResponsesObject;
-  produces: OpenAPIV2.MimeTypes;
-}
-
-export interface MiddlewareOption<T> {
-  enabled: boolean;
-  options?: T;
-}
-
-export interface MiddlewareOptions {
-  cors?: MiddlewareOption<CorsOptions>;
-  bodyParser?: {
-    enabled: boolean;
-    options?: {
-      json?: bodyParser.OptionsJson;
-      urlEncoded?: bodyParser.OptionsUrlencoded;
-    };
-  };
-  helmet?: MiddlewareOption<helmet.IHelmetConfiguration>;
-  morgan?: {
-    enabled: boolean;
-    options?: {
-      format: morgan.FormatFn;
-      options?: morgan.Options;
-    };
-  };
-  explorer?: {
-    enabled: boolean;
-    options?: {
-      path?: string;
-      opts?: false | SwaggerUiOptions | null | undefined;
-      options?: SwaggerOptions | undefined;
-      customCss?: SwaggerGenericOptions;
-      customfavIcon?: SwaggerGenericOptions;
-      swaggerUrl?: SwaggerGenericOptions;
-      customeSiteTitle?: SwaggerGenericOptions;
-    };
-  };
-}
+export * from './types';
 
 function toExpressParams(part: string) {
   return part.replace(/\{([^}]+)}/g, ':$1');
-}
-
-function getSchemaData(schema: Document) {
-  const openAPIV3Def = schema as OpenAPIV3Document;
-  const openAPIV2Def = schema as OpenAPIV2Document;
-  const basePath: string | undefined =
-    openAPIV3Def.servers && openAPIV3Def.servers[0].url
-      ? openAPIV3Def.servers[0].url
-      : openAPIV2Def.basePath;
-
-  const swaggerPath = Object.keys(schema.paths)[0];
-  const expressRoute = swaggerPath
-    .substring(1)
-    .split('/')
-    .map(toExpressParams)
-    .join('/');
-
-  const method = Object.keys(schema.paths[swaggerPath])[0];
-  const { responses, produces } = schema.paths[swaggerPath][method];
-  return { expressRoute: basePath + expressRoute, method, responses, produces, swaggerPath };
 }
 
 /**
@@ -144,16 +67,18 @@ export class BautaJSExpress extends BautaJS {
   constructor(apiDefinitions: Document[], options: BautaJSOptions) {
     super(apiDefinitions, options);
     this.app = express();
-    this.moduleLogger = LoggerBuilder.create('bautajs-express');
+    this.moduleLogger = new LoggerBuilder('bautajs-express');
   }
 
   private addRoute(expressRoute: string) {
     Object.keys(this.routes[expressRoute]).forEach((method: string) => {
-      const { operation, responses, produces }: Route = this.routes[expressRoute][method];
+      const { operation, responses, produces, isSwagger }: Route = this.routes[expressRoute][
+        method
+      ];
       // @ts-ignore
       this.app[method](expressRoute, (req: Request, res: Response, next: ICallback) => {
         const startTime = new Date();
-        const resolverWraper = (response: any) => {
+        const resolverWrapper = (response: any) => {
           if (res.headersSent || res.finished) {
             return null;
           }
@@ -162,12 +87,11 @@ export class BautaJSExpress extends BautaJS {
             res.status(200);
           }
 
-          if (responses[res.statusCode]) {
-            const openAPIV3 = operation.schema as OpenAPIV3Document;
-            const contentType = openAPIV3.openapi
+          if (responses && responses[res.statusCode]) {
+            const contentType = !isSwagger
               ? responses[res.statusCode].content &&
                 Object.keys(responses[res.statusCode].content)[0]
-              : produces[0];
+              : produces && produces[0];
             res.set({
               'Content-type': contentType,
               ...responses[res.statusCode].headers
@@ -184,7 +108,15 @@ export class BautaJSExpress extends BautaJS {
           );
           return res.end();
         };
-        const rejectWraper = (response: any) => {
+        const rejectWrapper = (response: any) => {
+          if (res.headersSent || res.finished) {
+            this.moduleLogger.error(
+              'Response has been sent to the user, but the promise throwed an error',
+              response
+            );
+            return null;
+          }
+
           res.status(response.statusCode || 500);
           const finalTime = new Date().getTime() - startTime.getTime();
           this.moduleLogger.info(
@@ -196,18 +128,23 @@ export class BautaJSExpress extends BautaJS {
           return next(response);
         };
 
-        operation
-          .run({ req, res })
-          .then(resolverWraper)
-          .catch(rejectWraper);
+        const op = operation.run({ req, res });
+        req.on('abort', () => {
+          op.cancel('Request was aborted by the client intentionally');
+        });
+        req.on('timeout', () => {
+          op.cancel('Request was aborted by the client because of a timeout');
+        });
+
+        op.then(resolverWrapper).catch(rejectWrapper);
       });
 
       this.moduleLogger.info(
         '[OK]',
         chalk.yellowBright(
           `[${method.toUpperCase()}] ${expressRoute} operation exposed on the API from ${
-            operation.serviceId
-          }.${operation.schema.info.version}.${operation.operationId}`
+            operation.version
+          }.${operation.id}`
         )
       );
       this.moduleLogger.events.emit(EventTypes.EXPOSE_OPERATION, {
@@ -218,29 +155,32 @@ export class BautaJSExpress extends BautaJS {
   }
 
   private updateRoutes() {
-    Object.keys(this.services).forEach(serviceId => {
-      const service = this.services[serviceId];
-      Object.keys(service).forEach(versionId => {
-        const version = service[versionId];
-        Object.keys(version).forEach((operationId: string) => {
-          const operation = version[operationId];
-          if (Object.keys(operation.schema.paths).length > 0 && !operation.private) {
-            const { method, expressRoute, responses, produces } = getSchemaData(operation.schema);
+    this.apiDefinitions.forEach(apiDefinition => {
+      const openAPIV3Def = apiDefinition as OpenAPIV3Document;
+      const openAPIV2Def = apiDefinition as OpenAPIV2Document;
+      const basePath: string | undefined =
+        openAPIV3Def.servers && openAPIV3Def.servers[0].url
+          ? openAPIV3Def.servers[0].url
+          : openAPIV2Def.basePath;
 
-            if (!this.routes[expressRoute]) {
-              this.routes[expressRoute] = {};
-            }
+      Object.keys(apiDefinition.paths).forEach(path => {
+        const route = path
+          .substring(1)
+          .split('/')
+          .map(toExpressParams)
+          .join('/');
+        const expressRoute = basePath + route;
 
-            this.routes[expressRoute][method] = {
-              operation,
-              responses,
-              produces
-            };
-          } else {
-            this.moduleLogger.warn(
-              `[WARN] ${operation.serviceId}.${operation.operationId} operation definition not found`
-            );
-          }
+        this.routes[expressRoute] = {};
+
+        Object.keys(apiDefinition.paths[path]).forEach(method => {
+          const { operationId, responses, produces } = apiDefinition.paths[path][method];
+          this.routes[expressRoute][method] = {
+            operation: this.operations[apiDefinition.info.version][operationId],
+            responses,
+            produces,
+            isSwagger: !openAPIV3Def.openapi
+          };
         });
       });
     });
@@ -250,7 +190,7 @@ export class BautaJSExpress extends BautaJS {
 
   /**
    *
-   * Add the standard express middlewares and create the created services routes using the given OpenAPI definition.
+   * Add the standard express middlewares and expose the operations routes using the given OpenAPI definition.
    * @param {MiddlewareOptions} [options={
    *       cors: {
    *         enabled: true
@@ -290,55 +230,11 @@ export class BautaJSExpress extends BautaJS {
       }
     }
   ) {
-    if (
-      !options.morgan ||
-      (options.morgan && options.morgan.enabled === true && !options.morgan.options)
-    ) {
-      this.app.use(
-        morgan('tiny', {
-          immediate: true
-        })
-      );
-      this.app.use(
-        morgan('tiny', {
-          immediate: false
-        })
-      );
-    } else if (options.morgan && options.morgan.options) {
-      this.app.use(morgan(options.morgan.options.format, options.morgan.options.options));
-      this.app.use(
-        morgan('tiny', {
-          immediate: false
-        })
-      );
-    }
-
-    if (
-      !options.helmet ||
-      (options.helmet && options.helmet.enabled === true && !options.helmet.options)
-    ) {
-      this.app.use(helmet());
-    } else if (options.helmet && options.helmet.options) {
-      this.app.use(helmet(options.helmet.options));
-    }
-
-    if (!options.cors || (options.cors && options.cors.enabled === true && !options.cors.options)) {
-      this.app.use(cors());
-    } else if (options.cors && options.cors.options) {
-      this.app.use(cors(options.cors.options));
-    }
+    initMorgan(this.app, options.morgan);
+    initHelmet(this.app, options.helmet);
+    initCors(this.app, options.cors);
     this.app.use(compression());
-
-    if (
-      !options.bodyParser ||
-      (options.bodyParser && options.bodyParser.enabled === true && !options.bodyParser.options)
-    ) {
-      this.app.use(bodyParser.json({ limit: '50mb' }));
-      this.app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
-    } else if (options.bodyParser && options.bodyParser.options) {
-      this.app.use(bodyParser.json(options.bodyParser.options.json));
-      this.app.use(bodyParser.urlencoded(options.bodyParser.options.urlEncoded));
-    }
+    initBodyParser(this.app, options.bodyParser);
 
     this.updateRoutes();
 
@@ -346,26 +242,7 @@ export class BautaJSExpress extends BautaJS {
       .sort(routeOrder())
       .forEach(this.addRoute.bind(this));
 
-    if (
-      !options.explorer ||
-      (options.explorer && options.explorer.enabled === true && !options.explorer.options)
-    ) {
-      this.apiDefinitions.forEach(apiDefinition =>
-        this.app.use(
-          `/${apiDefinition.info.version}/explorer`,
-          swaggerUiExpress.serve,
-          swaggerUiExpress.setup(apiDefinition)
-        )
-      );
-    } else if (options.explorer && options.explorer.options) {
-      this.apiDefinitions.forEach(apiDefinition =>
-        this.app.use(
-          `/${apiDefinition.info.version}/${(options.explorer as any).options.path}`,
-          swaggerUiExpress.serve,
-          swaggerUiExpress.setup(apiDefinition, ...(options.explorer as any).options)
-        )
-      );
-    }
+    initExplorer(this.app, this.apiDefinitions, options.explorer);
 
     return this;
   }

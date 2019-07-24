@@ -27,7 +27,8 @@
  * limitations under the License.
  */
 import { EventEmitter } from 'events';
-import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import PCancelable from 'p-cancelable';
 import { Dictionary, TRequest, TResponse } from '@bautajs/environment';
 
 export * from '@bautajs/environment';
@@ -39,6 +40,27 @@ export interface OpenAPIV2Document extends OpenAPIV2.Document {
 export interface OpenAPIV3Document extends OpenAPIV3.Document {
   validateRequest?: boolean;
   validateResponse?: boolean;
+}
+export interface SwaggerComponents {
+  validateRequest?: boolean;
+  validateResponse?: boolean;
+  swaggerVersion: string;
+  apiVersion: string;
+  schemes?: string[];
+  consumes?: string[];
+  produces?: string[];
+  definitions?: OpenAPIV2.DefinitionsObject;
+  parameters?: OpenAPIV2.ParametersDefinitionsObject;
+  responses?: OpenAPIV2.ResponsesDefinitionsObject;
+  securityDefinitions?: OpenAPIV2.SecurityDefinitionsObject;
+  security?: OpenAPIV2.SecurityRequirementObject[];
+  externalDocs?: OpenAPIV2.ExternalDocumentationObject;
+}
+export interface OpenAPIComponents extends OpenAPIV3.ComponentsObject {
+  validateRequest?: boolean;
+  validateResponse?: boolean;
+  swaggerVersion: string;
+  apiVersion: string;
 }
 export type Document = OpenAPIV2Document | OpenAPIV3Document;
 export type PathsObject = OpenAPIV2.PathsObject | OpenAPIV3.PathsObject;
@@ -68,54 +90,54 @@ export enum EventTypes {
   DATASOURCE_RESULT = '4',
   EXPOSE_OPERATION = '5'
 }
+export type Log = (...args: any[]) => any;
 export interface Logger {
-  debug: debug.Debugger;
-  trace: debug.Debugger;
-  log: debug.Debugger;
-  info: debug.Debugger;
-  warn: debug.Debugger;
-  error: debug.Debugger;
+  debug: Log;
+  trace: Log;
+  log: Log;
+  info: Log;
+  warn: Log;
+  error: Log;
   events: EventEmitter;
+  create: (namespace: string) => ContextLogger;
 }
 
-export enum ResponseType {
-  JSON = 'json',
-  BUFFER = 'buffer',
-  TEXT = 'text'
-}
+export interface ContextLogger extends Omit<Logger, 'create'> {}
 
 // BautaJS
 export interface BautaJSOptions {
-  dataSourcesPath?: string | string[];
+  /**
+   *
+   * An array of resolvers to include into the bautajs core.
+   * @type {Resolver[]}
+   * @memberof BautaJSOptions
+   */
+  resolvers?: Resolver[];
+  /**
+   *
+   * A glob path where to find the resolvers files. Will be ignore in case that resolvers is defined
+   * @type {string | string[]}
+   * @memberof BautaJSOptions
+   */
   resolversPath?: string | string[];
   /**
    *
-   *  The dataSource static context that will be use to do a first parse to the dataSource on run time.
+   *  The static context that will be use to do a first parse to the dataSource on run time.
    * @type {any}
    * @memberof BautaJSOptions
    */
-  dataSourceStatic?: any;
-  /**
-   *
-   * Add service utils available on every resolver.
-   * @type {(services: Services) => any}
-   * @memberof BautaJSOptions
-   */
-  servicesWrapper?: (services: Services) => any;
+  staticConfig?: any;
 }
 export interface BautaJSInstance {
-  readonly services: Services;
+  readonly operations: Operations;
   readonly logger: Logger;
   readonly apiDefinitions: Document[];
+  readonly staticConfig: any;
 }
 
 // Service
-export type Services = Dictionary<Service>;
-export type Service = Dictionary<Version>;
-export interface ServiceTemplate<TIn> {
-  operations: OperationTemplate<TIn, any>[];
-}
-export type Resolver = (services: Services, utils: any) => void;
+export type Operations = Dictionary<Version>;
+export type Resolver = (operations: Operations) => void;
 
 // Version
 export type Version = Dictionary<Operation>;
@@ -123,36 +145,58 @@ export type Version = Dictionary<Operation>;
 // Operation
 export type ErrorHandler = (err: Error, ctx: Context) => any;
 export interface Operation {
-  private: boolean;
-  schema: Document;
-  nextVersionOperation: null | Operation;
-  readonly operationId: string;
-  readonly serviceId: string;
-  dataSourceBuilder: OperationDataSourceBuilder<any>;
-  setErrorHandler(errorHandler: (err: Error, ctx: Context) => any): Operation;
-  validateRequest(toggle: boolean): Operation;
-  validateResponse(toggle: boolean): Operation;
-  setup(fn: (pipeline: Pipeline<undefined>) => void): Operation;
-  run(ctx?: ContextData): Promise<any>;
+  readonly id: string;
+  readonly version: string;
+  readonly deprecated: boolean;
+  schema: OpenAPI.Operation;
+  nextVersionOperation?: Operation;
+  /**
+   * Set the operation as deprecated. If the operation is deprecated the link between
+   * the operations version will be broken, meaning that operations from new version won't
+   * inherit this operation pipeline.
+   * @returns {Operation}
+   * @memberof Operation
+   */
+  setAsDeprecated(): Operation;
+  /**
+   * Get true if the pipeline is already setup for this operation
+   * @memberof Operation
+   */
+  isSetup(): boolean;
+  validateRequests(toggle: boolean): Operation;
+  validateResponses(toggle: boolean): Operation;
+  /**
+   * Setup a new pipeline for the operation.
+   * Each time you setup a pipeline if there is already a pipeline setup it will be overrided.
+   * @param {(pipeline: Pipeline<undefined>) => void} fn
+   * @returns {Operation}
+   * @memberof Operation
+   */
+  setup(fn: (pipeline: Pipeline<undefined>) => void): void;
+  /**
+   * Run the operation pipeline chain with the given context
+   * @param {ContextData} [ctx]
+   * @returns {PCancelable<any>}
+   * @memberof Operation
+   */
+  run(ctx?: ContextData): PCancelable<any>;
+  /**
+   * Set the operation as private. This will means that this operation will be
+   * removed from the output swagger definition.
+   * An operation is private by default, the only way to set as public is to setup a pipeline.
+   * If you set as private an operation even though is setup, the operation will remain private.
+   * @memberof Operation
+   */
+  setAsPrivate(): Operation;
+  /**
+   * Return if the operation is private or not.
+   * @returns {boolean}
+   * @memberof Operation
+   */
+  isPrivate(): boolean;
 }
 export type ValidationReqBuilder = (req?: TRequest) => null;
 export type ValidationResBuilder = (res: TResponse, statusCode?: number) => null;
-export interface Metadata {
-  version: string;
-  serviceId: string;
-  operationId: string;
-}
-export interface OperationTemplate<TIn, TOut> {
-  id: string;
-  version?: string;
-  private?: boolean;
-  inherit?: boolean;
-  staticData?: any;
-  runner: Runner<TIn, TOut>;
-}
-export type OperationDataSourceBuilder<TIn> = {
-  template: OperationTemplate<TIn, any>;
-} & ((previousValue?: any) => any);
 
 export interface ContextData {
   req?: TRequest;
@@ -160,20 +204,11 @@ export interface ContextData {
   data?: Dictionary<any>;
 }
 export interface Context extends Session {
+  token: CancelableToken;
   req: TRequest;
   res: TResponse;
   validateRequest: ValidationReqBuilder;
   validateResponse: ValidationResBuilder;
-
-  /**
-   *
-   *  The dataSource object where your request data is.
-   * @type {OperationDataSourceBuilder}
-   * @memberof Context
-   */
-  dataSourceBuilder: OperationDataSourceBuilder<any>;
-  metadata: Metadata;
-
   /**
    *  A dictionary to add custom data to pass between steps
    * @type {Dictionary<any>}
@@ -185,7 +220,7 @@ export interface Context extends Session {
 export interface Session {
   id?: string;
   userId?: string;
-  logger: Logger;
+  logger: ContextLogger;
   url: string | undefined;
 }
 
@@ -195,22 +230,43 @@ export type StepFn<TIn, TOut> = (
   ctx: Context,
   bautajs: BautaJSInstance
 ) => TOut | Promise<TOut>;
+
 export interface Pipeline<TIn> {
+  /**
+   * Push an step function to the pipeline.
+   * @template TOut
+   * @param {StepFn<TIn, TOut>} fn
+   * @returns {Pipeline<TOut>}
+   * @memberof Pipeline
+   */
   push<TOut>(fn: StepFn<TIn, TOut>): Pipeline<TOut>;
+  /**
+   * Merge the given pipeline with the current pipeline.
+   * @template TOut
+   * @param {(pipeline: Pipeline<TIn>) => void} fn
+   * @returns {Pipeline<TOut>}
+   * @memberof Pipeline
+   */
+  pushPipeline<TOut>(fn: (pipeline: Pipeline<TIn>) => void): Pipeline<TOut>;
+  /**
+   * Set a behaviour in case that some of the pipeline steps throws an error or rejects a promise.
+   * @param {ErrorHandler} fn
+   * @memberof Pipeline
+   */
+  onError(fn: ErrorHandler): void;
 }
+
 export interface HandlerAccesor {
   handler: StepFn<any, any>;
+  errorHandler: ErrorHandler;
 }
 
-// DataSource
-export interface DataSourceTemplate<TIn> {
-  services: Dictionary<ServiceTemplate<TIn>>;
-}
+export type OnCancel = () => void;
 
-export type Runner<TIn, TOut> = (
-  value: TIn,
-  ctx: Context,
-  $static: any,
-  $env: Dictionary<any>,
-  bautajs: BautaJSInstance
-) => TOut;
+export interface CancelableToken {
+  isCanceled: boolean;
+
+  cancel(): void;
+
+  onCancel: (fn: OnCancel) => void;
+}

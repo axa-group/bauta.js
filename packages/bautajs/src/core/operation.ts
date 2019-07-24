@@ -15,70 +15,41 @@
 import OpenapiDefaultSetter from 'openapi-default-setter';
 import OpenapiRequestValidator from 'openapi-request-validator';
 import OpenapiResponseValidator from 'openapi-response-validator';
-import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-import { logger } from '../logger';
+import { OpenAPI } from 'openapi-types';
+import PCancelable from 'p-cancelable';
 import { sessionFactory } from '../session-factory';
-import { defaultResolver } from '../utils/default-resolver';
-import { getStrictDefinition } from '../utils/strict-definitions';
 import {
   BautaJSInstance,
   Context,
   ContextData,
-  Document,
-  ErrorHandler,
+  OpenAPIComponents,
   Operation,
-  OperationDataSourceBuilder,
-  OperationTemplate,
-  PathItemObject,
-  PathsObject,
-  Pipeline
+  Pipeline,
+  SwaggerComponents
 } from '../utils/types';
-import { buildDataSource } from './datasource';
 import { Accesor, PipelineBuilder } from './pipeline';
 import { ValidationError } from './validation-error';
-
-function filterPaths(id: string, apiDefinition: Document): Document {
-  const paths: PathsObject = {};
-
-  Object.keys(apiDefinition.paths).some((pathKey: string) =>
-    Object.keys(apiDefinition.paths[pathKey]).some((methodKey: string) => {
-      const pathItem: PathItemObject = apiDefinition.paths[pathKey] as PathItemObject;
-      const operationObject: OpenAPI.Operation = pathItem[
-        methodKey as keyof PathItemObject
-      ] as OpenAPI.Operation;
-
-      if (operationObject.operationId === id) {
-        paths[pathKey] = { [methodKey]: operationObject };
-        return true;
-      }
-
-      return false;
-    })
-  );
-
-  return { ...apiDefinition, paths };
-}
+import { CancelableTokenBuilder } from './cancelable-token';
 
 export class OperationBuilder implements Operation {
   public static create(
-    operationId: string,
-    dataSourceBuilder: OperationTemplate<any, any>,
-    apiDefinition: Document,
-    serviceId: string,
+    id: string,
+    operationSchema: OpenAPI.Operation,
+    components: SwaggerComponents | OpenAPIComponents,
     bautajs: BautaJSInstance
   ): Operation {
-    return new OperationBuilder(operationId, dataSourceBuilder, apiDefinition, serviceId, bautajs);
+    return new OperationBuilder(id, operationSchema, components, bautajs);
   }
 
-  public private: boolean = false;
+  public version: string;
 
-  public schema: Document;
+  public nextVersionOperation?: Operation;
 
-  public dataSourceBuilder: OperationDataSourceBuilder<any>;
+  public deprecated: boolean = false;
 
-  public nextVersionOperation: null | Operation = null;
+  private private?: boolean;
 
-  private errorHandler: ErrorHandler;
+  private setupDone: boolean = false;
 
   private readonly validation: any = {
     validateReqBuilder: null,
@@ -89,119 +60,111 @@ export class OperationBuilder implements Operation {
 
   private accesor = new Accesor();
 
-  private pipelineSetUp: boolean = false;
-
   constructor(
-    public readonly operationId: string,
-    operationDataSource: OperationTemplate<any, any>,
-    apiDefinition: Document,
-    public readonly serviceId: string,
-    private readonly bautjas: BautaJSInstance
+    public readonly id: string,
+    public readonly schema: OpenAPI.Operation,
+    components: SwaggerComponents | OpenAPIComponents,
+    private readonly bautajs: BautaJSInstance
   ) {
-    this.dataSourceBuilder = buildDataSource(operationDataSource, bautjas);
-    this.private = operationDataSource.private as boolean;
-    this.errorHandler = (err: Error) => Promise.reject(err);
-    this.schema = this.getSchema(apiDefinition);
+    this.deprecated = schema.deprecated === undefined ? false : schema.deprecated;
+    this.version = components.apiVersion;
+    this.generateValidators(schema, components);
   }
 
-  public setErrorHandler(errorHandler: ErrorHandler): Operation {
-    if (typeof errorHandler !== 'function') {
-      throw new Error(
-        `The errorHandler must be a function, instead an ${typeof errorHandler} was found`
-      );
-    }
+  public isSetup() {
+    return this.setupDone;
+  }
 
-    this.errorHandler = errorHandler;
-    // Propagate the error handler to the next versions
-    if (this.nextVersionOperation) {
-      this.nextVersionOperation.setErrorHandler(errorHandler);
-    }
+  public isPrivate() {
+    return this.private === true || this.private === undefined;
+  }
+
+  public setAsPrivate(): Operation {
+    this.private = true;
 
     return this;
   }
 
-  public validateRequest(toggle: boolean): Operation {
+  public setAsDeprecated(): Operation {
+    this.deprecated = true;
+
+    return this;
+  }
+
+  public validateRequests(toggle: boolean): Operation {
     if (this.validation) {
       this.validation.validateReqEnabled = toggle;
     }
     return this;
   }
 
-  public validateResponse(toggle: boolean): Operation {
+  public validateResponses(toggle: boolean): Operation {
     if (this.validation) {
       this.validation.validateResEnabled = toggle;
     }
     return this;
   }
 
-  private getSchema(apiDefinition: Document): Document {
-    const strictSchema = getStrictDefinition(filterPaths(this.operationId, apiDefinition));
-
-    if (Object.keys(strictSchema.paths).length === 0) {
-      logger.warn(`[Not] Path not found for operation "${this.operationId}"`);
+  private generateValidators(
+    operationSchema: any,
+    components: SwaggerComponents | OpenAPIComponents
+  ): void {
+    let schemas: any;
+    if (components.swaggerVersion === '2') {
+      schemas = (components as SwaggerComponents).definitions;
     } else {
-      const [endpointDefinition] = Object.values(Object.values(strictSchema.paths)[0]);
-      // Determine OpenAPI version
-      const openApiV3ApiDefinition = apiDefinition as OpenAPIV3.Document;
-      const opernApiV2ApiDefinition = apiDefinition as OpenAPIV2.Document;
+      // eslint-disable-next-line prefer-destructuring
+      schemas = (components as OpenAPIComponents).schemas;
+    }
+    const validateRequest = new OpenapiRequestValidator({
+      ...operationSchema,
+      schemas
+    });
+    const validateResponse = new OpenapiResponseValidator({
+      ...operationSchema,
+      components: { schemas },
+      definitions: schemas
+    });
 
-      const schemas =
-        !!openApiV3ApiDefinition.openapi && !!openApiV3ApiDefinition.components
-          ? openApiV3ApiDefinition.components.schemas
-          : opernApiV2ApiDefinition.definitions;
-
-      const validateRequest = new OpenapiRequestValidator({
-        ...endpointDefinition,
-        schemas
-      });
-      const validateResponse = new OpenapiResponseValidator({
-        ...endpointDefinition,
-        components: { schemas },
-        definitions: schemas
-      });
-
-      // BUG related to: https://github.com/kogosoftwarellc/open-api/issues/381
-      const defaultSetter = new OpenapiDefaultSetter({ parameters: [], ...endpointDefinition });
-      this.validation.validateReqBuilder = (req: any) => {
-        defaultSetter.handle(req);
-        if (!req.headers) {
-          // if is not a Nodejs request set the content-type to force validation
-          req.headers = { 'content-type': 'application/json' };
-        }
-
-        const verror = validateRequest.validate(req);
-        if (verror && verror.errors && verror.errors.length > 0) {
-          throw new ValidationError(
-            'The request was not valid',
-            verror.errors,
-            verror.status === 400 ? 422 : verror.status
-          );
-        }
-
-        return null;
-      };
-      this.validation.validateResBuilder = (res: any, statusCode: number = 200) => {
-        const verror = validateResponse.validateResponse(statusCode, res);
-
-        if (verror && verror.errors && verror.errors.length > 0) {
-          throw new ValidationError(verror.message, verror.errors, 500, res);
-        }
-
-        return null;
-      };
-      if (apiDefinition.validateRequest === undefined || apiDefinition.validateRequest === true) {
-        this.validateRequest(true);
+    // BUG related to: https://github.com/kogosoftwarellc/open-api/issues/381
+    const defaultSetter = new OpenapiDefaultSetter({ parameters: [], ...operationSchema });
+    this.validation.validateReqBuilder = (req: any) => {
+      defaultSetter.handle(req);
+      if (!req.headers) {
+        // if is not a Nodejs request set the content-type to force validation
+        req.headers = { 'content-type': 'application/json' };
       }
 
-      if (apiDefinition.validateResponse === undefined || apiDefinition.validateResponse === true) {
-        this.validateResponse(true);
+      const verror = validateRequest.validate(req);
+      if (verror && verror.errors && verror.errors.length > 0) {
+        throw new ValidationError(
+          'The request was not valid',
+          verror.errors,
+          verror.status === 400 ? 422 : verror.status
+        );
       }
+
+      return null;
+    };
+    this.validation.validateResBuilder = (res: any, statusCode: number = 200) => {
+      const verror = validateResponse.validateResponse(statusCode, res);
+
+      if (verror && verror.errors && verror.errors.length > 0) {
+        throw new ValidationError(verror.message, verror.errors, 500, res);
+      }
+
+      return null;
+    };
+    if (components.validateRequest === undefined || components.validateRequest === true) {
+      this.validateRequests(true);
     }
 
-    return strictSchema;
+    if (components.validateResponse === undefined || components.validateResponse === true) {
+      this.validateResponses(true);
+    }
   }
 
-  public run(ctx: ContextData = {}): Promise<any> {
+  public run(ctx: ContextData = {}): PCancelable<any> {
     if (!ctx.req) {
       ctx.req = {};
     }
@@ -210,21 +173,18 @@ export class OperationBuilder implements Operation {
       ctx.res = {};
     }
 
-    const context: Context = {
-      data: ctx.data || {},
-      // @ts-ignore
-      req: ctx.req,
-      res: ctx.res,
-      dataSourceBuilder: this.dataSourceBuilder,
-      metadata: {
-        operationId: this.operationId,
-        serviceId: this.serviceId,
-        version: this.schema.info.version
+    const token = new CancelableTokenBuilder();
+    const context: Context = Object.assign(
+      {
+        validateResponse: () => null,
+        validateRequest: () => null,
+        data: ctx.data || {},
+        req: ctx.req,
+        res: ctx.res,
+        token
       },
-      ...sessionFactory(ctx.req),
-      validateRequest: (request: any = ctx.req) => request,
-      validateResponse: (response: any) => response
-    };
+      sessionFactory(ctx.req)
+    );
 
     if (this.validation.validateReqBuilder) {
       Object.assign(context, {
@@ -243,49 +203,53 @@ export class OperationBuilder implements Operation {
     if (context.validateRequest && this.validation.validateReqEnabled === true) {
       context.validateRequest(ctx.req);
     }
-    let result = this.pipelineSetUp
-      ? this.accesor.handler(undefined, context, this.bautjas)
-      : defaultResolver(undefined, context);
+
+    let result = this.accesor.handler(undefined, context, this.bautajs);
 
     if (!(result instanceof Promise)) {
       result = Promise.resolve(result);
     }
 
-    return result
+    const promise = result
       .then((finalResult: any) => {
         if (this.validation.validateResEnabled === true && context.validateResponse) {
-          // @ts-ignore
-          const { statusCode } = context.res as any;
           context.validateResponse(
             finalResult,
-            statusCode !== null && statusCode !== undefined && Number.isInteger(statusCode)
-              ? statusCode
+            context.res.statusCode !== null &&
+              context.res.statusCode !== undefined &&
+              Number.isInteger(context.res.statusCode)
+              ? context.res.statusCode
               : undefined
           );
         }
 
         return finalResult;
       })
-      .catch((e: Error) => this.errorHandler(e, context));
+      .catch((e: Error) => this.accesor.errorHandler(e, context));
+
+    return PCancelable.fn((_: any, onCancel: PCancelable.OnCancelFunction) => {
+      onCancel(() => {
+        context.token.isCanceled = true;
+        context.token.cancel();
+      });
+      return promise;
+    })(null);
   }
 
-  public setup(fn: (pipeline: Pipeline<undefined>) => void): Operation {
-    fn(
-      new PipelineBuilder<undefined>(
-        this.accesor,
-        this.serviceId,
-        this.schema.info.version,
-        this.operationId
-      )
-    );
+  public setup(fn: (pipeline: Pipeline<undefined>) => void): void {
+    // Reset handler
+    this.accesor.handler = () => {};
 
-    if (this.nextVersionOperation) {
+    fn(new PipelineBuilder<undefined>(this.accesor, this.id, this.version));
+
+    if (!this.deprecated && this.nextVersionOperation && !this.nextVersionOperation.isSetup()) {
       this.nextVersionOperation.setup(fn);
     }
 
-    this.pipelineSetUp = true;
-
-    return this;
+    this.setupDone = true;
+    if (this.private === undefined) {
+      this.private = false;
+    }
   }
 }
 

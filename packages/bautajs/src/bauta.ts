@@ -12,27 +12,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ajv from 'ajv';
-import deepmerge from 'deepmerge';
 import glob from 'glob';
 import OpenapiSchemaValidator, { OpenAPISchemaValidatorResult } from 'openapi-schema-validator';
-import { IJsonSchema, OpenAPIV3 } from 'openapi-types';
-import path from 'path';
-import { ServiceBuilder } from './core/service';
+import { IJsonSchema, OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import { resolve } from 'path';
+import { Dictionary } from '@bautajs/environment';
+import { OperationBuilder } from './core/operation';
 import { logger } from './logger';
-import { isMergeableObject } from './utils/is-mergeable-object';
+import { getComponents, getStrictDefinition } from './utils/strict-definitions';
 import {
   BautaJSInstance,
   BautaJSOptions,
-  DataSourceTemplate,
   Document,
+  EventTypes,
   Logger,
-  Services
+  Operation,
+  Operations
 } from './utils/types';
-import { validate } from './validators/validate';
 
-const datasourceSchemaJson = require('./validators/datasource-schema.json');
 const extendOpenapiSchemaJson = require('./validators/extend-openapi-schema.json');
+
+interface SchemaCache {
+  path: string;
+  method: string;
+  apiDefinitionIndex: number;
+  operation: Operation;
+}
 
 function setDefinitionDefaults(apiDefinition: Document): Document {
   return {
@@ -40,6 +45,31 @@ function setDefinitionDefaults(apiDefinition: Document): Document {
     validateRequest: apiDefinition.validateRequest !== false,
     validateResponse: apiDefinition.validateResponse !== false
   };
+}
+
+function parseApiDefinition(apiDefinition: Document) {
+  const newApiDefinition = setDefinitionDefaults(apiDefinition);
+  const apiDefinitionValidator = new OpenapiSchemaValidator({
+    extensions: extendOpenapiSchemaJson as IJsonSchema,
+    version: (apiDefinition as OpenAPIV3.Document).openapi ? 3 : 2
+  });
+
+  const validation = apiDefinitionValidator.validate(apiDefinition);
+  if (validation.errors.length > 0) {
+    throw new Error(
+      `Invalid API definitions, "${
+        (validation as OpenAPISchemaValidatorResult).errors[0].dataPath
+      }" ${(validation as OpenAPISchemaValidatorResult).errors[0].message}`
+    );
+  }
+
+  const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
+  Object.keys(newApiDefinition.paths).forEach(path => {
+    paths[path] = { ...newApiDefinition.paths[path] };
+  });
+  newApiDefinition.paths = paths;
+
+  return newApiDefinition;
 }
 
 /**
@@ -57,28 +87,27 @@ function setDefinitionDefaults(apiDefinition: Document): Document {
  * };
  *
  * const bautaJS = new BautaJS(apiDefinitions, {
- *  // Load all the files with datasource in the file name
- *  dataSourcesPath: './services/*-datasource.?(js|json)',
- *  resolversPath:  './services/*-resolver.js',
+ *  resolversPath:  './resolvers/*-resolver.js',
  *  dataSourceStatic: static,
- *  servicesWrapper: (services) => {
- *    return {
- *      wrappedService: (_, ctx) => {
- *        return services.service.v1.operation.run(ctx);
- *      }
- *    }
- *  }
  * });
  *
- * // Assuming we have a dataSource for cats, once bautajs is initialized, you can execute the operation with the following code:
- * await bautaJS.services.cats.v1.find.run({});
+ * // Assuming we have an api definition with version equals to 'v1' and have an operationId called 'find' we can run the following code:
+ * await bautaJS.operations.v1.find.run({});
  */
 export class BautaJS implements BautaJSInstance {
+  private schemaCache: SchemaCache[] = [];
+
   /**
-   * @type {Services}
+   * @type {Operations}
    * @memberof BautaJS
    */
-  public readonly services: Services = {};
+  public readonly operations: Operations = {};
+
+  /**
+   * @type {any}
+   * @memberof BautaJS
+   */
+  public readonly staticConfig: any;
 
   /**
    * A debug instance logger
@@ -95,104 +124,131 @@ export class BautaJS implements BautaJSInstance {
   public readonly apiDefinitions: Document[];
 
   constructor(apiDefinitions: Document[], options: BautaJSOptions = {}) {
-    const defaultApiDefinitions = apiDefinitions.map((apiDefinition: Document) => {
-      // eslint-disable-next-line no-param-reassign
-      apiDefinition = setDefinitionDefaults(apiDefinition);
-      const apiDefinitionValidator = new OpenapiSchemaValidator({
-        extensions: extendOpenapiSchemaJson as IJsonSchema,
-        version: (apiDefinition as OpenAPIV3.Document).openapi ? 3 : 2
-      });
+    const parsedApiDefinitions = apiDefinitions.map(parseApiDefinition);
 
-      const validation = apiDefinitionValidator.validate(apiDefinition);
-      if (validation.errors.length > 0) {
-        throw new Error(
-          `Invalid API definitions, "${
-            (validation as OpenAPISchemaValidatorResult).errors[0].dataPath
-          }" ${(validation as OpenAPISchemaValidatorResult).errors[0].message}`
-        );
-      }
-
-      return apiDefinition;
-    });
-
-    const dataSourcesTemplates: DataSourceTemplate<any>[] = BautaJS.requireAll(
-      options.dataSourcesPath || './server/services/**/*datasource.js',
-      true
-    ) as DataSourceTemplate<any>[];
-
-    const dataSource: DataSourceTemplate<any> = deepmerge.all(dataSourcesTemplates, {
-      isMergeableObject
-    }) as DataSourceTemplate<any>;
-
-    const error: ajv.ErrorObject[] | null | undefined = validate(dataSource, datasourceSchemaJson);
-    if (error) {
-      throw new Error(
-        `Invalid or not found dataSources, "${error[0].dataPath}" ${error[0].message}`
-      );
-    }
-
-    /**
-     * @memberof BautaJS#
-     * @property {Object.<string, Service>} services - A services dictionary containing all the created services
-     */
-    this.services = this.registerServices(
-      defaultApiDefinitions,
-      dataSource,
-      options.dataSourceStatic
-    );
+    this.staticConfig = options.staticConfig;
     /**
      * @memberof BautaJS#
      * @property {Logger} logger - A [debug]{@link https://www.npmjs.com/package/debug} logger instance
      */
     this.logger = logger;
-
-    // Register the global utils
-    const utils: any =
-      typeof options.servicesWrapper === 'function' ? options.servicesWrapper(this.services) : null;
+    this.operations = this.registerOperations(parsedApiDefinitions);
 
     // Load custom resolvers and operations modifiers
-    BautaJS.requireAll<[Services, any]>(
-      options.resolversPath || './server/services/**/*resolver.js',
-      true,
-      [this.services, utils]
-    );
+    if (options.resolvers) {
+      options.resolvers.forEach(resolver => {
+        resolver(this.operations);
+      });
+    } else {
+      BautaJS.requireAll<[Operations]>(
+        options.resolversPath || './server/resolvers/**/*resolver.js',
+        true,
+        [this.operations]
+      );
+    }
 
-    // Once all api definitions are filtered from the operations merge it all again
-    this.apiDefinitions = this.mergeApiDefinitions();
+    // Filter api definitions
+    this.apiDefinitions = this.filterApiDefinitions(parsedApiDefinitions);
+    // Clean the cache
+    this.schemaCache = [];
   }
 
-  private mergeApiDefinitions() {
-    return Object.values(this.services).map(version => {
-      const definitionsPices: Document[] = [];
-      Object.values(version).forEach(operations => {
-        Object.values(operations).forEach(operation => {
-          definitionsPices.push(operation.schema);
+  private filterApiDefinitions(defaultApiDefinitions: Document[]) {
+    // No need to copy definitions, already done on setDefinitionDefaults
+    this.schemaCache.forEach(({ path, method, operation, apiDefinitionIndex }) => {
+      if (operation.isPrivate()) {
+        // eslint-disable-next-line
+        delete defaultApiDefinitions[apiDefinitionIndex].paths[path][method];
+        if (Object.keys(defaultApiDefinitions[apiDefinitionIndex].paths[path]).length === 0) {
+          // eslint-disable-next-line
+          delete defaultApiDefinitions[apiDefinitionIndex].paths[path];
+        }
+      }
+    });
+
+    return defaultApiDefinitions.map(ap => getStrictDefinition(ap));
+  }
+
+  private registerOperations(apiDefinitions: Document[]): Operations {
+    const operations: Operations = new Proxy(
+      {},
+      {
+        get(target: Dictionary<any>, prop: string) {
+          if (!Object.prototype.hasOwnProperty.call(target, prop)) {
+            throw new Error(
+              `[ERROR] API version "${prop}" not found on your apiDefinitions.info.version`
+            );
+          }
+
+          return target[prop];
+        }
+      }
+    );
+    apiDefinitions.forEach((apiDefinition, apiIndex) => {
+      const apiVersion = apiDefinition.info.version;
+      const components = getComponents(apiDefinition);
+      let prevApiVersion: string;
+      if (apiIndex > 0) {
+        prevApiVersion = apiDefinitions[apiIndex - 1].info.version;
+      }
+      operations[apiVersion] = new Proxy(
+        {},
+        {
+          get(target: Dictionary<any>, prop: string) {
+            if (!Object.prototype.hasOwnProperty.call(target, prop)) {
+              throw new Error(
+                `[ERROR] API operationId "${prop}" not found on your apiDefinitions[${apiVersion}].paths[path][method].operationId`
+              );
+            }
+
+            return target[prop];
+          }
+        }
+      );
+
+      const paths = Object.values(apiDefinition.paths);
+      paths.forEach((pathSchema, pathIndex) => {
+        const methods: OpenAPI.Operation[] = Object.values(pathSchema);
+        methods.forEach((operationSchema: OpenAPI.Operation, methodIndex: number) => {
+          if (!operationSchema.operationId) {
+            throw new Error(
+              `Operation id is a mandatory field on [${methods[methodIndex]}] ${paths[pathIndex]}`
+            );
+          }
+
+          const operation = OperationBuilder.create(
+            operationSchema.operationId,
+            operationSchema,
+            components,
+            this
+          );
+
+          this.schemaCache.push({
+            path: Object.keys(apiDefinition.paths)[pathIndex],
+            method: Object.keys(pathSchema)[methodIndex],
+            apiDefinitionIndex: apiIndex,
+            operation
+          });
+
+          if (
+            prevApiVersion &&
+            operations[prevApiVersion][operation.id] &&
+            !operations[prevApiVersion][operation.id].deprecated
+          ) {
+            operations[prevApiVersion][operation.id].nextVersionOperation = operation;
+          }
+
+          operations[apiVersion][operation.id] = operation;
+
+          this.logger.info(`[OK] ${apiVersion}.${operation.id} operation registered on bautajs`);
+          this.logger.events.emit(EventTypes.REGISTER_SERVICE, {
+            apiVersion,
+            operation
+          });
         });
       });
-
-      return deepmerge.all(definitionsPices) as Document;
     });
-  }
-
-  private registerServices(
-    apiDefinitions: Document[],
-    dataSources: DataSourceTemplate<any>,
-    dataSourceStatic: any
-  ): Services {
-    const services: Services = {};
-    const dataSourceServices = Object.keys(dataSources.services);
-    dataSourceServices.forEach(serviceId => {
-      const serviceTemplate = dataSources.services[serviceId];
-      services[serviceId] = ServiceBuilder.create(
-        serviceId,
-        serviceTemplate,
-        apiDefinitions,
-        dataSourceStatic,
-        this
-      );
-    });
-
-    return services;
+    return operations;
   }
 
   /**
@@ -214,7 +270,7 @@ export class BautaJS implements BautaJSInstance {
       const result: any = [];
       glob.sync(folderPath, { strict: true }).forEach((file: string) => {
         // eslint-disable-next-line global-require, import/no-dynamic-require
-        let data = require(path.resolve(file));
+        let data = require(resolve(file));
         if (data.default) {
           data = data.default;
         }

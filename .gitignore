@@ -28,6 +28,7 @@ package-lock.json
 */**/package-lock.json
 # Ignore the compiled output.
 dist/
+coverage/
 
 # TypeScript incremental compilation cache
 *.tsbuildinfo

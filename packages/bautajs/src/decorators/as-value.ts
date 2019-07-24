@@ -25,7 +25,7 @@ import { StepFn } from '../utils/types';
  * @example
  * const { asValue } = require('@batuajs/decorators');
  *
- * services.v1.test.op1.setup(p => p.push(asValue(5)))
+ * operations.v1.op1.setup(p => p.push(asValue(5)))
  */
 export function asValue<TIn, TOut>(someValue: TOut): StepFn<TIn, TOut> {
   return (): TOut => someValue;

@@ -19,7 +19,8 @@
   "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/datasource-rest": "2.0.0-alpha.10",
-    "@bautajs/express": "2.0.0-alpha.10"
+    "@bautajs/core": "^2.0.0-alpha.10",
+    "@bautajs/datasource-rest": "^2.0.0-alpha.10",
+    "@bautajs/express": "^2.0.0-alpha.10"
   }
 }

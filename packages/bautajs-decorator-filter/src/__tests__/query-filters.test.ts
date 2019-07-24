@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import path from 'path';
 import { BautaJS, Document } from '@bautajs/core';
 import { queryFilters } from '../index';
 
@@ -21,20 +20,18 @@ const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 describe('Query filter decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[], {
-      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js')
-    });
+    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
   test('Should filter the given array with the given loobpack filters', async () => {
-    bautajs.services.testService.v1.operation1.validateResponse(false).setup(p => {
+    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push((_, ctx) => [{ id: ctx.req.id, name: 'pet' }, { id: ctx.req.id, name: 'pet2' }]).push(
         queryFilters()
       );
     });
 
     expect(
-      await bautajs.services.testService.v1.operation1.run({
+      await bautajs.operations.v1.operation1.run({
         req: {
           id: 1,
           query: {

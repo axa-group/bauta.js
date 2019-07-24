@@ -18,10 +18,6 @@ Some of the features of this library are:
 - Build in swagger explorer
 - Request like features such multipart request, proxy support... and much more.
 
-## Why use this
-
-Because is easy to learn, tested, it's not a framework, it's light and fast and it comes with a lot of cool features.
-
 ## Getting started
 
 To get started with BautaJS:
@@ -35,131 +31,8 @@ There are two ways to install @bautajs:
 
 ## Usage
 
-To use bautaJS with the default configuration we will need to create the following folder structure:
-
--   server
-    -   services
-        -   v1
-            -   cats
-                -   cats-datasource.js
-                -   cats-resolver.js
-    -   server.js
-    -   api-definitions.json
-
-For this example we will use `@bautajs/datasource-rest` for do http requests
-```js
-// cats-datasource.js
-const { restDataSource } = require('@bautajs/datasource-rest');
-
-module.exports = restDataSource({
-  "services": {
-    "cats": {
-      "operations": [
-        {
-          "id": "find",
-          options(previousValue, ctx, $static, $env): {
-            return {
-              method: 'GET',
-              url: `${$static.config.endpoint}/getsomecat`
-            }
-          }
-        }
-      ]
-    }
-  }
-})
-```
-
-// cats-resolver.js
-
-```js
-  const { compileDataSource } = require('@bautajs/datasource-rest');
-  const { resolver } = require('@bautajs/express');
-
-  module.exports = resolver(services => {
-    services.cats.v1.find
-      .setup(p => 
-        p.push(compileDataSource((previousValue, ctx, dataSource) => {
-          ctx.logger.info('Fetching some cats');
-
-          return dataSource.request();
-        }))
-      )
-  });
-```
-
-// api-definitions.json
-
-```json
-  [
-    {
-      "openapi": "3.0",
-      "apiVersion": "1.0",
-      "swaggerVersion": "1.0",
-      "info": {
-        "description": "API for cool cats",
-        "version": "v1",
-        "title": "My API"
-      },
-      "servers": [{
-        "url":"/v1/api/"
-      }],
-      "paths": {
-        "/cats": {
-          "get": {
-            "tags": ["cats"],
-            "summary": "Get the list of cats",
-            "operationId": "find",
-            "produces": ["application/json"],
-            "responses": {
-              "200": {
-                "description": "successful operation",
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "Object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  ]
-```
-
-// server.js
-
-```js
-    const { BautaJSExpress } = require('@bautajs/express');
-    const apiDefinitions = require('./api-definitions.json');
-
-    const bautaJS = new BautaJSExpress(apiDefinitions, {
-      dataSourceStatic: {
-        config: {
-          endpoint:'http://coolcats.com'
-        }
-      }
-    });
-
-    await bautaJS.services.cats.v1.find.run({});
-```
-
-This will produce a request to `coolcats.com` with the result:
-
-```json
-  [
-    {
-      "name": "cat1"
-    }
-  ]
-```
+See [Example of a project from scratch](./docs/hello-world.md).
+See more complex example at [bautajs-example](./packages/bautajs-example)
 
 ## Packages
 
@@ -171,13 +44,13 @@ This will produce a request to `coolcats.com` with the result:
 - [BautaJS Rest Datasource](./packages/bautajs-datasource-rest)
 - [BautaJS environment](./packages/bautajs-environment)
 
-## Documentation
+## Features
 
 - [API Definition](./docs/api-definition.md)
 - [API Versioning](./docs/api-versioning.md)
 - [Datasources](./docs/datasources.md)
 - [Debug](./docs/debug.md)
-- [Functional Programing](./docs/functional-programing.md)
+- [Request cancelation](./docs/request-cancelation.md)
 - [Steps and Resolvers](./docs/step-and-resolver.md)
 - [Validation](./docs/validation.md)
 

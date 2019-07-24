@@ -12,27 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { resolve } from 'path';
-import { BautaJS, Document } from '../../index';
-import { asCallback } from '../as-callback';
+import { BautaJS, Document, Pipeline } from '../../index';
+import { asPromise } from '../as-promise';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
 describe('Callback decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[], {
-      dataSourcesPath: resolve(__dirname, './fixtures/test-datasource.js')
-    });
+    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
   test('Should execute as a callaback', async () => {
-    bautajs.services.testService.v1.operation1.setup(p => {
-      p.push(asCallback((_, ctx, _bautajs, done) => done(null, [{ id: ctx.req.id, name: 'pet' }])));
+    bautajs.operations.v1.operation1.setup((p: Pipeline<any>) => {
+      p.push(
+        asPromise((_: any, ctx: any, _bautajs: any, done: any) =>
+          done(null, [{ id: ctx.req.id, name: 'pet' }])
+        )
+      );
     });
 
-    expect(
-      await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} })
-    ).toEqual([{ id: 1, name: 'pet' }]);
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+      { id: 1, name: 'pet' }
+    ]);
   });
 });

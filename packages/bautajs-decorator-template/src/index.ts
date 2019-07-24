@@ -35,7 +35,7 @@ import { Context, StepFn } from '@bautajs/core';
  *    "myEnv": "{{env.myEnv}}"
  * }
  *
- * services.v1.test.op1.push(template(myTemplate));
+ * operations.v1.op1.push(template(myTemplate));
  */
 export function template<TIn, TOut>(currentTemplate: TOut): StepFn<TIn, TOut> {
   return (value: TIn, ctx: Context): TOut =>

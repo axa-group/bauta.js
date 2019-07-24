@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import path from 'path';
 import { BautaJS, Document } from '@bautajs/core';
 import { cache } from '../index';
 
@@ -23,14 +22,12 @@ describe('Cache push', () => {
   beforeEach(() => {
     jest.useFakeTimers();
 
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[], {
-      dataSourcesPath: path.resolve(__dirname, './fixtures/test-datasource.js')
-    });
+    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
   test('Should cache the requests with the same id', async () => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
-    bautajs.services.testService.v1.operation1.setup(pipeline =>
+    bautajs.operations.v1.operation1.setup(pipeline =>
       pipeline.push(
         cache(
           p =>
@@ -43,15 +40,15 @@ describe('Cache push', () => {
       )
     );
 
-    await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} });
-    await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} });
+    await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
+    await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
 
     expect(fn.mock.calls.length).toBe(1);
   });
 
   test('Should allow memoizee options', async () => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
-    bautajs.services.testService.v1.operation1.setup(pipeline =>
+    bautajs.operations.v1.operation1.setup(pipeline =>
       pipeline.push(
         cache(
           p =>
@@ -67,16 +64,16 @@ describe('Cache push', () => {
       )
     );
     jest.runAllTimers();
-    await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} });
+    await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
     jest.runAllTimers();
-    await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} });
+    await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
     jest.runAllTimers();
     expect(fn.mock.calls.length).toBe(2);
   });
 
   test('Should throw an error if normalizer function is not specified', async () => {
     expect(() =>
-      bautajs.services.testService.v1.operation1.setup(pipeline =>
+      bautajs.operations.v1.operation1.setup(pipeline =>
         pipeline.push(
           // @ts-ignore
           cache(p => p.push((value: any, ctx: any) => ctx.dataSource(value).request()))

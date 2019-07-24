@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 import nock from 'nock';
-import { resolve } from 'path';
 import { BautaJS, Document } from '@bautajs/core/src';
-import { request } from '../decorators/request';
+import testDatasource from './fixtures/test-datasource';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
@@ -27,9 +26,7 @@ describe('Request decorator', () => {
       .get('/')
       .reply(200, [{ id: 3, name: 'pet3' }]);
 
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[], {
-      dataSourcesPath: resolve(__dirname, './fixtures/test-datasource.js')
-    });
+    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
   afterEach(() => {
@@ -37,21 +34,21 @@ describe('Request decorator', () => {
   });
 
   test('Should do a request', async () => {
-    bautajs.services.testService.v1.operation1.validateResponse(false).setup(p => {
-      p.push(request());
+    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
+      p.push(testDatasource.operation1());
     });
 
-    expect(
-      await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} })
-    ).toEqual([{ id: 3, name: 'pet3' }]);
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+      { id: 3, name: 'pet3' }
+    ]);
   });
 
   test('Should do a request and get the full response if resolveBodyOnly is false', async () => {
-    bautajs.services.testService.v1.operation1.validateResponse(false).setup(p => {
-      p.push(request({ resolveBodyOnly: false }));
+    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
+      p.push(testDatasource.operation1({ resolveBodyOnly: false }));
     });
 
-    const response = await bautajs.services.testService.v1.operation1.run({
+    const response = await bautajs.operations.v1.operation1.run({
       req: { id: 1 },
       res: {}
     });

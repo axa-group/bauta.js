@@ -12,24 +12,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 import { OperationBuilder } from '../core/operation';
 import { logger } from '../index';
-import { OpenAPIV3Document, Operation } from '../utils/types';
+import { OpenAPIComponents, OpenAPIV3Document, Operation } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaBodyJson from './fixtures/test-schema-body.json';
-
-const testDatasource = require('./fixtures/test-datasource');
+import { pipeline } from '../decorators/pipeline';
 
 describe('Operation class tests', () => {
+  let operationSchema: OpenAPI.Operation;
+  let schemaComponents: OpenAPIComponents;
+  beforeEach(() => {
+    operationSchema = { ...(testApiDefinitionsJson[0] as OpenAPIV3Document).paths['/test'].get };
+    schemaComponents = {
+      ...((testApiDefinitionsJson[0] as OpenAPIV3Document)
+        .components as OpenAPIV3.ComponentsObject),
+      swaggerVersion: '3',
+      apiVersion: 'v1'
+    };
+  });
   describe('Build operations cases', () => {
     test('should let you build an operation without schema', () => {
       const operationTest = OperationBuilder.create(
         'operation1',
-        testDatasource.services.testService.operations[0],
-        { ...(testApiDefinitionsJson[0] as OpenAPIV3Document), paths: {}, components: {} },
-        'testService',
+        operationSchema,
+        schemaComponents,
         {
-          services: {},
+          staticConfig: {},
+          operations: {},
           logger,
           apiDefinitions: []
         }
@@ -41,10 +52,14 @@ describe('Operation class tests', () => {
     test('should build the request validator from the schema parameters', async () => {
       const operationTest = OperationBuilder.create(
         'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
+        operationSchema,
+        schemaComponents,
+        {
+          staticConfig: {},
+          operations: {},
+          logger,
+          apiDefinitions: []
+        }
       );
       const req = {
         query: {
@@ -71,10 +86,14 @@ describe('Operation class tests', () => {
     test('should build the response validator from the schema response', async () => {
       const operationTest = OperationBuilder.create(
         'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
+        operationSchema,
+        schemaComponents,
+        {
+          staticConfig: {},
+          operations: {},
+          logger,
+          apiDefinitions: []
+        }
       );
       const req = {
         prop: 1
@@ -95,60 +114,23 @@ describe('Operation class tests', () => {
       }
     });
 
-    test('should convert the datasource in a compilable datasource by the request parameter', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
-
-      operationTest.validateResponse(false).setup(p =>
-        p.push((_, ctx) => {
-          expect(typeof ctx.dataSourceBuilder).toBe('function');
-        })
-      );
-
-      await operationTest.run({});
-    });
-
-    test('should compile the datasource on call the datasource compile function', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        (testApiDefinitionsJson[0] as OpenAPIV3Document) as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
-
-      operationTest.validateResponse(false).setup(p =>
-        p.push((_, ctx) => {
-          const compiled = ctx.dataSourceBuilder(_);
-          expect(compiled.headers && compiled.headers.someVariableOption).toEqual('test');
-        })
-      );
-
-      await operationTest.run({
-        req: {
-          variableOption: 'test'
-        }
-      });
-    });
-
     test('the default error handler should be a promise reject of the given error', async () => {
       const operationTest = OperationBuilder.create(
         'operation1',
-        testDatasource.services.testService.operations[0],
-        (testApiDefinitionsJson[0] as OpenAPIV3Document) as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
+        operationSchema,
+        schemaComponents,
+        {
+          staticConfig: {},
+          operations: {},
+          logger,
+          apiDefinitions: []
+        }
       );
       const error = new Error('someError');
       const ctx = { req: {}, res: {} };
       operationTest
-        .validateResponse(false)
-        .validateRequest(false)
+        .validateResponses(false)
+        .validateRequests(false)
         .setup(p =>
           p.push(() => {
             throw new Error('someError');
@@ -166,68 +148,81 @@ describe('Operation class tests', () => {
     let operationTest: Operation;
 
     beforeEach(() => {
-      operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        (testApiDefinitionsJson[0] as OpenAPIV3Document) as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
+      operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
     });
 
-    test('Should throw an error if the given resolver is undefined', () => {
+    test('Should throw an error if the given step fn is undefined', () => {
       // @ts-ignore
       const operationThrow = () => operationTest.setup(p => p.push(undefined));
-      expect(operationThrow).toThrow(
-        new Error('An step can not be undefined on testService.v1.operation1')
-      );
+      expect(operationThrow).toThrow(new Error('An step must be a function on v1.operation1'));
     });
     test('Pushed steps must be executed in order', async () => {
       const expected = 'this will be showed';
       operationTest
-        .validateResponse(false)
-        .validateRequest(false)
+        .validateResponses(false)
+        .validateRequests(false)
         .setup(p => p.push(() => 'next3').push(() => expected));
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toEqual(expected);
     });
+
+    test('Should allow to push a pipeline', async () => {
+      const expected = 'this will be showed';
+      const pipe = pipeline(p => {
+        p.push(() => 'next3').push(() => expected);
+      });
+      operationTest
+        .validateResponses(false)
+        .validateRequests(false)
+        .setup(p => p.pushPipeline(pipe));
+      const ctx = { req: {}, res: {} };
+
+      expect(await operationTest.run(ctx)).toEqual(expected);
+    });
+
+    test('Pipeline should be a function', async () => {
+      const expected = 'The pipeline must be a function on v1.operation1';
+      const pipe = 'string';
+      expect(() =>
+        operationTest
+          // @ts-ignore
+          .setup(p => p.pushPipeline(pipe))
+      ).toThrow(new Error(expected));
+    });
   });
 
-  describe('Operation.setErrorHandler tests', () => {
+  describe('Operation.pipeline.onError tests', () => {
+    let operationTest: Operation;
+    beforeEach(() => {
+      operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
+    });
     test('should throw an error if the first argument is not a function', () => {
       const errorHandler = 'String';
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
-      const expected = new Error(
-        `The errorHandler must be a function, instead an ${typeof errorHandler} was found`
-      );
+      const expected = new Error(`The errorHandler must be a function on v1.operation1`);
 
       // @ts-ignore
-      expect(() => operationTest.setErrorHandler(errorHandler)).toThrow(expected);
+      expect(() => operationTest.setup(p => p.onError(errorHandler))).toThrow(expected);
     });
 
     test('should set the given error handler', async () => {
       const errorHandler = () => Promise.reject(new Error('error'));
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
       const ctx = { req: {}, res: {} };
       const expected = new Error('error');
       operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setErrorHandler(errorHandler)
-        .setup(p => p.push(() => Promise.reject(new Error('crashhh!!!'))));
+        .validateResponses(false)
+        .validateRequests(false)
+        .setup(p => p.push(() => Promise.reject(new Error('crashhh!!!'))).onError(errorHandler));
       try {
         await operationTest.run(ctx);
       } catch (e) {
@@ -241,24 +236,17 @@ describe('Operation class tests', () => {
       const step2 = () => 'bender3';
       const step3 = () => Promise.reject(new Error('crashhh!!!'));
       const step4 = () => 'bender4';
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
       operationTest
+        .validateResponses(false)
+        .validateRequests(false)
         .setup(p =>
           p
             .push(step1)
             .push(step2)
             .push(step3)
             .push(step4)
-        )
-        .validateResponse(false)
-        .validateRequest(false)
-        .setErrorHandler(errorHandler);
+            .onError(errorHandler)
+        );
       const ctx = { req: {}, res: {} };
       try {
         await operationTest.run(ctx);
@@ -272,30 +260,20 @@ describe('Operation class tests', () => {
       const errorHandler = () => Promise.reject(new Error('error'));
       const errorHandlerV2 = () => Promise.reject(new Error('errorV2'));
       const step = () => Promise.reject(new Error('crashhh!!!'));
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      )
-        .validateResponse(false)
-        .validateRequest(false);
-      const operationV2 = OperationBuilder.create(
-        'operation2',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      )
-        .validateResponse(false)
-        .validateRequest(false);
+      operationTest.validateResponses(false).validateRequests(false);
+      const operationV2 = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      })
+        .validateResponses(false)
+        .validateRequests(false);
 
       operationTest.nextVersionOperation = operationV2;
-      operationTest.setErrorHandler(errorHandler);
 
-      operationV2.setErrorHandler(errorHandlerV2);
-      operationTest.setup(p => p.push(step));
+      operationV2.setup(p => p.push(step).onError(errorHandlerV2));
+      operationTest.setup(p => p.push(step).onError(errorHandler));
       const ctx = { req: {}, res: {} };
 
       try {
@@ -313,101 +291,51 @@ describe('Operation class tests', () => {
   });
 
   describe('Operation.run tests', () => {
-    test('should allow a context without req', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
+    let operationTest: Operation;
+    beforeEach(() => {
+      operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
+    });
 
+    test('should allow a context without req', async () => {
       operationTest
-        .validateResponse(false)
-        .validateRequest(false)
+        .validateResponses(false)
+        .validateRequests(false)
         .setup(p => p.push(() => 'good'));
 
       expect(await operationTest.run({ res: {} })).toEqual('good');
     });
 
     test('should allow a context without res', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
       operationTest
-        .validateResponse(false)
-        .validateRequest(false)
+        .validateResponses(false)
+        .validateRequests(false)
         .setup(p => p.push(() => 'good'));
 
       expect(await operationTest.run({ req: {} })).toEqual('good');
     });
-
-    test('should add the metadata operationId and serviceId on the context', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
-      operationTest
-        .validateRequest(false)
-        .validateResponse(false)
-        .setup(p =>
-          p.push((_, ctx) => {
-            expect(ctx.metadata).toEqual({
-              operationId: 'operation1',
-              serviceId: 'testService',
-              version: 'v1'
-            });
-
-            return [{ id: 1, name: '2' }];
-          })
-        );
-      const ctx = { req: {}, res: {} };
-
-      await operationTest.run(ctx);
-    });
-
-    test('dataSource should be accesible from all steps', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        {
-          id: 'operation1',
-          runner: () => ({
-            url: '1234'
-          })
-        },
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      )
-        .validateRequest(false)
-        .validateResponse(false);
-
-      operationTest.setup(p =>
-        p.push((previous, ctx) => {
-          expect(ctx.dataSourceBuilder.template.id).toEqual('operation1');
-          return previous;
-        })
-      );
-      const ctx = { req: {}, res: {} };
-      await operationTest.run(ctx);
-    });
   });
   describe('Operation ctx.validateRequest tests', () => {
-    test('should validate the request by default', async () => {
-      const operationTest = OperationBuilder.create(
+    let operationTest: Operation;
+    beforeEach(() => {
+      operationTest = OperationBuilder.create(
         'operation1',
-        testDatasource.services.testService.operations[0],
-        { ...testApiDefinitionsJson[0], paths: testSchemaBodyJson } as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
+        testSchemaBodyJson['/oauth2/token'].post as OpenAPI.Operation,
+        schemaComponents,
+        {
+          staticConfig: {},
+          operations: {},
+          logger,
+          apiDefinitions: []
+        }
       );
+    });
+
+    test('should validate the request by default', async () => {
       operationTest.setup(p =>
         p.push(() => [
           () => [
@@ -470,13 +398,6 @@ describe('Operation class tests', () => {
     });
 
     test('should validate an empty body', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        { ...testApiDefinitionsJson[0], paths: testSchemaBodyJson } as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
       operationTest.setup(p =>
         p.push(() => [
           () => [
@@ -539,13 +460,6 @@ describe('Operation class tests', () => {
     });
 
     test('should validate againts the operation schema', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        { ...testApiDefinitionsJson[0], paths: testSchemaBodyJson } as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
       operationTest.setup(p =>
         p.push(() => [
           () => [
@@ -580,15 +494,8 @@ describe('Operation class tests', () => {
     });
 
     test('should allow a valid schema', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        { ...testApiDefinitionsJson[0], paths: testSchemaBodyJson } as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
       operationTest
-        .validateResponse(false)
+        .validateResponses(false)
         .setup(p =>
           p
             .push((_, ctx) => ctx.validateRequest())
@@ -606,40 +513,40 @@ describe('Operation class tests', () => {
     });
 
     test('should use default step if setup is not done', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        { ...testApiDefinitionsJson[0], paths: testSchemaBodyJson } as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      );
-
-      operationTest.validateResponse(false);
-      const expected = {
-        headers: {
-          someVariableOption: undefined
-        },
-        url: 'https://google.com/'
-      };
+      operationTest.validateResponses(false);
       const body = {
         grant_type: 'password',
         username: 'user',
         password: 'pass'
       };
 
-      expect(await operationTest.run({ req: { body }, res: {} })).toEqual(expected);
+      try {
+        const result = await operationTest.run({ req: { body }, res: {} });
+        expect(result).toBeFalsy();
+      } catch (e) {
+        expect(e).toEqual(new Error('Not found'));
+      }
     });
   });
 
   describe('Operation ctx.validateResponse tests', () => {
-    test('should validate an not valid response', async () => {
-      const operationTest = OperationBuilder.create(
+    let operationTest: Operation;
+    beforeEach(() => {
+      operationTest = OperationBuilder.create(
         'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      ).validateRequest(false);
+        testSchemaBodyJson['/oauth2/token'].post as OpenAPI.Operation,
+        schemaComponents,
+        {
+          staticConfig: {},
+          operations: {},
+          logger,
+          apiDefinitions: []
+        }
+      );
+    });
+
+    test('should validate an not valid response', async () => {
+      operationTest.validateRequests(false);
       operationTest.setup(p =>
         p
           .push(() => [
@@ -691,13 +598,7 @@ describe('Operation class tests', () => {
       }
     });
     test('should validate the response by default', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      ).validateRequest(false);
+      operationTest.validateRequests(false);
       operationTest.setup(p =>
         p.push(() => [
           {
@@ -756,13 +657,7 @@ describe('Operation class tests', () => {
     });
 
     test('should validate an valid response', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        testDatasource.services.testService.operations[0],
-        testApiDefinitionsJson[0] as OpenAPIV3Document,
-        'testService',
-        { services: {}, logger, apiDefinitions: [] }
-      ).validateRequest(false);
+      operationTest.validateRequests(false);
       operationTest.setup(p =>
         p
           .push(() => [

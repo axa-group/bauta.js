@@ -14,8 +14,8 @@
  */
 const { resolver } = require('../../../../dist/decorators/resolver');
 
-module.exports = resolver(services => {
-  services.testService.v1.operation1.setup(p =>
+module.exports = resolver(operations => {
+  operations.v1.operation1.setup(p =>
     p.push(() => {
       return [
         {

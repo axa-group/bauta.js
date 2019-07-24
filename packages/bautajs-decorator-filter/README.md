@@ -14,14 +14,16 @@ Make sure that you have access to [Artifactory][2]
 
 ## Usage
 
-Just add it as a normal decorator
+Include it on the step you need to apply the filters, the decorator will automatically filter the previous step result using
+the loopback filters comming from `ctx.req.query.filter`
 
 ```js
-  const { queryFilter } = require('@bautajs/filters-decorator');
+  const { resolver } = require('@bautajs/core');
+  const { queryFilter } = require('@bautajs/decorator-filter');
 
-  module.exports = (services)=> {
-      services.pets.v1.get.setup(p => p.push(() => [{a:'foo'}, {a:'foo2'}]).push(queryFilter))
-  }
+  module.exports = resolver((operations)=> {
+      operations.v1.get.setup(p => p.push(() => [{a:'foo'}, {a:'foo2'}]).push(queryFilter))
+  })
 ```
 
 With the given request '/pets?filter[where][a]=foo' the result will be:

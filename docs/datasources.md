@@ -1,18 +1,14 @@
 ### Datasource
 
-The datasources are the main feature of the library. The datasources define how the services will behave and from where the data will come.
+The datasources are simple conectors or data providers for your middleware.
 
 ### Define a datasource
 
-To define a datasource, create a file into `"services/"` folder with a name ending on `"-datasource.json|js"`. The datasources are loaded automatically by the `bautajs` in bootstrap time.
-If you will create a middleware we recomend to include the package `@bautajs/datasource-rest`, each operation of this datasource type will represents a HTTP request (using [Got][https://github.com/sindresorhus/got]).
-
-Without `@bautajs/datasource-rest` and `url` parameter, a datasource just describe an simple service operation.
+To define a datasource, install the type of datasource you need for example: `@bautajs/datasource-rest` for rest providers, so each provider of this datasource type will represents a HTTP request (using [Got][https://github.com/sindresorhus/got]).
 
 ### Datasource structure
 
-`bautajs` datasources must be compliant with the [DataSourceTemplate](./packages/bautajs/src/utils/types.ts)
-`bautajs/datasource-rest` must be compliant with the [RestDataSourceTemplate](./packages/bautajs-datasource-rest/src/utils/types.ts)
+Rest datasources must be compliant with the [RestDataSource](./packages/bautajs-datasource-rest/src/utils/types.ts), this might not be applicable for other type of datasources.
 
 ### Example
 
@@ -22,58 +18,50 @@ This is a datasource example:
 const { restDataSource } = require('@bautajs/datasource-rest');
 
 module.exports = restDataSource({
-  "services": {
-    "testService":{
-      "operations":[
-        {
-          "id":"test",
-          "options":{
-            "url":"http://myserver.com",
-            "json": true,
-            "headers": {
-              "Accept":"application-json"
-            }
-          }
-        }
-      ]
-    }
-  }
+  "providers":[
+     {
+       "id":"test",
+       "options":{
+         "url":"http://myserver.com",
+         "json": true,
+         "headers": {
+           "Accept":"application-json"
+         }
+       }
+     }
+   ]
 }
 ```
 
 ### Dynamic datasources
 
-Datasources used in every request are compiled on demand if is a js file. It allow to add dynamic information into them, specifying properties from `value`, `ctx`, `$static` and `$env` objects. 
+Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `value`, `ctx`, `$static` and `$env` objects. 
  - `value`: reference to the previous step result.
  - `ctx`: reference to the current context, see (Context interface)[./src/utils/types.ts] Context.
- - `$static`: reference to the $static generic data coming from the `bautajs` constructor parameter dataSourceStaticCtx.
+ - `$static`: reference to the $static generic data coming from the `bautajs` constructor parameter staticConfig.
  - `$env`: reference to the current NodeJS process.env.
 
 ```js
 const { restDataSource } = require('@bautajs/datasource-rest');
 
 module.exports = restDataSource({
-  services: {
-    testService:{
-      operations:[
-        {
-          id:"test",
-          options(_, ctx, $static){
-            const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
+  providers:[
+    {
+      id:"test",
+      options(_, ctx, $static){
+        const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
 
-            return {
-              url: $static.config.url,
-              json: true,
-              headers: {
-                "Accept-Language": acceptLanguage,
-                "user-agent": ctx.req.headers['user-agent']
-              }
-            }
+        return {
+          url: $static.config.url,
+          json: true,
+          headers: {
+            "Accept-Language": acceptLanguage,
+            "user-agent": ctx.req.headers['user-agent']
           }
         }
-      ]
+      }
     }
-  }
+  ]
 });
 ```
 
@@ -85,155 +73,79 @@ Alternative you can also use a datasource template:
 const { restDataSourceTemplate } = require('@bautajs/datasource-rest');
 
 module.exports = restDataSourceTemplate({
-  services: {
-    testService:{
-      operations:[
-        {
-          id:"test",
-          options: {
-              url: '{{$static.config.url}}',
-              json: true,
-              headers: {
-                "Accept-Language": '{{ctx.data.acceptLanguage}}',
-                "user-agent": '{{ctx.req.headers['user-agent']}}'
-              }
+  providers:[
+    {
+      id:"test",
+      options: {
+          url: '{{$static.config.url}}',
+          json: true,
+          headers: {
+            "Accept-Language": '{{ctx.data.acceptLanguage}}',
+            "user-agent": '{{ctx.req.headers['user-agent']}}'
           }
-        }
-      ]
-    }
-  }
-});
-```
-
-### Accessing compiled datasources from my resolvers (steps)
-
-Is possible to access to compiled datasources from the operations resolvers.
-
-```js
-  const { compileDataSource } = require('@bautajs/datasource-rest');
-
-  // Launching the operation datasource request.
-  services.cats.v1.find.setup(p => p.push(compileDataSource((_, ctx, dataSource) => {
-    return dataSource.request();
-  })));
-  // Launching the operation datasource request with custom option.
-  // They will be merged with the definition options.
-  services.cats.v1.find.setup(p => p.push(compileDataSource((_, ctx, dataSource) => {
-    const customOptions = { json: false };
-    return dataSource.request(customOptions);
-  })));
-```
-
-```js
-  // Launching other operation datasource request
-  services.cats.v1.find.setup(p => p.push((value, ctx, srv) => {
-    return srv.documents.v1.find.dataSourceBuilder.bind(ctx)(value).request();
-  }));
-```
-
-```js
-  // Launching other operation
-  services.cats.v1.find.setup(p => p.push((value, ctx, srv) => {
-    return srv.documents.v1.find.run(ctx);
-  }));
-```
-
-By default, `bautajs/datasource-rest`, uses [got][https://github.com/sindresorhus/got] library to launch the operation datasources requests.
-However, is possible to use your preferred request module using the datasources definitions.
-
-```js
-  const { compileDataSource, asCallback } = require('@bautajs/datasource-rest');
-  const request = require('request');
-
-  services.cats.v1.find.setup(p =>
-    p.push(compileDataSource(asCallback((_, ctx, dataSource, cb) =>{
-      const { options } = dataSource.options;
-
-      return request(options, cb);
-    })
-  )));
-```
-
-Alternative you can build your own datasource provider:
-
-```js
-const { dataSource } = require('@bautajs/core');
-const request = require('request');
-
-module.exports = dataSource({
-  services: {
-    testService:{
-      operations:[
-        {
-          id:"test",
-          runner: (prev, ctx) => {
-
-            return new Promise ((resolve, reject) => request({ method: ctx.data.method, url:ctx.data.url }, (err, result) => err ? reject(err) : resolve(result)));
-          }
-        }
-      ]
-    }
-  }
-});
-```
-
-Even your own datasource connector.
-
-```js
-const request = require('request');
-
-function restOperationTemplate(operationTemplate) {
-  return {
-    id: operationTemplate.id,
-    version: operationTemplate.version,
-    private: operationTemplate.private,
-    inherit: operationTemplate.inherit,
-    runner: (value, ctx, $env, $static) => {
-      return new Promise((resolve, reject) =>
-        request(operationTemplate.options(value, ctx, $env, $static), (err, result) => err ? reject(err) : resolve(result))
-      );
-    }
-  };
-}
-
-function myDataSourceConnector(dsTemplate) {
-  const result = { services: {} };
-
-  Object.keys(dsTemplate.services).forEach(service => {
-    result.services[service] = {
-      operations: dsTemplate.services[service].operations.map(op =>
-        restOperationTemplate(op, dsTemplate.services[service].options)
-      )
-    };
-  });
-
-  return result;
-}
-```
-
-And then use it on all your datasources
-
-```js 
-  const { myDataSourceConnector } = require('./my-datasource-connector');
-
-  module.exports = myDataSourceConnector({
-    services:{
-      cats: {
-        operations:[
-          {
-            id:'1',
-            options(_, ctx) {
-              return {
-                url: `http://${ctx.data.url}`
-              }
-            }
-          }
-        ]
       }
     }
-  })
-
+  ]
+});
 ```
+
+### Datasource usage
+
+Datasource can be used on the resolvers as an step function.
+
+With the given datasource:
+
+```js
+// my-datasource.js
+const { restDataSourceTemplate } = require('@bautajs/datasource-rest');
+
+module.exports = restDataSourceTemplate({
+  providers:[
+    {
+      id:"test",
+      options: {
+          url: '{{$static.config.url}}',
+          json: true,
+          headers: {
+            "Accept-Language": '{{ctx.data.acceptLanguage}}',
+            "user-agent": '{{ctx.req.headers['user-agent']}}'
+          }
+      }
+    }
+  ]
+});
+```
+
+You can request it from your resolvers like this:
+
+```js
+const { resolver } = require('@bautajs/core');
+const { test } = require('./my-datasource');
+
+module.exports = resolver((operations) => {
+  operations.v1.findCats.setup(p => 
+    p.push(test())
+  )
+});
+```
+
+The providers are exported by your resolver as an object with the provider.id name. Do not worry if you make a mistake on the provider name, you will get a nice error message on running time.
+
+- Providers are a functions ready to do the request to your provider but you can also just compile the datasource an do the request after do some logic.
+
+```js
+const { resolver } = require('@bautajs/core');
+const { test } = require('./my-datasource');
+
+module.exports = resolver((operations) => {
+  operations.v1.findCats.setup(p => 
+    p.push(test.compile((val,ctx,bautajs,provider) => {
+      return provider.request({resolveFullBody: true});
+    }))
+  )
+});
+```
+
 
 ### multipart/related requests
 
@@ -243,10 +155,9 @@ Thus, `bautajs` add it to be available at the operations datasources requests.
 
 ```js
 // my-datasource.js
-const { dataSource } = require('@bautajs/express');
-module.exports = dataSource({
-  "testService": {
-    "operations":  [
+const { restDataSource } = require('@bautajs/rest-datasource');
+module.exports = restDataSource({
+    "providers":  [
       {
         "id": "operation1",
         options() {
@@ -303,18 +214,8 @@ module.exports = dataSource({
         }
       }
     ]
-  }
 })
 ```
-
-```js
-const compileDataSource = require('bautajs/decorators/compile-datasource');
-// my-resolver.js
-services.testService.v1.operation1.setup(p => p.push(compileDataSource((_, ctx) =>{
-  return ctx.dataSource.request()
-})))
-```
-
 
 ### multipart/form-data requests
 
@@ -323,53 +224,42 @@ As for `multipart/related`, `bautajs` provides its own implementation for `multi
 ```js
 // my-datasource.json
 // multipart/related without streams
-const { restDataSourceTemplate } = require('@bautajs/datasource-rest');
+const { restDataSource } = require('@bautajs/datasource-rest');
 
-module.exports = restDataSourceTemplate({
-  "services": {
-    "testService": {
-      "operations": [
-        {
-          "id": "operation1",
-          options() {
-            return {
-              formData: {
-                // Pass a simple key-value pair
-                my_field: 'my_value',
-                // Pass data via Buffers
-                my_buffer: Buffer.from([1, 2, 3]),
-                // Pass data via Streams
-                my_file: fs.createReadStream(__dirname + '/unicycle.jpg'),
-                // Pass multiple values /w an Array
-                attachments: [
-                  fs.createReadStream(__dirname + '/attachment1.jpg'),
-                  fs.createReadStream(__dirname + '/attachment2.jpg')
-                ],
-                // Pass optional meta-data with an 'options' object with style: {value: DATA, options: OPTIONS}
-                // Use case: for some types of streams, you'll need to provide "file"-related information manually.
-                // See the `form-data` README for more information about options: https://github.com/form-data/form-data
-                file: {
-                  value:  fs.createReadStream('/file'),
-                  options: {
-                    filename: 'someImage.jpg',
-                    contentType: 'image/jpeg'
-                  }
-                }
+module.exports = restDataSource({
+  "providers": [
+    {
+      "id": "operation1",
+      options() {
+        return {
+          formData: {
+            // Pass a simple key-value pair
+            my_field: 'my_value',
+            // Pass data via Buffers
+            my_buffer: Buffer.from([1, 2, 3]),
+            // Pass data via Streams
+            my_file: fs.createReadStream(__dirname + '/unicycle.jpg'),
+            // Pass multiple values /w an Array
+            attachments: [
+              fs.createReadStream(__dirname + '/attachment1.jpg'),
+              fs.createReadStream(__dirname + '/attachment2.jpg')
+            ],
+            // Pass optional meta-data with an 'options' object with style: {value: DATA, options: OPTIONS}
+            // Use case: for some types of streams, you'll need to provide "file"-related information manually.
+            // See the `form-data` README for more information about options: https://github.com/form-data/form-data
+            file: {
+              value:  fs.createReadStream('/file'),
+              options: {
+                filename: 'someImage.jpg',
+                contentType: 'image/jpeg'
               }
             }
           }
-        }
-      ]
+      }
     }
   }
+  ]
 }) 
-```
-
-```js
-// my-resolver.js
-services.testService.v1.operation1.setup(p => p.push(compileDataSource((_, ctx) => {
-  return ctx.dataSource.request();
-})));
 ```
 
 ### Request like features
@@ -405,25 +295,21 @@ To help on the transition from `request` to `got`, there are some alias and help
 ```js
 // my-datasource.js
 const { createHttpForeverAgent } =  require('native-proxy-agent');
-const { restDatasourceTemplate } =  require('@bautajs/datasource-rest');
-module.exports = restDatasourceTemplate({
-  "services": {
-    "testService": {
-      "operations": [
-        {
-          id: "operation1",
-          options: {
-            url: 'http://myhost.com',
-            agent: createHttpForeverAgent({
-              cert:'myCert',
-              ket:'myKet',
-              proxy: '192.120.3.4:80'
-            })
-          }
-        }
-      ]
+const { restDatasource } =  require('@bautajs/datasource-rest');
+module.exports = restDatasource({
+  "providers": [
+  {
+    id: "operation1",
+    options: {
+      url: 'http://myhost.com',
+      agent: createHttpForeverAgent({
+        cert:'myCert',
+        ket:'myKet',
+        proxy: '192.120.3.4:80'
+      })
     }
   }
+  ]
 }) 
 ```
 - To disable the proxy even using proxy env variables just set agent null on the request you need it or create a new Agent without proxy
@@ -431,18 +317,14 @@ module.exports = restDatasourceTemplate({
 // my-datasource.js
 const { restDatasourceTemplate } =  require('@bautajs/datasource-rest');
 module.exports = restDatasourceTemplate({
-  "services": {
-    "testService": {
-      "operations": [
-        {
-          "id": "operation1",
-          "options": {
-            "url": "http://myhost.com",
-            "agent": null
-          }
-        }
-      ]
+  "prividers": [
+    {
+      "id": "operation1",
+      "options": {
+        "url": "http://myhost.com",
+        "agent": null
+      }
     }
-  }
+  ]
 }) 
 ```

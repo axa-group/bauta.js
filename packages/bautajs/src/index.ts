@@ -12,26 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { isMergeableObject } from './utils/is-mergeable-object';
 import { prepareToLog } from './utils/prepare-to-log';
 
 export * from './bauta';
-export * from './core/validation-error';
-export * from './core/service';
-export * from './core/operation';
+export * from './core/cancelable-token';
 export * from './core/pipeline';
-export * from './core/datasource';
+export * from './core/validation-error';
 export * from './decorators/resolver';
 export * from './decorators/step';
 export * from './decorators/pipeline';
-export * from './decorators/datasource';
-export * from './decorators/as-callback';
+export * from './decorators/as-promise';
 export * from './decorators/as-value';
 export * from './decorators/parallel';
 export * from './utils/types';
 export * from './logger';
 
 export const utils = {
-  isMergeableObject,
   prepareToLog
 };

@@ -1,6 +1,8 @@
 ## bautajs-express
 
-A library to build easy versionable and self organized middlewares for express.
+A express framework implementation for `bautajs`.
+
+** All methods exposed on `@bautajs/core` will be available on `@bautajs/express` package **
 
 ## How to install
 
@@ -21,6 +23,6 @@ bautJSExpress.applyMiddlewares();
 bautaJS.listen();
 ```
 
-As [BautaJSExpress](classes/bautajsexpress.md) extends from [BautaJS](../../bautajs/docs/README.md) referer to his documentation to see more options.
+See full example on [Example of a project from scratch](../../docs/hello-world.md).
 
 [1]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/

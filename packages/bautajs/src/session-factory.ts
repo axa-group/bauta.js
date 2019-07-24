@@ -12,18 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import fastSafeStringify from 'fast-safe-stringify';
-import { LoggerBuilder } from './logger';
+import hyperid from 'hyperid';
+import { logger } from './logger';
 import { Session } from './utils/types';
 
-const maxInt = 2147483647;
+const idGenerator = hyperid();
 const requestIdHeader = 'request-id';
-let nextReqId = 0;
 
 function genReqId(headers: any): string {
-  // eslint-disable-next-line no-bitwise
-  nextReqId = (nextReqId + 1) & maxInt;
-  return headers && headers[requestIdHeader] ? String(headers[requestIdHeader]) : String(nextReqId);
+  if (headers && headers[requestIdHeader]) {
+    return headers[requestIdHeader];
+  }
+
+  return idGenerator();
 }
 
 /**
@@ -47,7 +48,11 @@ export function sessionFactory(req: any): Session {
 
   return {
     ...loggerContext,
-    logger: LoggerBuilder.create(fastSafeStringify(loggerContext))
+    logger: loggerContext.userId
+      ? logger.create(
+          `id:${loggerContext.id},userId:${loggerContext.userId},url:${loggerContext.url}`
+        )
+      : logger.create(`id:${loggerContext.id},url:${loggerContext.url}`)
   };
 }
 

@@ -33,22 +33,7 @@
           ],
           "responses": {
             "200": {
-              "description": "A paged array of articles",
-              "headers": {
-                "x-next": {
-                  "description": "A link to the next page of responses",
-                  "schema": {
-                    "type": "string"
-                  }
-                }
-              },
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Articles"
-                  }
-                }
-              }
+              "description": "A paged array of articles"
             },
             "default": {
               "description": "unexpected error",

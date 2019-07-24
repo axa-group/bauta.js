@@ -1,7 +1,7 @@
 {
   "name": "@bautajs/express",
   "version": "2.0.0-alpha.10",
-  "description": "A bautaJS express plugin. Allows auto exposing the bautaJS services.",
+  "description": "A bautaJS express plugin. Allows auto exposing the bautaJS operations.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -24,8 +24,11 @@
   ],
   "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
+  "peerDependencies": {
+    "@bautajs/core":"2.0.0-alpha.10"
+  },
   "dependencies": {
-    "@bautajs/core": "2.0.0-alpha.10",
+    "@bautajs/core":"2.0.0-alpha.10",
     "@bautajs/environment": "2.0.0-alpha.10",
     "body-parser": "1.19.0",
     "chalk": "2.4.2",

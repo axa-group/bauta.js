@@ -12,30 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { resolver } = require('../../../../dist/decorators/resolver');
+const { resolver } = require('@bautajs/core');
 
-module.exports = resolver((services, utils) => {
-  services.testService.v1.operation1.setup(p =>
-    p
-      .push(() => {
-        return [
-          {
-            id: 132,
-            name: 'pet1'
-          }
-        ];
-      })
-      .push(utils.operation2Wrap)
-  );
-
-  services.testService.v1.operation2.setup(p =>
-    p.push(() => {
-      return [
-        {
-          id: 424,
-          name: 'pet5'
-        }
-      ];
-    })
+module.exports = resolver(operations => {
+  operations.v1.operation1.setAsPrivate(true).setup(p =>
+    p.push(() => [
+      {
+        id: 134,
+        name: 'pet2'
+      }
+    ])
   );
 });

@@ -12,14 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Context } from './types';
-
-export function defaultResolver(value: any, ctx: Context): any {
-  if (ctx.dataSourceBuilder) {
-    return ctx.dataSourceBuilder(value);
-  }
+export function notFoundErrorResolver(): any {
   const error = new Error('Not found');
   return Promise.reject(Object.assign(error, { statusCode: 404 }));
 }
 
-export default defaultResolver;
+export default notFoundErrorResolver;

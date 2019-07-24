@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import callsites from 'callsites';
 import deepmerge from 'deepmerge';
 import { extend as gotExtend, Response } from 'got';
 import { Multipart } from 'multipart-request-builder';
@@ -19,33 +20,33 @@ import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
 import PCancelable from 'p-cancelable';
 import stjs from 'stjs';
 import {
+  BautaJSInstance,
   Context,
-  DataSourceTemplate,
+  ContextLogger,
   Dictionary,
   EventTypes,
   Logger,
   LoggerBuilder,
-  OperationTemplate,
+  StepFn,
   utils
 } from '@bautajs/core';
 import { buildForm } from './form-data';
+import { isMergeableObject } from './utils/is-mergeable-object';
 import {
+  CompiledRestProvider,
   NormalizedOptions,
   Options,
+  RequestDecorator,
+  RequestLog,
   RequestOptions,
   RequestParams,
   ResponseType,
+  RestDataSource,
   RestDataSourceTemplate,
-  RestOperation,
-  RestOperationTemplate
+  RestProvider,
+  RestProviderTemplate,
+  StepFnCompiled
 } from './utils/types';
-
-interface RequestLog {
-  url: string | undefined;
-  method: string | undefined;
-  headers: string;
-  body?: string;
-}
 
 const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
@@ -64,7 +65,7 @@ function parseBody(responseType: ResponseType | undefined, body: any): string | 
   return body;
 }
 
-function requestHooks(log: Logger = new LoggerBuilder('')): any {
+function requestHooks(log: ContextLogger = new LoggerBuilder('')): any {
   return {
     logRequest(options: RequestOptions) {
       log.info(`request-logger: Request to [${options.method}] ${options.href}`);
@@ -172,11 +173,11 @@ function normalizeOptions(options: RequestOptions): NormalizedOptions {
   return parsedOptions;
 }
 
-function compileDatasource<TIn>(
-  operationTemplate: RestOperationTemplate<TIn>,
+function compileDatasource(
+  providerTemplate: RestProviderTemplate<RequestParams>,
   context: Context,
   incomingOptions: RequestParams
-): RestOperation {
+): CompiledRestProvider {
   const { url, ...options } = incomingOptions;
   // Add request id
   if (options.headers) {
@@ -196,7 +197,7 @@ function compileDatasource<TIn>(
   const request: any = (localOptions: any = {}) => {
     if (typeof url !== 'string') {
       throw new Error(
-        `URL is a mandatory parameter for a datasource request on operation: ${operationTemplate.id}`
+        `URL is a mandatory parameter for a datasource request on operation: ${providerTemplate.id}`
       );
     }
     let updateOptions: NormalizedOptions = {};
@@ -213,28 +214,42 @@ function compileDatasource<TIn>(
       return gotInstace.stream(url, updateOptions);
     }
 
+    let cancelablePromise: PCancelable<any>;
     if (localOptions.resolveBodyOnly === false) {
-      return new PCancelable<Response<string | Buffer | object>>((resolve, reject, onCancel) => {
+      cancelablePromise = new PCancelable<Response<string | Buffer | object>>(
+        (resolve, reject, onCancel) => {
+          const promise = gotInstace(url, updateOptions);
+
+          onCancel(() => promise.cancel());
+
+          promise
+            .then((response: Response<string | Buffer | object>) => {
+              response.body = parseBody(updateOptions.responseType || responseType, response.body);
+              return response;
+            })
+            .then(resolve, reject);
+        }
+      );
+    } else {
+      cancelablePromise = new PCancelable<string | Buffer | object>((resolve, reject, onCancel) => {
         const promise = gotInstace(url, updateOptions);
-
         onCancel(() => promise.cancel());
-
         promise
-          .then((response: Response<string | Buffer | object>) => {
-            response.body = parseBody(updateOptions.responseType || responseType, response.body);
-            return response;
-          })
+          .then(response => parseBody(updateOptions.responseType || responseType, response.body))
           .then(resolve, reject);
       });
     }
 
-    return gotInstace(url, updateOptions).then(response =>
-      parseBody(updateOptions.responseType || responseType, response.body)
-    );
+    context.token.onCancel(() => {
+      context.logger.error(`Request to ${url} was canceled`);
+      cancelablePromise.cancel();
+    });
+
+    return cancelablePromise;
   };
 
   return {
-    ...operationTemplate,
+    id: providerTemplate.id,
     options: incomingOptions,
     request
   };
@@ -242,9 +257,10 @@ function compileDatasource<TIn>(
 
 function mergeOptions(
   ctx: Context,
+  logger: Logger,
   { options, globalOptions }: { options: RequestParams; globalOptions: RequestParams }
 ): RequestParams {
-  const log: Logger | undefined = ctx.logger;
+  const log: ContextLogger | Logger = ctx.logger || logger;
   const hooks = requestHooks(log);
 
   return deepmerge.all(
@@ -260,16 +276,16 @@ function mergeOptions(
       }
     ],
     {
-      isMergeableObject: utils.isMergeableObject
+      isMergeableObject
     }
   ) as RequestParams;
 }
 
 function compileByTemplate<TOptions>(
-  operationTemplate: RestOperationTemplate<TOptions>,
+  operationTemplate: RestProviderTemplate<TOptions>,
   previousValue: any,
   context: Context,
-  $static: any,
+  bautajs: BautaJSInstance,
   $env: Dictionary<any>,
   globalOptions?: TOptions
 ): RequestParams {
@@ -277,7 +293,7 @@ function compileByTemplate<TOptions>(
     .select({
       previousValue,
       ctx: context,
-      $static,
+      $static: bautajs.staticConfig,
       $env
     })
     .transformWith({
@@ -286,96 +302,111 @@ function compileByTemplate<TOptions>(
     })
     .root() as { globalOptionsCmp: RequestParams; optionsCmp: RequestParams };
 
-  return mergeOptions(context, { options: optionsCmp, globalOptions: globalOptionsCmp });
+  return mergeOptions(context, bautajs.logger, {
+    options: optionsCmp,
+    globalOptions: globalOptionsCmp
+  });
 }
 
 function compileOptions<TOptions>(
-  operationTemplate: RestOperationTemplate<TOptions>,
+  operationTemplate: RestProviderTemplate<TOptions>,
   previousValue: any,
   context: Context,
-  $static: any,
+  bautajs: BautaJSInstance,
   $env: Dictionary<any>,
   globalOptions?: TOptions
 ): RequestParams {
   const optionsCmp =
     typeof operationTemplate.options === 'function'
-      ? operationTemplate.options(previousValue, context, $static, $env)
+      ? operationTemplate.options(previousValue, context, bautajs.staticConfig, $env)
       : operationTemplate.options;
   const globalOptionsCmp =
     typeof globalOptions === 'function'
-      ? globalOptions(previousValue, context, $static, $env)
+      ? globalOptions(previousValue, context, bautajs.staticConfig, $env)
       : globalOptions;
 
-  return mergeOptions(context, { options: optionsCmp, globalOptions: globalOptionsCmp });
+  return mergeOptions(context, bautajs.logger, {
+    options: optionsCmp,
+    globalOptions: globalOptionsCmp
+  });
 }
 
-function runner<TIn, TOptions>(
-  operationTemplate: RestOperationTemplate<TOptions>,
+function runner<TIn, TOut, TOptions>(
+  providerTemplate: RestProviderTemplate<TOptions>,
   globalOptions?: TOptions,
-  byTemplate: boolean = false
+  byTemplate?: boolean
 ) {
-  return (value: TIn, ctx: Context, $env: Dictionary<any>, $static?: any) => {
-    let options: RequestParams;
-    if (byTemplate) {
-      options = compileByTemplate<TOptions>(
-        operationTemplate,
-        value,
-        ctx,
-        $static,
-        $env,
-        globalOptions
-      );
-    } else {
-      options = compileOptions<TOptions>(
-        operationTemplate,
-        value,
-        ctx,
-        $static,
-        $env,
-        globalOptions
-      );
+  return (fn: StepFnCompiled<TIn, TOut>): StepFn<TIn, TOut> => {
+    return (value: TIn, ctx: Context, bautajs: BautaJSInstance): Promise<TOut> | TOut => {
+      let options: RequestParams;
+      if (byTemplate) {
+        options = compileByTemplate<TOptions>(
+          providerTemplate,
+          value,
+          ctx,
+          bautajs,
+          process.env,
+          globalOptions
+        );
+      } else {
+        options = compileOptions<TOptions>(
+          providerTemplate,
+          value,
+          ctx,
+          bautajs,
+          process.env,
+          globalOptions
+        );
+      }
+      return fn(value, ctx, bautajs, compileDatasource(providerTemplate, ctx, options));
+    };
+  };
+}
+
+function initProviderList(obj: any) {
+  return new Proxy(obj, {
+    get(target: Dictionary<any>, prop: string) {
+      if (!Object.prototype.hasOwnProperty.call(target, prop)) {
+        throw new Error(`[ERROR] Provider "${prop}" not found on ${callsites()[1].getFileName()}.`);
+      }
+
+      return target[prop];
     }
-
-    return compileDatasource(operationTemplate, ctx, options);
-  };
+  });
 }
 
-export function restOperation<TIn, TOptions>(
-  operationTemplate: RestOperationTemplate<TOptions>,
+export function restProvider<TIn, TOptions>(
+  providerTemplate: RestProviderTemplate<TOptions>,
   globalOptions?: TOptions
-): OperationTemplate<TIn, RestOperation> {
-  return {
-    id: operationTemplate.id,
-    version: operationTemplate.version,
-    private: operationTemplate.private,
-    inherit: operationTemplate.inherit,
-    runner: runner<TIn, TOptions>(operationTemplate, globalOptions)
-  };
+): RestProvider<TIn> {
+  const compiler = runner<TIn, any, TOptions>(providerTemplate, globalOptions, false);
+  const request: RequestDecorator<TIn> = (localOptions?: any) =>
+    compiler((_: any, _ctx: any, _bautajs: any, provider: any) => provider.request(localOptions));
+
+  return Object.assign(request, { compile: compiler });
 }
 
-export function restOperationTemplate<TIn, TOptions>(
-  operationTemplate: RestOperationTemplate<RequestParams>,
+export function restProviderTemplate<TIn, TOptions>(
+  providerTemplate: RestProviderTemplate<TOptions>,
   globalOptions?: TOptions
-): OperationTemplate<TIn, RestOperation> {
-  return {
-    id: operationTemplate.id,
-    version: operationTemplate.version,
-    private: operationTemplate.private,
-    inherit: operationTemplate.inherit,
-    runner: runner<TIn, RequestParams>(operationTemplate, globalOptions, true)
-  };
+): RestProvider<TIn> {
+  const compiler = runner<TIn, any, TOptions>(providerTemplate, globalOptions, true);
+  const request: RequestDecorator<TIn> = (localOptions?: any) =>
+    compiler((_: any, _ctx: any, provider: any) => provider.request(localOptions));
+
+  return Object.assign(request, { compile: compiler });
 }
 
 export function restDataSource<TIn>(
   dsTemplate: RestDataSourceTemplate<Options<TIn, RequestParams>>
-): DataSourceTemplate<TIn> {
-  const result: DataSourceTemplate<TIn> = { services: {} };
-  Object.keys(dsTemplate.services).forEach(service => {
-    result.services[service] = {
-      operations: dsTemplate.services[service].operations.map(op =>
-        restOperation<TIn, Options<TIn, RequestParams>>(op, dsTemplate.services[service].options)
-      )
-    };
+): RestDataSource<TIn> {
+  const result: RestDataSource<TIn> = initProviderList({});
+
+  dsTemplate.providers.forEach(provider => {
+    result[provider.id] = restProvider<TIn, Options<TIn, RequestParams>>(
+      provider,
+      dsTemplate.options
+    );
   });
 
   return result;
@@ -383,15 +414,11 @@ export function restDataSource<TIn>(
 
 export function restDataSourceTemplate<TIn>(
   dsTemplate: RestDataSourceTemplate<RequestParams>
-): DataSourceTemplate<TIn> {
-  const result: DataSourceTemplate<TIn> = { services: {} };
+): RestDataSource<TIn> {
+  const result: RestDataSource<TIn> = initProviderList({});
 
-  Object.keys(dsTemplate.services).forEach(service => {
-    result.services[service] = {
-      operations: dsTemplate.services[service].operations.map(op =>
-        restOperationTemplate<TIn, RequestParams>(op, dsTemplate.services[service].options)
-      )
-    };
+  dsTemplate.providers.forEach(provider => {
+    result[provider.id] = restProviderTemplate<TIn, RequestParams>(provider, dsTemplate.options);
   });
 
   return result;

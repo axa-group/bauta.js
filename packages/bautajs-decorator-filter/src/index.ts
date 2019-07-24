@@ -34,7 +34,7 @@ export interface LoopbackRequest {
  * @example
  * const { queryFilter } = require('@bautajs/filters-decorator');
  *
- * services.v1.test.op1.setup(p => p.push(queryFilter()))
+ * operations.v1.op1.setup(p => p.push(queryFilter()))
  */
 export function queryFilters<TIn>(): StepFn<TIn[], TIn[]> {
   return (value: TIn[], ctx: Context): TIn[] => {

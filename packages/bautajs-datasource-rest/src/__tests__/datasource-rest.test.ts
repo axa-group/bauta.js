@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import Events from 'events';
 import fs from 'fs';
 import http from 'http';
@@ -20,10 +19,39 @@ import https from 'https';
 import { createHttpsAgent } from 'native-proxy-agent';
 import nock from 'nock';
 import path from 'path';
-import { buildDataSource, Context, logger, Logger, LoggerBuilder, Metadata } from '@bautajs/core';
+import {
+  BautaJSInstance,
+  CancelableTokenBuilder,
+  Context,
+  Document,
+  logger,
+  LoggerBuilder
+} from '@bautajs/core';
+import { ContextLogger } from '@bautajs/core/src';
 import { restDataSource, restDataSourceTemplate } from '../datasource-rest';
+import { CompiledRestProvider } from '../utils/types';
 
 describe('datasource rest test', () => {
+  let context: Context;
+  let bautaInstance: BautaJSInstance;
+  beforeEach(() => {
+    context = {
+      validateRequest: (request: any = {}) => request,
+      validateResponse: (response: any) => response,
+      req: {},
+      res: {},
+      data: {},
+      url: '',
+      logger: new LoggerBuilder('test'),
+      token: new CancelableTokenBuilder()
+    };
+    bautaInstance = {
+      operations: {},
+      staticConfig: {},
+      logger: new LoggerBuilder('test'),
+      apiDefinitions: {} as Document[]
+    };
+  });
   describe('Request alias features', () => {
     afterEach(() => {
       nock.cleanAll();
@@ -35,43 +63,25 @@ describe('datasource rest test', () => {
         .reply(200, expected);
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  json: {
-                    field1: 'value'
-                  }
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              json: {
+                field1: 'value'
+              }
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({ resolveBodyOnly: true })(
+        null,
+        context,
+        bautaInstance
+      );
       expect(response).toEqual(expected);
     });
 
@@ -87,43 +97,25 @@ describe('datasource rest test', () => {
         })
         .reply(200, expected);
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  form: {
-                    field1: 'value'
-                  }
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              form: {
+                field1: 'value'
+              }
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({ resolveBodyOnly: true })(
+        null,
+        context,
+        bautaInstance
+      );
       expect(response).toEqual(expected);
     });
   });
@@ -148,50 +140,32 @@ describe('datasource rest test', () => {
         .reply(200, { bender: 'ok' });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  json: {
-                    password: '1234'
-                  }
-                }
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              json: {
+                password: '1234'
               }
-            ]
+            }
           }
-        }
+        ]
       };
       const debugLogs: any[] = [];
 
-      const loggerMock: Logger = {
+      const loggerMock: ContextLogger = {
         ...logger
       };
 
       loggerMock.debug = jest.fn((...params: any[]) => debugLogs.push(params)) as any;
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
-          {
-            services: {},
-            logger,
-            apiDefinitions: []
-          }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: loggerMock
-      };
-      const compiled = ctx.dataSourceBuilder();
-      await compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      await datasource.op1({ resolveBodyOnly: true })(
+        null,
+        { ...context, logger: loggerMock },
+        bautaInstance
+      );
       expect(debugLogs[0][0]).toEqual(expectedMsg);
       expect(debugLogs[0][1]).toEqual(expectedData);
     });
@@ -207,22 +181,18 @@ describe('datasource rest test', () => {
         .reply(200, { bender: 'ok' });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  json: {
-                    field1: 'value'
-                  }
-                }
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              json: {
+                field1: 'value'
               }
-            ]
+            }
           }
-        }
+        ]
       };
 
       const infoLogs: any[] = [];
@@ -231,26 +201,13 @@ describe('datasource rest test', () => {
       };
 
       loggerMock.info = jest.fn((...params: any[]) => infoLogs.push(params)) as any;
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
-          {
-            services: {},
-            logger,
-            apiDefinitions: []
-          }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: loggerMock as Logger
-      };
-      const compiled = ctx.dataSourceBuilder();
-      await compiled.request({ resolveBodyOnly: true });
+
+      const datasource = restDataSource(template);
+      await datasource.op1({ resolveBodyOnly: true })(
+        null,
+        { ...context, logger: loggerMock },
+        bautaInstance
+      );
       expect(infoLogs[0][0]).toEqual(expectedMsg);
     });
 
@@ -270,51 +227,33 @@ describe('datasource rest test', () => {
         .reply(200, { bender: 'ok' });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  json: false,
-                  body: 'someString',
-                  headers: {
-                    accept: 'application/json'
-                  }
-                }
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              json: false,
+              body: 'someString',
+              headers: {
+                accept: 'application/json'
               }
-            ]
+            }
           }
-        }
+        ]
       };
       const debugLogs: any[] = [];
-      const loggerMock: Logger = {
+      const loggerMock: ContextLogger = {
         ...logger
       };
 
       loggerMock.debug = jest.fn((...params: any[]) => debugLogs.push(params)) as any;
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
-          {
-            services: {},
-            logger,
-            apiDefinitions: []
-          }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: loggerMock
-      };
-      const compiled = ctx.dataSourceBuilder();
-      await compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      await datasource.op1({ resolveBodyOnly: true })(
+        null,
+        { ...context, logger: loggerMock },
+        bautaInstance
+      );
 
       expect(debugLogs[0][0]).toEqual(expectedMsg);
       expect(debugLogs[0][1]).toEqual(expectedData);
@@ -342,48 +281,30 @@ describe('datasource rest test', () => {
         .reply(200, { bender: 1 });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'GET'
-                }
-              }
-            ]
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'GET'
+            }
           }
-        }
+        ]
       };
       const debugConsole: any[] = [];
       const infoConsole: any[] = [];
-      const loggerMock: Logger = {
+      const loggerMock: ContextLogger = {
         ...logger
       };
       loggerMock.debug = jest.fn((...params: any[]) => debugConsole.push(params)) as any;
       loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
 
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
-          {
-            services: {},
-            logger,
-            apiDefinitions: []
-          }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: loggerMock
-      };
-      const compiled = ctx.dataSourceBuilder();
-      await compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      await datasource.op1({ resolveBodyOnly: true })(
+        null,
+        { ...context, logger: loggerMock },
+        bautaInstance
+      );
       expect(debugConsole[1]).toEqual(expectedMsg);
     });
 
@@ -398,46 +319,28 @@ describe('datasource rest test', () => {
         .reply(200, { bender: 1 });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'GET'
-                }
-              }
-            ]
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'GET'
+            }
           }
-        }
+        ]
       };
       const infoConsole: any[] = [];
-      const loggerMock: Logger = {
+      const loggerMock: ContextLogger = {
         ...logger
       };
       loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
 
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
-          {
-            services: {},
-            logger,
-            apiDefinitions: []
-          }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: loggerMock
-      };
-      const compiled = ctx.dataSourceBuilder();
-      await compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      await datasource.op1({ resolveBodyOnly: true })(
+        null,
+        { ...context, logger: loggerMock },
+        bautaInstance
+      );
       expect(infoConsole[1][0]).toMatch(expectedMsg);
     });
 
@@ -459,20 +362,16 @@ describe('datasource rest test', () => {
           'content-type': 'text/html'
         });
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'GET',
-                  json: false
-                }
-              }
-            ]
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'GET',
+              json: false
+            }
           }
-        }
+        ]
       };
       const debugConsole: any[] = [];
       const infoConsole: any[] = [];
@@ -483,26 +382,12 @@ describe('datasource rest test', () => {
       loggerMock.debug = jest.fn((...params: any[]) => debugConsole.push(params)) as any;
       loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
 
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
-          {
-            services: {},
-            logger,
-            apiDefinitions: []
-          }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: loggerMock
-      };
-      const compiled = ctx.dataSourceBuilder();
-      await compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      await datasource.op1({ resolveBodyOnly: true })(
+        null,
+        { ...context, logger: loggerMock },
+        bautaInstance
+      );
       expect(debugConsole[1]).toEqual(expectedMsg);
     });
   });
@@ -520,46 +405,23 @@ describe('datasource rest test', () => {
         )
         .reply(200, { ok: true });
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  headers: {
-                    'content-type': 'multipart/related'
-                  },
-                  preambleCRLF: true,
-                  postambleCRLF: true
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              headers: {
+                'content-type': 'multipart/related'
+              },
+              preambleCRLF: true,
+              postambleCRLF: true
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      // Multipart won't work directly on the datasource template, because of the parsing
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({
         multipart: [
           {
             headers: {
@@ -582,7 +444,7 @@ describe('datasource rest test', () => {
           }
         ],
         resolveBodyOnly: true
-      });
+      })(null, context, bautaInstance);
 
       expect(response).toEqual({ ok: true });
     });
@@ -600,46 +462,23 @@ describe('datasource rest test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  headers: {
-                    'content-type': 'multipart/related'
-                  },
-                  preambleCRLF: true,
-                  postambleCRLF: true
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              headers: {
+                'content-type': 'multipart/related'
+              },
+              preambleCRLF: true,
+              postambleCRLF: true
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      // Multipart won't work directly on the datasource template, because of the parsing
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({
         multipart: [
           {
             headers: {
@@ -662,8 +501,7 @@ describe('datasource rest test', () => {
           }
         ],
         resolveBodyOnly: true
-      });
-
+      })(null, context, bautaInstance);
       expect(response).toEqual({ ok: true });
     });
 
@@ -681,43 +519,20 @@ describe('datasource rest test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  preambleCRLF: true,
-                  postambleCRLF: true
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              preambleCRLF: true,
+              postambleCRLF: true
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      // Multipart won't work directly on the datasource template, because of the parsing
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({
         multipart: [
           {
             headers: {
@@ -740,7 +555,7 @@ describe('datasource rest test', () => {
           }
         ],
         resolveBodyOnly: true
-      });
+      })(null, context, bautaInstance);
 
       expect(response).toEqual({ ok: true });
     });
@@ -759,49 +574,26 @@ describe('datasource rest test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  preambleCRLF: true,
-                  postambleCRLF: true
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              preambleCRLF: true,
+              postambleCRLF: true
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      // Multipart won't work directly on the datasource template, because of the parsing
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({
         formData: {
           my_field: 'my_value',
           my_file: fs.createReadStream(path.resolve(__dirname, './fixtures/test-path-schema.json'))
         },
         resolveBodyOnly: true
-      });
+      })(null, context, bautaInstance);
 
       expect(response).toEqual({ ok: true });
     });
@@ -819,43 +611,20 @@ describe('datasource rest test', () => {
         .reply(200, { ok: true });
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  preambleCRLF: true,
-                  postambleCRLF: true
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              preambleCRLF: true,
+              postambleCRLF: true
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      // Multipart won't work directly on the datasource template, because of the parsing
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({
         formData: {
           my_field: 'my_value',
           custom_file: {
@@ -870,7 +639,7 @@ describe('datasource rest test', () => {
           ]
         },
         resolveBodyOnly: true
-      });
+      })(null, context, bautaInstance);
 
       expect(response).toEqual({ ok: true });
     });
@@ -898,41 +667,21 @@ describe('datasource rest test', () => {
         return emmiter;
       };
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'http://pets.com/v1/policies',
-                  method: 'POST',
-                  timeout: 5000
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'http://pets.com/v1/policies',
+              method: 'POST',
+              timeout: 5000
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      const compiled = ctx.dataSourceBuilder();
-      compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      datasource.op1({
+        resolveBodyOnly: true
+      })(null, context, bautaInstance);
     });
 
     test('Should allow to set a custom agent', done => {
@@ -943,45 +692,25 @@ describe('datasource rest test', () => {
         return emmiter;
       };
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'POST',
-                  timeout: 5000,
-                  agent: createHttpsAgent({
-                    keepAliveMsecs: 5000
-                  })
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'POST',
+              timeout: 5000,
+              agent: createHttpsAgent({
+                keepAliveMsecs: 5000
+              })
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
 
-      const compiled = ctx.dataSourceBuilder();
-      compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      datasource.op1({
+        resolveBodyOnly: true
+      })(null, context, bautaInstance);
     });
 
     test('Should allow to set the agent certificates by a custom agent', done => {
@@ -994,46 +723,25 @@ describe('datasource rest test', () => {
       };
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'http://pets.com/v1/policies',
-                  method: 'POST',
-                  timeout: 5000,
-                  agent: createHttpsAgent({
-                    cert: '132',
-                    key: '123'
-                  })
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'http://pets.com/v1/policies',
+              method: 'POST',
+              timeout: 5000,
+              agent: createHttpsAgent({
+                cert: '132',
+                key: '123'
+              })
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-
-      const compiled = ctx.dataSourceBuilder();
-      compiled.request({ resolveBodyOnly: true });
+      const datasource = restDataSource(template);
+      datasource.op1({
+        resolveBodyOnly: true
+      })(null, context, bautaInstance);
     });
 
     test('Should allow get the full response object', async () => {
@@ -1042,40 +750,20 @@ describe('datasource rest test', () => {
         .get('/v1/policies')
         .reply(200, expectedBody);
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'GET'
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'GET'
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({ resolveBodyOnly: false });
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({
+        resolveBodyOnly: false
+      })(null, context, bautaInstance);
 
       expect(response.body).toEqual(expectedBody);
       expect(response.headers).toEqual({ 'content-type': 'application/json' });
@@ -1083,41 +771,21 @@ describe('datasource rest test', () => {
 
     test('Should throw an error if a request is done without url', async () => {
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'myads',
-                options: {
-                  method: 'GET'
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'myads',
+            options: {
+              method: 'GET'
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      const compiled = ctx.dataSourceBuilder();
-      expect(() => compiled.request({ resolveBodyOnly: true })).toThrow(
-        'URL is a mandatory parameter for a datasource request on operation: myads'
-      );
+      const datasource = restDataSource(template);
+      expect(() =>
+        datasource.myads({
+          resolveBodyOnly: false
+        })(null, context, bautaInstance)
+      ).toThrow('URL is a mandatory parameter for a datasource request on operation: myads');
     });
 
     test('Request parameters should override template fields', async () => {
@@ -1128,102 +796,28 @@ describe('datasource rest test', () => {
         .reply(200, expectedBody);
 
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'https://pets.com/v1/policies',
-                  method: 'GET'
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'GET'
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: {},
-        res: {},
-        data: {},
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      const compiled = ctx.dataSourceBuilder();
-      const response = await compiled.request({
+      const datasource = restDataSource(template);
+      const response = await datasource.op1({
         headers: { 'x-custom-header': 'override' },
         resolveBodyOnly: true
-      });
+      })(null, context, bautaInstance);
 
       expect(response).toEqual(expectedBody);
     });
   });
 
   describe('Datasource compile', () => {
-    test('Datasource must compile complex templating properly as a function', () => {
-      const expected = {
-        url: 'http://pets.com/v1/policies/toto/documents',
-        method: 'GET',
-        options: {
-          timeout: '5000'
-        },
-        json: {
-          foo: 'bar dead live & robots bar'
-        }
-      };
-      const template = restDataSource({
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options(_: any, ctx: Context) {
-                  return {
-                    url: `http://pets.com/v1/policies/${ctx.req.id}/documents`,
-                    method: 'GET',
-                    json: {
-                      foo: `${ctx.data.bar} dead live & robots ${ctx.data.bar}`
-                    }
-                  };
-                }
-              }
-            ]
-          }
-        }
-      });
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(template.services.cats.operations[0], {
-          services: {},
-          logger,
-          apiDefinitions: []
-        }),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: { id: 'toto' },
-        res: {},
-        data: { bar: 'bar' },
-        url: '',
-        logger: new LoggerBuilder('test')
-      };
-      const { options } = ctx.dataSourceBuilder();
-
-      expect(options && options.url).toEqual(expected.url);
-      expect(options && options.json && (options.json as any).foo).toEqual(expected.json.foo);
-    });
-
-    test('Datasource must compile complex templating properly as a JSON template', () => {
+    test('Datasource must compile complex templating properly as a function', done => {
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -1235,48 +829,32 @@ describe('datasource rest test', () => {
         }
       };
       const template = {
-        services: {
-          cats: {
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
-                  method: 'GET',
-                  json: {
-                    foo: '{{ctx.data.bar}} dead live & robots {{ctx.data.bar}}'
-                  }
-                }
-              }
-            ]
-          }
-        }
-      };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
+        providers: [
           {
-            services: {},
-            logger,
-            apiDefinitions: []
+            id: 'op1',
+            options(_: any, ctx: Context) {
+              return {
+                url: `http://pets.com/v1/policies/${ctx.req.id}/documents`,
+                method: 'GET',
+                json: {
+                  foo: `${ctx.data.bar} dead live & robots ${ctx.data.bar}`
+                }
+              };
+            }
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: { id: 'toto' },
-        res: {},
-        data: { bar: 'bar' },
-        url: '',
-        logger: new LoggerBuilder('test')
+        ]
       };
-      const { options } = ctx.dataSourceBuilder();
-
-      expect(options && options.url).toEqual(expected.url);
-      expect(options && options.json && (options.json as any).foo).toEqual(expected.json.foo);
+      const datasource = restDataSource(template);
+      datasource.op1.compile((_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
+        expect(provider.options && provider.options.url).toEqual(expected.url);
+        expect(
+          provider.options && provider.options.json && (provider.options.json as any).foo
+        ).toEqual(expected.json.foo);
+        done();
+      })(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar' } }, bautaInstance);
     });
 
-    test('Should merge global options with local options and local options have priority', () => {
+    test('Datasource must compile complex templating properly as a JSON template', done => {
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -1288,55 +866,117 @@ describe('datasource rest test', () => {
         }
       };
       const template = {
-        services: {
-          cats: {
+        providers: [
+          {
+            id: 'op1',
             options: {
-              headers: {
-                'x-header': 1
+              url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
+              method: 'GET',
+              json: {
+                foo: '{{ctx.data.bar}} dead live & robots {{ctx.data.bar}}'
               }
-            },
-            operations: [
-              {
-                id: 'op1',
-                options: {
-                  url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
-                  method: 'GET',
-                  headers: {
-                    token: '{{ctx.data.token}}'
-                  },
-                  json: {
-                    foo: '{{ctx.data.bar}} dead live & robots {{ctx.data.bar}}'
-                  }
-                }
-              }
-            ]
+            }
           }
+        ]
+      };
+      const datasource = restDataSourceTemplate(template);
+      datasource.op1.compile((_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
+        expect(provider.options && provider.options.url).toEqual(expected.url);
+        expect(
+          provider.options && provider.options.json && (provider.options.json as any).foo
+        ).toEqual(expected.json.foo);
+        done();
+      })(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar' } }, bautaInstance);
+    });
+
+    test('Should merge global options with local options and local options have priority', done => {
+      const expected = {
+        url: 'http://pets.com/v1/policies/toto/documents',
+        method: 'GET',
+        options: {
+          timeout: '5000'
+        },
+        json: {
+          foo: 'bar dead live & robots bar'
         }
       };
-      const ctx: Context = {
-        dataSourceBuilder: buildDataSource(
-          restDataSourceTemplate(template).services.cats.operations[0],
-          {
-            services: {},
-            logger,
-            apiDefinitions: []
+      const template = {
+        options: {
+          headers: {
+            'x-header': 1
           }
-        ),
-        validateRequest: (request: any = ctx.req) => request,
-        validateResponse: (response: any) => response,
-        metadata: {} as Metadata,
-        req: { id: 'toto' },
-        res: {},
-        data: { bar: 'bar', token: '1234' },
-        url: '',
-        logger: new LoggerBuilder('test')
+        },
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
+              method: 'GET',
+              headers: {
+                token: '{{ctx.data.token}}'
+              },
+              json: {
+                foo: '{{ctx.data.bar}} dead live & robots {{ctx.data.bar}}'
+              }
+            }
+          }
+        ]
       };
-      const { options } = ctx.dataSourceBuilder();
+      const datasource = restDataSourceTemplate(template);
+      datasource.op1.compile((_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
+        expect(provider.options && provider.options.url).toEqual(expected.url);
+        expect(
+          provider.options && provider.options.json && (provider.options.json as any).foo
+        ).toEqual(expected.json.foo);
+        expect(
+          provider.options && provider.options.headers && provider.options.headers.token
+        ).toEqual('1234');
+        expect(
+          provider.options && provider.options.headers && provider.options.headers['x-header']
+        ).toEqual(1);
+        done();
+      })(
+        null,
+        { ...context, req: { id: 'toto' }, data: { bar: 'bar', token: '1234' } },
+        bautaInstance
+      );
+    });
+  });
+  describe('Request cancelation', () => {
+    test('Should cancel the request if the a cancel is executed', done => {
+      const myContext = { ...context, req: { id: 'toto' }, data: { bar: 'bar' } };
+      const template = {
+        providers: [
+          {
+            id: 'op1',
+            options(_: any, ctx: Context) {
+              return {
+                url: `http://pets.com/v1/policies/${ctx.req.id}/documents`,
+                method: 'GET',
+                json: {
+                  foo: `${ctx.data.bar} dead live & robots ${ctx.data.bar}`
+                }
+              };
+            }
+          }
+        ]
+      };
+      const datasource = restDataSource(template);
+      const request1 = datasource.op1({
+        resolveBodyOnly: true
+      })(null, myContext, bautaInstance);
 
-      expect(options && options.url).toEqual(expected.url);
-      expect(options && options.json && (options.json as any).foo).toEqual(expected.json.foo);
-      expect(options && options.headers.token).toEqual('1234');
-      expect(options && options.headers['x-header']).toEqual(1);
+      (async () => {
+        try {
+          await request1;
+          expect(true).toBeFalsy();
+        } catch (e) {
+          expect(e.message).toEqual('Promise was canceled');
+          done();
+        }
+      })();
+
+      myContext.token.cancel();
     });
   });
 });

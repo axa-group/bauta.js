@@ -27,8 +27,11 @@
   "dependencies": {
     "@bautajs/core": "2.0.0-alpha.10",
     "@bautajs/environment": "2.0.0-alpha.10",
+    "callsites": "3.1.0",
+    "form-data": "2.5.0",
     "got": "9.6.0",
-    "multipart-request-builder": "2.0.0",
+    "is-plain-object": "3.0.0",
+    "multipart-request-builder": "2.1.1",
     "native-proxy-agent": "2.3.0",
     "stjs": "0.0.5"
   }

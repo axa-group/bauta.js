@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { resolve } from 'path';
 import { BautaJS, Document } from '../../index';
 import { asValue } from '../as-value';
 
@@ -21,18 +20,16 @@ const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 describe('As value decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[], {
-      dataSourcesPath: resolve(__dirname, './fixtures/test-datasource.js')
-    });
+    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
   test('Should allow send a simple value', async () => {
-    bautajs.services.testService.v1.operation1.setup(p => {
+    bautajs.operations.v1.operation1.setup(p => {
       p.push(asValue([{ id: 1, name: 'pet' }]));
     });
 
-    expect(
-      await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} })
-    ).toEqual([{ id: 1, name: 'pet' }]);
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+      { id: 1, name: 'pet' }
+    ]);
   });
 });

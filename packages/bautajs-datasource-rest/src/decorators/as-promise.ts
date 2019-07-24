@@ -13,31 +13,33 @@
  * limitations under the License.
  */
 import { promisify } from 'util';
-import { BautaJSInstance, Context, StepFn } from '../utils/types';
+import { BautaJSInstance, Context } from '@bautajs/core';
+import { CompiledRestProvider, StepFnCompiled } from '../utils/types';
 
 export type StepFnCallback<TIn, TOut> = (
   prev: TIn,
   ctx: Context,
   bautajs: BautaJSInstance,
+  provider: CompiledRestProvider,
   callback: (err: Error | null, val: TOut) => void
 ) => void;
 
 /**
- * Allow you to use a callback style async operation
+ * Allow you to use a callback style async operation on compiled datasource context
  * @export
  * @template TIn
  * @template TOut
  * @param {StepFnCallback<TIn, TOut>} fn
  * @returns {StepFn<TIn, TOut>}
  * @example
- * const { asCallback } = require('@batuajs/core');
- *
- * services.v1.test.op1.setup(p => p.push(asCallback((_, ctx, batuajs, done) => {
+ * const { asPromise } = require('@batuajs/datasource-rest');
+ *+
+ * operations.v1.op1.setup(p => p.push(asPromise((_, ctx, provider, batuajs, done) => {
  *  done(null, 'hey')
  * })))
  */
-export function asCallback<TIn, TOut>(fn: StepFnCallback<TIn, TOut>): StepFn<TIn, TOut> {
-  return promisify<TIn, Context, BautaJSInstance, TOut>(fn);
+export function asPromise<TIn, TOut>(fn: StepFnCallback<TIn, TOut>): StepFnCompiled<TIn, TOut> {
+  return promisify<TIn, Context, BautaJSInstance, CompiledRestProvider, TOut>(fn);
 }
 
-export default asCallback;
+export default asPromise;

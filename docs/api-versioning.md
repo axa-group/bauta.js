@@ -1,143 +1,179 @@
-# Versioning
- 
- On `bautajs` there is two kinds of versionings:
-  - Api versioning
-  - Datasource versioning
+# API versioning
 
-## API versioning 
+`bautajs` has API versioning out of the box to version your API operations.
 
- With `bautajs` you have an automatically API versioning using the OpenAPI file. This versioning will be reflected on the API interface by different paths.
- 
- The version path will be build using the OpenAPI.info.version parameter of your OpenAPI file. An example of OpenAPI file will be:
+As `bautajs` is loading all files under ./resolvers file by default, it's recommended to follow the next folder structure, remember you can change this default path by other one.
+````
+- resolvers
+  -- v1
+    -- cats-resolver.js
+  -- v2
+    -- cats-resolver.js
+````
 
- ```json
-  [
-   {
-      "openapi": "3.0.0",
-      "info": {
-        "version": "v1",
-        "title": "Swagger Petstore",
-        "license": {
-          "name": "MIT"
-        }
-      },
-      "servers": [
-        {
-          "url": "http://petstore.swagger.io/v1"
-        }
-      ]
+```js
+// v1/cats-resolver.js
+const { resolver } = require('@bautajs/core');
+module.exports = resolver((operations) => {
+  operations.v1.findCat.push((_, ctx) => {
+    return {
+      name: 'toto'
     }
-  ]
- ```
+  })
+})
+```
 
- This file will produce the api path: `/api/v1` and the operations path `services.cats.v1.`
+```js
+// v2/cats-resolver.js
+const { resolver } = require('@bautajs/core');
+module.exports = resolver((operations) => {
+  operations.v2.findCat.push((_, ctx) => {
+    return {
+      id: 'toto'
+    }
+  })
+})
+```
 
- To add another API version just add a new OpenAPI definition on the array:
+- To find out how to use push, take a look to its [documentation](./step-and-resolver.md)
 
- ```json
-  [
-   {
-      "openapi": "3.0.0",
-      "info": {
-        "version": "v1",
-        "title": "Swagger Petstore",
-        "license": {
-          "name": "MIT"
-        }
-      },
-      "servers": [
-        {
-          "url": "http://petstore.swagger.io/v1"
-        }
-      ]
+### Example
+
+This is an example of API definitions for two API versions:
+
+```json
+// api-definitions.json
+[
+  {
+    "openapi": "3.0.0",
+    "apiVersion": "1.0",
+    "info": {
+      "description": "A new API",
+      "version": "v1",
+      "title": "CORE API"
     },
-    {
-      "openapi": "3.0.0",
-      "info": {
-        "version": "v2",
-        "title": "Swagger Petstore",
-        "license": {
-          "name": "MIT"
+    "servers": [
+      {
+        "url":"/v1/api/"
+     }
+    ],
+    "paths": {
+      "/cats": {
+        "get":{
+          "operationId":"findCat"
         }
-      },
-      "servers": [
-        {
-          "url": "http://petstore.swagger.io/v1"
-        }
-      ]
-    }
-  ]
- ```
-
-## Datasource versioning
-
-  The datasource can also be versioned, by default a datasource without version will be associated to the first OpenAPI definition on your `api-definitions.json` file. to apply the versioning also on a datasource you have to specify the parameter `version` on the datasource with the version you want to associate of your OpenAPI definition.
-
-  Given the following api-definitions.json
-   ```json
-  [
-   {
-      "openapi": "3.0.0",
-      "info": {
-        "version": "v1",
-        "title": "Swagger Petstore",
-        "license": {
-          "name": "MIT"
-        }
-      },
-      "servers": [
-        {
-          "url": "http://petstore.swagger.io/v1"
-        }
-      ]
-    },
-    {
-      "openapi": "3.0.0",
-      "info": {
-        "version": "v2",
-        "title": "Swagger Petstore",
-        "license": {
-          "name": "MIT"
-        }
-      },
-      "servers": [
-        {
-          "url": "http://petstore.swagger.io/v1"
-        }
-      ]
-    }
-  ]
- ```
-
- To associate a datasource to the version v2, just simply add:
- ```js
-  const { dataSource } = require('@bautajs/core');
-
-  module.exports = dataSource({
-    services:{
-      cats:{
-        operations:[
-          {
-            id:'1',
-            runner() {
-              return 'hello';
-            }
-          },
-          {
-            id:'2',
-            version: 'v2',
-            runner() {
-              return 'bye'
-            }
-          }
-        ]
       }
     }
-  });
- ```
+  },
+  {
+    "openapi": "3.0.0",
+    "apiVersion": "2.0",
+    "info": {
+      "description": "A new API",
+      "version": "v2",
+      "title": "CORE API"
+    },
+    "servers": [
+      {
+        "url":"/v1/api/"
+     }
+    ],
+    "paths": {
+      "/cats": {
+        "get":{
+          "operationId":"findCat"
+        }
+      }
+    }
+  }
+]
+```
+
+API versions are now accesible by code:
+**See that the operations structure is the following bautajs.operations[OPEN_API.info.version][OPEN_API.paths[x][METHOD].operationId]**
+
+```js
+// server.js
+const { BautaJSExpress } = require('@bautajs/express');
+const apiDefinition = require('./api-definitions.json');
 
 
+const bautajs = new BautaJSExpress(apiDefinition);
 
+const res1 = await bautajs.operations.v1.findCat.run();
 
+const res2 = await bautajs.operations.v2.findCat.run();
 
+console.log(res1, res2);
+
+```
+
+In this example the `cats.v2` is inheriting automatically the behaviour of `cats.v1`.
+
+**Calling setup method from v2 will override the v2 pipeline inherited from v1**
+
+### Deprecate an operation
+
+A deprecated operation means that his behaviour or (pipeline) won't be inherited by the next API versions.
+There are two ways for deprecate an operation; by code or by the OpenAPI definition.
+
+- Deprecation by code:
+```js
+const { resolver } = require('@bautajs/core');
+// my-resolver.js
+module.exports = resolver(operations) => {
+  operations.v1.findCats.setAsDeprecated().setup((p) => p.push(() => 'result'));
+}
+```
+
+- Deprecation by OpenAPI file
+
+```json
+// api-definitions.json
+[
+  {
+    "openapi": "3.0.0",
+    "apiVersion": "1.0",
+    "info": {
+      "description": "A new API",
+      "version": "v1",
+      "title": "CORE API"
+    },
+    "servers": [
+      {
+        "url":"/v1/api/"
+     }
+    ],
+    "paths": {
+      "/cats": {
+        "get":{
+          "operationId":"findCat",
+          "deprecated": true
+        }
+      }
+    }
+  },
+  {
+    "openapi": "3.0.0",
+    "apiVersion": "2.0",
+    "info": {
+      "description": "A new API",
+      "version": "v2",
+      "title": "CORE API"
+    },
+    "servers": [
+      {
+        "url":"/v1/api/"
+     }
+    ],
+    "paths": {
+      "/cats": {
+        "get":{
+          "operationId":"findCat"
+        }
+      }
+    }
+  }
+]
+```
 

@@ -106,15 +106,15 @@ const impl: StaticParallel = {
    * @param {...any[]} args
    * @returns {*}
    * @example
-   * const { compileDataSource, parallel } = require('batuajs/decorators');
+   * const { getCats } = require('./my-datasource');
    *
-   * services.v1.test.op1.setup(p => p.push(
+   * operations.v1.op1.setup(p => p.push(
    *  parallel(
-   *    compileDataSource((_, ctx, dataSource) => {
-   *      return dataSource.request();
+   *    getCats.compile((_, ctx, provider) => {
+   *      return provider.request();
    *    })),
-   *    compileDataSource((_, ctx, dataSource) => {
-   *      return dataSource.request({id: 1});
+   *    getCats.compile((_, ctx, provider) => {
+   *      return provider.request({id: 1});
    *    })
    *  )
    * ));

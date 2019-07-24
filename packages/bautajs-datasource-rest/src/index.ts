@@ -14,6 +14,4 @@
  */
 export * from './datasource-rest';
 export * from './utils/types';
-export * from './decorators/compile-datasource';
-export * from './decorators/request';
-export * from './decorators/as-callback';
+export * from './decorators/as-promise';

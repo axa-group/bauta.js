@@ -19,11 +19,10 @@ import {
   Context,
   Pipeline,
   PipelineBuilder,
-  Services,
   StepFn
 } from '@bautajs/core';
 
-export type Normalizer<TIn> = (value: [TIn, Context, Services]) => any;
+export type Normalizer<TIn> = (value: [TIn, Context, BautaJSInstance]) => any;
 
 /**
  * Cache the given steps with [memoizee](https://www.npmjs.com/package/memoizee)
@@ -35,9 +34,8 @@ export type Normalizer<TIn> = (value: [TIn, Context, Services]) => any;
  * @returns {StepFn<TIn, any>}
  * @example
  * const { cache } = require('@batuajs/cache-decorator');
- * const { request } = require('@batuajs/decorators');
  *
- * services.v1.test.op1.setup(p => p.push(cache(request(), ([_,ctx] => ctx.token))))
+ * operations.v1.op1.setup(p => p.push(cache([() => {...}], ([_,ctx] => ctx.data.token))))
  */
 export function cache<TIn>(
   fn: (pipeline: Pipeline<TIn>) => void,
@@ -50,7 +48,9 @@ export function cache<TIn>(
     );
   }
   const accessor = new Accesor();
-  const flow = new PipelineBuilder<TIn>(accessor, '', '', '');
+  // Set default handler as empty function
+  accessor.handler = () => {};
+  const flow = new PipelineBuilder<TIn>(accessor, '', '');
   fn(flow);
   const cached = memoizee(accessor.handler, {
     ...options,

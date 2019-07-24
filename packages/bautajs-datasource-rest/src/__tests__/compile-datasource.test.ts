@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 import nock from 'nock';
-import { resolve } from 'path';
 import { BautaJS, Document } from '@bautajs/core/src';
-import { compileDataSource } from '../decorators/compile-datasource';
+import testDatasource from './fixtures/test-datasource-dynamic';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
@@ -27,9 +26,7 @@ describe('Compile datasource decorator', () => {
       .get(`/${path}`)
       .reply(200, [{ id: 3, name: 'pet3' }]);
 
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[], {
-      dataSourcesPath: resolve(__dirname, './fixtures/test-datasource-dynamic.js')
-    });
+    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
   afterEach(() => {
@@ -37,19 +34,19 @@ describe('Compile datasource decorator', () => {
   });
 
   test('Should compile de datasource and do the request to a dynamic url', async () => {
-    bautajs.services.testService.v1.operation1.validateResponse(false).setup(p => {
+    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push((_, ctx) => {
         ctx.data.path = path;
       });
       p.push(
-        compileDataSource((_, _ctx, dataSource) => {
-          return dataSource.request({ resolveBodyOnly: true });
+        testDatasource.operation1.compile((_, _ctx, _bautajs, provider) => {
+          return provider.request({ resolveBodyOnly: true });
         })
       );
     });
 
-    expect(
-      await bautajs.services.testService.v1.operation1.run({ req: { id: 1 }, res: {} })
-    ).toEqual([{ id: 3, name: 'pet3' }]);
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+      { id: 3, name: 'pet3' }
+    ]);
   });
 });

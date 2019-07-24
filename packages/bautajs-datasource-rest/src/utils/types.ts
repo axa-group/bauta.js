@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { GotEmitter, GotOptions, GotPromise, Hooks } from 'got';
+import { GotEmitter, GotOptions, GotPromise, Hooks, Response } from 'got';
 import { MultipartBody, RequestPart } from 'multipart-request-builder';
 import * as nodeStream from 'stream';
-import { Context } from '@bautajs/core';
+import { BautaJSInstance, Context, StepFn } from '@bautajs/core';
 import { Dictionary } from '@bautajs/environment';
 
 export enum ResponseType {
@@ -24,11 +24,8 @@ export enum ResponseType {
   TEXT = 'text'
 }
 
-export interface RestOperationTemplate<TOptions> {
+export interface RestProviderTemplate<TOptions> {
   id: string;
-  version?: string;
-  private?: boolean;
-  inherit?: boolean;
   options?: TOptions;
 }
 
@@ -38,10 +35,19 @@ export interface RequestFn {
   (localOptions: StreamRequestOptions): GotEmitter & nodeStream.Duplex;
 }
 
-export interface RestOperation extends RestOperationTemplate<RequestParams> {
-  request: RequestFn;
-  options?: RequestParams;
+export interface RequestDecorator<TIn> {
+  (localOptions?: RequestOptions): StepFn<TIn, Buffer | string | object>;
+  (localOptions: FullResponseRequestOptions): StepFn<TIn, Response<Buffer | string | object>>;
+  (localOptions: StreamRequestOptions): StepFn<TIn, GotEmitter & nodeStream.Duplex>;
 }
+
+export interface CompiledRestProvider extends RestProviderTemplate<RequestParams> {
+  request: RequestFn;
+}
+
+export type RestProvider<TIn> = RequestDecorator<TIn> & {
+  compile: (fn: StepFnCompiled<TIn, any>) => StepFn<TIn, any>;
+};
 
 // DataSource
 export interface RequestOptions extends GotOptions<string | null> {
@@ -72,18 +78,31 @@ export interface NormalizedOptions extends GotOptions<any> {
   responseType?: ResponseType;
 }
 export interface RestDataSourceTemplate<TOptions> {
-  services: Dictionary<RestServiceTemplate<TOptions>>;
-}
-export interface RestServiceTemplate<TOptions> {
   /**
-   * A generic GOT options for your operations, this will be merged with the local operation options giving priority to the local ones.
+   * A generic GOT options for your providers, this will be merged with the local provider options giving priority to the local ones.
    * @type {TOptions}
    * @memberof RestServiceTemplate
    */
   options?: TOptions;
-  operations: RestOperationTemplate<TOptions>[];
+  providers: RestProviderTemplate<TOptions>[];
 }
+
+export type RestDataSource<TIn> = Dictionary<RestProvider<TIn>>;
 
 export type Options<TIn, TOut> =
   | ((value: TIn, ctx: Context, $static: any, $env: Dictionary<any>) => TOut)
   | RequestParams;
+
+export type StepFnCompiled<TIn, TOut> = (
+  prev: TIn,
+  ctx: Context,
+  bautajs: BautaJSInstance,
+  provider: CompiledRestProvider
+) => TOut | Promise<TOut>;
+
+export interface RequestLog {
+  url: string | undefined;
+  method: string | undefined;
+  headers: string;
+  body?: string;
+}

@@ -12,10 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { DataSourceTemplate } from '../utils/types';
+import { CancelableToken, OnCancel } from '../utils/types';
 
-export function dataSource<TIn>(template: DataSourceTemplate<TIn>): DataSourceTemplate<TIn> {
-  return template;
+export class CancelableTokenBuilder implements CancelableToken {
+  private cancelStack: OnCancel[] = [];
+
+  public isCanceled: boolean = false;
+
+  cancel() {
+    this.cancelStack.forEach(onCancel => onCancel());
+  }
+
+  onCancel(fn: OnCancel) {
+    this.cancelStack.push(fn);
+  }
 }
 
-export default dataSource;
+export default CancelableToken;
