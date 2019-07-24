@@ -941,6 +941,53 @@ describe('datasource rest test', () => {
         bautaInstance
       );
     });
+
+    test('Should compile a restDataSourceTemplate', done => {
+      const expected = {
+        url: 'http://pets.com/v1/policies/toto/documents',
+        method: 'GET',
+        options: {
+          timeout: '5000'
+        },
+        json: {
+          foo: 'bar dead live & robots bar'
+        }
+      };
+      const template = {
+        options: {
+          headers: {
+            'x-header': 1
+          }
+        },
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
+              method: 'GET',
+              headers: {
+                token: '{{ctx.data.token}}'
+              },
+              json: {
+                foo: '{{ctx.data.bar}} dead live & robots {{ctx.data.bar}}'
+              }
+            }
+          }
+        ]
+      };
+      const datasource = restDataSourceTemplate(template);
+      datasource.op1.compile((_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
+        expect(provider.options && provider.options.url).toEqual(expected.url);
+        expect(
+          provider.options && provider.options.json && (provider.options.json as any).foo
+        ).toEqual(expected.json.foo);
+        done();
+      })(
+        null,
+        { ...context, req: { id: 'toto' }, data: { bar: 'bar', token: '1' } },
+        bautaInstance
+      );
+    });
   });
   describe('Request cancelation', () => {
     test('Should cancel the request if the a cancel is executed', done => {

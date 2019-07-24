@@ -392,7 +392,7 @@ export function restProviderTemplate<TIn, TOptions>(
 ): RestProvider<TIn> {
   const compiler = runner<TIn, any, TOptions>(providerTemplate, globalOptions, true);
   const request: RequestDecorator<TIn> = (localOptions?: any) =>
-    compiler((_: any, _ctx: any, provider: any) => provider.request(localOptions));
+    compiler((_: any, _ctx: any, _bautajs: any, provider: any) => provider.request(localOptions));
 
   return Object.assign(request, { compile: compiler });
 }
