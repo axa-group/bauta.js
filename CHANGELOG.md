@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.10...v2.0.0) (2019-07-24)
+
+
+### Bug Fixes
+
+* allow foreverAgent and extend the agent ([018080e](http://github.axa.com/Digital/bauta-nodejs/commit/018080e))
+
+
+### Features
+
+* BautaJS refactor concept ([#83](http://github.axa.com/Digital/bauta-nodejs/issues/83)) ([a138074](http://github.axa.com/Digital/bauta-nodejs/commit/a138074)), closes [#82](http://github.axa.com/Digital/bauta-nodejs/issues/82) [#74](http://github.axa.com/Digital/bauta-nodejs/issues/74) [#72](http://github.axa.com/Digital/bauta-nodejs/issues/72) [#78](http://github.axa.com/Digital/bauta-nodejs/issues/78)
+
+
+### BREAKING CHANGES
+
+* datasources has been removed from the bautajs core. Use it as separated feature (decorator).
+* service concept has been removed from the core. Operations are now built from the OpenAPI schema.
+* All packages has been moved under @bautajs scope.
+* Not core decorators has been moved to another package. @bautajs/datasource-rest, @bautajs/decorator-cache, @bautajs/decorator-template, @bautajs/decorator-filter
+* ctx.dataSource do not exist any more, use providers from @bautajs/datasource-rest
+* datasource structure has change, services and operations where removed, now use providers instead.
+* Operation methods has been modified, some of them has been removed, see ./types for more info
+* setup method destroy old version pipeline
+* operation versioning has changed, see ./docs/api-versioning.md
+* to add certificates and agent options to a datasource you have to create a new agent.
+* error handler has been moved to pipeline level as onError
+
+* Features:
+* not posible to update agent options, instead create a new agent for it.
+
+- update dependencies to fix audit
+
+
+
+
+
 # [2.0.0-alpha.10](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.9...v2.0.0-alpha.10) (2019-07-10)
 
 
