@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0...v2.0.1) (2019-07-24)
+
+
+### Bug Fixes
+
+* **@bautajs/datasource-rest:** restProviderTemplate.compile wasn't working. Step fn has 4 parameters not 3 ([45f72e2](https://github.axa.com/Digital/bauta-nodejs/commit/45f72e2))
+
+
+
+
+
 # [2.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.10...v2.0.0) (2019-07-24)
 
 

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0...v2.0.1) (2019-07-24)
+
+**Note:** Version bump only for package bautajs-example
+
+
+
+
+
 # [2.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.10...v2.0.0) (2019-07-24)
 
 
