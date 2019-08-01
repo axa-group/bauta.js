@@ -15,8 +15,7 @@
 import { GotEmitter, GotOptions, GotPromise, Hooks, Response } from 'got';
 import { MultipartBody, RequestPart } from 'multipart-request-builder';
 import * as nodeStream from 'stream';
-import { BautaJSInstance, Context, StepFn } from '@bautajs/core';
-import { Dictionary } from '@bautajs/environment';
+import { BautaJSInstance, Context, StepFn, Dictionary } from '@bautajs/core';
 
 export enum ResponseType {
   JSON = 'json',

@@ -6,8 +6,7 @@
   "files": [],
   "exclude": ["__tests__"],
   "references": [
-    { "path": "./packages/bautajs-environment" },
-    { "path": "./packages/bautajs" },
+    { "path": "./packages/bautajs-core" },
     { "path": "./packages/bautajs-datasource-rest" },
     { "path": "./packages/bautajs-decorator-cache" },
     { "path": "./packages/bautajs-decorator-template" },

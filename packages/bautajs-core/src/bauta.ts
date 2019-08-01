@@ -16,11 +16,11 @@ import glob from 'glob';
 import OpenapiSchemaValidator, { OpenAPISchemaValidatorResult } from 'openapi-schema-validator';
 import { IJsonSchema, OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { resolve } from 'path';
-import { Dictionary } from '@bautajs/environment';
 import { OperationBuilder } from './core/operation';
 import { logger } from './logger';
 import { getComponents, getStrictDefinition } from './utils/strict-definitions';
 import {
+  Dictionary,
   BautaJSInstance,
   BautaJSOptions,
   Document,

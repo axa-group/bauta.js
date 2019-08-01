@@ -29,9 +29,17 @@
 import { EventEmitter } from 'events';
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import PCancelable from 'p-cancelable';
-import { Dictionary, TRequest, TResponse } from '@bautajs/environment';
 
-export * from '@bautajs/environment';
+export interface Dictionary<T> {
+  [key: string]: T;
+}
+export interface TRequest {
+  [key: string]: any;
+}
+export interface TResponse {
+  [key: string]: any;
+}
+
 // OpenAPI document
 export interface OpenAPIV2Document extends OpenAPIV2.Document {
   validateRequest?: boolean;

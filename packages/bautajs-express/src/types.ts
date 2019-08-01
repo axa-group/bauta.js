@@ -19,11 +19,17 @@ import morgan from 'morgan';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { Operation } from '@bautajs/core';
 
-type SwaggerGenericOptions = string | false | null;
-interface SwaggerUiOptions {
+export interface ICallback {
+  (error?: Error | null, result?: any): void;
+}
+
+export type SwaggerGenericOptions = string | false | null;
+
+export interface SwaggerUiOptions {
   [key: string]: any;
 }
-interface SwaggerOptions {
+
+export interface SwaggerOptions {
   [key: string]: any;
 }
 

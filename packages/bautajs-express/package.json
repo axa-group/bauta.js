@@ -24,12 +24,8 @@
   ],
   "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
-  "peerDependencies": {
-    "@bautajs/core": "2.0.0-alpha.10"
-  },
   "dependencies": {
     "@bautajs/core": "2.0.0",
-    "@bautajs/environment": "2.0.0",
     "body-parser": "1.19.0",
     "chalk": "2.4.2",
     "compression": "1.7.4",

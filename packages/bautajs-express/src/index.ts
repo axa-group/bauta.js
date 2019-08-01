@@ -24,12 +24,11 @@ import {
   Dictionary,
   Document,
   EventTypes,
-  ICallback,
   LoggerBuilder,
   OpenAPIV2Document,
   OpenAPIV3Document
 } from '@bautajs/core';
-import { Route, MiddlewareOptions } from './types';
+import { Route, MiddlewareOptions, ICallback } from './types';
 import { initMorgan, initBodyParser, initHelmet, initCors, initExplorer } from './middlewares';
 
 export * from './types';
