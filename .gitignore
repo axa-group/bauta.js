@@ -19,7 +19,6 @@ npm-debug.log
 *.jtl
 logs
 target/*
-.vscode
 npm-shrinkwrap.json
 .history/
 .settings/
