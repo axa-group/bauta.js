@@ -12,27 +12,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document, PipelineBuilder } from '../../index';
-import { asPromise } from '../as-promise';
+import { BautaJS, Document, createContext } from '../../index';
+import { pipeline } from '../pipeline';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Callback decorator', () => {
+describe('Pipeline decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
-  test('Should execute as a callaback', async () => {
-    bautajs.operations.v1.operation1.setup((p: PipelineBuilder<any>) => {
-      p.push(
-        asPromise((_: any, ctx: any, _bautajs: any, done: any) =>
-          done(null, [{ id: ctx.req.id, name: 'pet' }])
-        )
-      );
+  test('Should execute the pipeline created by the pipeline decorator', async () => {
+    const myPipeline = pipeline(p => p.push(() => [{ id: 1, name: 'pet' }]));
+    bautajs.operations.v1.operation1.setup(p => {
+      p.pushPipeline(myPipeline);
     });
 
     expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+      { id: 1, name: 'pet' }
+    ]);
+  });
+
+  test('Should execute the pipeline without add it into bautajs', async () => {
+    const myPipeline = pipeline(p => p.push(() => [{ id: 1, name: 'pet' }]));
+
+    expect(await myPipeline(null, createContext({ req: { id: 1 }, res: {} }), bautajs)).toEqual([
       { id: 1, name: 'pet' }
     ]);
   });

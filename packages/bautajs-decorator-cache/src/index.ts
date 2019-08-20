@@ -13,52 +13,49 @@
  * limitations under the License.
  */
 import memoizee from 'memoizee';
-import {
-  Accesor,
-  BautaJSInstance,
-  Context,
-  Pipeline,
-  PipelineBuilder,
-  StepFn
-} from '@bautajs/core';
+import { BautaJSInstance, Context, OperatorFunction } from '@bautajs/core';
 
 export type Normalizer<TIn> = (value: [TIn, Context, BautaJSInstance]) => any;
 
+export interface CacheDecorator {
+  <TIn, TOut>(
+    fn: OperatorFunction<TIn, TOut>,
+    normalizer: Normalizer<TIn>,
+    options?: memoizee.Options
+  ): OperatorFunction<TIn, TOut>;
+}
+
 /**
- * Cache the given steps with [memoizee](https://www.npmjs.com/package/memoizee)
+ * Cache the given OperatorFunctions with [memoizee](https://www.npmjs.com/package/memoizee)
  * @export
  * @template TIn
  * @param {(pipeline: Pipeline<TIn>) => void} fn
  * @param {Normalizer<TIn>} normalizer
  * @param {memoizee.Options} [options={}]
- * @returns {StepFn<TIn, any>}
+ * @returns {OperatorFunction<TIn, any>}
  * @example
  * const { cache } = require('@batuajs/cache-decorator');
  *
  * operations.v1.op1.setup(p => p.push(cache([() => {...}], ([_,ctx] => ctx.data.token))))
  */
-export function cache<TIn>(
-  fn: (pipeline: Pipeline<TIn>) => void,
+// eslint-disable-next-line import/export
+export const cache: CacheDecorator = <TIn, TOut>(
+  fn: any,
   normalizer: Normalizer<TIn>,
   options: memoizee.Options = {}
-): StepFn<TIn, null> {
+): OperatorFunction<TIn, TOut> => {
   if (!normalizer) {
     throw new Error(
       'normalizer: (args)=>{} function is a mandatory parameter to calculate the cache key'
     );
   }
-  const accessor = new Accesor();
-  // Set default handler as empty function
-  accessor.handler = () => {};
-  const flow = new PipelineBuilder<TIn>(accessor, '', '');
-  fn(flow);
-  const cached = memoizee(accessor.handler, {
+  const cached = memoizee(fn, {
     ...options,
     normalizer,
     promise: true
   });
 
   return async (value: TIn, ctx: Context, bautajs: BautaJSInstance) => cached(value, ctx, bautajs);
-}
+};
 
 export default cache;

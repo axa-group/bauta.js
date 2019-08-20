@@ -1,7 +1,7 @@
 # Cancelable request
 
 All the pipelines are cancelable promises that are attached to the `req.on('abort')` and to the `req.on('timeout')` [Node.js request events](https://nodejs.org/api/http.html#http_class_http_clientrequest).
-When the client cancel the request the pipeline is canceled and the `onCancel` method is called for each pushed step.
+When the client cancel the request the pipeline is canceled and the `onCancel` method is called for each pushed OperatorFunction.
 
 - Example:
 ```js
@@ -10,21 +10,23 @@ const { resolver } = require('@bautajs/core');
 
 module.exports = resolver((operations) => {
   operations.v1.findCats.setup((p) => {
-    p.push((val, ctx) => {
+    p.pipe((val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled');
         })
       return {
         id: '1'
       }
-    }).push((val, ctx) => {
+    },
+    (val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled fired on cancel 2');
         })
       return {
         id: '1'
       }
-    }).push((val, ctx) => {
+    },
+    (val, ctx) => {
       return {
         id: '1'
       }
@@ -33,7 +35,7 @@ module.exports = resolver((operations) => {
 })
 ```
 
-In the example of above if the request is canceled before complete all steps, an error will be thrown and the pending steps won't be executed.
+In the example of above if the request is canceled before complete all OperatorFunctions, an error will be thrown and the pending OperatorFunctions won't be executed.
 
 - In case of a request to a datasource, if a request is canceled, the request to the third party API will be discarded.
 
@@ -45,21 +47,23 @@ const { resolver } = require('@bautajs/core');
 
 module.exports = resolver((operations) => {
   operations.v1.findCats.setup((p) => {
-    p.push((val, ctx) => {
+    p.pipe((val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled');
         })
       return {
         id: '1'
       }
-    }).push((val, ctx) => {
+    },
+    (val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled fired on cancel 2');
         })
       return {
         id: '1'
       }
-    }).push((val, ctx) => {
+    },
+    (val, ctx) => {
       return {
         id: '1'
       }

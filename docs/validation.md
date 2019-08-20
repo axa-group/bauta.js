@@ -37,7 +37,7 @@ using `operations.v1.operation1.validateRequest(false);`
 
 ```js
   operations.v1.findCats.setup(p => 
-      p.push(function pFn(_, ctx) {
+      p.pipe(function pFn(_, ctx) {
       ctx.validateRequest();
       // if the request is not valid this will throw an [AJV](https://www.npmjs.com/package/ajv#validation-errors) error
     })
@@ -83,7 +83,7 @@ s
 
 ```js
   operations.v1.findCats.setup(p => 
-    p.push(function pFn(response, ctx) {
+    p.pipe(function pFn(response, ctx) {
       ctx.validateResponse(response);
       // if the response is not valid this will throw an ValidationError error 
     })
@@ -94,7 +94,7 @@ s
 
 ```js
   operations.v1.findCats.setup(p => 
-    p.push(function pFn(response, ctx) {
+    p.pipe(function pFn(response, ctx) {
       ctx.validateResponse(response, 201);
     })
   );

@@ -15,7 +15,18 @@
 import { GotEmitter, GotOptions, GotPromise, Hooks, Response } from 'got';
 import { MultipartBody, RequestPart } from 'multipart-request-builder';
 import * as nodeStream from 'stream';
-import { BautaJSInstance, Context, StepFn, Dictionary } from '@bautajs/core';
+import { BautaJSInstance, Context, OperatorFunction, Dictionary } from '@bautajs/core';
+
+export enum EventTypes {
+  /**
+   * A datasource was executed with the given options.
+   */
+  DATASOURCE_EXECUTION = '3',
+  /**
+   * A datasource execution finished with the given result.
+   */
+  DATASOURCE_RESULT = '4'
+}
 
 export enum ResponseType {
   JSON = 'json',
@@ -35,9 +46,12 @@ export interface RequestFn {
 }
 
 export interface RequestDecorator<TIn> {
-  (localOptions?: RequestOptions): StepFn<TIn, Buffer | string | object>;
-  (localOptions: FullResponseRequestOptions): StepFn<TIn, Response<Buffer | string | object>>;
-  (localOptions: StreamRequestOptions): StepFn<TIn, GotEmitter & nodeStream.Duplex>;
+  (localOptions?: RequestOptions): OperatorFunction<TIn, Buffer | string | object>;
+  (localOptions: FullResponseRequestOptions): OperatorFunction<
+    TIn,
+    Response<Buffer | string | object>
+  >;
+  (localOptions: StreamRequestOptions): OperatorFunction<TIn, GotEmitter & nodeStream.Duplex>;
 }
 
 export interface CompiledRestProvider extends RestProviderTemplate<RequestParams> {
@@ -45,7 +59,7 @@ export interface CompiledRestProvider extends RestProviderTemplate<RequestParams
 }
 
 export type RestProvider<TIn> = RequestDecorator<TIn> & {
-  compile: (fn: StepFnCompiled<TIn, any>) => StepFn<TIn, any>;
+  compile: (fn: OperatorFunctionCompiled<TIn, any>) => OperatorFunction<TIn, any>;
 };
 
 // DataSource
@@ -92,7 +106,7 @@ export type Options<TIn, TOut> =
   | ((value: TIn, ctx: Context, $static: any, $env: Dictionary<any>) => TOut)
   | RequestParams;
 
-export type StepFnCompiled<TIn, TOut> = (
+export type OperatorFunctionCompiled<TIn, TOut> = (
   prev: TIn,
   ctx: Context,
   bautajs: BautaJSInstance,

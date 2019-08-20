@@ -1,8 +1,17 @@
-const { resolver, pipeline } = require('@bautajs/express');
+const { resolver, pipeline, match } = require('@bautajs/core');
 const { provider1 } = require('./source-datasource');
 
+const myPipelinetwo = pipeline(p =>
+  p.pipe(response => {
+    console.log('pipeline 2');
+
+    return response;
+  })
+);
+
 const myPipeline = pipeline(p =>
-  p.push(response => {
+  p.pipe(response => {
+    console.log('pipeline 1');
     return response;
   })
 );
@@ -12,26 +21,15 @@ module.exports = resolver(operations => {
     .validateRequests(false)
     .validateResponses(false)
     .setup(p =>
-      p
-        .push(provider1())
-        .push((response, ctx) => {
-          ctx.token.onCancel(() => {
-            console.log('O no was canceled');
-          });
-
-          return response;
-        })
-        .push((response, ctx) => {
-          ctx.token.onCancel(() => {
-            console.log('O no was canceled 2');
-          });
-          if (ctx.token.isCanceled) {
-            return null;
-          }
-          return ctx.req.query.title
-            ? response.filter(r => r.title.includes(ctx.req.query.title))
-            : response;
-        })
-        .pushPipeline(myPipeline)
+      p.pipe(
+        provider1(),
+        match(m =>
+          m
+            .on(prev => {
+              return prev === null;
+            }, myPipeline)
+            .otherwise(myPipelinetwo)
+        )
+      )
     );
 });

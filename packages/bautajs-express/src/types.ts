@@ -19,6 +19,13 @@ import morgan from 'morgan';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { Operation } from '@bautajs/core';
 
+export enum EventTypes {
+  /**
+   * An operation was exposed throught express framework.
+   */
+  EXPOSE_OPERATION = '5'
+}
+
 export interface ICallback {
   (error?: Error | null, result?: any): void;
 }

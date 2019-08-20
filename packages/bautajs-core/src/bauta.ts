@@ -241,7 +241,7 @@ export class BautaJS implements BautaJSInstance {
           operations[apiVersion][operation.id] = operation;
 
           this.logger.info(`[OK] ${apiVersion}.${operation.id} operation registered on bautajs`);
-          this.logger.events.emit(EventTypes.REGISTER_SERVICE, {
+          this.logger.events.emit(EventTypes.REGISTER_OPERATION, {
             apiVersion,
             operation
           });

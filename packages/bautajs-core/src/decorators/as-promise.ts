@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 import { promisify } from 'util';
-import { BautaJSInstance, Context, StepFn } from '../utils/types';
+import { BautaJSInstance, Context, OperatorFunction } from '../utils/types';
 
-export type StepFnCallback<TIn, TOut> = (
+export type OperatorFunctionCallback<TIn, TOut> = (
   prev: TIn,
   ctx: Context,
   bautajs: BautaJSInstance,
@@ -27,8 +27,8 @@ export type StepFnCallback<TIn, TOut> = (
  * @export
  * @template TIn
  * @template TOut
- * @param {StepFnCallback<TIn, TOut>} fn
- * @returns {StepFn<TIn, TOut>}
+ * @param {OperatorFunctionCallback<TIn, TOut>} fn
+ * @returns {OperatorFunction<TIn, TOut>}
  * @example
  * const { asPromise } = require('@batuajs/core');
  *
@@ -36,7 +36,9 @@ export type StepFnCallback<TIn, TOut> = (
  *  done(null, 'hey')
  * })))
  */
-export function asPromise<TIn, TOut>(fn: StepFnCallback<TIn, TOut>): StepFn<TIn, TOut> {
+export function asPromise<TIn, TOut>(
+  fn: OperatorFunctionCallback<TIn, TOut>
+): OperatorFunction<TIn, TOut> {
   return promisify<TIn, Context, BautaJSInstance, TOut>(fn);
 }
 

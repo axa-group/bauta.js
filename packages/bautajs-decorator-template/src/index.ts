@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import stjs from 'stjs';
-import { Context, StepFn } from '@bautajs/core';
+import { Context, OperatorFunction } from '@bautajs/core';
 
 /**
  * Compile the json {@link https://www.npmjs.com/package/stjs|stjs} template with the given ctx, env, and previous value.
@@ -25,7 +25,7 @@ import { Context, StepFn } from '@bautajs/core';
  * @template TIn
  * @template TOut
  * @param {TOut} currentTemplate
- * @returns {StepFn<TIn, TOut>}
+ * @returns {OperatorFunction<TIn, TOut>}
  * @example
  * const { template } = require('@batuajs/decorators');
  *
@@ -37,7 +37,7 @@ import { Context, StepFn } from '@bautajs/core';
  *
  * operations.v1.op1.push(template(myTemplate));
  */
-export function template<TIn, TOut>(currentTemplate: TOut): StepFn<TIn, TOut> {
+export function template<TIn, TOut>(currentTemplate: TOut): OperatorFunction<TIn, TOut> {
   return (value: TIn, ctx: Context): TOut =>
     stjs
       .select({

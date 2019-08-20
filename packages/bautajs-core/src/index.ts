@@ -15,9 +15,7 @@
 import { prepareToLog } from './utils/prepare-to-log';
 
 export * from './bauta';
-export * from './core/cancelable-token';
-export * from './core/pipeline';
-export * from './core/validation-error';
+export * from './decorators/match';
 export * from './decorators/resolver';
 export * from './decorators/step';
 export * from './decorators/pipeline';
@@ -25,6 +23,7 @@ export * from './decorators/as-promise';
 export * from './decorators/as-value';
 export * from './decorators/parallel';
 export * from './utils/types';
+export * from './utils/create-context';
 export * from './logger';
 
 export const utils = {

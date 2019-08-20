@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document } from '@bautajs/core';
+import { BautaJS, Document, pipeline } from '@bautajs/core';
 import { cache } from '../index';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
@@ -27,18 +27,13 @@ describe('Cache push', () => {
 
   test('Should cache the requests with the same id', async () => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
-    bautajs.operations.v1.operation1.setup(pipeline =>
-      pipeline.push(
-        cache(
-          p =>
-            p
-              .push(() => [{ a: '123' }])
-              .push((result: any) => ({ ...result[0], new: 1 }))
-              .push(fn),
-          ([, ctx]) => ctx.id
-        )
-      )
+    const pp = pipeline(p =>
+      p
+        .push(() => [{ a: '123' }])
+        .push((result: any) => ({ ...result[0], new: 1 }))
+        .push(fn)
     );
+    bautajs.operations.v1.operation1.setup(p => p.push(cache(pp, ([, ctx]) => ctx.id)));
 
     await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
     await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
@@ -48,19 +43,18 @@ describe('Cache push', () => {
 
   test('Should allow memoizee options', async () => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
-    bautajs.operations.v1.operation1.setup(pipeline =>
-      pipeline.push(
-        cache(
-          p =>
-            p
-              .push(() => [{ a: '123' }])
-              .push((result: any) => ({ ...result[0], new: 1 }))
-              .push(fn),
-          ([, ctx]) => ctx.id,
-          {
-            maxAge: 1000
-          }
-        )
+    const pp = pipeline(p =>
+      p
+        .push(() => [{ a: '123' }])
+        .push((result: any) => ({ ...result[0], new: 1 }))
+        .push(fn)
+    );
+
+    bautajs.operations.v1.operation1.setup(p =>
+      p.push(
+        cache(pp, ([, ctx]) => ctx.id, {
+          maxAge: 1000
+        })
       )
     );
     jest.runAllTimers();
@@ -72,11 +66,15 @@ describe('Cache push', () => {
   });
 
   test('Should throw an error if normalizer function is not specified', async () => {
+    const pp = pipeline(p =>
+      p.push(() => [{ a: '123' }]).push((result: any) => ({ ...result[0], new: 1 }))
+    );
+
     expect(() =>
-      bautajs.operations.v1.operation1.setup(pipeline =>
-        pipeline.push(
+      bautajs.operations.v1.operation1.setup(p =>
+        p.push(
           // @ts-ignore
-          cache(p => p.push((value: any, ctx: any) => ctx.dataSource(value).request()))
+          cache(pp)
         )
       )
     ).toThrow(

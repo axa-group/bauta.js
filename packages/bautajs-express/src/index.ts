@@ -23,12 +23,11 @@ import {
   BautaJSOptions,
   Dictionary,
   Document,
-  EventTypes,
   LoggerBuilder,
   OpenAPIV2Document,
   OpenAPIV3Document
 } from '@bautajs/core';
-import { Route, MiddlewareOptions, ICallback } from './types';
+import { Route, MiddlewareOptions, ICallback, EventTypes } from './types';
 import { initMorgan, initBodyParser, initHelmet, initCors, initExplorer } from './middlewares';
 
 export * from './types';
@@ -92,7 +91,7 @@ export class BautaJSExpress extends BautaJS {
                 Object.keys(responses[res.statusCode].content)[0]
               : produces && produces[0];
             res.set({
-              'Content-type': contentType,
+              ...(contentType ? { 'Content-type': contentType } : {}),
               ...responses[res.statusCode].headers
             });
           }

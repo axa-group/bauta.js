@@ -12,23 +12,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OperatorFunction } from '../utils/types';
+import { ContextData, Context } from './types';
+import { CancelableTokenBuilder } from '../core/cancelable-token';
+import { sessionFactory } from '../session-factory';
 
-/**
- *
- * Allow to pass directly a value to the resolver
- * @export
- * @template TIn
- * @template TOut
- * @param {TOut} someValue
- * @returns {OperatorFunction<TIn, TOut>}
- * @example
- * const { asValue } = require('@batuajs/core');
- *
- * operations.v1.op1.setup(p => p.push(asValue(5)))
- */
-export function asValue<TIn, TOut>(someValue: TOut): OperatorFunction<TIn, TOut> {
-  return (): TOut => someValue;
+export function createContext(ctx: ContextData): Context {
+  if (!ctx.req) {
+    ctx.req = {};
+  }
+
+  if (!ctx.res) {
+    ctx.res = {};
+  }
+
+  const token = new CancelableTokenBuilder();
+
+  return Object.assign(
+    {
+      validateResponse: () => null,
+      validateRequest: () => null,
+      data: ctx.data || {},
+      req: ctx.req,
+      res: ctx.res,
+      token
+    },
+    sessionFactory(ctx.req)
+  );
 }
 
-export default asValue;
+export default createContext;

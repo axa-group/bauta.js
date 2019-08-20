@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import loopbackFilters, { Filter } from 'loopback-filters';
-import { Context, StepFn } from '@bautajs/core';
+import { Context, OperatorFunction } from '@bautajs/core';
 
 export interface LoopbackQuery {
   filter: Filter;
@@ -27,7 +27,7 @@ export interface LoopbackRequest {
  * This decorator will filter the previous pushed value using the req.query.filter parameter of the request
  * @export
  * @template TIn
- * @returns {StepFn<
+ * @returns {OperatorFunction<
  *   TIn[],
  *   TIn[]
  * >}
@@ -36,7 +36,7 @@ export interface LoopbackRequest {
  *
  * operations.v1.op1.setup(p => p.push(queryFilter()))
  */
-export function queryFilters<TIn>(): StepFn<TIn[], TIn[]> {
+export function queryFilters<TIn>(): OperatorFunction<TIn[], TIn[]> {
   return (value: TIn[], ctx: Context): TIn[] => {
     const queryFilter = ctx.req.query && ctx.req.query.filter;
 

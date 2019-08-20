@@ -2,8 +2,7 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist",
-    "target": "es6"
+    "outDir": "./dist"
   },
   "include": ["src/**/*.ts", "src/validators/*.json"],
   "exclude": ["**/__tests__", "**/__mocks__", "dist"]

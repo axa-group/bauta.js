@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import bodyParser from 'body-parser';
 import swaggerUiExpress from 'swagger-ui-express';
 import morgan from 'morgan';
 import cors, { CorsOptions } from 'cors';
-import { Application } from 'express';
+import { Application, json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { Document } from '@bautajs/core';
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
@@ -61,11 +60,11 @@ export function initCors(app: Application, opt?: MiddlewareOption<CorsOptions>) 
 
 export function initBodyParser(app: Application, opt?: MiddlewareOption<BodyParserOptions>) {
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
-    app.use(bodyParser.json({ limit: '50mb' }));
-    app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+    app.use(json({ limit: '50mb' }));
+    app.use(urlencoded({ extended: true, limit: '50mb' }));
   } else if (opt && opt.options) {
-    app.use(bodyParser.json(opt.options.json));
-    app.use(bodyParser.urlencoded(opt.options.urlEncoded));
+    app.use(json(opt.options.json));
+    app.use(urlencoded(opt.options.urlEncoded));
   }
 }
 

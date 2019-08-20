@@ -12,28 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { logger } from '../logger';
 import {
   BautaJSInstance,
   Context,
-  EventTypes,
   HandlerAccesor,
-  Pipeline,
-  StepFn,
+  PipelineBuilder,
+  OperatorFunction,
   ErrorHandler
 } from '../utils/types';
-import defaultResolver from '../utils/default-resolver';
 
 export class Accesor implements HandlerAccesor {
-  private accesor: StepFn<any, any> = defaultResolver;
+  private accesor: OperatorFunction<any, any> = val => val;
 
   private errorAccesor: ErrorHandler = (err: Error) => Promise.reject(err);
 
-  get handler(): StepFn<any, any> {
+  get handler(): OperatorFunction<any, any> {
     return this.accesor;
   }
 
-  set handler(fn: StepFn<any, any>) {
+  set handler(fn: OperatorFunction<any, any>) {
     this.accesor = fn;
   }
 
@@ -46,53 +43,63 @@ export class Accesor implements HandlerAccesor {
   }
 }
 
-export class PipelineBuilder<TIn> implements Pipeline<TIn> {
-  // eslint-disable-next-line no-useless-constructor
+export class Builder<TIn> implements PipelineBuilder<TIn> {
   constructor(
-    public readonly accesor: HandlerAccesor,
-    private readonly operationId: string,
-    private readonly version: string // eslint-disable-next-line no-empty-function
-  ) {}
+    public readonly accesor: HandlerAccesor = new Accesor(),
+    private onPush?: (param: any) => void
+  ) {
+    // eslint-disable-next-line no-empty-function
+  }
 
   onError(fn: ErrorHandler): void {
     if (typeof fn !== 'function') {
-      throw new Error(`The errorHandler must be a function on ${this.version}.${this.operationId}`);
+      throw new Error('The errorHandler must be a function.');
     }
 
     this.accesor.errorHandler = fn;
   }
 
-  pushPipeline<TOut>(fn: (pipeline: Pipeline<TIn>) => void): Pipeline<TOut> {
-    if (typeof fn !== 'function') {
-      throw new Error(`The pipeline must be a function on ${this.version}.${this.operationId}`);
+  pushPipeline<TOut>(fn: OperatorFunction<TIn, TOut>): PipelineBuilder<TOut> {
+    if (this.onPush) {
+      this.onPush(fn);
     }
 
-    fn(new PipelineBuilder<TIn>(this.accesor, this.operationId, this.version));
-
-    return new PipelineBuilder<TOut>(this.accesor, this.operationId, this.version);
+    return this.push<TOut>(fn);
   }
 
-  push<TOut>(fn: StepFn<TIn, TOut>): Pipeline<TOut> {
+  push<TOut>(fn: OperatorFunction<TIn, TOut>): PipelineBuilder<TOut> {
     if (typeof fn !== 'function') {
-      throw new Error(`An step must be a function on ${this.version}.${this.operationId}`);
+      throw new Error('An OperatorFunction must be a function.');
     }
 
     this.accesor.handler = this.merge<any, any>(this.accesor.handler, fn);
 
-    logger.info(
-      `[OK] ${fn.name || 'anonymous function'} pushed to .${this.version}.${this.operationId}`
-    );
-    logger.events.emit(EventTypes.PUSH_STEP, {
-      step: fn,
-      version: this.version,
-      operationId: this.operationId
-    });
+    if (this.onPush) {
+      this.onPush(fn);
+    }
 
-    return new PipelineBuilder<TOut>(this.accesor, this.operationId, this.version);
+    return new Builder<TOut>(this.accesor, this.onPush);
+  }
+
+  pipe<TOut>(...fns: any[]): PipelineBuilder<TOut> {
+    if (fns.length === 0) {
+      throw new Error('At least one OperatorFunction must be specified.');
+    }
+
+    if (!fns.every((fn: Function) => typeof fn === 'function')) {
+      throw new Error('An OperatorFunction must be a function.');
+    }
+
+    fns.forEach(fn => this.push(fn));
+
+    return new Builder<TOut>(this.accesor, this.onPush);
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private merge<T, TOut>(fn1: StepFn<TIn, T>, fn2: StepFn<T, TOut>): StepFn<TIn, TOut> {
+  private merge<T, TOut>(
+    fn1: OperatorFunction<TIn, T>,
+    fn2: OperatorFunction<T, TOut>
+  ): OperatorFunction<TIn, TOut> {
     return (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => {
       const res = fn1(prev, ctx, bautajs);
       if (res instanceof Promise) {
@@ -103,4 +110,4 @@ export class PipelineBuilder<TIn> implements Pipeline<TIn> {
   }
 }
 
-export default PipelineBuilder;
+export default Builder;

@@ -19,17 +19,24 @@ import https from 'https';
 import { createHttpsAgent } from 'native-proxy-agent';
 import nock from 'nock';
 import path from 'path';
-import {
-  BautaJSInstance,
-  CancelableTokenBuilder,
-  Context,
-  Document,
-  logger,
-  LoggerBuilder
-} from '@bautajs/core';
+import { BautaJSInstance, Context, Document, logger, LoggerBuilder } from '@bautajs/core';
 import { ContextLogger } from '@bautajs/core/src';
 import { restDataSource, restDataSourceTemplate } from '../datasource-rest';
 import { CompiledRestProvider } from '../utils/types';
+
+class CancelableTokenBuilder {
+  private cancelStack: any[] = [];
+
+  public isCanceled: boolean = false;
+
+  cancel() {
+    this.cancelStack.forEach(onCancel => onCancel());
+  }
+
+  onCancel(fn: any) {
+    this.cancelStack.push(fn);
+  }
+}
 
 describe('datasource rest test', () => {
   let context: Context;

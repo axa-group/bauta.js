@@ -156,12 +156,13 @@ describe('Operation class tests', () => {
       });
     });
 
-    test('Should throw an error if the given step fn is undefined', () => {
+    test('Should throw an error if the given OperatorFunction fn is undefined', () => {
       // @ts-ignore
-      const operationThrow = () => operationTest.setup(p => p.push(undefined));
-      expect(operationThrow).toThrow(new Error('An step must be a function on v1.operation1'));
+      expect(() => operationTest.setup(p => p.push(undefined))).toThrow(
+        new Error('An OperatorFunction must be a function.')
+      );
     });
-    test('Pushed steps must be executed in order', async () => {
+    test('Pushed OperatorFunctions must be executed in order', async () => {
       const expected = 'this will be showed';
       operationTest
         .validateResponses(false)
@@ -187,7 +188,7 @@ describe('Operation class tests', () => {
     });
 
     test('Pipeline should be a function', async () => {
-      const expected = 'The pipeline must be a function on v1.operation1';
+      const expected = 'An OperatorFunction must be a function.';
       const pipe = 'string';
       expect(() =>
         operationTest
@@ -209,7 +210,7 @@ describe('Operation class tests', () => {
     });
     test('should throw an error if the first argument is not a function', () => {
       const errorHandler = 'String';
-      const expected = new Error(`The errorHandler must be a function on v1.operation1`);
+      const expected = new Error(`The errorHandler must be a function.`);
 
       // @ts-ignore
       expect(() => operationTest.setup(p => p.onError(errorHandler))).toThrow(expected);
@@ -232,19 +233,19 @@ describe('Operation class tests', () => {
 
     test('should be called only onces', async () => {
       const errorHandler = jest.fn().mockRejectedValue(new Error('error'));
-      const step1 = () => 'bender';
-      const step2 = () => 'bender3';
-      const step3 = () => Promise.reject(new Error('crashhh!!!'));
-      const step4 = () => 'bender4';
+      const OperatorFunction1 = () => 'bender';
+      const OperatorFunction2 = () => 'bender3';
+      const OperatorFunction3 = () => Promise.reject(new Error('crashhh!!!'));
+      const OperatorFunction4 = () => 'bender4';
       operationTest
         .validateResponses(false)
         .validateRequests(false)
         .setup(p =>
           p
-            .push(step1)
-            .push(step2)
-            .push(step3)
-            .push(step4)
+            .push(OperatorFunction1)
+            .push(OperatorFunction2)
+            .push(OperatorFunction3)
+            .push(OperatorFunction4)
             .onError(errorHandler)
         );
       const ctx = { req: {}, res: {} };
@@ -259,7 +260,7 @@ describe('Operation class tests', () => {
     test('should set the error handler to the inherit operation diferent from the first operation', async () => {
       const errorHandler = () => Promise.reject(new Error('error'));
       const errorHandlerV2 = () => Promise.reject(new Error('errorV2'));
-      const step = () => Promise.reject(new Error('crashhh!!!'));
+      const OperatorFunction = () => Promise.reject(new Error('crashhh!!!'));
       operationTest.validateResponses(false).validateRequests(false);
       const operationV2 = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
         staticConfig: {},
@@ -272,8 +273,8 @@ describe('Operation class tests', () => {
 
       operationTest.nextVersionOperation = operationV2;
 
-      operationV2.setup(p => p.push(step).onError(errorHandlerV2));
-      operationTest.setup(p => p.push(step).onError(errorHandler));
+      operationV2.setup(p => p.push(OperatorFunction).onError(errorHandlerV2));
+      operationTest.setup(p => p.push(OperatorFunction).onError(errorHandler));
       const ctx = { req: {}, res: {} };
 
       try {
@@ -287,6 +288,91 @@ describe('Operation class tests', () => {
       } catch (e) {
         expect(e).toEqual(new Error('errorV2'));
       }
+    });
+  });
+
+  describe('Operation.pipeline.pipe tests', () => {
+    let operationTest: Operation;
+    beforeEach(() => {
+      operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
+    });
+    test('Should throw an error on pipe 0 OperatorFunctions', () => {
+      const expected = new Error(`At least one OperatorFunction must be specified.`);
+
+      // @ts-ignore
+      expect(() => operationTest.setup(p => p.pipe())).toThrow(expected);
+    });
+
+    test('Should throw an error on pipe a non function', () => {
+      const expected = new Error(`An OperatorFunction must be a function.`);
+
+      // @ts-ignore
+      expect(() => operationTest.setup(p => p.pipe('string'))).toThrow(expected);
+    });
+
+    test('Should be able to use previous values', async () => {
+      const expected = 10;
+      operationTest
+        .validateResponses(false)
+        .validateRequests(false)
+        .setup(p =>
+          p.pipe(
+            () => 5,
+            prev => prev + 5
+          )
+        );
+      const ctx = { req: {}, res: {} };
+
+      expect(await operationTest.run(ctx)).toEqual(expected);
+    });
+
+    test('Should execute the pipe OperatorFunctions in order', async () => {
+      const expected = 'this will be showed';
+      operationTest
+        .validateResponses(false)
+        .validateRequests(false)
+        .setup(p =>
+          p.pipe(
+            () => 'next3',
+            () => expected
+          )
+        );
+      const ctx = { req: {}, res: {} };
+
+      expect(await operationTest.run(ctx)).toEqual(expected);
+    });
+
+    test('Should allow pipelines on pipe method', async () => {
+      const expected = 'this will be showed';
+      const pp = pipeline(p => p.pipe(() => expected));
+      operationTest
+        .validateResponses(false)
+        .validateRequests(false)
+        .setup(p =>
+          p.pipe(
+            () => 'next3',
+            pp
+          )
+        );
+      const ctx = { req: {}, res: {} };
+
+      expect(await operationTest.run(ctx)).toEqual(expected);
+    });
+
+    test('Should allow async functions', async () => {
+      const expected = 'next3';
+      operationTest
+        .validateResponses(false)
+        .validateRequests(false)
+        .setup(p => p.pipe(() => Promise.resolve('next3')));
+      const ctx = { req: {}, res: {} };
+
+      expect(await operationTest.run(ctx)).toEqual(expected);
     });
   });
 
@@ -512,7 +598,7 @@ describe('Operation class tests', () => {
       expect(await operationTest.run({ req: { body }, res: {} })).toEqual(expected);
     });
 
-    test('should use default step if setup is not done', async () => {
+    test('should use default OperatorFunction if setup is not done', async () => {
       operationTest.validateResponses(false);
       const body = {
         grant_type: 'password',

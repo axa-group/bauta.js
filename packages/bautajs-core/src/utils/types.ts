@@ -92,11 +92,14 @@ export interface IValidationError extends Error {
   toJSON: () => ValidationErrorJSON;
 }
 export enum EventTypes {
-  PUSH_STEP = '1',
-  REGISTER_SERVICE = '2',
-  DATASOURCE_EXECUTION = '3',
-  DATASOURCE_RESULT = '4',
-  EXPOSE_OPERATION = '5'
+  /**
+   * An OperatorFunction has been pushed to some pipeline
+   */
+  PUSH_OPERATOR = '1',
+  /**
+   * An operation was registered on bautajs.
+   */
+  REGISTER_OPERATION = '2'
 }
 export type Log = (...args: any[]) => any;
 export interface Logger {
@@ -137,9 +140,33 @@ export interface BautaJSOptions {
   staticConfig?: any;
 }
 export interface BautaJSInstance {
+  /**
+   * The list of operations defined on the given OpenAPI schemas split by version ID's.
+   *
+   * @type {Operations}
+   * @memberof BautaJSInstance
+   */
   readonly operations: Operations;
+  /**
+   * An instance of the logger under bautajs scope.
+   *
+   * @type {Logger}
+   * @memberof BautaJSInstance
+   */
   readonly logger: Logger;
+  /**
+   * The given OpenAPI definitions schemas.
+   *
+   * @type {Document[]}
+   * @memberof BautaJSInstance
+   */
   readonly apiDefinitions: Document[];
+  /**
+   * An static set of configurations available on each OperatorFunction.
+   *
+   * @type {*}
+   * @memberof BautaJSInstance
+   */
   readonly staticConfig: any;
 }
 
@@ -180,7 +207,7 @@ export interface Operation {
    * @returns {Operation}
    * @memberof Operation
    */
-  setup(fn: (pipeline: Pipeline<undefined>) => void): void;
+  setup(pipelineSetup: PipelineSetup<undefined>): void;
   /**
    * Run the operation pipeline chain with the given context
    * @param {ContextData} [ctx]
@@ -207,18 +234,66 @@ export type ValidationReqBuilder = (req?: TRequest) => null;
 export type ValidationResBuilder = (res: TResponse, statusCode?: number) => null;
 
 export interface ContextData {
+  /**
+   * The request object of the used framework
+   *
+   * @type {TRequest}
+   * @memberof ContextData
+   */
   req?: TRequest;
+  /**
+   * The response object of the used framework.
+   *
+   * @type {TResponse}
+   * @memberof ContextData
+   */
   res?: TResponse;
+  /**
+   *  A dictionary to add custom data to pass between OperatorFunctions
+   * @type {Dictionary<any>}
+   * @memberof Context
+   */
   data?: Dictionary<any>;
 }
 export interface Context extends Session {
+  /**
+   * A cancelable token instance of the current pipeline. Use it to check if the pipeline
+   * has been canceled or to subscribe to the onCancel event.
+   *
+   * @type {CancelableToken}
+   * @memberof Context
+   */
   token: CancelableToken;
+  /**
+   * The request object of the used framework
+   *
+   * @type {TRequest}
+   * @memberof Context
+   */
   req: TRequest;
+  /**
+   * The response object of the used framework.
+   *
+   * @type {TResponse}
+   * @memberof Context
+   */
   res: TResponse;
+  /**
+   * Validate the given req.body, req.params and req.query with the given OpenAPI request schema for that operation ID.
+   *
+   * @type {ValidationReqBuilder}
+   * @memberof Context
+   */
   validateRequest: ValidationReqBuilder;
+  /**
+   * Validate the given response againts the specified OpenAPI response schema for that operation ID.
+   *
+   * @type {ValidationResBuilder}
+   * @memberof Context
+   */
   validateResponse: ValidationResBuilder;
   /**
-   *  A dictionary to add custom data to pass between steps
+   *  A dictionary to add custom data to pass between OperatorFunctions
    * @type {Dictionary<any>}
    * @memberof Context
    */
@@ -226,46 +301,203 @@ export interface Context extends Session {
 }
 
 export interface Session {
+  /**
+   * An unique id generated each request.
+   *
+   * @type {string}
+   * @memberof Session
+   */
   id?: string;
+  /**
+   * A hash of the request AUTHORIZATION token representing the userId.
+   *
+   * @type {string}
+   * @memberof Session
+   */
   userId?: string;
+  /**
+   * An instance of the logger with the id and userId scopes.
+   *
+   * @type {ContextLogger}
+   * @memberof Session
+   */
   logger: ContextLogger;
+  /**
+   * The url that is being requested.
+   *
+   * @type {(string | undefined)}
+   * @memberof Session
+   */
   url: string | undefined;
 }
 
-// Step
+// @deprecated "use OperatorFunction instead"
 export type StepFn<TIn, TOut> = (
+  /**
+   * The previous value returned by the previous operator executed.
+   */
   prev: TIn,
+  /**
+   * The request context.
+   */
   ctx: Context,
+  /**
+   * The bautajs instance.
+   */
   bautajs: BautaJSInstance
 ) => TOut | Promise<TOut>;
 
-export interface Pipeline<TIn> {
+export type OperatorFunction<TIn, TOut> = StepFn<TIn, TOut>;
+
+export interface PipelineBuilder<TIn> {
   /**
-   * Push an step function to the pipeline.
-   * @template TOut
-   * @param {StepFn<TIn, TOut>} fn
-   * @returns {Pipeline<TOut>}
-   * @memberof Pipeline
+   * Create a pipeline of OperatorFunction. It allows merge pipelines.
+   *
+   * @param {...OperatorFunction<TIn, TOut>} ...fns
+   * @returns {PipelineBuilder<TOut>}
+   * @memberof PipelineBuilder
+   * @example
+   * const { pipeline } = require('@bautajs/core');
+   *
+   * const pipelineOne = pipeline(p => p.pipe(() => 'result'));
+   * pipeline(p => p.pipe(() => 'some convertion', pipelineOne));
    */
-  push<TOut>(fn: StepFn<TIn, TOut>): Pipeline<TOut>;
+  pipe<A>(op1: OperatorFunction<TIn, A>): PipelineBuilder<A>;
+  pipe<A, B>(op1: OperatorFunction<TIn, A>, op2: OperatorFunction<A, B>): PipelineBuilder<B>;
+  pipe<A, B, C>(
+    op1: OperatorFunction<TIn, A>,
+    op2: OperatorFunction<A, B>,
+    op3: OperatorFunction<B, C>
+  ): PipelineBuilder<C>;
+  pipe<A, B, C, D>(
+    op1: OperatorFunction<TIn, A>,
+    op2: OperatorFunction<A, B>,
+    op3: OperatorFunction<B, C>,
+    op4: OperatorFunction<C, D>
+  ): PipelineBuilder<D>;
+  pipe<A, B, C, D, E>(
+    op1: OperatorFunction<TIn, A>,
+    op2: OperatorFunction<A, B>,
+    op3: OperatorFunction<B, C>,
+    op4: OperatorFunction<C, D>,
+    op5: OperatorFunction<D, E>
+  ): PipelineBuilder<E>;
+  pipe<A, B, C, D, E, F>(
+    op1: OperatorFunction<TIn, A>,
+    op2: OperatorFunction<A, B>,
+    op3: OperatorFunction<B, C>,
+    op4: OperatorFunction<C, D>,
+    op5: OperatorFunction<D, E>,
+    op6: OperatorFunction<E, F>
+  ): PipelineBuilder<F>;
+  pipe<A, B, C, D, E, F, G>(
+    op1: OperatorFunction<TIn, A>,
+    op2: OperatorFunction<A, B>,
+    op3: OperatorFunction<B, C>,
+    op4: OperatorFunction<C, D>,
+    op5: OperatorFunction<D, E>,
+    op6: OperatorFunction<E, F>,
+    op7: OperatorFunction<F, G>
+  ): PipelineBuilder<G>;
+  pipe<A, B, C, D, E, F, G, H>(
+    op1: OperatorFunction<TIn, A>,
+    op2: OperatorFunction<A, B>,
+    op3: OperatorFunction<B, C>,
+    op4: OperatorFunction<C, D>,
+    op5: OperatorFunction<D, E>,
+    op6: OperatorFunction<E, F>,
+    op7: OperatorFunction<F, G>,
+    op8: OperatorFunction<G, H>
+  ): PipelineBuilder<H>;
+  pipe<A, B, C, D, E, F, G, H, I>(
+    op1: OperatorFunction<TIn, A>,
+    op2: OperatorFunction<A, B>,
+    op3: OperatorFunction<B, C>,
+    op4: OperatorFunction<C, D>,
+    op5: OperatorFunction<D, E>,
+    op6: OperatorFunction<E, F>,
+    op7: OperatorFunction<F, G>,
+    op8: OperatorFunction<G, H>,
+    op9: OperatorFunction<H, I>
+  ): PipelineBuilder<I>;
+  pipe<A, B, C, D, E, F, G, H, I>(
+    op1: OperatorFunction<TIn, A>,
+    op2: OperatorFunction<A, B>,
+    op3: OperatorFunction<B, C>,
+    op4: OperatorFunction<C, D>,
+    op5: OperatorFunction<D, E>,
+    op6: OperatorFunction<E, F>,
+    op7: OperatorFunction<F, G>,
+    op8: OperatorFunction<G, H>,
+    op9: OperatorFunction<H, I>,
+    ...operations: OperatorFunction<any, any>[]
+  ): PipelineBuilder<any>;
+  /**
+   * Push an OperatorFunction to the pipeline.
+   *
+   * @template TOut
+   * @deprecated Use .pipe instead
+   * @param {OperatorFunction<TIn, TOut>} fn
+   * @returns {PipelineBuilder<TOut>}
+   * @memberof PipelineBuilder
+   */
+  push<TOut>(fn: OperatorFunction<TIn, TOut>): PipelineBuilder<TOut>;
   /**
    * Merge the given pipeline with the current pipeline.
+   *
    * @template TOut
-   * @param {(pipeline: Pipeline<TIn>) => void} fn
-   * @returns {Pipeline<TOut>}
-   * @memberof Pipeline
+   * @deprecated Use .pipe instead
+   * @param {(pipeline: Pipeline<TIn, TOut>) => void} fn
+   * @returns {PipelineBuilder<TOut>}
+   * @memberof PipelineBuilder
    */
-  pushPipeline<TOut>(fn: (pipeline: Pipeline<TIn>) => void): Pipeline<TOut>;
+  pushPipeline<TOut>(fn: OperatorFunction<TIn, TOut>): PipelineBuilder<TOut>;
+
   /**
    * Set a behaviour in case that some of the pipeline steps throws an error or rejects a promise.
+   *
    * @param {ErrorHandler} fn
-   * @memberof Pipeline
+   * @memberof PipelineBuilder
    */
   onError(fn: ErrorHandler): void;
 }
 
+export type PipelineSetup<TIn> = (pipeline: PipelineBuilder<TIn>) => void;
+
+/**
+ * Resolve the given predicate an execute the pipeline for that condition
+ *
+ * @export
+ * @interface Match
+ * @template TIn
+ * @template TOut
+ */
+export interface Match<TIn, TOut> {
+  pipeline?: OperatorFunction<TIn, TOut>;
+  /**
+   * Set a predicate function that have to return true or false. Depending on that resolution the
+   * given pipeline will be executed.
+   *
+   * @param {(prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean} pred
+   * @param {OperatorFunction<TIn, TOut>} pipeline
+   * @returns {Match<TIn, TOut>}
+   * @memberof Match
+   */
+  on(
+    pred: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
+    pipeline: OperatorFunction<TIn, TOut>
+  ): Match<TIn, TOut>;
+  /**
+   * Set the pipeline that will be executed by default if any of the given predicates succed.
+   *
+   * @param {OperatorFunction<TIn, TOut>} pipeline
+   * @memberof Match
+   */
+  otherwise(pipeline: OperatorFunction<TIn, TOut>): void;
+}
+
 export interface HandlerAccesor {
-  handler: StepFn<any, any>;
+  handler: OperatorFunction<any, any>;
   errorHandler: ErrorHandler;
 }
 
@@ -274,7 +506,17 @@ export type OnCancel = () => void;
 export interface CancelableToken {
   isCanceled: boolean;
 
+  /**
+   * Cancel the given pipeline execution triggering all onCancel listeners.
+   *
+   * @memberof CancelableToken
+   */
   cancel(): void;
 
+  /**
+   * Listen to an onCancel event and execute the given function.
+   *
+   * @memberof CancelableToken
+   */
   onCancel: (fn: OnCancel) => void;
 }

@@ -17,19 +17,22 @@ import OpenapiRequestValidator from 'openapi-request-validator';
 import OpenapiResponseValidator from 'openapi-response-validator';
 import { OpenAPI } from 'openapi-types';
 import PCancelable from 'p-cancelable';
-import { sessionFactory } from '../session-factory';
 import {
   BautaJSInstance,
   Context,
   ContextData,
   OpenAPIComponents,
   Operation,
-  Pipeline,
-  SwaggerComponents
+  SwaggerComponents,
+  EventTypes,
+  OperatorFunction,
+  PipelineSetup
 } from '../utils/types';
-import { Accesor, PipelineBuilder } from './pipeline';
+import { buildDefaultPipeline } from '../utils/default-pipeline';
 import { ValidationError } from './validation-error';
-import { CancelableTokenBuilder } from './cancelable-token';
+import { logger } from '../logger';
+import { createContext } from '../utils/create-context';
+import { pipeline } from '../decorators/pipeline';
 
 export class OperationBuilder implements Operation {
   public static create(
@@ -49,6 +52,8 @@ export class OperationBuilder implements Operation {
 
   private private?: boolean;
 
+  private operatorFunction: OperatorFunction<undefined, any>;
+
   private setupDone: boolean = false;
 
   private readonly validation: any = {
@@ -58,14 +63,13 @@ export class OperationBuilder implements Operation {
     validateResEnabled: false
   };
 
-  private accesor = new Accesor();
-
   constructor(
     public readonly id: string,
     public readonly schema: OpenAPI.Operation,
     components: SwaggerComponents | OpenAPIComponents,
     private readonly bautajs: BautaJSInstance
   ) {
+    this.operatorFunction = buildDefaultPipeline();
     this.deprecated = schema.deprecated === undefined ? false : schema.deprecated;
     this.version = components.apiVersion;
     this.generateValidators(schema, components);
@@ -165,26 +169,7 @@ export class OperationBuilder implements Operation {
   }
 
   public run(ctx: ContextData = {}): PCancelable<any> {
-    if (!ctx.req) {
-      ctx.req = {};
-    }
-
-    if (!ctx.res) {
-      ctx.res = {};
-    }
-
-    const token = new CancelableTokenBuilder();
-    const context: Context = Object.assign(
-      {
-        validateResponse: () => null,
-        validateRequest: () => null,
-        data: ctx.data || {},
-        req: ctx.req,
-        res: ctx.res,
-        token
-      },
-      sessionFactory(ctx.req)
-    );
+    const context: Context = createContext(ctx);
 
     if (this.validation.validateReqBuilder) {
       Object.assign(context, {
@@ -204,14 +189,8 @@ export class OperationBuilder implements Operation {
       context.validateRequest(ctx.req);
     }
 
-    let result = this.accesor.handler(undefined, context, this.bautajs);
-
-    if (!(result instanceof Promise)) {
-      result = Promise.resolve(result);
-    }
-
-    const promise = result
-      .then((finalResult: any) => {
+    const promise = this.operatorFunction(undefined, context, this.bautajs).then(
+      (finalResult: any) => {
         if (this.validation.validateResEnabled === true && context.validateResponse) {
           context.validateResponse(
             finalResult,
@@ -224,8 +203,8 @@ export class OperationBuilder implements Operation {
         }
 
         return finalResult;
-      })
-      .catch((e: Error) => this.accesor.errorHandler(e, context));
+      }
+    );
 
     return PCancelable.fn((_: any, onCancel: PCancelable.OnCancelFunction) => {
       onCancel(() => {
@@ -236,14 +215,22 @@ export class OperationBuilder implements Operation {
     })(null);
   }
 
-  public setup(fn: (pipeline: Pipeline<undefined>) => void): void {
-    // Reset handler
-    this.accesor.handler = () => {};
-
-    fn(new PipelineBuilder<undefined>(this.accesor, this.id, this.version));
+  public setup(pipelineSetup: PipelineSetup<undefined>): void {
+    this.operatorFunction = pipeline<undefined, any>(pipelineSetup, param => {
+      logger.info(
+        `[OK] ${param.name || 'anonymous function or pipeline'} pushed to .${this.version}.${
+          this.id
+        }`
+      );
+      logger.events.emit(EventTypes.PUSH_OPERATOR, {
+        operator: param,
+        version: this.version,
+        operationId: this.id
+      });
+    });
 
     if (!this.deprecated && this.nextVersionOperation && !this.nextVersionOperation.isSetup()) {
-      this.nextVersionOperation.setup(fn);
+      this.nextVersionOperation.setup(pipelineSetup);
     }
 
     this.setupDone = true;

@@ -14,7 +14,7 @@ Make sure that you have access to [Artifactory][2]
 
 ## Usage
 
-Include it on the step you need to apply the filters, the decorator will automatically filter the previous step result using
+Include it on the OperatorFunction you need to apply the filters, the decorator will automatically filter the previous OperatorFunction result using
 the loopback filters comming from `ctx.req.query.filter`
 
 ```js

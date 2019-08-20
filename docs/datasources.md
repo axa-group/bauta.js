@@ -36,7 +36,7 @@ module.exports = restDataSource({
 ### Dynamic datasources
 
 Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `value`, `ctx`, `$static` and `$env` objects. 
- - `value`: reference to the previous step result.
+ - `value`: reference to the previous OperatorFunction result.
  - `ctx`: reference to the current context, see (Context interface)[./src/utils/types.ts] Context.
  - `$static`: reference to the $static generic data coming from the `bautajs` constructor parameter staticConfig.
  - `$env`: reference to the current NodeJS process.env.
@@ -91,7 +91,7 @@ module.exports = restDataSourceTemplate({
 
 ### Datasource usage
 
-Datasource can be used on the resolvers as an step function.
+Datasource can be used on the resolvers as an OperatorFunction.
 
 With the given datasource:
 
@@ -124,7 +124,7 @@ const { test } = require('./my-datasource');
 
 module.exports = resolver((operations) => {
   operations.v1.findCats.setup(p => 
-    p.push(test())
+    p.pipe(test())
   )
 });
 ```
@@ -139,7 +139,7 @@ const { test } = require('./my-datasource');
 
 module.exports = resolver((operations) => {
   operations.v1.findCats.setup(p => 
-    p.push(test.compile((val,ctx,bautajs,provider) => {
+    p.pipe(test.compile((val,ctx,bautajs,provider) => {
       return provider.request({resolveFullBody: true});
     }))
   )

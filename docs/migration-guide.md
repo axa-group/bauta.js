@@ -36,10 +36,10 @@
 
   - now:
   ```js
-    operations.version.operation.setup((p) => p.push(() => [{a:'1'}]));
+    operations.version.operation.setup((p) => p.pipe(() => [{a:'1'}]));
   ```
 
-     Now only a function (value,ctx) => any is accepted on push.
+     Now only a function (value,ctx, bautajs) => any is accepted on pipe. `push` is as well valid even though is deprecated.
 
 ### version.push
 
@@ -73,12 +73,12 @@
   ```js
       const { myProvider } = require('./my-datasource');
       operations.version.operation.setup(
-        (p) => p.push(myProvider.compile((value, ctx, bautajs, provider) => {
+        (p) => p.pipe(myProvider.compile((value, ctx, bautajs, provider) => {
           return provider.request({ resolveBodyOnly: true});
         }))
       );
         service.myService.version.operation2.setup(
-        (p) => p.push(myProvider.compile((value, ctx, bautajs, provider) => {
+        (p) => p.pipe(myProvider.compile((value, ctx, bautajs, provider) => {
           return provider.request({ stream: true});
         }))
       );
@@ -106,7 +106,7 @@
   ```js
       const { myProvider } = require('./my-datasource');
       service.myService.version.operation.setup(
-        (p) => p.push(myProvider())
+        (p) => p.pipe(myProvider())
       );
   ```
 
@@ -125,7 +125,7 @@
   ```js
       const { asValue } = require('@bautajs/core');
       operations.version.operation.setup(
-        (p) => p.push(asValue(1))
+        (p) => p.pipe(asValue(1))
       );
   ```
 
@@ -149,5 +149,5 @@
   ```js
     const { queryFilters } = require('@bautajs/decorator-filter');
     const ctx = {req, res};
-    operations.version.operation.setup((p) => p.push(() => [{a:'1'}]).push(queryFilters()));
+    operations.version.operation.setup((p) => p.pipe(() => [{a:'1'}],queryFilters()));
   ```

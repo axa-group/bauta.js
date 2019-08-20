@@ -12,17 +12,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Pipeline } from '../utils/types';
+import { PipelineSetup, OperatorFunction, EventTypes } from '../utils/types';
+import { Builder, Accesor } from '../core/pipeline-builder';
+import { logger } from '../logger';
+
+function defaultOnPush(param: any) {
+  logger.info(`[OK] ${param.name || 'anonymous function'} pushed to anonymous pipeline`);
+  logger.events.emit(EventTypes.PUSH_OPERATOR, {
+    operator: param
+  });
+}
 
 /**
- * A decorator to allow intellisense on pipeline on non typescript files
+ * A decorator to create a pipeline that can be executed.
  * @export
  * @template TIn
- * @param {Pipeline<TIn>} fn
- * @returns
+ * @template TOut
+ * @param {PipelineSetup<TIn>} pipelineSetup
+ * @param {(param: any) => void} onPush
+ * @returns OperatorFunction<TIn, TOut>
  */
-export function pipeline<TIn>(fn: (pipeline: Pipeline<TIn>) => void) {
-  return fn;
+export function pipeline<TIn, TOut>(
+  pipelineSetup: PipelineSetup<TIn>,
+  onPush?: (param: any) => void
+): OperatorFunction<TIn, TOut> {
+  const pp = new Builder<TIn>(new Accesor(), onPush || defaultOnPush);
+  pipelineSetup(pp);
+  return (prev, ctx, bautajs) => {
+    let result = pp.accesor.handler(prev, ctx, bautajs);
+
+    if (!(result instanceof Promise)) {
+      result = Promise.resolve(result);
+    }
+    return result.catch(async (e: Error) => pp.accesor.errorHandler(e, ctx));
+  };
 }
 
 export default pipeline;

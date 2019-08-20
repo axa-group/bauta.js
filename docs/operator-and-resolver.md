@@ -1,6 +1,6 @@
 # Resolver
 
-A resolver is a Node.js module where you define your operations steps, pipelines and behaviour. Basically is where resides all the logic of your API. 
+A resolver is a Node.js module where you define your operations OperatorFunctions, pipelines and behaviour. Basically is where resides all the logic of your API. 
 `bautajs` will automatically import all files with the `-resolver.js` name in it under the `resolvers` folder alternative you can pass the resolvers as a parameter on the `bautajs`creation.
 
 ```js
@@ -9,7 +9,7 @@ const { resolver } = require('@bautajs/core');
 
 module.exports = resolver((operations) => {
   operations.v1.findCats.setup((p) => {
-    p.push(() => {
+    p.pipe(() => {
       return {
         id: '1'
       }
@@ -24,19 +24,20 @@ Remember you only can access to the operation you have defined on the your OpenA
 
 # Pipeline
 
-A pipeline is an chain of steps for the given operation.
+A pipeline is an chain of OperatorFunctions for the given operation.
 
 ```js
 // resolvers/my-pipeline.js
 const { pipeline } = require('@bautajs/core');
 
 const findCatsPipeline = pipeline((p) => {
-  p.push(() => {
+  p.pipe(
+  () => {
     return {
       id:'1'
     }
-  })
-  .push((val) => {
+  },
+  (val) => {
     return {
       ...val,
       name: 'supercat'
@@ -49,32 +50,33 @@ module.exports = {
 };
 ```
 
-- You can merge pipelines also:
+- You can also merge pipelines.
 
 ```js
 // resolvers/my-pipeline.js
 const { pipeline } = require('@bautajs/core');
 
 const logResultPipeline = pipeline((p) => {
-  p.push((res) => {
+  p.pipe((res) => {
     console.log(res);
     return res;
   })
 });
 
 const findCatsPipeline = pipeline((p) => {
-  p.push(() => {
+  p.pipe(() => {
     return {
       id:'1'
     }
-  })
-  .push((val) => {
+  },
+  (val) => {
     return {
       ...val,
       name: 'supercat'
     }
-  })
-  .pushPipeline(logResultPipeline)
+  },
+  logResultPipeline
+  )
 });
 
 module.exports = {
@@ -82,7 +84,7 @@ module.exports = {
 };
 ```
 
-- And control your pipeline errors
+- And control your pipeline errors.
 
 ```js
 // resolvers/my-pipeline.js
@@ -94,12 +96,12 @@ const logError = (err) => {
 }
 
 const findCatsPipeline = pipeline((p) => {
-  p.push(() => {
+  p.pipe(() => {
     return {
       id:'1'
     }
-  })
-  .push((val) => {
+  },
+  (val) => {
     return {
       ...val,
       name: 'supercat'
@@ -113,33 +115,104 @@ module.exports = {
 };
 ```
 
-# Step
+- Pipeline are executable as well.
 
-An step is an implementation of a part of a pipeline.
-
-An step have three input parameters:
-  - The previous step value as first parameter. In the first step will be undefined.
-  - The request [ctx](#Context), that is the context object that includes the request and response.
-  - The bautajs instance, meaning you have access to the operations from the step.
-
-my-step-helpers.js
 ```js
-  const { step } = require('@bautajs/core')
+const { pipeline } = require('@bautajs/core');
 
-  const stepHelper1 = step((value, ctx) => {
+const logResultPipeline = pipeline((p) => {
+  p.pipe((res) => {
+    console.log(res);
+    return res;
+  })
+});
+
+const findCatsPipeline = pipeline((p) => {
+  p.pipe(
+  async (val, ctx, bautajs) => {
+
+    await logResultPipeline.run(val, ctx, bautajs);
+
+    return {
+      id:'1'
+    }
+  },
+  (val) => {
+    return {
+      ...val,
+      name: 'supercat'
+    }
+  })
+});
+```
+
+- Pipeline can be executed by a condition.
+
+
+```js
+const { pipeline, match } = require('@bautajs/core');
+const { bautajsInstance } = require('./bautajs-instance');
+
+const logResultPipeline = pipeline((p) => {
+  p.pipe((res) => {
+    console.log(res);
+    return res;
+  })
+});
+
+const findCatsPipeline = pipeline((p) => {
+  p.pipe(
+  async (val, ctx, bautajs) => {
+    return {
+      id:'1'
+    }
+  },
+  (val) => {
+    return {
+      ...val,
+      name: 'supercat'
+    }
+  })
+});
+
+bautajsInstance.operations.v1.findcats.setup(
+  p =>
+    p.pipe(
+      () => 1,
+      match(m => 
+        m.on((prev) => prev === 1, findCatsPipeline)
+        .otherwise(logResultPipeline)
+      )
+    )
+)
+```
+
+# OperatorFunction
+
+An OperatorFunction is an implementation of a part of a pipeline.
+
+An OperatorFunction have three input parameters:
+  - The previous OperatorFunction value as first parameter. In the first OperatorFunction will be undefined.
+  - The request [ctx](#Context), that is the context object that includes the request and response.
+  - The bautajs instance, meaning you have access to the operations from the OperatorFunction.
+
+my-operator-functions-helpers.js
+```js
+
+  const operatorHelper1 = (value, ctx) => {
     ctx.data.something = 'something';
-  });
+  };
 
-  const stepHelper2 = step((val, ctx) => {
+  const operatorHelper2 = (val, ctx) => {
     return {
       headers: ctx.req.headers,
       ....val
     }
-  });
+  };
 
   module.exports = {
-    stepHelper1,
-    stepHelper2,
+    operatorHelper1,
+    operatorHelper2,
   }
 ```
 
@@ -152,31 +225,27 @@ A context is an unique object by request that contains the unique data by reques
 Inside the ctx object a logger function resides, using this loggin will help you to identify logs from same request/sessions.
 
 ```js
-  const { step } = require('@bautajs/core')
-
-  const stepHelper1 = step((value, ctx) => {
+  const operatorHelper1 = (value, ctx) => {
     ctx.logger.info('Some log for this session');
-  });
+  };
 
   module.exports = {
-    stepHelper1,
+    operatorHelper1,
   }
 ```
 
 ### Save data into the context
 
-We strongly recommend to not save data into the ctx directly, for that pruposes the context has an special property called `data` that is a free object where you can add your data and passed between steps.
+We strongly recommend to not save data into the ctx directly, for that pruposes the context has an special property called `data` that is a free object where you can add your data and passed between OperatorFunctions.
 
 ```js
-  const { step } = require('@bautajs/core')
-
-  const stepHelper1 = step((value, ctx) => {
+  const operatorHelper1 = (value, ctx) => {
     ctx.data.customData = {
       id:'1'
     }
-  });
+  };
 
   module.exports = {
-    stepHelper1,
+    operatorHelper1,
   }
 ```

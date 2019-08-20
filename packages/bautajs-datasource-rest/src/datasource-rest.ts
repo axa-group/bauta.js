@@ -24,10 +24,9 @@ import {
   Context,
   ContextLogger,
   Dictionary,
-  EventTypes,
   Logger,
   LoggerBuilder,
-  StepFn,
+  OperatorFunction,
   utils
 } from '@bautajs/core';
 import { buildForm } from './form-data';
@@ -45,7 +44,8 @@ import {
   RestDataSourceTemplate,
   RestProvider,
   RestProviderTemplate,
-  StepFnCompiled
+  OperatorFunctionCompiled,
+  EventTypes
 } from './utils/types';
 
 const httpAgent = createHttpAgent();
@@ -336,7 +336,7 @@ function runner<TIn, TOut, TOptions>(
   globalOptions?: TOptions,
   byTemplate?: boolean
 ) {
-  return (fn: StepFnCompiled<TIn, TOut>): StepFn<TIn, TOut> => {
+  return (fn: OperatorFunctionCompiled<TIn, TOut>): OperatorFunction<TIn, TOut> => {
     return (value: TIn, ctx: Context, bautajs: BautaJSInstance): Promise<TOut> | TOut => {
       let options: RequestParams;
       if (byTemplate) {

@@ -50,7 +50,7 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [Datasources](./docs/datasources.md)
 - [Debug](./docs/debug.md)
 - [Request cancelation](./docs/request-cancelation.md)
-- [Steps and Resolvers](./docs/step-and-resolver.md)
+- [OperatorFunction and Resolvers](./docs/operator-and-resolver.md)
 - [Validation](./docs/validation.md)
 
 ## Contributing
