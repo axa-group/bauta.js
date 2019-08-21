@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.1...v2.1.2) (2019-08-21)
+
+
+### Bug Fixes
+
+* use forked openapi-request-validator until release ([caa4607](http://github.axa.com/Digital/bauta-nodejs/commit/caa4607))
+
+
+
+
+
 ## [2.1.1](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.0...v2.1.1) (2019-08-21)
 
 
