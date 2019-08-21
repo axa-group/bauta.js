@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.1...v2.1.0) (2019-08-21)
+
+
+### Features
+
+* **@bautajs/core:**  pipelines are now runnable. ([#89](http://github.axa.com/Digital/bauta-nodejs/issues/89)) ([78f21d8](http://github.axa.com/Digital/bauta-nodejs/commit/78f21d8)), closes [#86](http://github.axa.com/Digital/bauta-nodejs/issues/86) [#93](http://github.axa.com/Digital/bauta-nodejs/issues/93)
+
+
+
+
+
 # [2.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0-alpha.10...v2.0.0) (2019-07-24)
 
 

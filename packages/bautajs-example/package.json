@@ -1,6 +1,6 @@
 {
   "name": "bautajs-example",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "A bautaJS example",
   "main": "./server.js",
   "scripts": {
@@ -19,8 +19,8 @@
   "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "2.0.0",
-    "@bautajs/datasource-rest": "2.0.1",
-    "@bautajs/express": "2.0.0"
+    "@bautajs/core": "2.1.0",
+    "@bautajs/datasource-rest": "2.1.0",
+    "@bautajs/express": "2.1.0"
   }
 }

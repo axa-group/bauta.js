@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.1...v2.1.0) (2019-08-21)
+
+
+### Bug Fixes
+
+* **@bautajs/datasource-rest:** add deepmerge module ([#91](http://github.axa.com/Digital/bauta-nodejs/issues/91)) ([5c4dd22](http://github.axa.com/Digital/bauta-nodejs/commit/5c4dd22))
+
+
+### Features
+
+* **@bautajs/core:**  pipelines are now runnable. ([#89](http://github.axa.com/Digital/bauta-nodejs/issues/89)) ([78f21d8](http://github.axa.com/Digital/bauta-nodejs/commit/78f21d8)), closes [#86](http://github.axa.com/Digital/bauta-nodejs/issues/86) [#93](http://github.axa.com/Digital/bauta-nodejs/issues/93)
+* **@bautajs/datasource-rest:** id is not longer mandatory when use restProvider ([d7d59a6](http://github.axa.com/Digital/bauta-nodejs/commit/d7d59a6)), closes [#94](http://github.axa.com/Digital/bauta-nodejs/issues/94)
+
+
+
+
+
 ## [2.0.1](http://github.axa.com/Digital/bauta-nodejs/compare/v2.0.0...v2.0.1) (2019-07-24)
 
 
