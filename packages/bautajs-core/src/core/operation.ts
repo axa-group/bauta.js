@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import OpenapiDefaultSetter from 'openapi-default-setter';
-import OpenapiRequestValidator from 'openapi-request-validator';
+import OpenapiRequestValidator from '@javi11/openapi-request-validator';
 import OpenapiResponseValidator from 'openapi-response-validator';
 import { OpenAPI } from 'openapi-types';
 import PCancelable from 'p-cancelable';
