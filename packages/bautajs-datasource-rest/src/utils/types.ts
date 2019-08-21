@@ -36,11 +36,12 @@ export enum ResponseType {
 
 export interface RestProviderTemplate<TOptions> {
   id?: string;
-  options?: TOptions;
+  options: TOptions;
 }
 
-export interface RestProviderTemplateWithId<TOptions> extends RestProviderTemplate<TOptions> {
+export interface RestProviderTemplateWithId<TOptions> {
   id: string;
+  options?: TOptions;
 }
 
 export interface RequestFn {
@@ -94,13 +95,14 @@ export interface FullResponseRequestOptions extends Omit<RequestOptions, 'resolv
 export interface NormalizedOptions extends GotOptions<any> {
   responseType?: ResponseType;
 }
-export interface RestDataSourceTemplate<TOptions> {
+export interface RestDataSourceTemplate<TOptions, TGlobalOptions> {
   /**
    * A generic GOT options for your providers, this will be merged with the local provider options giving priority to the local ones.
    * @type {TOptions}
+   * @type {TGlobalOptions}
    * @memberof RestServiceTemplate
    */
-  options?: TOptions;
+  options?: TGlobalOptions;
   providers: RestProviderTemplateWithId<TOptions>[];
 }
 
@@ -108,7 +110,7 @@ export type RestDataSource<TIn> = Dictionary<RestProvider<TIn>>;
 
 export type Options<TIn, TOut> =
   | ((value: TIn, ctx: Context, $static: any, $env: Dictionary<any>) => TOut)
-  | RequestParams;
+  | TOut;
 
 export type OperatorFunctionCompiled<TIn, TOut> = (
   prev: TIn,

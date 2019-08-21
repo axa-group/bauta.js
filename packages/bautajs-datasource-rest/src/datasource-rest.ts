@@ -258,7 +258,7 @@ function compileDatasource(
 function mergeOptions(
   ctx: Context,
   logger: Logger,
-  { options, globalOptions }: { options: RequestParams; globalOptions: RequestParams }
+  { options, globalOptions }: { options: RequestParams; globalOptions?: RequestOptions }
 ): RequestParams {
   const log: ContextLogger | Logger = ctx.logger || logger;
   const hooks = requestHooks(log);
@@ -281,13 +281,13 @@ function mergeOptions(
   ) as RequestParams;
 }
 
-function compileByTemplate<TOptions>(
-  operationTemplate: RestProviderTemplate<TOptions>,
+function compileByTemplate(
+  operationTemplate: RestProviderTemplate<RequestParams>,
   previousValue: any,
   context: Context,
   bautajs: BautaJSInstance,
   $env: Dictionary<any>,
-  globalOptions?: TOptions
+  globalOptions?: RequestOptions
 ): RequestParams {
   const { globalOptionsCmp, optionsCmp } = stjs
     .select({
@@ -308,13 +308,13 @@ function compileByTemplate<TOptions>(
   });
 }
 
-function compileOptions<TOptions>(
-  operationTemplate: RestProviderTemplate<TOptions>,
+function compileOptions<TIn>(
+  operationTemplate: RestProviderTemplate<Options<TIn, RequestParams>>,
   previousValue: any,
   context: Context,
   bautajs: BautaJSInstance,
   $env: Dictionary<any>,
-  globalOptions?: TOptions
+  globalOptions?: Options<TIn, RequestOptions>
 ): RequestParams {
   const optionsCmp =
     typeof operationTemplate.options === 'function'
@@ -331,16 +331,16 @@ function compileOptions<TOptions>(
   });
 }
 
-function runner<TIn, TOut, TOptions>(
+function runner<TIn, TOut, TOptions, TGeneralOptions>(
   providerTemplate: RestProviderTemplate<TOptions>,
-  globalOptions?: TOptions,
+  globalOptions?: TGeneralOptions,
   byTemplate?: boolean
 ) {
   return (fn: OperatorFunctionCompiled<TIn, TOut>): OperatorFunction<TIn, TOut> => {
     return (value: TIn, ctx: Context, bautajs: BautaJSInstance): Promise<TOut> | TOut => {
       let options: RequestParams;
       if (byTemplate) {
-        options = compileByTemplate<TOptions>(
+        options = compileByTemplate(
           providerTemplate,
           value,
           ctx,
@@ -349,7 +349,7 @@ function runner<TIn, TOut, TOptions>(
           globalOptions
         );
       } else {
-        options = compileOptions<TOptions>(
+        options = compileOptions<TIn>(
           providerTemplate,
           value,
           ctx,
@@ -375,22 +375,30 @@ function initProviderList(obj: any) {
   });
 }
 
-export function restProvider<TIn, TOptions>(
-  providerTemplate: RestProviderTemplate<TOptions>,
-  globalOptions?: TOptions
+export function restProvider<TIn>(
+  providerTemplate: RestProviderTemplate<Options<TIn, RequestParams>>,
+  globalOptions?: Options<TIn, RequestOptions>
 ): RestProvider<TIn> {
-  const compiler = runner<TIn, any, TOptions>(providerTemplate, globalOptions, false);
+  const compiler = runner<TIn, any, Options<TIn, RequestParams>, Options<TIn, RequestOptions>>(
+    providerTemplate,
+    globalOptions,
+    false
+  );
   const request: RequestDecorator<TIn> = (localOptions?: any) =>
     compiler((_: any, _ctx: any, _bautajs: any, provider: any) => provider.request(localOptions));
 
   return Object.assign(request, { compile: compiler });
 }
 
-export function restProviderTemplate<TIn, TOptions>(
-  providerTemplate: RestProviderTemplate<TOptions>,
-  globalOptions?: TOptions
+export function restProviderTemplate<TIn>(
+  providerTemplate: RestProviderTemplate<RequestParams>,
+  globalOptions?: RequestOptions
 ): RestProvider<TIn> {
-  const compiler = runner<TIn, any, TOptions>(providerTemplate, globalOptions, true);
+  const compiler = runner<TIn, any, RequestParams, RequestOptions>(
+    providerTemplate,
+    globalOptions,
+    true
+  );
   const request: RequestDecorator<TIn> = (localOptions?: any) =>
     compiler((_: any, _ctx: any, _bautajs: any, provider: any) => provider.request(localOptions));
 
@@ -398,13 +406,13 @@ export function restProviderTemplate<TIn, TOptions>(
 }
 
 export function restDataSource<TIn>(
-  dsTemplate: RestDataSourceTemplate<Options<TIn, RequestParams>>
+  dsTemplate: RestDataSourceTemplate<Options<TIn, RequestParams>, Options<TIn, RequestOptions>>
 ): RestDataSource<TIn> {
   const result: RestDataSource<TIn> = initProviderList({});
 
   dsTemplate.providers.forEach(provider => {
-    result[provider.id] = restProvider<TIn, Options<TIn, RequestParams>>(
-      provider,
+    result[provider.id] = restProvider<TIn>(
+      { options: {}, ...provider } as RestProviderTemplate<TIn>,
       dsTemplate.options
     );
   });
@@ -413,12 +421,15 @@ export function restDataSource<TIn>(
 }
 
 export function restDataSourceTemplate<TIn>(
-  dsTemplate: RestDataSourceTemplate<RequestParams>
+  dsTemplate: RestDataSourceTemplate<RequestParams, RequestOptions>
 ): RestDataSource<TIn> {
   const result: RestDataSource<TIn> = initProviderList({});
 
   dsTemplate.providers.forEach(provider => {
-    result[provider.id] = restProviderTemplate<TIn, RequestParams>(provider, dsTemplate.options);
+    result[provider.id] = restProviderTemplate<TIn>(
+      { options: {}, ...provider } as RestProviderTemplate<TIn>,
+      dsTemplate.options
+    );
   });
 
   return result;
