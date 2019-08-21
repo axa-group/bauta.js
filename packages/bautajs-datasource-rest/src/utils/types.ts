@@ -35,8 +35,12 @@ export enum ResponseType {
 }
 
 export interface RestProviderTemplate<TOptions> {
-  id: string;
+  id?: string;
   options?: TOptions;
+}
+
+export interface RestProviderTemplateWithId<TOptions> extends RestProviderTemplate<TOptions> {
+  id: string;
 }
 
 export interface RequestFn {
@@ -97,7 +101,7 @@ export interface RestDataSourceTemplate<TOptions> {
    * @memberof RestServiceTemplate
    */
   options?: TOptions;
-  providers: RestProviderTemplate<TOptions>[];
+  providers: RestProviderTemplateWithId<TOptions>[];
 }
 
 export type RestDataSource<TIn> = Dictionary<RestProvider<TIn>>;
