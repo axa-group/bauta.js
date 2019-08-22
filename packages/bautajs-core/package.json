@@ -32,7 +32,7 @@
     "npm": ">=5"
   },
   "dependencies": {
-    "@javi11/openapi-request-validator": "3.8.4",
+    "@javi11/openapi-request-validator": "3.8.5",
     "ajv": "6.10.0",
     "debug": "4.1.1",
     "fast-safe-stringify": "2.0.6",
