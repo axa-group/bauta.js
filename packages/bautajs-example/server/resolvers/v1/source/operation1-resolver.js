@@ -1,7 +1,7 @@
-const { resolver, pipeline, match } = require('@bautajs/core');
+const { resolver, pipelineBuilder, match } = require('@bautajs/core');
 const { provider1 } = require('./source-datasource');
 
-const myPipelinetwo = pipeline(p =>
+const myPipelinetwo = pipelineBuilder(p =>
   p.pipe(response => {
     console.log('pipeline 2');
 
@@ -9,7 +9,7 @@ const myPipelinetwo = pipeline(p =>
   })
 );
 
-const myPipeline = pipeline(p =>
+const myPipeline = pipelineBuilder(p =>
   p.pipe(response => {
     console.log('pipeline 1');
     return response;

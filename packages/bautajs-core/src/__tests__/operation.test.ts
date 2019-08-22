@@ -18,7 +18,7 @@ import { logger } from '../index';
 import { OpenAPIComponents, OpenAPIV3Document, Operation } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaBodyJson from './fixtures/test-schema-body.json';
-import { pipeline } from '../decorators/pipeline';
+import { pipelineBuilder } from '../decorators/pipeline';
 
 describe('Operation class tests', () => {
   let operationSchema: OpenAPI.Operation;
@@ -175,7 +175,7 @@ describe('Operation class tests', () => {
 
     test('Should allow to push a pipeline', async () => {
       const expected = 'this will be showed';
-      const pipe = pipeline(p => {
+      const pipe = pipelineBuilder(p => {
         p.push(() => 'next3').push(() => expected);
       });
       operationTest
@@ -349,7 +349,7 @@ describe('Operation class tests', () => {
 
     test('Should allow pipelines on pipe method', async () => {
       const expected = 'this will be showed';
-      const pp = pipeline(p => p.pipe(() => expected));
+      const pp = pipelineBuilder(p => p.pipe(() => expected));
       operationTest
         .validateResponses(false)
         .validateRequests(false)

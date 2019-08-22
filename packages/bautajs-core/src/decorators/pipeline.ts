@@ -24,6 +24,17 @@ function defaultOnPush(param: any) {
 }
 
 /**
+ * A decorator to give itellicense to a pipeline.
+ * @export
+ * @template TIn
+ * @param {PipelineSetup<TIn>} pipelineSetup
+ * @returns PipelineSetup<TIn>
+ */
+export function pipeline<TIn>(pipelineSetup: PipelineSetup<TIn>): PipelineSetup<TIn> {
+  return pipelineSetup;
+}
+
+/**
  * A decorator to create a pipeline that can be executed.
  * @export
  * @template TIn
@@ -32,7 +43,7 @@ function defaultOnPush(param: any) {
  * @param {(param: any) => void} onPush
  * @returns OperatorFunction<TIn, TOut>
  */
-export function pipeline<TIn, TOut>(
+export function pipelineBuilder<TIn, TOut>(
   pipelineSetup: PipelineSetup<TIn>,
   onPush?: (param: any) => void
 ): OperatorFunction<TIn, TOut> {

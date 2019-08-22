@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { BautaJS, Document } from '../../index';
-import { pipeline } from '../pipeline';
+import { pipelineBuilder } from '../pipeline';
 import { match } from '../match';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
@@ -25,8 +25,8 @@ describe('Match decorator', () => {
   });
 
   test('Should select the pipeline execution depending on the condition', async () => {
-    const myPipeline1 = pipeline(p => p.push(() => [{ id: 1, name: 'pet' }]));
-    const myPipeline2 = pipeline(p => p.push(() => [{ id: 3, name: 'pet' }]));
+    const myPipeline1 = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
+    const myPipeline2 = pipelineBuilder(p => p.push(() => [{ id: 3, name: 'pet' }]));
     bautajs.operations.v1.operation1.setup(p => {
       p.push(() => 1).push(
         match(m => m.on(prev => prev === 1, myPipeline1).otherwise(myPipeline2))
@@ -39,8 +39,8 @@ describe('Match decorator', () => {
   });
 
   test('Should use the default option if non of the options match', async () => {
-    const myPipeline1 = pipeline(p => p.push(() => [{ id: 1, name: 'pet' }]));
-    const myPipeline2 = pipeline(p => p.push(() => [{ id: 3, name: 'pet' }]));
+    const myPipeline1 = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
+    const myPipeline2 = pipelineBuilder(p => p.push(() => [{ id: 3, name: 'pet' }]));
     bautajs.operations.v1.operation1.setup(p => {
       p.push(() => 5).push(
         match(m =>

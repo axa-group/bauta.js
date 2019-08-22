@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document, pipeline } from '@bautajs/core';
+import { BautaJS, Document, pipelineBuilder } from '@bautajs/core';
 import { cache } from '../index';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
@@ -27,7 +27,7 @@ describe('Cache push', () => {
 
   test('Should cache the requests with the same id', async () => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
-    const pp = pipeline(p =>
+    const pp = pipelineBuilder(p =>
       p
         .push(() => [{ a: '123' }])
         .push((result: any) => ({ ...result[0], new: 1 }))
@@ -43,7 +43,7 @@ describe('Cache push', () => {
 
   test('Should allow memoizee options', async () => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
-    const pp = pipeline(p =>
+    const pp = pipelineBuilder(p =>
       p
         .push(() => [{ a: '123' }])
         .push((result: any) => ({ ...result[0], new: 1 }))
@@ -66,7 +66,7 @@ describe('Cache push', () => {
   });
 
   test('Should throw an error if normalizer function is not specified', async () => {
-    const pp = pipeline(p =>
+    const pp = pipelineBuilder(p =>
       p.push(() => [{ a: '123' }]).push((result: any) => ({ ...result[0], new: 1 }))
     );
 

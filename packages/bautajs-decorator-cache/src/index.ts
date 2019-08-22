@@ -29,7 +29,7 @@ export interface CacheDecorator {
  * Cache the given OperatorFunctions with [memoizee](https://www.npmjs.com/package/memoizee)
  * @export
  * @template TIn
- * @param {(pipeline: Pipeline<TIn>) => void} fn
+ * @param {OperatorFunction<TIn, TOut>} fn
  * @param {Normalizer<TIn>} normalizer
  * @param {memoizee.Options} [options={}]
  * @returns {OperatorFunction<TIn, any>}

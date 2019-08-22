@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 import { PipelineBuilder, OperatorFunction } from './types';
-import { pipeline } from '../decorators/pipeline';
+import { pipelineBuilder } from '../decorators/pipeline';
 
 export function buildDefaultPipeline(): OperatorFunction<any, any> {
-  return pipeline((p: PipelineBuilder<any>) =>
+  return pipelineBuilder((p: PipelineBuilder<any>) =>
     p.push(() => {
       const error = new Error('Not found');
       return Promise.reject(Object.assign(error, { statusCode: 404 }));

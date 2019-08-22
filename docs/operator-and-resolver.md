@@ -28,9 +28,9 @@ A pipeline is an chain of OperatorFunctions for the given operation.
 
 ```js
 // resolvers/my-pipeline.js
-const { pipeline } = require('@bautajs/core');
+const { pipelineBuilder } = require('@bautajs/core');
 
-const findCatsPipeline = pipeline((p) => {
+const findCatsPipeline = pipelineBuilder((p) => {
   p.pipe(
   () => {
     return {
@@ -54,16 +54,16 @@ module.exports = {
 
 ```js
 // resolvers/my-pipeline.js
-const { pipeline } = require('@bautajs/core');
+const { pipelineBuilder } = require('@bautajs/core');
 
-const logResultPipeline = pipeline((p) => {
+const logResultPipeline = pipelineBuilder((p) => {
   p.pipe((res) => {
     console.log(res);
     return res;
   })
 });
 
-const findCatsPipeline = pipeline((p) => {
+const findCatsPipeline = pipelineBuilder((p) => {
   p.pipe(() => {
     return {
       id:'1'
@@ -88,14 +88,14 @@ module.exports = {
 
 ```js
 // resolvers/my-pipeline.js
-const { pipeline } = require('@bautajs/core');
+const { pipelineBuilder } = require('@bautajs/core');
 
 const logError = (err) => {
   console.error(err);
   return Promise.reject(err);
 }
 
-const findCatsPipeline = pipeline((p) => {
+const findCatsPipeline = pipelineBuilder((p) => {
   p.pipe(() => {
     return {
       id:'1'
@@ -118,16 +118,16 @@ module.exports = {
 - Pipeline are executable as well.
 
 ```js
-const { pipeline } = require('@bautajs/core');
+const { pipelineBuilder } = require('@bautajs/core');
 
-const logResultPipeline = pipeline((p) => {
+const logResultPipeline = pipelineBuilder((p) => {
   p.pipe((res) => {
     console.log(res);
     return res;
   })
 });
 
-const findCatsPipeline = pipeline((p) => {
+const findCatsPipeline = pipelineBuilder((p) => {
   p.pipe(
   async (val, ctx, bautajs) => {
 
@@ -150,17 +150,17 @@ const findCatsPipeline = pipeline((p) => {
 
 
 ```js
-const { pipeline, match } = require('@bautajs/core');
+const { pipelineBuilder, match } = require('@bautajs/core');
 const { bautajsInstance } = require('./bautajs-instance');
 
-const logResultPipeline = pipeline((p) => {
+const logResultPipeline = pipelineBuilder((p) => {
   p.pipe((res) => {
     console.log(res);
     return res;
   })
 });
 
-const findCatsPipeline = pipeline((p) => {
+const findCatsPipeline = pipelineBuilder((p) => {
   p.pipe(
   async (val, ctx, bautajs) => {
     return {

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { BautaJS, Document, createContext } from '../../index';
-import { pipeline } from '../pipeline';
+import { pipelineBuilder } from '../pipeline';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
@@ -24,7 +24,7 @@ describe('Pipeline decorator', () => {
   });
 
   test('Should execute the pipeline created by the pipeline decorator', async () => {
-    const myPipeline = pipeline(p => p.push(() => [{ id: 1, name: 'pet' }]));
+    const myPipeline = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
     bautajs.operations.v1.operation1.setup(p => {
       p.pushPipeline(myPipeline);
     });
@@ -35,7 +35,7 @@ describe('Pipeline decorator', () => {
   });
 
   test('Should execute the pipeline without add it into bautajs', async () => {
-    const myPipeline = pipeline(p => p.push(() => [{ id: 1, name: 'pet' }]));
+    const myPipeline = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
 
     expect(await myPipeline(null, createContext({ req: { id: 1 }, res: {} }), bautajs)).toEqual([
       { id: 1, name: 'pet' }

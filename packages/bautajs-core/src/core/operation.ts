@@ -32,7 +32,7 @@ import { buildDefaultPipeline } from '../utils/default-pipeline';
 import { ValidationError } from './validation-error';
 import { logger } from '../logger';
 import { createContext } from '../utils/create-context';
-import { pipeline } from '../decorators/pipeline';
+import { pipelineBuilder } from '../decorators/pipeline';
 
 export class OperationBuilder implements Operation {
   public static create(
@@ -216,7 +216,7 @@ export class OperationBuilder implements Operation {
   }
 
   public setup(pipelineSetup: PipelineSetup<undefined>): void {
-    this.operatorFunction = pipeline<undefined, any>(pipelineSetup, param => {
+    this.operatorFunction = pipelineBuilder<undefined, any>(pipelineSetup, param => {
       logger.info(
         `[OK] ${param.name || 'anonymous function or pipeline'} pushed to .${this.version}.${
           this.id
