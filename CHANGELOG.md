@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.3](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.2...v2.1.3) (2019-08-22)
+
+
+### Bug Fixes
+
+* **@bautajs/core:** allow charset on content-type on request validation ([d7ab37e](http://github.axa.com/Digital/bauta-nodejs/commit/d7ab37e))
+
+
+
+
+
 ## [2.1.2](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.1...v2.1.2) (2019-08-21)
 
 
