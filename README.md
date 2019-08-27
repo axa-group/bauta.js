@@ -38,7 +38,7 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 
 - [BautaJS](./packages/bautajs)
 - [BautaJS Express](./packages/bautajs-express)
-- [BautaJS Cache Decorator](./packages/bautajs-decorator-express)
+- [BautaJS Cache Decorator](./packages/bautajs-decorator-cache)
 - [BautaJS Filter Decorator](./packages/bautajs-decorator-filter)
 - [BautaJS Template Decorator](./packages/bautajs-decorator-template)
 - [BautaJS Rest Datasource](./packages/bautajs-datasource-rest)
