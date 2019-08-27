@@ -8,7 +8,7 @@ A cache decorator using [memoizee][1] for bautaJS pipelines
 Make sure that you have access to [Artifactory][2]
 
 ```console
-  npm install @bautajs/cache-decorator
+  npm install @bautajs/decorator-cache
 ```
 
 
