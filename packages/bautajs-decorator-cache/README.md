@@ -39,6 +39,8 @@ Include it on your pipeline as follows:
   })
 ```
 
+- Cache only accept executable pipeline (pipelineBuilder) as a first parameter
+
 [1]: https://www.npmjs.com/package/memoizee#configuration
 
 [2]: https://axags.jfrog.io/axags/api/npm/virtual-bcn-node/
