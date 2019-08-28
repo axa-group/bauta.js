@@ -36,7 +36,7 @@ module.exports = restDataSource({
 ### Dynamic datasources
 
 Datasources used in every request are compiled on demand. It allow to add dynamic information into them, specifying properties from `value`, `ctx`, `$static` and `$env` objects. 
- - `value`: reference to the previous OperatorFunction result.
+ - `previousValue`: reference to the previous OperatorFunction result.
  - `ctx`: reference to the current context, see (Context interface)[./src/utils/types.ts] Context.
  - `$static`: reference to the $static generic data coming from the `bautajs` constructor parameter staticConfig.
  - `$env`: reference to the current NodeJS process.env.
@@ -48,7 +48,7 @@ module.exports = restDataSource({
   providers:[
     {
       id:"test",
-      options(_, ctx, $static){
+      options(previousValue, ctx, $static){
         const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
 
         return {
