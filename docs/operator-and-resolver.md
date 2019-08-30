@@ -131,7 +131,7 @@ const findCatsPipeline = pipelineBuilder((p) => {
   p.pipe(
   async (val, ctx, bautajs) => {
 
-    await logResultPipeline.run(val, ctx, bautajs);
+    await logResultPipeline(val, ctx, bautajs);
 
     return {
       id:'1'
