@@ -218,7 +218,7 @@ my-operator-functions-helpers.js
 
 # Context
 
-A context is an unique object by request that contains the unique data by request. This data might have the req and the res objects of the framework (express, fastify...) depending on which module is being used. See [Context interface](../packages/bautajs/src/utils/types.ts) for more informatin about the available properties.
+A context is an unique object by request that contains the unique data by request. This data might have the req and the res objects of the framework (express, fastify...) depending on which module is being used. See [Context interface](../packages/bautajs-core/src/utils/types.ts) for more informatin about the available properties.
 
 ### Loggin with request context
 
