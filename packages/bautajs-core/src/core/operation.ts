@@ -191,7 +191,12 @@ export class OperationBuilder implements Operation {
 
     const promise = this.operatorFunction(undefined, context, this.bautajs).then(
       (finalResult: any) => {
-        if (this.validation.validateResEnabled === true && context.validateResponse) {
+        if (
+          this.validation.validateResEnabled === true &&
+          context.validateResponse &&
+          !context.res.headersSent &&
+          !context.res.finished
+        ) {
           context.validateResponse(
             finalResult,
             context.res.statusCode !== null &&

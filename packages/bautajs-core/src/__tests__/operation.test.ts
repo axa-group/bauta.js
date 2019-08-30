@@ -780,5 +780,51 @@ describe('Operation class tests', () => {
 
       expect(result).toEqual(expected);
     });
+
+    test('should not validate the response if the res.send has been called', async () => {
+      operationTest.setup(p =>
+        p
+          .pipe(() => [
+            {
+              code: 'boo'
+            },
+            {
+              code: 'foo'
+            }
+          ])
+          .push((response, ctx) => {
+            ctx.res.send(response);
+
+            return response;
+          })
+      );
+      const body = {
+        grant_type: 'password',
+        username: 'user',
+        password: 'pass'
+      };
+      const res = {
+        data: null,
+        headersSent: false,
+        send(data: any) {
+          this.headersSent = true;
+          this.data = data;
+        }
+      };
+
+      await operationTest.run({
+        req: { body, headers: { 'content-type': 'application/json' } },
+        res
+      });
+
+      expect(res.data).toEqual([
+        {
+          code: 'boo'
+        },
+        {
+          code: 'foo'
+        }
+      ]);
+    });
   });
 });

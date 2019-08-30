@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// eslint-disable-next-line no-unused-vars
 import fastSafeStringify from 'fast-safe-stringify';
 import path from 'path';
 import { BautaJS, resolver } from '../index';
-import { OnCancel, OpenAPIV3Document } from '../utils/types';
+import { OnCancel, Document } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-versions.json';
 
@@ -27,7 +26,7 @@ describe('Core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         staticConfig: config
       });
       expect(bautaJS.operations.v1.operation1).toBeDefined();
@@ -45,7 +44,7 @@ describe('Core tests', () => {
             ...testApiDefinitionsJson[0],
             info: { version: 'v2', title: '1' }
           }
-        ] as OpenAPIV3Document[],
+        ] as Document[],
         {
           staticConfig: config
         }
@@ -82,7 +81,7 @@ describe('Core tests', () => {
       };
       const res = {};
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         staticConfig: config
       });
 
@@ -112,7 +111,7 @@ describe('Core tests', () => {
       const res = {};
 
       const bautaJS = new BautaJS(
-        [{ ...testApiDefinitionsJson[0], validateRequest: false }] as OpenAPIV3Document[],
+        [{ ...testApiDefinitionsJson[0], validateRequest: false }] as Document[],
         {
           resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           staticConfig: config
@@ -138,7 +137,7 @@ describe('Core tests', () => {
       };
       const res = {};
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         staticConfig: config
       });
 
@@ -162,7 +161,7 @@ describe('Core tests', () => {
       };
       const res = {};
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         staticConfig: config
       });
@@ -201,7 +200,7 @@ describe('Core tests', () => {
       };
       const res = {};
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         staticConfig: config
       });
@@ -227,7 +226,7 @@ describe('Core tests', () => {
       const res = {};
 
       const bautaJS = new BautaJS(
-        [{ ...testApiDefinitionsJson[0], validateResponse: false }] as OpenAPIV3Document[],
+        [{ ...testApiDefinitionsJson[0], validateResponse: false }] as Document[],
         {
           resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           staticConfig: config
@@ -250,7 +249,7 @@ describe('Core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         staticConfig: config
       });
@@ -268,7 +267,7 @@ describe('Core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolversPath: [
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver-1.js')
@@ -290,7 +289,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1.setup(p =>
@@ -325,7 +324,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1.setup(p =>
@@ -362,7 +361,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1.setup(p =>
@@ -398,7 +397,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1.setup(p =>
@@ -444,7 +443,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1.validateResponses(false).setup(p =>
@@ -456,7 +455,7 @@ describe('Core tests', () => {
                   return new Promise(resolve =>
                     setTimeout(() => {
                       resolve();
-                    }, 2000)
+                    }, 1000)
                   );
                 })
                 .push((_, ctx) => {
@@ -499,7 +498,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v2.operation1.validateResponses(false);
@@ -522,7 +521,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1.validateResponses(false).setup(p =>
@@ -556,7 +555,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v2.operation1.validateResponses(false).setup(p =>
@@ -591,7 +590,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1
@@ -622,7 +621,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1.validateResponses(false).setup(p =>
@@ -661,7 +660,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [],
         staticConfig: config
       });
@@ -673,7 +672,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1.validateResponses(false).setup(p =>
@@ -694,7 +693,7 @@ describe('Core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as OpenAPIV3Document[], {
+      const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1

@@ -99,3 +99,5 @@ s
     })
   );
 ```
+
+There is an especial case where you response is not validated. Since you can send the response during the pipeline life using res.send on express for example, bautaJS have an special checker where if you set to true the res.headersSent and res.finished parameters the response is not validate because is supposed to be already sent.

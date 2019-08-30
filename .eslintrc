@@ -14,7 +14,7 @@
   "rules": {
     "no-useless-constructor": "off",
     "import/no-extraneous-dependencies": "off",
-    "prefer-spread": 0,
+    "import/prefer-default-export": "off",
     "comma-dangle": ["error", "never"],
     "prettier/prettier": ["error"]
   }
