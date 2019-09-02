@@ -18,7 +18,7 @@ const set = <T>(arr: T[]): T[] =>
   }, []);
 
 const scanProp = (obj: Dictionary<any>, prop: string): string[] => {
-  if (typeof obj !== 'object') {
+  if (typeof obj !== 'object' || obj === null) {
     return [];
   }
   const props = Object.keys(obj);

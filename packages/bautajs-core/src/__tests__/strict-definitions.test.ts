@@ -16,6 +16,7 @@
 import { getStrictDefinition } from '../utils/strict-definitions';
 import apiDefinitionNotUsedSchemaSwagger2Json from './fixtures/api-definition-not-used-schema-swagger2.json';
 import apiDefinitionNotUsedSchemaJson from './fixtures/api-definition-not-used-schema.json';
+import apiDefinitionWithNull from './fixtures/api-definition-with-null.json';
 
 describe('Strict definition test', () => {
   test('should remove the not used schemas', () => {
@@ -47,5 +48,10 @@ describe('Strict definition test', () => {
     expect(
       result.components && result.components.schemas && result.components.schemas.DocumentId
     ).toBeInstanceOf(Object);
+  });
+
+  test('should allow ref as null and not crash', () => {
+    const result = getStrictDefinition(apiDefinitionWithNull as any);
+    expect(result).toBeInstanceOf(Object);
   });
 });
