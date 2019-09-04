@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.5](https://github.axa.com/Digital/bauta-nodejs/compare/v2.1.4...v2.1.5) (2019-09-04)
+
+**Note:** Version bump only for package @bautajs/decorator-template
+
+
+
+
+
 ## [2.1.4](https://github.axa.com/Digital/bauta-nodejs/compare/v2.1.3...v2.1.4) (2019-08-22)
 
 **Note:** Version bump only for package @bautajs/decorator-template

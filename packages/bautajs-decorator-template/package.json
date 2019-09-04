@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/decorator-template",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "A bautaJS template decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +25,7 @@
   "author": "javier.blanco@axa.com",
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "2.1.4",
+    "@bautajs/core": "2.1.5",
     "stjs": "^0.0.5"
   }
 }

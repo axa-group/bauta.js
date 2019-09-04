@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.5](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.4...v2.1.5) (2019-09-04)
+
+
+### Bug Fixes
+
+* **@bautajs/core:** allow null an the openapi schema on scanprops ([#105](http://github.axa.com/Digital/bauta-nodejs/issues/105)) ([ec984ff](http://github.axa.com/Digital/bauta-nodejs/commit/ec984ff)), closes [#102](http://github.axa.com/Digital/bauta-nodejs/issues/102)
+* **@bautajs/core:** do not validate response on set res.headerSent or res.finished ([f1d8f76](http://github.axa.com/Digital/bauta-nodejs/commit/f1d8f76)), closes [#101](http://github.axa.com/Digital/bauta-nodejs/issues/101)
+
+
+
+
+
 ## [2.1.4](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.3...v2.1.4) (2019-08-22)
 
 
