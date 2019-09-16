@@ -1,6 +1,6 @@
 {
   "name": "bautajs",
-  "version": "1.3.3",
+  "version": "1.5.0",
   "description": "A simple library to make middlewares",
   "main": "bauta.js",
   "scripts": {

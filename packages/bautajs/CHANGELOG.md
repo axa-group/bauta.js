@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](http://github.axa.com/Digital/bauta-nodejs/compare/v1.4.0...v1.5.0) (2019-09-16)
+
+
+### Features
+
+* **bautajs:** show error log on datasource error ([#108](http://github.axa.com/Digital/bauta-nodejs/issues/108)) ([51bce98](http://github.axa.com/Digital/bauta-nodejs/commit/51bce98)), closes [#107](http://github.axa.com/Digital/bauta-nodejs/issues/107) [#107](http://github.axa.com/Digital/bauta-nodejs/issues/107)
+
+
+
+
+
 ## [1.3.3](http://github.axa.com/Digital/bauta-nodejs/compare/v1.3.2...v1.3.3) (2019-07-15)
 
 
