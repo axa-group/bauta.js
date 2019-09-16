@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import http from 'http';
+import tls from 'tls';
 import { GotEmitter, GotOptions, GotPromise, Hooks, Response } from 'got';
 import { MultipartBody, RequestPart } from 'multipart-request-builder';
 import * as nodeStream from 'stream';
@@ -66,6 +68,41 @@ export interface CompiledRestProvider extends RestProviderTemplate<RequestParams
 export type RestProvider<TIn> = RequestDecorator<TIn> & {
   compile: (fn: OperatorFunctionCompiled<TIn, any>) => OperatorFunction<TIn, any>;
 };
+
+// DataSource template
+export interface RequestParamsTemplate extends RequestOptionsTemplate {
+  url?: string;
+  method?: string;
+}
+
+export type RequestOptionsTemplate = ClientRequestArgsTemplate &
+  SecureContextOptionsTemplate & {
+    rejectUnauthorized?: boolean | string;
+    servername?: string; // SNI TLS Extension
+  };
+
+export interface SecureContextOptionsTemplate
+  extends Omit<
+    tls.SecureContextOptions,
+    'honorCipherOrder' | 'secureOptions' | 'maxVersion' | 'minVersion'
+  > {
+  honorCipherOrder?: boolean | string;
+  secureOptions?: number | string;
+  maxVersion?: tls.SecureVersion | string;
+  minVersion?: tls.SecureVersion | string;
+}
+
+export interface ClientRequestArgsTemplate
+  extends Omit<
+    http.ClientRequestArgs,
+    'family' | 'agent' | '_defaultAgent' | 'timeout' | 'setHost'
+  > {
+  family?: number | string;
+  agent?: http.Agent | string;
+  _defaultAgent?: http.Agent | string;
+  timeout?: number | string;
+  setHost?: boolean | string;
+}
 
 // DataSource
 export interface RequestOptions extends GotOptions<string | null> {

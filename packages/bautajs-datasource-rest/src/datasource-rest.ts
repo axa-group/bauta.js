@@ -45,7 +45,9 @@ import {
   RestProvider,
   RestProviderTemplate,
   OperatorFunctionCompiled,
-  EventTypes
+  EventTypes,
+  RequestParamsTemplate,
+  RequestOptionsTemplate
 } from './utils/types';
 
 const httpAgent = createHttpAgent();
@@ -391,10 +393,10 @@ export function restProvider<TIn>(
 }
 
 export function restProviderTemplate<TIn>(
-  providerTemplate: RestProviderTemplate<RequestParams>,
-  globalOptions?: RequestOptions
+  providerTemplate: RestProviderTemplate<RequestParamsTemplate>,
+  globalOptions?: RequestOptionsTemplate
 ): RestProvider<TIn> {
-  const compiler = runner<TIn, any, RequestParams, RequestOptions>(
+  const compiler = runner<TIn, any, RequestParamsTemplate, RequestOptionsTemplate>(
     providerTemplate,
     globalOptions,
     true
@@ -419,9 +421,8 @@ export function restDataSource<TIn>(
 
   return result;
 }
-
 export function restDataSourceTemplate<TIn>(
-  dsTemplate: RestDataSourceTemplate<RequestParams, RequestOptions>
+  dsTemplate: RestDataSourceTemplate<RequestParamsTemplate, RequestOptionsTemplate>
 ): RestDataSource<TIn> {
   const result: RestDataSource<TIn> = initProviderList({});
 
