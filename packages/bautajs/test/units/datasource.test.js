@@ -82,6 +82,44 @@ describe('datasource test', () => {
     afterEach(() => {
       nock.cleanAll();
     });
+
+    test('should log the response if the response is an error', async () => {
+      process.env.LOG_LEVEL = 'error';
+      const expectedMsg = 'request-logger: Error for [POST] https://pets.com/v1/policies:';
+      const expectedData = {
+        body: '{"bender":"error"}',
+        statusCode: 400
+      };
+
+      nock('https://pets.com')
+        .post('/v1/policies')
+        .reply(400, { bender: 'error' });
+
+      const template = {
+        url: 'https://pets.com/v1/policies',
+        method: 'POST',
+        options: {
+          json: {
+            password: '1234'
+          }
+        }
+      };
+      const errorLogs = [];
+      const loggerMock = {
+        ...logger,
+        error(...params) {
+          errorLogs.push(params);
+        },
+        debug() {},
+        info() {},
+        warn() {}
+      };
+      const dataSource = buildDataSource(template);
+      const compiled = dataSource({ logger: loggerMock });
+      await compiled.request().catch(() => Promise.resolve({}));
+      expect(errorLogs[0][0]).toEqual(expectedMsg);
+      expect(errorLogs[0][1]).toEqual(expectedData);
+    });
     test('should log the requests data on debug mode', async () => {
       process.env.LOG_LEVEL = 'debug';
       const expectedMsg = 'request-logger: Request data: ';
@@ -208,7 +246,7 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'request-logger: Response for [GET]  https://pets.com/v1/policies: ',
+        'request-logger: Response for [GET] https://pets.com/v1/policies:',
         { body: '{"bender":1}', headers: '{"content-type":"application/json"}', statusCode: 200 }
       ];
 
@@ -269,7 +307,7 @@ describe('datasource test', () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'request-logger: Response for [GET]  https://pets.com/v1/policies: ',
+        'request-logger: Response for [GET] https://pets.com/v1/policies:',
         {
           body: '<html><div></div></html>',
           headers: '{"content-type":"text/html"}',

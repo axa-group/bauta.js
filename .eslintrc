@@ -12,13 +12,6 @@
     "import/no-extraneous-dependencies": "off",
     "prefer-spread": 0,
     "comma-dangle": ["error", "never"],
-    "global-require": 0,
-    "prettier/prettier": [
-      "error",
-      {
-        "printWidth": 100,
-        "singleQuote": true
-      }
-    ]
+    "global-require": 0
   }
 }

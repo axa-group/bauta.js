@@ -58,13 +58,18 @@ function requestHooks(log) {
       } else {
         if (process.env.LOG_LEVEL === 'debug') {
           log.debug(
-            `request-logger: Response for [${response.req.method}]  ${response.requestUrl}: `,
+            `request-logger: Response for [${response.req.method}] ${response.requestUrl}:`,
             {
               headers: prepareToLog(response.headers),
               statusCode: response.statusCode,
               body: prepareToLog(response.body)
             }
           );
+        } else if (response.statusCode > 399) {
+          log.error(`request-logger: Error for [${response.req.method}] ${response.requestUrl}:`, {
+            statusCode: response.statusCode,
+            body: prepareToLog(response.body)
+          });
         }
         log.info(
           `request-logger: The request to ${response.requestUrl} took: ${response.timings.phases.total} ms`
@@ -112,7 +117,11 @@ function normalizeOptions(options) {
     parsedOptions.body = body;
     parsedOptions.json = false;
     parsedOptions.responseType = 'json';
-    parsedOptions.headers = { ...options.headers, ...headers, Accept: 'application/json' };
+    parsedOptions.headers = {
+      ...options.headers,
+      ...headers,
+      Accept: 'application/json'
+    };
   }
 
   if (!Array.isArray(options.formData) && typeof options.formData === 'object') {

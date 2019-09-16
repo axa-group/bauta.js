@@ -384,7 +384,7 @@ module.exports = class Operation {
    *
    */
   exec(req, res, initialData = {}) {
-    const values = Object.assign({}, initialData);
+    const values = { ...initialData };
     const context = {
       validateRequest: request => this.validation.validateReqBuilder(request || req),
       validateResponse: this.validation.validateResBuilder,
