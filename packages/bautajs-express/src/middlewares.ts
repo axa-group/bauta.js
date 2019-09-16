@@ -32,7 +32,7 @@ export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOption
         immediate: false
       })
     );
-  } else if (opt && opt.options) {
+  } else if (opt && opt.enabled === true && opt.options) {
     app.use(morgan(opt.options.format, opt.options.options));
     app.use(
       morgan('tiny', {
@@ -45,7 +45,7 @@ export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOption
 export function initHelmet(app: Application, opt?: MiddlewareOption<helmet.IHelmetConfiguration>) {
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     app.use(helmet());
-  } else if (opt && opt.options) {
+  } else if (opt && opt.enabled === true && opt.options) {
     app.use(helmet(opt.options));
   }
 }
@@ -53,7 +53,7 @@ export function initHelmet(app: Application, opt?: MiddlewareOption<helmet.IHelm
 export function initCors(app: Application, opt?: MiddlewareOption<CorsOptions>) {
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     app.use(cors());
-  } else if (opt && opt.options) {
+  } else if (opt && opt.enabled === true && opt.options) {
     app.use(cors(opt.options));
   }
 }
@@ -62,7 +62,7 @@ export function initBodyParser(app: Application, opt?: MiddlewareOption<BodyPars
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     app.use(json({ limit: '50mb' }));
     app.use(urlencoded({ extended: true, limit: '50mb' }));
-  } else if (opt && opt.options) {
+  } else if (opt && opt.enabled === true && opt.options) {
     app.use(json(opt.options.json));
     app.use(urlencoded(opt.options.urlEncoded));
   }
@@ -90,7 +90,7 @@ export function initExplorer(
         })
       );
     });
-  } else if (opt && opt.options) {
+  } else if (opt && opt.enabled === true && opt.options) {
     const opts: ExplorerOptions = opt.options;
     apiDefinitions.forEach(apiDefinition => {
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;

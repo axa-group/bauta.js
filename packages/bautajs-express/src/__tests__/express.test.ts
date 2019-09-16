@@ -145,6 +145,23 @@ describe('BautaJS express', () => {
       });
   });
 
+  test('Should not expose the swagger if explorer is set to false', done => {
+    const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
+      resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+    });
+
+    bautajs.applyMiddlewares({ explorer: { enabled: false } });
+
+    supertest(bautajs.app)
+      .get('/v1/explorer')
+      .expect(404)
+      .end((err, res) => {
+        if (err) throw err;
+        expect(res.status).toEqual(404);
+        done();
+      });
+  });
+
   test('Should left error handling to express error handler', done => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolversPath: path.resolve(
