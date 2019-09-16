@@ -47,6 +47,40 @@
             }
           }
         }
+      },
+      "/no-pipeline": {
+        "get": {
+          "summary": "Endpoint without pipeline",
+          "operationId": "noPipeline",
+          "tags": ["articles"],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "How many items to return at one time (max 100)",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A paged array of articles"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "components": {

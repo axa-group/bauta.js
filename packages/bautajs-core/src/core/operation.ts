@@ -222,7 +222,7 @@ export class OperationBuilder implements Operation {
 
   public setup(pipelineSetup: PipelineSetup<undefined>): void {
     this.operatorFunction = pipelineBuilder<undefined, any>(pipelineSetup, param => {
-      logger.info(
+      logger.debug(
         `[OK] ${param.name || 'anonymous function or pipeline'} pushed to .${this.version}.${
           this.id
         }`

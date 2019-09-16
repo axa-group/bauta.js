@@ -16,8 +16,12 @@ import { PipelineSetup, OperatorFunction, EventTypes } from '../utils/types';
 import { Builder, Accesor } from '../core/pipeline-builder';
 import { logger } from '../logger';
 
+let pipelineCounter = 0;
+
 function defaultOnPush(param: any) {
-  logger.info(`[OK] ${param.name || 'anonymous function'} pushed to anonymous pipeline`);
+  logger.debug(
+    `[OK] ${param.name || 'anonymous function'} pushed to anonymous pipeline ${pipelineCounter}`
+  );
   logger.events.emit(EventTypes.PUSH_OPERATOR, {
     operator: param
   });
@@ -47,6 +51,8 @@ export function pipelineBuilder<TIn, TOut>(
   pipelineSetup: PipelineSetup<TIn>,
   onPush?: (param: any) => void
 ): OperatorFunction<TIn, TOut> {
+  pipelineCounter += 1;
+
   const pp = new Builder<TIn>(new Accesor(), onPush || defaultOnPush);
   pipelineSetup(pp);
   return (prev, ctx, bautajs) => {

@@ -14,13 +14,16 @@
  */
 import { PipelineBuilder, OperatorFunction } from './types';
 import { pipelineBuilder } from '../decorators/pipeline';
+import { NotFoundError } from '../core/not-found-error';
 
 export function buildDefaultPipeline(): OperatorFunction<any, any> {
-  return pipelineBuilder((p: PipelineBuilder<any>) =>
-    p.push(() => {
-      const error = new Error('Not found');
-      return Promise.reject(Object.assign(error, { statusCode: 404 }));
-    })
+  return pipelineBuilder(
+    (p: PipelineBuilder<any>) =>
+      p.push(() => {
+        const error = new NotFoundError('Not found');
+        return Promise.reject(error);
+      }),
+    () => {}
   );
 }
 
