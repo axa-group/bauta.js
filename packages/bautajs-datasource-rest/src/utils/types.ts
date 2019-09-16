@@ -14,10 +14,21 @@
  */
 import http from 'http';
 import tls from 'tls';
-import { GotEmitter, GotOptions, GotPromise, Hooks, Response } from 'got';
+import {
+  GotEmitter,
+  GotOptions,
+  GotPromise,
+  Hooks,
+  Response,
+  TimeoutOptions,
+  RetryOptions,
+  RequestFunction
+} from 'got';
 import { MultipartBody, RequestPart } from 'multipart-request-builder';
 import * as nodeStream from 'stream';
 import { BautaJSInstance, Context, OperatorFunction, Dictionary } from '@bautajs/core';
+import { CookieJar } from 'tough-cookie';
+import { AgentOptions } from 'https';
 
 export enum EventTypes {
   /**
@@ -78,7 +89,32 @@ export interface RequestParamsTemplate extends RequestOptionsTemplate {
 export type RequestOptionsTemplate = ClientRequestArgsTemplate &
   SecureContextOptionsTemplate & {
     rejectUnauthorized?: boolean | string;
-    servername?: string; // SNI TLS Extension
+    servername?: string;
+    body?: string | Buffer | nodeStream.Readable | object | Record<string, any>;
+    form?: boolean | object | string;
+    href?: string;
+    responseType?: ResponseType | string;
+    multipart?: RequestPart[] | MultipartBody | string;
+    formData?: Dictionary<any> | string;
+    json?: boolean | object | string;
+    preambleCRLF?: boolean | string;
+    postambleCRLF?: boolean | string;
+    hooks?: Hooks<GotOptions<string | null>, object> | string;
+    stream?: false;
+    resolveBodyOnly?: true;
+    baseUrl?: string;
+    cookieJar?: CookieJar | string;
+    encoding?: string;
+    query?: Record<string, any> | URLSearchParams | string;
+    timeout?: number | TimeoutOptions | string;
+    retry?: number | RetryOptions | string;
+    followRedirect?: boolean | string;
+    decompress?: boolean | string;
+    useElectronNet?: boolean | string;
+    throwHttpErrors?: boolean | string;
+    agent?: http.Agent | boolean | AgentOptions | string;
+    cache?: Cache | string;
+    request?: RequestFunction | string;
   };
 
 export interface SecureContextOptionsTemplate
