@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import glob from 'glob';
+import fastGlob from 'fast-glob';
 import OpenapiSchemaValidator, { OpenAPISchemaValidatorResult } from 'openapi-schema-validator';
 import { IJsonSchema, OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { resolve } from 'path';
@@ -268,7 +268,7 @@ export class BautaJS implements BautaJSInstance {
   static requireAll<T>(folder: string | string[], execute: boolean = true, vars?: T) {
     const execFiles = (folderPath: string) => {
       const result: any = [];
-      glob.sync(folderPath, { strict: true }).forEach((file: string) => {
+      fastGlob.sync(folderPath).forEach((file: string) => {
         // eslint-disable-next-line global-require, import/no-dynamic-require
         let data = require(resolve(file));
         if (data.default) {

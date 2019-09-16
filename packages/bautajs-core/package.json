@@ -33,13 +33,13 @@
   },
   "dependencies": {
     "@javi11/openapi-request-validator": "3.8.5",
-    "ajv": "6.10.0",
+    "ajv": "6.10.2",
     "debug": "4.1.1",
-    "fast-safe-stringify": "2.0.6",
-    "glob": "7.1.4",
+    "fast-safe-stringify": "2.0.7",
+    "fast-glob": "3.0.4",
     "hyperid": "2.0.2",
     "openapi-default-setter": "2.0.4",
-    "openapi-response-validator": "3.8.1",
+    "openapi-response-validator": "3.8.2",
     "openapi-schema-validator": "3.0.3",
     "openapi-types": "1.3.5",
     "p-cancelable": "2.0.0"
