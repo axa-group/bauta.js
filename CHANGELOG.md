@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.5...v2.2.0) (2019-09-17)
+
+
+### Bug Fixes
+
+* **@bautajs-core:** add not found error ([9fdf034](http://github.axa.com/Digital/bauta-nodejs/commit/9fdf034))
+* **@bautajs-express:** do not override headers set during the pipeline ([d732ab8](http://github.axa.com/Digital/bauta-nodejs/commit/d732ab8)), closes [#111](http://github.axa.com/Digital/bauta-nodejs/issues/111)
+* **@bautajs/datasource-rest:** add more options for template ([98afc32](http://github.axa.com/Digital/bauta-nodejs/commit/98afc32))
+* **@bautajs/datasource-rest:** fix datasource options typescript definition ([5db7eb3](http://github.axa.com/Digital/bauta-nodejs/commit/5db7eb3)), closes [#100](http://github.axa.com/Digital/bauta-nodejs/issues/100)
+* **@bautajs/express:**  do not expose explorer if explorer is disabled ([3ec324d](http://github.axa.com/Digital/bauta-nodejs/commit/3ec324d)), closes [#104](http://github.axa.com/Digital/bauta-nodejs/issues/104)
+
+
+### Features
+
+* **@bautajs/core:** do not log default operation step ([0e4cee8](http://github.axa.com/Digital/bauta-nodejs/commit/0e4cee8)), closes [#103](http://github.axa.com/Digital/bauta-nodejs/issues/103)
+
+
+
+
+
 ## [2.1.5](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.4...v2.1.5) (2019-09-04)
 
 

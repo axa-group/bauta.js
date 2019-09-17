@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v2.1.5...v2.2.0) (2019-09-17)
+
+
+### Bug Fixes
+
+* **@bautajs-express:** do not override headers set during the pipeline ([d732ab8](https://github.axa.com/Digital/bauta-nodejs/commit/d732ab8)), closes [#111](https://github.axa.com/Digital/bauta-nodejs/issues/111)
+* **@bautajs/express:**  do not expose explorer if explorer is disabled ([3ec324d](https://github.axa.com/Digital/bauta-nodejs/commit/3ec324d)), closes [#104](https://github.axa.com/Digital/bauta-nodejs/issues/104)
+
+
+
+
+
 ## [2.1.5](https://github.axa.com/Digital/bauta-nodejs/compare/v2.1.4...v2.1.5) (2019-09-04)
 
 **Note:** Version bump only for package @bautajs/express

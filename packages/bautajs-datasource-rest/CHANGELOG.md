@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v2.1.5...v2.2.0) (2019-09-17)
+
+
+### Bug Fixes
+
+* **@bautajs/datasource-rest:** add more options for template ([98afc32](https://github.axa.com/Digital/bauta-nodejs/commit/98afc32))
+* **@bautajs/datasource-rest:** fix datasource options typescript definition ([5db7eb3](https://github.axa.com/Digital/bauta-nodejs/commit/5db7eb3)), closes [#100](https://github.axa.com/Digital/bauta-nodejs/issues/100)
+
+
+
+
+
 ## [2.1.5](https://github.axa.com/Digital/bauta-nodejs/compare/v2.1.4...v2.1.5) (2019-09-04)
 
 **Note:** Version bump only for package @bautajs/datasource-rest

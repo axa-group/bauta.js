@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.5...v2.2.0) (2019-09-17)
+
+
+### Bug Fixes
+
+* **@bautajs-core:** add not found error ([9fdf034](http://github.axa.com/Digital/bauta-nodejs/commit/9fdf034))
+
+
+### Features
+
+* **@bautajs/core:** do not log default operation step ([0e4cee8](http://github.axa.com/Digital/bauta-nodejs/commit/0e4cee8)), closes [#103](http://github.axa.com/Digital/bauta-nodejs/issues/103)
+
+
+
+
+
 ## [2.1.5](http://github.axa.com/Digital/bauta-nodejs/compare/v2.1.4...v2.1.5) (2019-09-04)
 
 
