@@ -12,10 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { GotEmitter, GotOptions, GotPromise, Hooks, Response } from 'got';
+import http from 'http';
+import tls from 'tls';
+import {
+  GotEmitter,
+  GotOptions,
+  GotPromise,
+  Hooks,
+  Response,
+  TimeoutOptions,
+  RetryOptions,
+  RequestFunction
+} from 'got';
 import { MultipartBody, RequestPart } from 'multipart-request-builder';
 import * as nodeStream from 'stream';
 import { BautaJSInstance, Context, OperatorFunction, Dictionary } from '@bautajs/core';
+import { CookieJar } from 'tough-cookie';
+import { AgentOptions } from 'https';
 
 export enum EventTypes {
   /**
@@ -66,6 +79,66 @@ export interface CompiledRestProvider extends RestProviderTemplate<RequestParams
 export type RestProvider<TIn> = RequestDecorator<TIn> & {
   compile: (fn: OperatorFunctionCompiled<TIn, any>) => OperatorFunction<TIn, any>;
 };
+
+// DataSource template
+export interface RequestParamsTemplate extends RequestOptionsTemplate {
+  url?: string;
+  method?: string;
+}
+
+export type RequestOptionsTemplate = ClientRequestArgsTemplate &
+  SecureContextOptionsTemplate & {
+    rejectUnauthorized?: boolean | string;
+    servername?: string;
+    body?: string | Buffer | nodeStream.Readable | object | Record<string, any>;
+    form?: boolean | object | string;
+    href?: string;
+    responseType?: ResponseType | string;
+    multipart?: RequestPart[] | MultipartBody | string;
+    formData?: Dictionary<any> | string;
+    json?: boolean | object | string;
+    preambleCRLF?: boolean | string;
+    postambleCRLF?: boolean | string;
+    hooks?: Hooks<GotOptions<string | null>, object> | string;
+    stream?: false;
+    resolveBodyOnly?: true;
+    baseUrl?: string;
+    cookieJar?: CookieJar | string;
+    encoding?: string;
+    query?: Record<string, any> | URLSearchParams | string;
+    timeout?: number | TimeoutOptions | string;
+    retry?: number | RetryOptions | string;
+    followRedirect?: boolean | string;
+    decompress?: boolean | string;
+    useElectronNet?: boolean | string;
+    throwHttpErrors?: boolean | string;
+    agent?: http.Agent | boolean | AgentOptions | string;
+    cache?: Cache | string;
+    request?: RequestFunction | string;
+  };
+
+export interface SecureContextOptionsTemplate
+  extends Omit<
+    tls.SecureContextOptions,
+    'honorCipherOrder' | 'secureOptions' | 'maxVersion' | 'minVersion'
+  > {
+  honorCipherOrder?: boolean | string;
+  secureOptions?: number | string;
+  maxVersion?: tls.SecureVersion | string;
+  minVersion?: tls.SecureVersion | string;
+}
+
+export interface ClientRequestArgsTemplate
+  extends Omit<
+    http.ClientRequestArgs,
+    'family' | 'agent' | '_defaultAgent' | 'timeout' | 'setHost'
+  > {
+  family?: number | string;
+  agent?: http.Agent | string;
+  _defaultAgent?: http.Agent | string;
+  timeout?: number | string;
+  setHost?: boolean | string;
+}
 
 // DataSource
 export interface RequestOptions extends GotOptions<string | null> {
