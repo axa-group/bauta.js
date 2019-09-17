@@ -44,6 +44,7 @@
     "eslint-plugin-jest": "22.17.0",
     "eslint-plugin-prettier": "3.1.0",
     "fast-safe-stringify": "2.0.7",
+    "form-data": "2.5.1",
     "got": "9.6.0",
     "jest": "24.9.0",
     "jest-config": "24.9.0",

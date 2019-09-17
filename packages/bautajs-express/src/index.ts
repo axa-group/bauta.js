@@ -92,7 +92,8 @@ export class BautaJSExpress extends BautaJS {
               : produces && produces[0];
             res.set({
               ...(contentType ? { 'Content-type': contentType } : {}),
-              ...responses[res.statusCode].headers
+              ...responses[res.statusCode].headers,
+              ...res.getHeaders()
             });
           }
 

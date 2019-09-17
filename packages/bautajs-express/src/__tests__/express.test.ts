@@ -14,6 +14,7 @@
  */
 // eslint-disable-next-line no-unused-vars
 import path from 'path';
+import FormData from 'form-data';
 import supertest from 'supertest';
 import { Readable } from 'stream';
 import { Response } from 'express';
@@ -119,6 +120,37 @@ describe('BautaJS express', () => {
       .expect('Content-disposition', 'attachment; filename="file.pdf')
       .expect(200)
       .expect('123')
+      .end(done);
+  });
+
+  test('Should not override the headers set on the pipeline by the swagger ones', done => {
+    const form = new FormData();
+    const bautajs = new BautaJSExpress(apiDefinitions, {
+      resolvers: [
+        resolver(operations => {
+          operations.v1.operation1.setup(p =>
+            p.push(
+              asPromise((_, ctx, _bautajs, callback) => {
+                const expressResponse: Response = ctx.res as Response;
+                form.append('part1', 'part 1 data');
+                form.append('part2', 'part 2 data');
+                ctx.res.set('Content-type', `multipart/form-data; boundary=${form.getBoundary()}`);
+                form.pipe(expressResponse);
+
+                return form.on('end', callback);
+              })
+            )
+          );
+        })
+      ]
+    });
+
+    bautajs.applyMiddlewares();
+
+    supertest(bautajs.app)
+      .get('/api/v1/test')
+      .expect('Content-type', `multipart/form-data; boundary=${form.getBoundary()}`)
+      .expect(200)
       .end(done);
   });
 
