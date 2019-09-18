@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const nodeHash = require('node-object-hash')();
+const nodeHash = require('node-object-hash')({ coerce: { set: true, symbol: true } });
 const { createHttpAgent, createHttpsAgent } = require('native-proxy-agent');
 
 let agentStorage = {};

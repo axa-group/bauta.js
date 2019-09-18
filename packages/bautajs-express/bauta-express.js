@@ -16,7 +16,6 @@ const swaggerUi = require('swagger-ui-express');
 const BautaJS = require('bautajs');
 const helmetMw = require('helmet');
 const corsMw = require('cors');
-const bodyParserMw = require('body-parser');
 const compression = require('compression');
 const express = require('express');
 const https = require('https');
@@ -234,11 +233,11 @@ class BautaJSExpress extends BautaJS {
     this.app.use(compression());
 
     if (bodyParser === true) {
-      this.app.use(bodyParserMw.json({ limit: '50mb' }));
-      this.app.use(bodyParserMw.urlencoded({ extended: true, limit: '50mb' }));
+      this.app.use(express.json({ limit: '50mb' }));
+      this.app.use(express.urlencoded({ extended: true, limit: '50mb' }));
     } else if (bodyParser) {
-      this.app.use(bodyParserMw.json(bodyParser.json));
-      this.app.use(bodyParserMw.urlencoded(bodyParser.urlencoded));
+      this.app.use(express.json(bodyParser.json));
+      this.app.use(express.urlencoded(bodyParser.urlencoded));
     }
 
     this.updateRoutes();
