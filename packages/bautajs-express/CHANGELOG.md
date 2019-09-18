@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.axa.com/Digital/bauta-nodejs/compare/v1.5.0...v1.5.1) (2019-09-18)
+
+
+### Bug Fixes
+
+* update dependencies and openapi-response-validator ([6a52b20](https://github.axa.com/Digital/bauta-nodejs/commit/6a52b20)), closes [#112](https://github.axa.com/Digital/bauta-nodejs/issues/112)
+
+
+
+
+
 # [1.5.0](https://github.axa.com/Digital/bauta-nodejs/compare/v1.4.0...v1.5.0) (2019-09-16)
 
 **Note:** Version bump only for package bautajs-express
