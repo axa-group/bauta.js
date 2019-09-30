@@ -20,28 +20,7 @@ import {
   OperatorFunction,
   ErrorHandler
 } from '../utils/types';
-
-export class Accesor implements HandlerAccesor {
-  private accesor: OperatorFunction<any, any> = val => val;
-
-  private errorAccesor: ErrorHandler = (err: Error) => Promise.reject(err);
-
-  get handler(): OperatorFunction<any, any> {
-    return this.accesor;
-  }
-
-  set handler(fn: OperatorFunction<any, any>) {
-    this.accesor = fn;
-  }
-
-  get errorHandler(): ErrorHandler {
-    return this.errorAccesor;
-  }
-
-  set errorHandler(fn: ErrorHandler) {
-    this.errorAccesor = fn;
-  }
-}
+import { Accesor } from './accesor';
 
 export class Builder<TIn> implements PipelineBuilder<TIn> {
   constructor(

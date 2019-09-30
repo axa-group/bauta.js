@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 import { PipelineSetup, OperatorFunction, EventTypes } from '../utils/types';
-import { Builder, Accesor } from '../core/pipeline-builder';
+import { Builder } from '../core/pipeline-builder';
+import { Accesor } from '../core/accesor';
 import { logger } from '../logger';
 
 let pipelineCounter = 0;

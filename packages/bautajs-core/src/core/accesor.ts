@@ -12,30 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ContextData, Context } from './types';
-import { CancelableTokenBuilder } from '../core/cancelable-token';
-import { sessionFactory } from '../session-factory';
+import { HandlerAccesor, OperatorFunction, ErrorHandler } from '../utils/types';
 
-export function createContext(ctx: ContextData): Context {
-  if (!ctx.req) {
-    ctx.req = {};
+export class Accesor implements HandlerAccesor {
+  private accesor: OperatorFunction<any, any> = val => val;
+
+  private errorAccesor: ErrorHandler = (err: Error) => Promise.reject(err);
+
+  get handler(): OperatorFunction<any, any> {
+    return this.accesor;
   }
 
-  if (!ctx.res) {
-    ctx.res = {};
+  set handler(fn: OperatorFunction<any, any>) {
+    this.accesor = fn;
   }
 
-  const token = new CancelableTokenBuilder();
+  get errorHandler(): ErrorHandler {
+    return this.errorAccesor;
+  }
 
-  return {
-    validateResponse: () => null,
-    validateRequest: () => null,
-    data: ctx.data || {},
-    req: ctx.req,
-    res: ctx.res,
-    token,
-    ...sessionFactory(ctx.req)
-  };
+  set errorHandler(fn: ErrorHandler) {
+    this.errorAccesor = fn;
+  }
 }
 
-export default createContext;
+export default Accesor;
