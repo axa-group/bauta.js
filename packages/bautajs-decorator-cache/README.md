@@ -26,7 +26,7 @@ Include it on your pipeline as follows:
                     );
 
   module.exports = resolver((operations)=> {
-      const normalizer = (value, ctx) => ctx.id;
+      const normalizer = ([value, ctx]) => ctx.id;
       operations.v1.op1.setup(p => 
         p.push(
             cache(
