@@ -4,8 +4,11 @@
   "packages": [
     "packages/*"
   ],
-  "npmClientArgs": [
-    "--no-lockfile"
-  ],
+  "bootstrap": {
+    "npmClientArgs": ["--no-package-lock"]
+  },
+  "publish": {
+    "npmClientArgs": ["--no-package-lock"]
+  },
   "version": "2.2.0"
 }
