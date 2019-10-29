@@ -387,7 +387,7 @@ export function restProvider<TIn>(
     false
   );
   const request: RequestDecorator<TIn> = (localOptions?: any) =>
-    compiler((_: any, _ctx: any, _bautajs: any, provider: any) => provider.request(localOptions));
+    compiler((_: TIn, _ctx: any, _bautajs: any, provider: any) => provider.request(localOptions));
 
   return Object.assign(request, { compile: compiler });
 }

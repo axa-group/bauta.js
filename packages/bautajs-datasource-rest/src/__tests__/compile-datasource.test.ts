@@ -37,8 +37,7 @@ describe('compile datasource decorator', () => {
     bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push((_, ctx) => {
         ctx.data.path = path;
-      });
-      p.push(
+      }).push(
         testDatasource.operation1.compile((_, _ctx, _bautajs, provider) => {
           return provider.request({ resolveBodyOnly: true });
         })
