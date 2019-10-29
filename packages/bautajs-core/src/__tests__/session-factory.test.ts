@@ -14,12 +14,12 @@
  */
 import { sessionFactory } from '../session-factory';
 
-describe('Session factory tests', () => {
+describe('session factory tests', () => {
   test('should return the request id and logger', () => {
     const req = { headers: {} };
     const result = sessionFactory(req);
-    expect(typeof result.id).toEqual('string');
-    expect(typeof result.logger.info).toEqual('function');
+    expect(typeof result.id).toStrictEqual('string');
+    expect(typeof result.logger.info).toStrictEqual('function');
   });
 
   test('should return the request id, the logger and the userId with the user token encripted in case of an Authenticated request', () => {
@@ -29,7 +29,7 @@ describe('Session factory tests', () => {
       }
     };
     const result = sessionFactory(req);
-    expect(typeof result.userId).toEqual('string');
+    expect(typeof result.userId).toStrictEqual('string');
   });
 
   test('should use the request-id header in case that exists as req.id', () => {
@@ -40,6 +40,6 @@ describe('Session factory tests', () => {
       }
     };
     const result = sessionFactory(req);
-    expect(result.id).toEqual('1234');
+    expect(result.id).toStrictEqual('1234');
   });
 });

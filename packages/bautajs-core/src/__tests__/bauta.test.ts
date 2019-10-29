@@ -19,8 +19,8 @@ import { OnCancel, Document } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-versions.json';
 
-describe('Core tests', () => {
-  describe('Express initialization tests', () => {
+describe('core tests', () => {
+  describe('express initialization tests', () => {
     test('should initialize the core with the given parameters', () => {
       const config = {
         endpoint: 'http://google.es'
@@ -69,7 +69,7 @@ describe('Core tests', () => {
     });
   });
 
-  describe('Validate request globally', () => {
+  describe('validate request globally', () => {
     test('should validate the request by ./fixtures', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -84,19 +84,18 @@ describe('Core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         staticConfig: config
       });
-
-      try {
-        await bautaJS.operations.v1.operation1.run({ req, res });
-      } catch (e) {
-        expect(e.errors).toEqual([
-          {
-            errorCode: 'type.openapi.validation',
-            location: 'query',
-            message: 'should be integer',
-            path: 'limit'
-          }
-        ]);
-      }
+      await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
+        expect.objectContaining({
+          errors: [
+            {
+              errorCode: 'type.openapi.validation',
+              location: 'query',
+              message: 'should be integer',
+              path: 'limit'
+            }
+          ]
+        })
+      );
     });
 
     test('should not validate the request if set validateRequest to false', async () => {
@@ -118,38 +117,16 @@ describe('Core tests', () => {
         }
       );
 
-      expect(await bautaJS.operations.v1.operation1.run({ req, res })).toEqual([
+      expect(await bautaJS.operations.v1.operation1.run({ req, res })).toStrictEqual([
         {
           id: 134,
           name: 'pet2'
         }
       ]);
     });
-
-    test('should validate the request and print the stack object', async () => {
-      const config = {
-        endpoint: 'http://google.es'
-      };
-      const req = {
-        query: {
-          limit: 'string'
-        }
-      };
-      const res = {};
-
-      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
-        staticConfig: config
-      });
-
-      try {
-        await bautaJS.operations.v1.operation1.run({ req, res });
-      } catch (e) {
-        expect(e.stack).toEqual(`${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`);
-      }
-    });
   });
 
-  describe('Validate response globally', () => {
+  describe('validate response globally', () => {
     test('should validate the response by default', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -173,20 +150,21 @@ describe('Core tests', () => {
         }))
       );
 
-      try {
-        await bautaJS.operations.v1.operation1.run({ req, res });
-      } catch (e) {
-        expect(e.errors).toEqual([
-          {
-            errorCode: 'type.openapi.responseValidation',
-            message: 'response should be array'
+      await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
+        expect.objectContaining({
+          errors: [
+            {
+              path: 'response',
+              errorCode: 'type.openapi.responseValidation',
+              message: 'should be array'
+            }
+          ],
+          response: {
+            id: 1,
+            name: 'pety'
           }
-        ]);
-        expect(e.response).toEqual({
-          id: 1,
-          name: 'pety'
-        });
-      }
+        })
+      );
     });
 
     test('should format the validation error to string', async () => {
@@ -210,7 +188,10 @@ describe('Core tests', () => {
       try {
         await bautaJS.operations.v1.operation1.run({ req, res });
       } catch (e) {
-        expect(e.stack).toEqual(`${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`);
+        // eslint-disable-next-line jest/no-try-expect
+        expect(e.stack).toStrictEqual(
+          `${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`
+        );
       }
     });
 
@@ -234,7 +215,7 @@ describe('Core tests', () => {
       );
 
       await bautaJS.operations.v1.operation1.run({ req, res });
-      expect(await bautaJS.operations.v1.operation1.run({ req, res })).toEqual([
+      expect(await bautaJS.operations.v1.operation1.run({ req, res })).toStrictEqual([
         {
           id: 134,
           name: 'pet2'
@@ -243,7 +224,7 @@ describe('Core tests', () => {
     });
   });
 
-  describe('Load resolvers from path', () => {
+  describe('load resolvers from path', () => {
     test('should load the operations from the given path', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -254,7 +235,7 @@ describe('Core tests', () => {
         staticConfig: config
       });
 
-      expect(await bautaJS.operations.v1.operation1.run({ req: {}, res: {} })).toEqual([
+      expect(await bautaJS.operations.v1.operation1.run({ req: {}, res: {} })).toStrictEqual([
         {
           id: 134,
           name: 'pet2'
@@ -275,7 +256,7 @@ describe('Core tests', () => {
         staticConfig: config
       });
 
-      expect(await bautaJS.operations.v1.operation1.run({ req: {}, res: {} })).toEqual([
+      expect(await bautaJS.operations.v1.operation1.run({ req: {}, res: {} })).toStrictEqual([
         {
           id: 132,
           name: 'pet1'
@@ -284,8 +265,8 @@ describe('Core tests', () => {
     });
   });
 
-  describe('Execution cancelation', () => {
-    test('should allow cancel a execution chain', done => {
+  describe('execution cancelation', () => {
+    test('should allow cancel a execution chain', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -307,20 +288,20 @@ describe('Core tests', () => {
       });
       const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
 
-      (async () => {
-        try {
-          await request1;
-          expect(true).toBeFalsy();
-        } catch (e) {
-          expect(e.message).toEqual('Promise was canceled');
-          done();
-        }
-      })();
+      const doRequest = async () => {
+        await expect(request1).rejects.toThrow(
+          expect.objectContaining({ message: 'Promise was canceled' })
+        );
+      };
 
       request1.cancel();
+
+      await doRequest();
+      expect.assertions(1);
     });
 
-    test('should set the token variable isCanceled to true if the chain is canceled', done => {
+    // eslint-disable-next-line jest/no-test-callback
+    test('should set the token variable isCanceled to true if the chain is canceled', async done => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -330,7 +311,7 @@ describe('Core tests', () => {
             operations.v1.operation1.setup(p =>
               p.push(async (_, ctx) => {
                 ctx.token.onCancel(() => {
-                  expect(ctx.token.isCanceled).toEqual(true);
+                  expect(ctx.token.isCanceled).toStrictEqual(true);
                   done();
                 });
                 await new Promise(resolve =>
@@ -346,18 +327,16 @@ describe('Core tests', () => {
       });
       const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
 
-      (async () => {
-        try {
-          await request1;
-        } catch (e) {
-          // eslint-disable-next-line;
-        }
-      })();
-
+      expect.assertions(1);
       request1.cancel();
+      try {
+        await request1;
+      } catch (e) {
+        // No need to control error
+      }
     });
 
-    test('should allow custom cancel reason', done => {
+    test('should allow custom cancel reason', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -378,21 +357,17 @@ describe('Core tests', () => {
         staticConfig: config
       });
       const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
-
-      (async () => {
-        try {
-          await request1;
-          expect(true).toBeFalsy();
-        } catch (e) {
-          expect(e.message).toEqual('Request was aborted');
-          done();
-        }
-      })();
-
+      const doRequest = async () => {
+        await expect(request1).rejects.toThrow(
+          expect.objectContaining({ message: 'Request was aborted' })
+        );
+      };
       request1.cancel('Request was aborted');
+      await doRequest();
+      expect.assertions(1);
     });
 
-    test('should execute all onCancel that where subscribed', done => {
+    test('should execute all onCancel that where subscribed', async () => {
       const onCancel = jest.fn();
       const config = {
         endpoint: 'http://google.es'
@@ -425,20 +400,17 @@ describe('Core tests', () => {
       });
       const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
 
-      (async () => {
-        try {
-          await request1;
-          expect(true).toBeFalsy();
-        } catch (error) {
-          expect(onCancel).toHaveBeenCalledTimes(3);
-          done();
-        }
-      })();
-
       request1.cancel();
+
+      try {
+        await request1;
+      } catch (error) {
+        // Not interested on the error
+      }
+      expect(onCancel).toHaveBeenCalledTimes(3);
     });
 
-    test('should not mix concurrent executions', done => {
+    test('should not mix concurrent executions', async () => {
       const onCancel: OnCancel = jest.fn();
       const config = {
         endpoint: 'http://google.es'
@@ -471,29 +443,16 @@ describe('Core tests', () => {
       const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
       const request2 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
 
-      (async () => {
-        try {
-          await request1;
-        } catch (error) {
-          // eslint-disable-next-line
-        }
-      })();
-      (async () => {
-        try {
-          const result = await request2;
-          expect(onCancel).toHaveBeenCalledTimes(1);
-          expect(result).toEqual('ok');
-          done();
-        } catch (error) {
-          done(error);
-        }
-      })();
-
       request1.cancel();
+      // eslint-disable-next-line jest/valid-expect-in-promise
+      const [, req2] = await Promise.all([request1.catch(() => Promise.resolve()), request2]);
+
+      expect(onCancel).toHaveBeenCalledTimes(1);
+      expect(req2).toStrictEqual('ok');
     });
   });
 
-  describe('Inheritance between api versions', () => {
+  describe('inheritance between api versions', () => {
     test('should inherit by default the operation pipeline', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -514,10 +473,10 @@ describe('Core tests', () => {
       const request1 = await bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
       const request2 = await bautaJS.operations.v2.operation1.run({ req: {}, res: {} });
 
-      expect(request1).toEqual(request2);
+      expect(request1).toStrictEqual(request2);
     });
 
-    test('Version 2 should override the setup done by v1', async () => {
+    test('version 2 should override the setup done by v1', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -547,11 +506,11 @@ describe('Core tests', () => {
       const request1 = await bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
       const request2 = await bautaJS.operations.v2.operation1.run({ req: {}, res: {} });
 
-      expect(request2).not.toEqual(request1);
-      expect(request2).toEqual({ key: 2 });
+      expect(request2).not.toStrictEqual(request1);
+      expect(request2).toStrictEqual({ key: 2 });
     });
 
-    test('Version 2 should override v1 behaviour even if they are not loaded in order', async () => {
+    test('version 2 should override v1 behaviour even if they are not loaded in order', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -582,11 +541,11 @@ describe('Core tests', () => {
       const request1 = await bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
       const request2 = await bautaJS.operations.v2.operation1.run({ req: {}, res: {} });
 
-      expect(request2).not.toEqual(request1);
-      expect(request2).toEqual({ key: 2 });
+      expect(request2).not.toStrictEqual(request1);
+      expect(request2).toStrictEqual({ key: 2 });
     });
 
-    test('Should not inherit from v1 id the operation was marked as deprecated', async () => {
+    test('should not inherit from v1 id the operation was marked as deprecated', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -607,17 +566,13 @@ describe('Core tests', () => {
         ],
         staticConfig: config
       });
-      let error;
-      try {
-        await bautaJS.operations.v2.operation1.run({ req: {}, res: {} });
-      } catch (e) {
-        error = e;
-      }
 
-      expect(error).toEqual(new Error('Not found'));
+      await expect(bautaJS.operations.v2.operation1.run({ req: {}, res: {} })).rejects.toThrow(
+        new Error('Not found')
+      );
     });
 
-    test('Error handler should be inherit by default', async () => {
+    test('error handler should be inherit by default', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -651,11 +606,11 @@ describe('Core tests', () => {
         error2 = e;
       }
 
-      expect(error1).toEqual(error2);
+      expect(error1).toStrictEqual(error2);
     });
   });
 
-  describe('Private operations', () => {
+  describe('private operations', () => {
     test('should set operation as private by default if the setup is not done', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -665,7 +620,7 @@ describe('Core tests', () => {
         staticConfig: config
       });
 
-      expect(bautaJS.apiDefinitions[0].paths).toEqual({});
+      expect(bautaJS.apiDefinitions[0].paths).toStrictEqual({});
     });
 
     test('should set as public automatically if the setup is done for the operation', async () => {
@@ -684,7 +639,7 @@ describe('Core tests', () => {
         ],
         staticConfig: config
       });
-      expect(bautaJS.apiDefinitions[0].paths['/test'].get.operationId).toEqual(
+      expect(bautaJS.apiDefinitions[0].paths['/test'].get.operationId).toStrictEqual(
         bautaJS.operations.v1.operation1.id
       );
     });
@@ -708,7 +663,7 @@ describe('Core tests', () => {
         ],
         staticConfig: config
       });
-      expect(bautaJS.apiDefinitions[0].paths).toEqual({});
+      expect(bautaJS.apiDefinitions[0].paths).toStrictEqual({});
     });
   });
 });

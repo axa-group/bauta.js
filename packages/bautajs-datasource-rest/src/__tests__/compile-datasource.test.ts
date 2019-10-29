@@ -18,7 +18,7 @@ import testDatasource from './fixtures/test-datasource-dynamic';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Compile datasource decorator', () => {
+describe('compile datasource decorator', () => {
   let bautajs: BautaJS;
   const path = 'cats';
   beforeEach(() => {
@@ -33,7 +33,7 @@ describe('Compile datasource decorator', () => {
     nock.cleanAll();
   });
 
-  test('Should compile de datasource and do the request to a dynamic url', async () => {
+  test('should compile de datasource and do the request to a dynamic url', async () => {
     bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push((_, ctx) => {
         ctx.data.path = path;
@@ -45,7 +45,7 @@ describe('Compile datasource decorator', () => {
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       { id: 3, name: 'pet3' }
     ]);
   });

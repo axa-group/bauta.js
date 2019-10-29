@@ -17,13 +17,13 @@ import { queryFilters } from '../index';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Query filter decorator', () => {
+describe('query filter decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
-  test('Should filter the given array with the given loobpack filters', async () => {
+  test('should filter the given array with the given loobpack filters', async () => {
     bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push((_, ctx) => [{ id: ctx.req.id, name: 'pet' }, { id: ctx.req.id, name: 'pet2' }]).push(
         queryFilters()
@@ -44,6 +44,6 @@ describe('Query filter decorator', () => {
         },
         res: {}
       })
-    ).toEqual([{ id: 1, name: 'pet2' }]);
+    ).toStrictEqual([{ id: 1, name: 'pet2' }]);
   });
 });

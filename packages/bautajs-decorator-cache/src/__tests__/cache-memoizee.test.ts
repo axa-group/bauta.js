@@ -17,7 +17,7 @@ import { cache } from '../index';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Cache push', () => {
+describe('cache push', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     jest.useFakeTimers();
@@ -25,7 +25,7 @@ describe('Cache push', () => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
-  test('Should cache the requests with the same id', async () => {
+  test('should cache the requests with the same id', async () => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
     const pp = pipelineBuilder(p =>
       p
@@ -38,10 +38,10 @@ describe('Cache push', () => {
     await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
     await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
 
-    expect(fn.mock.calls.length).toBe(1);
+    expect(fn.mock.calls).toHaveLength(1);
   });
 
-  test('Should allow memoizee options', async () => {
+  test('should allow memoizee options', async () => {
     const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
     const pp = pipelineBuilder(p =>
       p
@@ -62,10 +62,10 @@ describe('Cache push', () => {
     jest.runAllTimers();
     await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
     jest.runAllTimers();
-    expect(fn.mock.calls.length).toBe(2);
+    expect(fn.mock.calls).toHaveLength(2);
   });
 
-  test('Should throw an error if normalizer function is not specified', async () => {
+  test('should throw an error if normalizer function is not specified', async () => {
     const pp = pipelineBuilder(p =>
       p.push(() => [{ a: '123' }]).push((result: any) => ({ ...result[0], new: 1 }))
     );

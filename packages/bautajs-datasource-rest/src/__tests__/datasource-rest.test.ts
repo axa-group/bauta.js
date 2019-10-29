@@ -58,11 +58,13 @@ describe('datasource rest test', () => {
       logger: new LoggerBuilder('test'),
       apiDefinitions: {} as Document[]
     };
+    nock.disableNetConnect();
+    nock.enableNetConnect('127.0.0.1');
   });
-  describe('Request alias features', () => {
-    afterEach(() => {
-      nock.cleanAll();
-    });
+  afterEach(() => {
+    nock.cleanAll();
+  });
+  describe('request alias features', () => {
     test('should allow a request with application/json header using the field json as an object', async () => {
       const expected = { bender: 'ok' };
       nock('https://pets.com')
@@ -89,7 +91,7 @@ describe('datasource rest test', () => {
         context,
         bautaInstance
       );
-      expect(response).toEqual(expected);
+      expect(response).toStrictEqual(expected);
     });
 
     test('should allow a request with application/x-www-form-urlencoded using the field form as an object', async () => {
@@ -123,11 +125,11 @@ describe('datasource rest test', () => {
         context,
         bautaInstance
       );
-      expect(response).toEqual(expected);
+      expect(response).toStrictEqual(expected);
     });
   });
 
-  describe('Logs on requests', () => {
+  describe('logs on requests', () => {
     afterEach(() => {
       nock.cleanAll();
     });
@@ -173,8 +175,8 @@ describe('datasource rest test', () => {
         { ...context, logger: loggerMock },
         bautaInstance
       );
-      expect(debugLogs[0][0]).toEqual(expectedMsg);
-      expect(debugLogs[0][1]).toEqual(expectedData);
+      expect(debugLogs[0][0]).toStrictEqual(expectedMsg);
+      expect(debugLogs[0][1]).toStrictEqual(expectedData);
     });
 
     test('should log the requests method and url info mode', async () => {
@@ -215,7 +217,7 @@ describe('datasource rest test', () => {
         { ...context, logger: loggerMock },
         bautaInstance
       );
-      expect(infoLogs[0][0]).toEqual(expectedMsg);
+      expect(infoLogs[0][0]).toStrictEqual(expectedMsg);
     });
 
     test('should log the requests data on debug mode if the request body is not a json', async () => {
@@ -262,12 +264,12 @@ describe('datasource rest test', () => {
         bautaInstance
       );
 
-      expect(debugLogs[0][0]).toEqual(expectedMsg);
-      expect(debugLogs[0][1]).toEqual(expectedData);
+      expect(debugLogs[0][0]).toStrictEqual(expectedMsg);
+      expect(debugLogs[0][1]).toStrictEqual(expectedData);
     });
   });
 
-  describe('Logs on response', () => {
+  describe('logs on response', () => {
     afterEach(() => {
       nock.cleanAll();
     });
@@ -312,7 +314,7 @@ describe('datasource rest test', () => {
         { ...context, logger: loggerMock },
         bautaInstance
       );
-      expect(debugConsole[1]).toEqual(expectedMsg);
+      expect(debugConsole[1]).toStrictEqual(expectedMsg);
     });
 
     test('should log the response time', async () => {
@@ -395,12 +397,12 @@ describe('datasource rest test', () => {
         { ...context, logger: loggerMock },
         bautaInstance
       );
-      expect(debugConsole[1]).toEqual(expectedMsg);
+      expect(debugConsole[1]).toStrictEqual(expectedMsg);
     });
   });
 
-  describe('Multipart request', () => {
-    test('Should build a new multipart request if the multipart options is set', async () => {
+  describe('multipart request', () => {
+    test('should build a new multipart request if the multipart options is set', async () => {
       nock('https://pets.com/v1')
         .post(
           '/policies',
@@ -453,10 +455,10 @@ describe('datasource rest test', () => {
         resolveBodyOnly: true
       })(null, context, bautaInstance);
 
-      expect(response).toEqual({ ok: true });
+      expect(response).toStrictEqual({ ok: true });
     });
 
-    test('Should build a new multipart request if multipart do not have data object', async () => {
+    test('should build a new multipart request if multipart do not have data object', async () => {
       nock('https://pets.com/v1')
         .post(
           '/policies',
@@ -509,10 +511,10 @@ describe('datasource rest test', () => {
         ],
         resolveBodyOnly: true
       })(null, context, bautaInstance);
-      expect(response).toEqual({ ok: true });
+      expect(response).toStrictEqual({ ok: true });
     });
 
-    test('Should add the content type multipart related if is not set', async () => {
+    test('should add the content type multipart related if is not set', async () => {
       nock('https://pets.com/v1')
         .matchHeader('content-type', /multipart\/related/g)
         .post(
@@ -564,12 +566,12 @@ describe('datasource rest test', () => {
         resolveBodyOnly: true
       })(null, context, bautaInstance);
 
-      expect(response).toEqual({ ok: true });
+      expect(response).toStrictEqual({ ok: true });
     });
   });
 
-  describe('Form-data request', () => {
-    test('Should allow a multipart/form-data request', async () => {
+  describe('form-data request', () => {
+    test('should allow a multipart/form-data request', async () => {
       nock('https://pets.com/v1')
         .post(
           '/policies',
@@ -602,10 +604,10 @@ describe('datasource rest test', () => {
         resolveBodyOnly: true
       })(null, context, bautaInstance);
 
-      expect(response).toEqual({ ok: true });
+      expect(response).toStrictEqual({ ok: true });
     });
 
-    test('Should allow a multipart/form-data request with options and attachements', async () => {
+    test('should allow a multipart/form-data request with options and attachements', async () => {
       nock('https://pets.com/v1')
         .post(
           '/policies',
@@ -648,11 +650,11 @@ describe('datasource rest test', () => {
         resolveBodyOnly: true
       })(null, context, bautaInstance);
 
-      expect(response).toEqual({ ok: true });
+      expect(response).toStrictEqual({ ok: true });
     });
   });
 
-  describe('Timeout parser, fullResponse and stric ssl features', () => {
+  describe('timeout parser, fullResponse and stric ssl features', () => {
     const originalHttpRequest = http.request;
     const originalHttpsRequest = https.request;
     let emmiter: any;
@@ -666,12 +668,14 @@ describe('datasource rest test', () => {
       emmiter.removeAllListeners();
     });
 
-    test('Should set rejectUnauthorized as true by default', done => {
-      http.request = (options: any) => {
-        expect(options.agent.options.rejectUnauthorized).toEqual(undefined);
-        done();
+    test('should set rejectUnauthorized as true by default', async () => {
+      nock('http://pets.com')
+        .get('/v1/policies')
+        .reply(200, {});
+      http.request = (options: any, cb: any) => {
+        expect(options.agent.options.rejectUnauthorized).toBeUndefined();
 
-        return emmiter;
+        return originalHttpRequest(options, cb);
       };
       const template = {
         providers: [
@@ -679,54 +683,58 @@ describe('datasource rest test', () => {
             id: 'op1',
             options: {
               url: 'http://pets.com/v1/policies',
-              method: 'POST',
-              timeout: 5000
+              method: 'GET'
             }
           }
         ]
       };
+      expect.assertions(1);
       const datasource = restDataSource(template);
-      datasource.op1({
+      await datasource.op1({
         resolveBodyOnly: true
       })(null, context, bautaInstance);
     });
 
-    test('Should allow to set a custom agent', done => {
-      https.request = (options: any) => {
-        expect(options.agent.keepAliveMsecs).toEqual(5000);
-        done();
+    test('should allow to set a custom agent', async () => {
+      await new Promise(done => {
+        https.request = (options: any) => {
+          expect(options.agent.keepAliveMsecs).toStrictEqual(5000);
+          done();
 
-        return emmiter;
-      };
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              timeout: 5000,
-              agent: createHttpsAgent({
-                keepAliveMsecs: 5000
-              })
+          return emmiter;
+        };
+        const template = {
+          providers: [
+            {
+              id: 'op1',
+              options: {
+                url: 'https://pets.com/v1/policies',
+                method: 'POST',
+                timeout: 5000,
+                agent: createHttpsAgent({
+                  keepAliveMsecs: 5000
+                })
+              }
             }
-          }
-        ]
-      };
+          ]
+        };
 
-      const datasource = restDataSource(template);
-      datasource.op1({
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
+        const datasource = restDataSource(template);
+        datasource.op1({
+          resolveBodyOnly: true
+        })(null, context, bautaInstance);
+      });
     });
 
-    test('Should allow to set the agent certificates by a custom agent', done => {
-      http.request = (options: any) => {
-        expect(options.agent.options.cert).toEqual('132');
-        expect(options.agent.options.key).toEqual('123');
-        done();
+    test('should allow to set the agent certificates by a custom agent', async () => {
+      nock('http://pets.com')
+        .get('/v1/policies')
+        .reply(200, {});
+      http.request = (options: any, cb: any) => {
+        expect(options.agent.options.cert).toStrictEqual('132');
+        expect(options.agent.options.key).toStrictEqual('123');
 
-        return emmiter;
+        return originalHttpRequest(options, cb);
       };
 
       const template = {
@@ -735,7 +743,7 @@ describe('datasource rest test', () => {
             id: 'op1',
             options: {
               url: 'http://pets.com/v1/policies',
-              method: 'POST',
+              method: 'GET',
               timeout: 5000,
               agent: createHttpsAgent({
                 cert: '132',
@@ -746,12 +754,13 @@ describe('datasource rest test', () => {
         ]
       };
       const datasource = restDataSource(template);
-      datasource.op1({
+      expect.assertions(2);
+      await datasource.op1({
         resolveBodyOnly: true
       })(null, context, bautaInstance);
     });
 
-    test('Should allow get the full response object', async () => {
+    test('should allow get the full response object', async () => {
       const expectedBody = { ok: true };
       nock('https://pets.com')
         .get('/v1/policies')
@@ -772,11 +781,11 @@ describe('datasource rest test', () => {
         resolveBodyOnly: false
       })(null, context, bautaInstance);
 
-      expect(response.body).toEqual(expectedBody);
-      expect(response.headers).toEqual({ 'content-type': 'application/json' });
+      expect(response.body).toStrictEqual(expectedBody);
+      expect(response.headers).toStrictEqual({ 'content-type': 'application/json' });
     });
 
-    test('Should throw an error if a request is done without url', async () => {
+    test('should throw an error if a request is done without url', async () => {
       const template = {
         providers: [
           {
@@ -795,7 +804,7 @@ describe('datasource rest test', () => {
       ).toThrow('URL is a mandatory parameter for a datasource request on operation: myads');
     });
 
-    test('Request parameters should override template fields', async () => {
+    test('request parameters should override template fields', async () => {
       const expectedBody = { ok: true };
       nock('https://pets.com')
         .matchHeader('x-custom-header', 'override')
@@ -819,12 +828,13 @@ describe('datasource rest test', () => {
         resolveBodyOnly: true
       })(null, context, bautaInstance);
 
-      expect(response).toEqual(expectedBody);
+      expect(response).toStrictEqual(expectedBody);
+      expect(nock.isDone()).toBe(true);
     });
   });
 
-  describe('Datasource compile', () => {
-    test('Datasource must compile complex templating properly as a function', done => {
+  describe('datasource compile', () => {
+    test('datasource must compile complex templating properly as a function', async () => {
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -852,16 +862,18 @@ describe('datasource rest test', () => {
         ]
       };
       const datasource = restDataSource(template);
-      datasource.op1.compile((_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
-        expect(provider.options && provider.options.url).toEqual(expected.url);
-        expect(
-          provider.options && provider.options.json && (provider.options.json as any).foo
-        ).toEqual(expected.json.foo);
-        done();
-      })(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar' } }, bautaInstance);
+      expect.assertions(2);
+      await datasource.op1.compile(
+        (_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
+          expect(provider.options && provider.options.url).toStrictEqual(expected.url);
+          expect(
+            provider.options && provider.options.json && (provider.options.json as any).foo
+          ).toStrictEqual(expected.json.foo);
+        }
+      )(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar' } }, bautaInstance);
     });
 
-    test('Datasource must compile complex templating properly as a JSON template', done => {
+    test('datasource must compile complex templating properly as a JSON template', async () => {
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -887,16 +899,18 @@ describe('datasource rest test', () => {
         ]
       };
       const datasource = restDataSourceTemplate(template);
-      datasource.op1.compile((_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
-        expect(provider.options && provider.options.url).toEqual(expected.url);
-        expect(
-          provider.options && provider.options.json && (provider.options.json as any).foo
-        ).toEqual(expected.json.foo);
-        done();
-      })(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar' } }, bautaInstance);
+      expect.assertions(2);
+      await datasource.op1.compile(
+        (_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
+          expect(provider.options && provider.options.url).toStrictEqual(expected.url);
+          expect(
+            provider.options && provider.options.json && (provider.options.json as any).foo
+          ).toStrictEqual(expected.json.foo);
+        }
+      )(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar' } }, bautaInstance);
     });
 
-    test('Should merge global options with local options and local options have priority', done => {
+    test('should merge global options with local options and local options have priority', async () => {
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -930,26 +944,28 @@ describe('datasource rest test', () => {
         ]
       };
       const datasource = restDataSourceTemplate(template);
-      datasource.op1.compile((_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
-        expect(provider.options && provider.options.url).toEqual(expected.url);
-        expect(
-          provider.options && provider.options.json && (provider.options.json as any).foo
-        ).toEqual(expected.json.foo);
-        expect(
-          provider.options && provider.options.headers && provider.options.headers.token
-        ).toEqual('1234');
-        expect(
-          provider.options && provider.options.headers && provider.options.headers['x-header']
-        ).toEqual(1);
-        done();
-      })(
+      expect.assertions(4);
+      await datasource.op1.compile(
+        (_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
+          expect(provider.options && provider.options.url).toStrictEqual(expected.url);
+          expect(
+            provider.options && provider.options.json && (provider.options.json as any).foo
+          ).toStrictEqual(expected.json.foo);
+          expect(
+            provider.options && provider.options.headers && provider.options.headers.token
+          ).toStrictEqual('1234');
+          expect(
+            provider.options && provider.options.headers && provider.options.headers['x-header']
+          ).toStrictEqual(1);
+        }
+      )(
         null,
         { ...context, req: { id: 'toto' }, data: { bar: 'bar', token: '1234' } },
         bautaInstance
       );
     });
 
-    test('Should compile a restDataSourceTemplate', done => {
+    test('should compile a restDataSourceTemplate', async () => {
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -983,21 +999,19 @@ describe('datasource rest test', () => {
         ]
       };
       const datasource = restDataSourceTemplate(template);
-      datasource.op1.compile((_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
-        expect(provider.options && provider.options.url).toEqual(expected.url);
-        expect(
-          provider.options && provider.options.json && (provider.options.json as any).foo
-        ).toEqual(expected.json.foo);
-        done();
-      })(
-        null,
-        { ...context, req: { id: 'toto' }, data: { bar: 'bar', token: '1' } },
-        bautaInstance
-      );
+      expect.assertions(2);
+      await datasource.op1.compile(
+        (_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
+          expect(provider.options && provider.options.url).toStrictEqual(expected.url);
+          expect(
+            provider.options && provider.options.json && (provider.options.json as any).foo
+          ).toStrictEqual(expected.json.foo);
+        }
+      )(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar', token: '1' } }, bautaInstance);
     });
   });
-  describe('Request cancelation', () => {
-    test('Should cancel the request if the a cancel is executed', done => {
+  describe('request cancelation', () => {
+    test('should cancel the request if the a cancel is executed', async () => {
       const myContext = { ...context, req: { id: 'toto' }, data: { bar: 'bar' } };
       const template = {
         providers: [
@@ -1020,17 +1034,11 @@ describe('datasource rest test', () => {
         resolveBodyOnly: true
       })(null, myContext, bautaInstance);
 
-      (async () => {
-        try {
-          await request1;
-          expect(true).toBeFalsy();
-        } catch (e) {
-          expect(e.message).toEqual('Promise was canceled');
-          done();
-        }
-      })();
-
       myContext.token.cancel();
+
+      await expect(request1).rejects.toThrow(
+        expect.objectContaining({ message: 'Promise was canceled' })
+      );
     });
   });
 });

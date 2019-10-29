@@ -17,28 +17,28 @@ import { pipelineBuilder } from '../pipeline';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Pipeline decorator', () => {
+describe('pipeline decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
-  test('Should execute the pipeline created by the pipeline decorator', async () => {
+  test('should execute the pipeline created by the pipeline decorator', async () => {
     const myPipeline = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
     bautajs.operations.v1.operation1.setup(p => {
       p.pushPipeline(myPipeline);
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       { id: 1, name: 'pet' }
     ]);
   });
 
-  test('Should execute the pipeline without add it into bautajs', async () => {
+  test('should execute the pipeline without add it into bautajs', async () => {
     const myPipeline = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
 
-    expect(await myPipeline(null, createContext({ req: { id: 1 }, res: {} }), bautajs)).toEqual([
-      { id: 1, name: 'pet' }
-    ]);
+    expect(
+      await myPipeline(null, createContext({ req: { id: 1 }, res: {} }), bautajs)
+    ).toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 });

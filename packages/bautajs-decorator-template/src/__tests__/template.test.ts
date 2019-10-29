@@ -17,26 +17,24 @@ import { template } from '../index';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Template decorator', () => {
-  test('Should allow put a template', async () => {
+describe('template decorator', () => {
+  test('should allow put a template', async () => {
     const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
     bautajs.operations.v1.operation1.setup(p => {
       p.push(() => '1').push(template([{ id: '{{ctx.req.id}}', name: '{{previousValue}}' }]));
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       { id: 1, name: '1' }
     ]);
   });
 
-  test('Should bypass not valid template', async () => {
+  test('should bypass not valid template', async () => {
     const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
     bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push(() => '1').push(template(undefined));
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual(
-      undefined
-    );
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toBeUndefined();
   });
 });

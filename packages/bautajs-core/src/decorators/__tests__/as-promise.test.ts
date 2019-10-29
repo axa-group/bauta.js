@@ -17,13 +17,13 @@ import { asPromise } from '../as-promise';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Callback decorator', () => {
+describe('callback decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
-  test('Should execute as a callaback', async () => {
+  test('should execute as a callaback', async () => {
     bautajs.operations.v1.operation1.setup((p: PipelineBuilder<any>) => {
       p.push(
         asPromise((_: any, ctx: any, _bautajs: any, done: any) =>
@@ -32,7 +32,7 @@ describe('Callback decorator', () => {
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       { id: 1, name: 'pet' }
     ]);
   });

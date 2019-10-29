@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import OpenapiDefaultSetter from 'openapi-default-setter';
-import OpenapiRequestValidator from '@javi11/openapi-request-validator';
+import OpenapiRequestValidator from 'openapi-request-validator';
 import OpenapiResponseValidator from 'openapi-response-validator';
 import { OpenAPI } from 'openapi-types';
 import PCancelable from 'p-cancelable';
@@ -139,7 +139,7 @@ export class OperationBuilder implements Operation {
         req.headers = { 'content-type': 'application/json' };
       }
 
-      const verror = validateRequest.validate(req);
+      const verror = validateRequest.validateRequest(req);
       if (verror && verror.errors && verror.errors.length > 0) {
         throw new ValidationError(
           'The request was not valid',
@@ -186,37 +186,50 @@ export class OperationBuilder implements Operation {
 
     // Validate the request
     if (context.validateRequest && this.validation.validateReqEnabled === true) {
-      context.validateRequest(ctx.req);
+      try {
+        context.validateRequest(ctx.req);
+      } catch (e) {
+        return new PCancelable((_, reject) => {
+          reject(e);
+        });
+      }
     }
 
-    const promise = this.operatorFunction(undefined, context, this.bautajs).then(
-      (finalResult: any) => {
-        if (
-          this.validation.validateResEnabled === true &&
-          context.validateResponse &&
-          !context.res.headersSent &&
-          !context.res.finished
-        ) {
-          context.validateResponse(
-            finalResult,
-            context.res.statusCode !== null &&
-              context.res.statusCode !== undefined &&
-              Number.isInteger(context.res.statusCode)
-              ? context.res.statusCode
-              : undefined
-          );
-        }
-
-        return finalResult;
+    const validateResponse = (finalResult: any) => {
+      if (
+        this.validation.validateResEnabled === true &&
+        context.validateResponse &&
+        !context.res.headersSent &&
+        !context.res.finished
+      ) {
+        context.validateResponse(
+          finalResult,
+          context.res.statusCode !== null &&
+            context.res.statusCode !== undefined &&
+            Number.isInteger(context.res.statusCode)
+            ? context.res.statusCode
+            : undefined
+        );
       }
-    );
+
+      return finalResult;
+    };
 
     return PCancelable.fn((_: any, onCancel: PCancelable.OnCancelFunction) => {
       onCancel(() => {
         context.token.isCanceled = true;
         context.token.cancel();
       });
-      return promise;
+      try {
+        let result = this.operatorFunction(undefined, context, this.bautajs);
+        if (!(result instanceof Promise)) {
+          result = Promise.resolve(result);
+        }
+
+        return result.then(validateResponse);
+      } catch (e) {
+        return Promise.reject(e);
+      }
     })(null);
   }
 

@@ -17,12 +17,12 @@ import { parallel } from '../parallel';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Parallel decorator', () => {
+describe('parallel decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
-  test('Should execute the promises in parallel', async () => {
+  test('should execute the promises in parallel', async () => {
     bautajs.operations.v1.operation1.setup(p => {
       p.push(
         parallel(
@@ -32,7 +32,7 @@ describe('Parallel decorator', () => {
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       [{ id: 3, name: 'pet3' }],
       [{ id: 1, name: 'pet' }]
     ]);

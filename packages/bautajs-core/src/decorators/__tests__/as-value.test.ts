@@ -17,18 +17,18 @@ import { asValue } from '../as-value';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('As value decorator', () => {
+describe('as value decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
-  test('Should allow send a simple value', async () => {
+  test('should allow send a simple value', async () => {
     bautajs.operations.v1.operation1.setup(p => {
       p.push(asValue([{ id: 1, name: 'pet' }]));
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       { id: 1, name: 'pet' }
     ]);
   });

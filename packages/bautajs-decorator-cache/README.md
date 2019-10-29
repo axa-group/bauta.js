@@ -23,7 +23,7 @@ Include it on your pipeline as follows:
   
   const myPipeline = pipelineBuilder(p => 
                     p.pipe( someHeavyOperation, (result) => ({...result, otherprop:1}))
-                    );
+  );
 
   module.exports = resolver((operations)=> {
       const normalizer = ([value, ctx]) => ctx.id;
@@ -38,6 +38,8 @@ Include it on your pipeline as follows:
     );
   })
 ```
+
+- Remember to use properties [promise](https://github.com/medikoo/memoizee#promise-returning-functions) or [async](https://github.com/medikoo/memoizee#nodejs-callback-style-functions) if you are using an async or promise based pipeline.
 
 - Cache only accept executable pipeline (pipelineBuilder) as a first parameter
 

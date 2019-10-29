@@ -18,13 +18,13 @@ import { match } from '../match';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Match decorator', () => {
+describe('match decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
 
-  test('Should select the pipeline execution depending on the condition', async () => {
+  test('should select the pipeline execution depending on the condition', async () => {
     const myPipeline1 = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
     const myPipeline2 = pipelineBuilder(p => p.push(() => [{ id: 3, name: 'pet' }]));
     bautajs.operations.v1.operation1.setup(p => {
@@ -33,12 +33,12 @@ describe('Match decorator', () => {
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       { id: 1, name: 'pet' }
     ]);
   });
 
-  test('Should use the default option if non of the options match', async () => {
+  test('should use the default option if non of the options match', async () => {
     const myPipeline1 = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
     const myPipeline2 = pipelineBuilder(p => p.push(() => [{ id: 3, name: 'pet' }]));
     bautajs.operations.v1.operation1.setup(p => {
@@ -52,7 +52,7 @@ describe('Match decorator', () => {
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 3 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 3 }, res: {} })).toStrictEqual([
       { id: 3, name: 'pet' }
     ]);
   });

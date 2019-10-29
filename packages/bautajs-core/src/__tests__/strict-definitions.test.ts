@@ -18,7 +18,7 @@ import apiDefinitionNotUsedSchemaSwagger2Json from './fixtures/api-definition-no
 import apiDefinitionNotUsedSchemaJson from './fixtures/api-definition-not-used-schema.json';
 import apiDefinitionWithNull from './fixtures/api-definition-with-null.json';
 
-describe('Strict definition test', () => {
+describe('strict definition test', () => {
   test('should remove the not used schemas', () => {
     const result = getStrictDefinition(apiDefinitionNotUsedSchemaJson as any);
 

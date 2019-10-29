@@ -51,8 +51,7 @@ export const cache: CacheDecorator = <TIn, TOut>(
   }
   const cached = memoizee(fn, {
     ...options,
-    normalizer,
-    promise: true
+    normalizer
   });
 
   return async (value: TIn, ctx: Context, bautajs: BautaJSInstance) => cached(value, ctx, bautajs);

@@ -24,31 +24,28 @@ import { BautaJSExpress } from '../index';
 const apiDefinitions = require('./fixtures/test-api-definitions.json');
 const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
 
-describe('BautaJS express', () => {
-  test('Should expose the given swagger with an express API', done => {
+describe('bautaJS express', () => {
+  test('should expose the given swagger with an express API', async () => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
     bautajs.applyMiddlewares();
 
-    supertest(bautajs.app)
+    const res = await supertest(bautajs.app)
       .get('/api/v1/test')
       .expect('Content-Type', /json/)
-      .expect(200)
-      .end((err, res) => {
-        if (err) throw err;
-        expect(res.body).toEqual([
-          {
-            id: 134,
-            name: 'pet2'
-          }
-        ]);
-        done();
-      });
+      .expect(200);
+
+    expect(res.body).toStrictEqual([
+      {
+        id: 134,
+        name: 'pet2'
+      }
+    ]);
   });
 
-  test('Should not expose the endpoints that have been configured as private', done => {
+  test('should not expose the endpoints that have been configured as private', async () => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolversPath: path.resolve(
         __dirname,
@@ -58,16 +55,12 @@ describe('BautaJS express', () => {
 
     bautajs.applyMiddlewares();
 
-    supertest(bautajs.app)
-      .get('/api/v1/test')
-      .expect(404)
-      .end(err => {
-        if (err) throw err;
-        done();
-      });
+    const res = await supertest(bautajs.app).get('/api/v1/test');
+
+    expect(res.status).toStrictEqual(404);
   });
 
-  test('Should not send the response again if already has been sent', done => {
+  test('should not send the response again if already has been sent', async () => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolversPath: path.resolve(
         __dirname,
@@ -77,18 +70,16 @@ describe('BautaJS express', () => {
 
     bautajs.applyMiddlewares();
 
-    supertest(bautajs.app)
+    const res = await supertest(bautajs.app)
       .get('/api/v1/test')
       .expect('Content-Type', /json/)
-      .expect(200)
-      .end((err, res) => {
-        if (err) throw err;
-        expect(res.body).toEqual({ ok: 'finished early' });
-        done();
-      });
+      .expect(200);
+
+    expect(res.body).toStrictEqual({ ok: 'finished early' });
   });
 
-  test('Should not send the response again if already has been sent on a readable pipe', done => {
+  // eslint-disable-next-line jest/expect-expect
+  test('should not send the response again if already has been sent on a readable pipe', async () => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolvers: [
         resolver(operations => {
@@ -115,15 +106,15 @@ describe('BautaJS express', () => {
 
     bautajs.applyMiddlewares();
 
-    supertest(bautajs.app)
+    await supertest(bautajs.app)
       .get('/api/v1/test')
       .expect('Content-disposition', 'attachment; filename="file.pdf')
       .expect(200)
-      .expect('123')
-      .end(done);
+      .expect('123');
   });
 
-  test('Should not override the headers set on the pipeline by the swagger ones', done => {
+  // eslint-disable-next-line jest/expect-expect
+  test('should not override the headers set on the pipeline by the swagger ones', async () => {
     const form = new FormData();
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolvers: [
@@ -147,54 +138,47 @@ describe('BautaJS express', () => {
 
     bautajs.applyMiddlewares();
 
-    supertest(bautajs.app)
+    await supertest(bautajs.app)
       .get('/api/v1/test')
       .expect('Content-type', `multipart/form-data; boundary=${form.getBoundary()}`)
-      .expect(200)
-      .end(done);
+      .expect(200);
   });
 
-  test('Should allow swagger 2.0', done => {
+  test('should allow swagger 2.0', async () => {
     const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
     bautajs.applyMiddlewares();
 
-    supertest(bautajs.app)
+    const res = await supertest(bautajs.app)
       .get('/api/v1/test')
       .expect('Content-Type', /json/)
-      .expect(200)
-      .end((err, res) => {
-        if (err) throw err;
-        expect(res.body).toEqual([
-          {
-            id: 134,
-            name: 'pet2'
-          }
-        ]);
-        done();
-      });
+      .expect(200);
+
+    expect(res.body).toStrictEqual([
+      {
+        id: 134,
+        name: 'pet2'
+      }
+    ]);
   });
 
-  test('Should not expose the swagger if explorer is set to false', done => {
+  test('should not expose the swagger if explorer is set to false', async () => {
     const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
     bautajs.applyMiddlewares({ explorer: { enabled: false } });
 
-    supertest(bautajs.app)
+    const res = await supertest(bautajs.app)
       .get('/v1/explorer')
-      .expect(404)
-      .end((err, res) => {
-        if (err) throw err;
-        expect(res.status).toEqual(404);
-        done();
-      });
+      .expect(404);
+
+    expect(res.status).toStrictEqual(404);
   });
 
-  test('Should left error handling to express error handler', done => {
+  test('should left error handling to express error handler', async () => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolversPath: path.resolve(
         __dirname,
@@ -209,14 +193,11 @@ describe('BautaJS express', () => {
       res.json({ message: err.message, status: res.statusCode }).end();
     });
 
-    supertest(bautajs.app)
+    const res = await supertest(bautajs.app)
       .get('/api/v1/test')
       .expect('Content-Type', /json/)
-      .expect(500)
-      .end((err, res) => {
-        if (err) throw err;
-        expect(res.body).toEqual({ message: 'some error', status: 500 });
-        done();
-      });
+      .expect(500);
+
+    expect(res.body).toStrictEqual({ message: 'some error', status: 500 });
   });
 });

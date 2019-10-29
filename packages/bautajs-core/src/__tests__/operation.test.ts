@@ -20,7 +20,7 @@ import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaBodyJson from './fixtures/test-schema-body.json';
 import { pipelineBuilder } from '../decorators/pipeline';
 
-describe('Operation class tests', () => {
+describe('operation class tests', () => {
   let operationSchema: OpenAPI.Operation;
   let schemaComponents: OpenAPIComponents;
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('Operation class tests', () => {
       apiVersion: 'v1'
     };
   });
-  describe('Build operations cases', () => {
+  describe('build operations cases', () => {
     test('should let you build an operation without schema', () => {
       const operationTest = OperationBuilder.create(
         'operation1',
@@ -76,11 +76,9 @@ describe('Operation class tests', () => {
         }
       ];
       const ctx = { req, res };
-      try {
-        await operationTest.run(ctx);
-      } catch (e) {
-        expect(e.errors).toEqual(expected);
-      }
+      await expect(operationTest.run(ctx)).rejects.toThrow(
+        expect.objectContaining({ errors: expected })
+      );
     });
 
     test('should build the response validator from the schema response', async () => {
@@ -101,17 +99,16 @@ describe('Operation class tests', () => {
       const res = {};
       const expected = [
         {
+          path: 'response',
           errorCode: 'type.openapi.responseValidation',
-          message: 'response should be array'
+          message: 'should be array'
         }
       ];
       const ctx = { req, res };
       operationTest.setup(p => p.push(() => 1));
-      try {
-        await operationTest.run(ctx);
-      } catch (e) {
-        expect(e.errors).toEqual(expected);
-      }
+      await expect(operationTest.run(ctx)).rejects.toThrow(
+        expect.objectContaining({ errors: expected })
+      );
     });
 
     test('the default error handler should be a promise reject of the given error', async () => {
@@ -136,15 +133,12 @@ describe('Operation class tests', () => {
             throw new Error('someError');
           })
         );
-      try {
-        await operationTest.run(ctx);
-      } catch (e) {
-        expect(e).toEqual(error);
-      }
+
+      await expect(operationTest.run(ctx)).rejects.toThrow(error);
     });
   });
 
-  describe('Operation.setup tests', () => {
+  describe('operation.setup tests', () => {
     let operationTest: Operation;
 
     beforeEach(() => {
@@ -156,13 +150,13 @@ describe('Operation class tests', () => {
       });
     });
 
-    test('Should throw an error if the given OperatorFunction fn is undefined', () => {
+    test('should throw an error if the given OperatorFunction fn is undefined', () => {
       // @ts-ignore
       expect(() => operationTest.setup(p => p.push(undefined))).toThrow(
         new Error('An OperatorFunction must be a function.')
       );
     });
-    test('Pushed OperatorFunctions must be executed in order', async () => {
+    test('pushed OperatorFunctions must be executed in order', async () => {
       const expected = 'this will be showed';
       operationTest
         .validateResponses(false)
@@ -170,10 +164,10 @@ describe('Operation class tests', () => {
         .setup(p => p.push(() => 'next3').push(() => expected));
       const ctx = { req: {}, res: {} };
 
-      expect(await operationTest.run(ctx)).toEqual(expected);
+      expect(await operationTest.run(ctx)).toStrictEqual(expected);
     });
 
-    test('Should allow to push a pipeline', async () => {
+    test('should allow to push a pipeline', async () => {
       const expected = 'this will be showed';
       const pipe = pipelineBuilder(p => {
         p.push(() => 'next3').push(() => expected);
@@ -184,10 +178,10 @@ describe('Operation class tests', () => {
         .setup(p => p.pushPipeline(pipe));
       const ctx = { req: {}, res: {} };
 
-      expect(await operationTest.run(ctx)).toEqual(expected);
+      expect(await operationTest.run(ctx)).toStrictEqual(expected);
     });
 
-    test('Pipeline should be a function', async () => {
+    test('pipeline should be a function', async () => {
       const expected = 'An OperatorFunction must be a function.';
       const pipe = 'string';
       expect(() =>
@@ -198,7 +192,7 @@ describe('Operation class tests', () => {
     });
   });
 
-  describe('Operation.pipeline.onError tests', () => {
+  describe('operation.pipeline.onError tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
       operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
@@ -224,11 +218,8 @@ describe('Operation class tests', () => {
         .validateResponses(false)
         .validateRequests(false)
         .setup(p => p.push(() => Promise.reject(new Error('crashhh!!!'))).onError(errorHandler));
-      try {
-        await operationTest.run(ctx);
-      } catch (e) {
-        expect(e).toEqual(expected);
-      }
+
+      await expect(operationTest.run(ctx)).rejects.toThrow(expected);
     });
 
     test('should be called only onces', async () => {
@@ -249,15 +240,13 @@ describe('Operation class tests', () => {
             .onError(errorHandler)
         );
       const ctx = { req: {}, res: {} };
-      try {
-        await operationTest.run(ctx);
-      } catch (e) {
-        expect(errorHandler.mock.calls.length).toBe(1);
-        expect(e).toEqual(new Error('error'));
-      }
+
+      await expect(operationTest.run(ctx)).rejects.toThrow(new Error('error'));
+
+      expect(errorHandler.mock.calls).toHaveLength(1);
     });
 
-    test('should set the error handler to the inherit operation diferent from the first operation', async () => {
+    test('should set the error handler to the inherit operation different from the first operation', async () => {
       const errorHandler = () => Promise.reject(new Error('error'));
       const errorHandlerV2 = () => Promise.reject(new Error('errorV2'));
       const OperatorFunction = () => Promise.reject(new Error('crashhh!!!'));
@@ -277,21 +266,13 @@ describe('Operation class tests', () => {
       operationTest.setup(p => p.push(OperatorFunction).onError(errorHandler));
       const ctx = { req: {}, res: {} };
 
-      try {
-        await operationTest.run(ctx);
-      } catch (e) {
-        expect(e).toEqual(new Error('error'));
-      }
+      await expect(operationTest.run(ctx)).rejects.toThrow(new Error('error'));
 
-      try {
-        await operationV2.run(ctx);
-      } catch (e) {
-        expect(e).toEqual(new Error('errorV2'));
-      }
+      await expect(operationV2.run(ctx)).rejects.toThrow(new Error('errorV2'));
     });
   });
 
-  describe('Operation.pipeline.pipe tests', () => {
+  describe('operation.pipeline.pipe tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
       operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
@@ -301,21 +282,21 @@ describe('Operation class tests', () => {
         apiDefinitions: []
       });
     });
-    test('Should throw an error on pipe 0 OperatorFunctions', () => {
+    test('should throw an error on pipe 0 OperatorFunctions', () => {
       const expected = new Error(`At least one OperatorFunction must be specified.`);
 
       // @ts-ignore
       expect(() => operationTest.setup(p => p.pipe())).toThrow(expected);
     });
 
-    test('Should throw an error on pipe a non function', () => {
+    test('should throw an error on pipe a non function', () => {
       const expected = new Error(`An OperatorFunction must be a function.`);
 
       // @ts-ignore
       expect(() => operationTest.setup(p => p.pipe('string'))).toThrow(expected);
     });
 
-    test('Should be able to use previous values', async () => {
+    test('should be able to use previous values', async () => {
       const expected = 10;
       operationTest
         .validateResponses(false)
@@ -328,10 +309,10 @@ describe('Operation class tests', () => {
         );
       const ctx = { req: {}, res: {} };
 
-      expect(await operationTest.run(ctx)).toEqual(expected);
+      expect(await operationTest.run(ctx)).toStrictEqual(expected);
     });
 
-    test('Should execute the pipe OperatorFunctions in order', async () => {
+    test('should execute the pipe OperatorFunctions in order', async () => {
       const expected = 'this will be showed';
       operationTest
         .validateResponses(false)
@@ -344,10 +325,10 @@ describe('Operation class tests', () => {
         );
       const ctx = { req: {}, res: {} };
 
-      expect(await operationTest.run(ctx)).toEqual(expected);
+      expect(await operationTest.run(ctx)).toStrictEqual(expected);
     });
 
-    test('Should allow pipelines on pipe method', async () => {
+    test('should allow pipelines on pipe method', async () => {
       const expected = 'this will be showed';
       const pp = pipelineBuilder(p => p.pipe(() => expected));
       operationTest
@@ -361,10 +342,10 @@ describe('Operation class tests', () => {
         );
       const ctx = { req: {}, res: {} };
 
-      expect(await operationTest.run(ctx)).toEqual(expected);
+      expect(await operationTest.run(ctx)).toStrictEqual(expected);
     });
 
-    test('Should allow async functions', async () => {
+    test('should allow async functions', async () => {
       const expected = 'next3';
       operationTest
         .validateResponses(false)
@@ -372,11 +353,11 @@ describe('Operation class tests', () => {
         .setup(p => p.pipe(() => Promise.resolve('next3')));
       const ctx = { req: {}, res: {} };
 
-      expect(await operationTest.run(ctx)).toEqual(expected);
+      expect(await operationTest.run(ctx)).toStrictEqual(expected);
     });
   });
 
-  describe('Operation.run tests', () => {
+  describe('operation.run tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
       operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
@@ -393,7 +374,7 @@ describe('Operation class tests', () => {
         .validateRequests(false)
         .setup(p => p.push(() => 'good'));
 
-      expect(await operationTest.run({ res: {} })).toEqual('good');
+      expect(await operationTest.run({ res: {} })).toStrictEqual('good');
     });
 
     test('should allow a context without res', async () => {
@@ -402,10 +383,10 @@ describe('Operation class tests', () => {
         .validateRequests(false)
         .setup(p => p.push(() => 'good'));
 
-      expect(await operationTest.run({ req: {} })).toEqual('good');
+      expect(await operationTest.run({ req: {} })).toStrictEqual('good');
     });
   });
-  describe('Operation ctx.validateRequest tests', () => {
+  describe('operation ctx.validateRequest tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
       operationTest = OperationBuilder.create(
@@ -472,15 +453,12 @@ describe('Operation class tests', () => {
         }
       ];
       const body = null;
-
-      try {
+      await expect(
         operationTest.run({
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
-        });
-      } catch (e) {
-        expect(e.errors).toEqual(expected);
-      }
+        })
+      ).rejects.toThrow(expect.objectContaining({ errors: expected }));
     });
 
     test('should validate an empty body', async () => {
@@ -535,14 +513,12 @@ describe('Operation class tests', () => {
       ];
       const body = null;
 
-      try {
+      await expect(
         operationTest.run({
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
-        });
-      } catch (e) {
-        expect(e.errors).toEqual(expected);
-      }
+        })
+      ).rejects.toThrow(expect.objectContaining({ errors: expected }));
     });
 
     test('should validate againts the operation schema', async () => {
@@ -572,11 +548,9 @@ describe('Operation class tests', () => {
         password: 'pass'
       };
 
-      try {
-        await operationTest.run({ req: { body }, res: {} });
-      } catch (e) {
-        expect(e.errors).toEqual(expected);
-      }
+      await expect(operationTest.run({ req: { body }, res: {} })).rejects.toThrow(
+        expect.objectContaining({ errors: expected })
+      );
     });
 
     test('should allow a valid schema', async () => {
@@ -595,7 +569,7 @@ describe('Operation class tests', () => {
         password: 'pass'
       };
 
-      expect(await operationTest.run({ req: { body }, res: {} })).toEqual(expected);
+      expect(await operationTest.run({ req: { body }, res: {} })).toStrictEqual(expected);
     });
 
     test('should use default OperatorFunction if setup is not done', async () => {
@@ -606,16 +580,13 @@ describe('Operation class tests', () => {
         password: 'pass'
       };
 
-      try {
-        const result = await operationTest.run({ req: { body }, res: {} });
-        expect(result).toBeFalsy();
-      } catch (e) {
-        expect(e).toEqual(new Error('Not found'));
-      }
+      await expect(operationTest.run({ req: { body }, res: {} })).rejects.toThrow(
+        new Error('Not found')
+      );
     });
   });
 
-  describe('Operation ctx.validateResponse tests', () => {
+  describe('operation ctx.validateResponse tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
       operationTest = OperationBuilder.create(
@@ -649,22 +620,22 @@ describe('Operation class tests', () => {
       const expected = [
         {
           errorCode: 'required.openapi.responseValidation',
-          message: "response[0] should have required property 'id'",
+          message: "should have required property 'id'",
           path: 'response[0]'
         },
         {
           errorCode: 'required.openapi.responseValidation',
-          message: "response[0] should have required property 'name'",
+          message: "should have required property 'name'",
           path: 'response[0]'
         },
         {
           errorCode: 'required.openapi.responseValidation',
-          message: "response[1] should have required property 'id'",
+          message: "should have required property 'id'",
           path: 'response[1]'
         },
         {
           errorCode: 'required.openapi.responseValidation',
-          message: "response[1] should have required property 'name'",
+          message: "should have required property 'name'",
           path: 'response[1]'
         }
       ];
@@ -674,14 +645,12 @@ describe('Operation class tests', () => {
         password: 'pass'
       };
 
-      try {
-        await operationTest.run({
+      await expect(
+        operationTest.run({
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
-        });
-      } catch (e) {
-        expect(e.errors).toEqual(expected);
-      }
+        })
+      ).rejects.toThrow(expect.objectContaining({ errors: expected }));
     });
     test('should validate the response by default', async () => {
       operationTest.validateRequests(false);
@@ -699,22 +668,22 @@ describe('Operation class tests', () => {
       const expected = [
         {
           errorCode: 'required.openapi.responseValidation',
-          message: "response[0] should have required property 'id'",
+          message: "should have required property 'id'",
           path: 'response[0]'
         },
         {
           errorCode: 'required.openapi.responseValidation',
-          message: "response[0] should have required property 'name'",
+          message: "should have required property 'name'",
           path: 'response[0]'
         },
         {
           errorCode: 'required.openapi.responseValidation',
-          message: "response[1] should have required property 'id'",
+          message: "should have required property 'id'",
           path: 'response[1]'
         },
         {
           errorCode: 'required.openapi.responseValidation',
-          message: "response[1] should have required property 'name'",
+          message: "should have required property 'name'",
           path: 'response[1]'
         }
       ];
@@ -724,22 +693,24 @@ describe('Operation class tests', () => {
         password: 'pass'
       };
 
-      try {
-        await operationTest.run({
+      await expect(
+        operationTest.run({
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
-        });
-      } catch (e) {
-        expect(e.errors).toEqual(expected);
-        expect(e.response).toEqual([
-          {
-            code: 'boo'
-          },
-          {
-            code: 'foo'
-          }
-        ]);
-      }
+        })
+      ).rejects.toThrow(
+        expect.objectContaining({
+          errors: expected,
+          response: [
+            {
+              code: 'boo'
+            },
+            {
+              code: 'foo'
+            }
+          ]
+        })
+      );
     });
 
     test('should validate an valid response', async () => {
@@ -778,7 +749,7 @@ describe('Operation class tests', () => {
         res: {}
       });
 
-      expect(result).toEqual(expected);
+      expect(result).toStrictEqual(expected);
     });
 
     test('should not validate the response if the res.send has been called', async () => {
@@ -817,7 +788,7 @@ describe('Operation class tests', () => {
         res
       });
 
-      expect(res.data).toEqual([
+      expect(res.data).toStrictEqual([
         {
           code: 'boo'
         },

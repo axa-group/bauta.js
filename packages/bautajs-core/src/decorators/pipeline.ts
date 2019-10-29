@@ -57,12 +57,20 @@ export function pipelineBuilder<TIn, TOut>(
   const pp = new Builder<TIn>(new Accesor(), onPush || defaultOnPush);
   pipelineSetup(pp);
   return (prev, ctx, bautajs) => {
-    let result = pp.accesor.handler(prev, ctx, bautajs);
+    let result;
 
-    if (!(result instanceof Promise)) {
-      result = Promise.resolve(result);
+    // if not a promise but throw, manage the error
+    try {
+      result = pp.accesor.handler(prev, ctx, bautajs);
+    } catch (e) {
+      return pp.accesor.errorHandler(e, ctx);
     }
-    return result.catch(async (e: Error) => pp.accesor.errorHandler(e, ctx));
+
+    if (result instanceof Promise) {
+      result = result.catch(async (e: Error) => pp.accesor.errorHandler(e, ctx));
+    }
+
+    return result;
   };
 }
 

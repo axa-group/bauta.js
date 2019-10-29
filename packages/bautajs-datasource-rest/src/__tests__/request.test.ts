@@ -18,7 +18,7 @@ import testDatasource from './fixtures/test-datasource';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('Request decorator', () => {
+describe('request decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     nock('https://google.com')
@@ -33,17 +33,17 @@ describe('Request decorator', () => {
     nock.cleanAll();
   });
 
-  test('Should do a request', async () => {
+  test('should do a request', async () => {
     bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push(testDatasource.operation1());
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toEqual([
+    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       { id: 3, name: 'pet3' }
     ]);
   });
 
-  test('Should do a request and get the full response if resolveBodyOnly is false', async () => {
+  test('should do a request and get the full response if resolveBodyOnly is false', async () => {
     bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push(testDatasource.operation1({ resolveBodyOnly: false }));
     });
@@ -53,6 +53,6 @@ describe('Request decorator', () => {
       res: {}
     });
 
-    expect(response.body).toEqual([{ id: 3, name: 'pet3' }]);
+    expect(response.body).toStrictEqual([{ id: 3, name: 'pet3' }]);
   });
 });
