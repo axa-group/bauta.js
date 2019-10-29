@@ -4,11 +4,10 @@
   "packages": [
     "packages/*"
   ],
-  "bootstrap": {
-    "npmClientArgs": ["--no-package-lock"]
-  },
-  "publish": {
-    "npmClientArgs": ["--no-package-lock"]
+  "command": {
+    "bootstrap": {
+      "npmClientArgs": ["--no-package-lock"]
+    }
   },
   "version": "2.2.0"
 }
