@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.axa.com/Digital/bauta-nodejs/compare/v2.2.0...v2.2.1) (2019-10-29)
+
+
+### Bug Fixes
+
+* operation run do not always returned a promise ([#119](https://github.axa.com/Digital/bauta-nodejs/issues/119)) ([bc5b755](https://github.axa.com/Digital/bauta-nodejs/commit/bc5b7553b7253075751d6fbdc94e4cf90b45a2d4)), closes [#118](https://github.axa.com/Digital/bauta-nodejs/issues/118) [#117](https://github.axa.com/Digital/bauta-nodejs/issues/117)
+
+
+
+
+
 # [2.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v2.1.5...v2.2.0) (2019-09-17)
 
 **Note:** Version bump only for package @bautajs/decorator-cache
