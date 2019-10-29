@@ -4,5 +4,8 @@
   "packages": [
     "packages/*"
   ],
+  "npmClientArgs": [
+    "--no-lockfile"
+  ],
   "version": "2.2.0"
 }
