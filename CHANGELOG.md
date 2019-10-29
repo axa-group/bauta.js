@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.2](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
+
+
+### Bug Fixes
+
+* **@bautajs-core:** validate response should be inisde promise resolve ([3eb92f0](http://github.axa.com/Digital/bauta-nodejs/commit/3eb92f0c3ac3ca54a5c0072893181d414eda09c6))
+
+
+
+
+
 ## [2.2.1](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.0...v2.2.1) (2019-10-29)
 
 
