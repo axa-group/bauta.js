@@ -24,7 +24,7 @@ npm-shrinkwrap.json
 .settings/
 junit.xml
 package-lock.json
-*/**/package-lock.json
+!/.github/actions/*/package-lock.json
 # Ignore the compiled output.
 dist/
 coverage/
