@@ -195,26 +195,6 @@ export class OperationBuilder implements Operation {
       }
     }
 
-    const validateResponse = (finalResult: any) => {
-      if (
-        this.validation.validateResEnabled === true &&
-        context.validateResponse &&
-        !context.res.headersSent &&
-        !context.res.finished
-      ) {
-        context.validateResponse(
-          finalResult,
-          context.res.statusCode !== null &&
-            context.res.statusCode !== undefined &&
-            Number.isInteger(context.res.statusCode)
-            ? context.res.statusCode
-            : undefined
-        );
-      }
-
-      return finalResult;
-    };
-
     return PCancelable.fn((_: any, onCancel: PCancelable.OnCancelFunction) => {
       onCancel(() => {
         context.token.isCanceled = true;
@@ -226,7 +206,25 @@ export class OperationBuilder implements Operation {
           result = Promise.resolve(result);
         }
 
-        return result.then(validateResponse);
+        return result.then((finalResult: any) => {
+          if (
+            this.validation.validateResEnabled === true &&
+            context.validateResponse &&
+            !context.res.headersSent &&
+            !context.res.finished
+          ) {
+            context.validateResponse(
+              finalResult,
+              context.res.statusCode !== null &&
+                context.res.statusCode !== undefined &&
+                Number.isInteger(context.res.statusCode)
+                ? context.res.statusCode
+                : undefined
+            );
+          }
+
+          return finalResult;
+        });
       } catch (e) {
         return Promise.reject(e);
       }
