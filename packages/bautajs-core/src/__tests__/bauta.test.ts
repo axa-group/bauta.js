@@ -65,7 +65,7 @@ describe('core tests', () => {
           new BautaJS([{}], {
             staticConfig: config
           })
-      ).toThrow(`Invalid API definitions, "" should have required property 'swagger'`);
+      ).toThrow('[object Object] is not a valid Openapi API definition');
     });
   });
 
@@ -82,16 +82,18 @@ describe('core tests', () => {
       const res = {};
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
-        staticConfig: config
+        staticConfig: config,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
       await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
         expect.objectContaining({
+          message: 'The request was not valid',
           errors: [
             {
-              errorCode: 'type.openapi.validation',
+              path: '.limit',
               location: 'query',
               message: 'should be integer',
-              path: 'limit'
+              errorCode: 'type'
             }
           ]
         })
@@ -139,7 +141,6 @@ describe('core tests', () => {
       const res = {};
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         staticConfig: config
       });
 
@@ -152,11 +153,13 @@ describe('core tests', () => {
 
       await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
         expect.objectContaining({
+          message: 'Internal error',
           errors: [
             {
-              path: 'response',
-              errorCode: 'type.openapi.responseValidation',
-              message: 'should be array'
+              path: '',
+              location: 'response',
+              message: 'should be array',
+              errorCode: 'type'
             }
           ],
           response: {
@@ -235,7 +238,9 @@ describe('core tests', () => {
         staticConfig: config
       });
 
-      expect(await bautaJS.operations.v1.operation1.run({ req: {}, res: {} })).toStrictEqual([
+      expect(
+        await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
+      ).toStrictEqual([
         {
           id: 134,
           name: 'pet2'
@@ -256,7 +261,9 @@ describe('core tests', () => {
         staticConfig: config
       });
 
-      expect(await bautaJS.operations.v1.operation1.run({ req: {}, res: {} })).toStrictEqual([
+      expect(
+        await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
+      ).toStrictEqual([
         {
           id: 132,
           name: 'pet1'
@@ -286,7 +293,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
+      const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
 
       const doRequest = async () => {
         await expect(request1).rejects.toThrow(
@@ -325,7 +332,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
+      const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
 
       expect.assertions(1);
       request1.cancel();
@@ -356,7 +363,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
+      const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
       const doRequest = async () => {
         await expect(request1).rejects.toThrow(
           expect.objectContaining({ message: 'Request was aborted' })
@@ -398,7 +405,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
+      const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
 
       request1.cancel();
 
@@ -440,8 +447,8 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      const request1 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
-      const request2 = bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
+      const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
+      const request2 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
 
       request1.cancel();
       // eslint-disable-next-line jest/valid-expect-in-promise
@@ -470,8 +477,8 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      const request1 = await bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
-      const request2 = await bautaJS.operations.v2.operation1.run({ req: {}, res: {} });
+      const request1 = await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
+      const request2 = await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
 
       expect(request1).toStrictEqual(request2);
     });
@@ -503,8 +510,8 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      const request1 = await bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
-      const request2 = await bautaJS.operations.v2.operation1.run({ req: {}, res: {} });
+      const request1 = await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
+      const request2 = await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
 
       expect(request2).not.toStrictEqual(request1);
       expect(request2).toStrictEqual({ key: 2 });
@@ -538,8 +545,8 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      const request1 = await bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
-      const request2 = await bautaJS.operations.v2.operation1.run({ req: {}, res: {} });
+      const request1 = await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
+      const request2 = await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
 
       expect(request2).not.toStrictEqual(request1);
       expect(request2).toStrictEqual({ key: 2 });
@@ -567,9 +574,9 @@ describe('core tests', () => {
         staticConfig: config
       });
 
-      await expect(bautaJS.operations.v2.operation1.run({ req: {}, res: {} })).rejects.toThrow(
-        new Error('Not found')
-      );
+      await expect(
+        bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} })
+      ).rejects.toThrow(new Error('Not found'));
     });
 
     test('error handler should be inherit by default', async () => {
@@ -595,13 +602,13 @@ describe('core tests', () => {
       let error1;
       let error2;
       try {
-        await bautaJS.operations.v1.operation1.run({ req: {}, res: {} });
+        await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
       } catch (e) {
         error1 = e;
       }
 
       try {
-        await bautaJS.operations.v2.operation1.run({ req: {}, res: {} });
+        await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
       } catch (e) {
         error2 = e;
       }
@@ -620,7 +627,10 @@ describe('core tests', () => {
         staticConfig: config
       });
 
-      expect(bautaJS.apiDefinitions[0].paths).toStrictEqual({});
+      expect.assertions(1);
+      Object.keys(bautaJS.operations.v1).map((key: string) =>
+        expect(bautaJS.operations.v1[key].isPrivate()).toStrictEqual(true)
+      );
     });
 
     test('should set as public automatically if the setup is done for the operation', async () => {
@@ -639,9 +649,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      expect(bautaJS.apiDefinitions[0].paths['/test'].get.operationId).toStrictEqual(
-        bautaJS.operations.v1.operation1.id
-      );
+      expect(bautaJS.operations.v1.operation1.isPrivate()).toStrictEqual(false);
     });
 
     test('should set as private if we specified even thought we did setup the operation', async () => {
@@ -663,7 +671,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-      expect(bautaJS.apiDefinitions[0].paths).toStrictEqual({});
+      expect(bautaJS.operations.v1.operation1.isPrivate()).toStrictEqual(true);
     });
   });
 });

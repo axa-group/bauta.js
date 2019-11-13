@@ -105,9 +105,10 @@
           }
         },
         "Article": {
-          "required": ["userId", "title"],
+          "required": ["title"],
           "properties": {
             "userId": {
+              "nullable": true,
               "type": "integer",
               "format": "int64"
             },

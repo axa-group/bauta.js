@@ -24,9 +24,9 @@ describe('template decorator', () => {
       p.push(() => '1').push(template([{ id: '{{ctx.req.id}}', name: '{{previousValue}}' }]));
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
-      { id: 1, name: '1' }
-    ]);
+    expect(
+      await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+    ).toStrictEqual([{ id: 1, name: '1' }]);
   });
 
   test('should bypass not valid template', async () => {
@@ -35,6 +35,8 @@ describe('template decorator', () => {
       p.push(() => '1').push(template(undefined));
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toBeUndefined();
+    expect(
+      await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+    ).toBeUndefined();
   });
 });

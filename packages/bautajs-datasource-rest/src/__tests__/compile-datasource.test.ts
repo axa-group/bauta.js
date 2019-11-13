@@ -34,7 +34,7 @@ describe('compile datasource decorator', () => {
   });
 
   test('should compile de datasource and do the request to a dynamic url', async () => {
-    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
+    bautajs.operations.v1.operation1.setup(p => {
       p.push((_, ctx) => {
         ctx.data.path = path;
       }).push(

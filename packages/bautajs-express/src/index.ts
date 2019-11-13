@@ -24,17 +24,13 @@ import {
   Dictionary,
   Document,
   LoggerBuilder,
-  OpenAPIV2Document,
-  OpenAPIV3Document
+  Operation
 } from '@bautajs/core';
-import { Route, MiddlewareOptions, ICallback, EventTypes } from './types';
+import { MiddlewareOptions, ICallback, EventTypes } from './types';
 import { initMorgan, initBodyParser, initHelmet, initCors, initExplorer } from './middlewares';
+import { getContentType } from './utils';
 
 export * from './types';
-
-function toExpressParams(part: string) {
-  return part.replace(/\{([^}]+)}/g, ':$1');
-}
 
 /**
  * Create an Express server using the BautaJS library with almost 0 configuration
@@ -52,7 +48,7 @@ function toExpressParams(part: string) {
  * bautaJS.listen();
  */
 export class BautaJSExpress extends BautaJS {
-  private routes: Dictionary<Dictionary<Route>> = {};
+  private routes: Dictionary<Operation> = {};
 
   /**
    * @type {Application}
@@ -69,120 +65,92 @@ export class BautaJSExpress extends BautaJS {
   }
 
   private addRoute(expressRoute: string) {
-    Object.keys(this.routes[expressRoute]).forEach((method: string) => {
-      const { operation, responses, produces, isSwagger }: Route = this.routes[expressRoute][
-        method
-      ];
-      // @ts-ignore
-      this.app[method](expressRoute, (req: Request, res: Response, next: ICallback) => {
-        const startTime = new Date();
-        const resolverWrapper = (response: any) => {
-          if (res.headersSent || res.finished) {
-            return null;
-          }
+    const operation = this.routes[expressRoute];
+    const method = operation.route.method.toLowerCase() as keyof express.Application;
+    const responses = operation.route.schema.response;
 
-          if (!res.statusCode) {
-            res.status(200);
-          }
+    console.log('ola', expressRoute);
+    this.app[method](expressRoute, (req: Request, res: Response, next: ICallback) => {
+      const startTime = new Date();
+      const resolverWrapper = (response: any) => {
+        if (res.headersSent || res.finished) {
+          return null;
+        }
 
-          if (responses && responses[res.statusCode]) {
-            const contentType = !isSwagger
-              ? responses[res.statusCode].content &&
-                Object.keys(responses[res.statusCode].content)[0]
-              : produces && produces[0];
-            res.set({
-              ...(contentType ? { 'Content-type': contentType } : {}),
-              ...responses[res.statusCode].headers,
-              ...res.getHeaders()
-            });
-          }
+        if (!res.statusCode) {
+          res.status(200);
+        }
 
-          res.json(response || {});
-          const finalTime = new Date().getTime() - startTime.getTime();
+        if (responses && responses[res.statusCode]) {
+          const contentType = getContentType(operation.route, res.statusCode);
+          res.set({
+            ...(contentType ? { 'Content-type': contentType } : {}),
+            ...responses[res.statusCode].headers,
+            ...res.getHeaders()
+          });
+        }
 
-          this.moduleLogger.info(
-            `The operation execution of ${expressRoute} took: ${
-              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
-            } ms`
+        res.json(response || {});
+        const finalTime = new Date().getTime() - startTime.getTime();
+
+        this.moduleLogger.info(
+          `The operation execution of ${expressRoute} took: ${
+            typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
+          } ms`
+        );
+        return res.end();
+      };
+      const rejectWrapper = (response: any) => {
+        if (res.headersSent || res.finished) {
+          this.moduleLogger.error(
+            'Response has been sent to the user, but the promise throwed an error',
+            response
           );
-          return res.end();
-        };
-        const rejectWrapper = (response: any) => {
-          if (res.headersSent || res.finished) {
-            this.moduleLogger.error(
-              'Response has been sent to the user, but the promise throwed an error',
-              response
-            );
-            return null;
-          }
+          return null;
+        }
 
-          res.status(response.statusCode || 500);
-          const finalTime = new Date().getTime() - startTime.getTime();
-          this.moduleLogger.info(
-            `The operation execution of ${expressRoute} took: ${
-              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
-            } ms`
-          );
+        res.status(response.statusCode || 500);
+        const finalTime = new Date().getTime() - startTime.getTime();
+        this.moduleLogger.info(
+          `The operation execution of ${expressRoute} took: ${
+            typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
+          } ms`
+        );
 
-          return next(response);
-        };
+        return next(response);
+      };
 
-        const op = operation.run({ req, res });
-        req.on('abort', () => {
-          op.cancel('Request was aborted by the client intentionally');
-        });
-        req.on('timeout', () => {
-          op.cancel('Request was aborted by the client because of a timeout');
-        });
-
-        op.then(resolverWrapper).catch(rejectWrapper);
+      const op = operation.run({ req, res });
+      req.on('abort', () => {
+        op.cancel('Request was aborted by the client intentionally');
+      });
+      req.on('timeout', () => {
+        op.cancel('Request was aborted by the client because of a timeout');
       });
 
-      this.moduleLogger.info(
-        '[OK]',
-        chalk.yellowBright(
-          `[${method.toUpperCase()}] ${expressRoute} operation exposed on the API from ${
-            operation.version
-          }.${operation.id}`
-        )
-      );
-      this.moduleLogger.events.emit(EventTypes.EXPOSE_OPERATION, {
-        operation,
-        route: expressRoute
-      });
+      op.then(resolverWrapper).catch(rejectWrapper);
+    });
+
+    this.moduleLogger.info(
+      '[OK]',
+      chalk.yellowBright(
+        `[${method.toUpperCase()}] ${expressRoute} operation exposed on the API from ${
+          operation.version
+        }.${operation.id}`
+      )
+    );
+    this.moduleLogger.events.emit(EventTypes.EXPOSE_OPERATION, {
+      operation,
+      route: expressRoute
     });
   }
 
   private updateRoutes() {
-    this.apiDefinitions.forEach(apiDefinition => {
-      const openAPIV3Def = apiDefinition as OpenAPIV3Document;
-      const openAPIV2Def = apiDefinition as OpenAPIV2Document;
-      const basePath: string | undefined =
-        openAPIV3Def.servers && openAPIV3Def.servers[0].url
-          ? openAPIV3Def.servers[0].url
-          : openAPIV2Def.basePath;
-
-      Object.keys(apiDefinition.paths).forEach(path => {
-        const route = path
-          .substring(1)
-          .split('/')
-          .map(toExpressParams)
-          .join('/');
-        const expressRoute = basePath + route;
-
-        this.routes[expressRoute] = {};
-
-        Object.keys(apiDefinition.paths[path]).forEach(method => {
-          const { operationId, responses, produces } = apiDefinition.paths[path][method];
-          this.routes[expressRoute][method] = {
-            operation: this.operations[apiDefinition.info.version][operationId],
-            responses,
-            produces,
-            isSwagger: !openAPIV3Def.openapi
-          };
-        });
-      });
-    });
+    Object.values(this.operations).forEach(versions =>
+      Object.values(versions).forEach(operation => {
+        this.routes[operation.route.url] = operation;
+      })
+    );
 
     return this.routes;
   }

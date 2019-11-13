@@ -28,8 +28,8 @@ describe('as value decorator', () => {
       p.push(asValue([{ id: 1, name: 'pet' }]));
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
-      { id: 1, name: 'pet' }
-    ]);
+    expect(
+      await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
+    ).toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 });

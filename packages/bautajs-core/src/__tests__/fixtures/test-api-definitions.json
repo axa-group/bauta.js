@@ -31,7 +31,7 @@
             }
           ],
           "responses": {
-            "200": {
+            "default": {
               "description": "A paged array of pets",
               "headers": {
                 "x-next": {
@@ -45,16 +45,6 @@
                 "application/json": {
                   "schema": {
                     "$ref": "#/components/schemas/Pets"
-                  }
-                }
-              }
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
                   }
                 }
               }

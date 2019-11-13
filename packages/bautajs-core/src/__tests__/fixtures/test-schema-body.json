@@ -1,53 +1,105 @@
 {
-  "/oauth2/token": {
-    "post": {
-      "tags": ["authentication"],
-      "summary": "Authenticate a user using his credentials - standard OAuth 2 version",
-      "description": "",
-      "operationId": "operation1",
-      "parameters": [],
-      "requestBody": {
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": ["grant_type"],
-              "properties": {
-                "grant_type": {
-                  "type": "string",
-                  "enum": ["password", "refresh_token", "authorization_code"]
-                },
-                "username": {
-                  "description": "The resource owner user name, e.g. the customer's digital account login",
-                  "type": "string"
-                },
-                "password": {
-                  "description": "The resource owner password, e.g. the customer's digital account password",
-                  "type": "string"
-                },
-                "refresh_token": {
-                  "description": "The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)",
-                  "type": "string"
-                },
-                "code": {
-                  "description": "The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory",
-                  "type": "string"
+  "openapi": "3.0.0",
+  "info": {
+    "version": "v1",
+    "title": "Swagger Petstore",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://petstore.swagger.io/v1"
+    }
+  ],
+  "paths": {
+    "/oauth2/token": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Authenticate a user using his credentials - standard OAuth 2 version",
+        "description": "",
+        "operationId": "operation1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["grant_type"],
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "enum": ["password", "refresh_token", "authorization_code"]
+                  },
+                  "username": {
+                    "description": "The resource owner user name, e.g. the customer's digital account login",
+                    "type": "string"
+                  },
+                  "password": {
+                    "description": "The resource owner password, e.g. the customer's digital account password",
+                    "type": "string"
+                  },
+                  "refresh_token": {
+                    "description": "The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)",
+                    "type": "string"
+                  },
+                  "code": {
+                    "description": "The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pets"
                 }
               }
             }
           }
         }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pet": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "tag": {
+            "type": "string"
+          }
+        }
       },
-      "responses": {
-        "200": {
-          "description": "successful operation",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/definitions/Pets"
-              }
-            }
+      "Pets": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Pet"
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
           }
         }
       }

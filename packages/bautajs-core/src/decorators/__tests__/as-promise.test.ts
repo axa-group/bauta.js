@@ -32,8 +32,8 @@ describe('callback decorator', () => {
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
-      { id: 1, name: 'pet' }
-    ]);
+    expect(
+      await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+    ).toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 });

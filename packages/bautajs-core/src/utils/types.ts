@@ -12,23 +12,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Copyright (c) AXA Shared Services Spain S.A.
- *
- * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
- * may not use this file except in compliance with the License.
- * A copy of the License can be found in the LICENSE.TXT file distributed
- * together with this file.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import { EventEmitter } from 'events';
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import PCancelable from 'p-cancelable';
+
+export type JSONSchema = any;
+
+export interface Response {
+  [code: number]: JSONSchema;
+  [code: string]: JSONSchema;
+}
+
+export interface RouteSchema {
+  body?: JSONSchema;
+  querystring?: JSONSchema;
+  params?: JSONSchema;
+  headers?: JSONSchema;
+  response?: Response;
+}
+
+export interface Route {
+  method: string;
+  url: string;
+  schema: RouteSchema;
+  operationId: string;
+  openapiSource: OpenAPI.Operation;
+  operation?: Operation;
+  isV2: boolean;
+}
+
+export type Generic = Omit<OpenAPI.Document, 'paths'>;
+
+export interface DocumentParsed {
+  generic: Generic;
+  routes: Route[];
+  prefix?: string;
+}
 
 export interface Dictionary<T> {
   [key: string]: T;
@@ -79,6 +98,7 @@ export interface LocationError {
   path: string;
   location: string;
   message: string;
+  errorCode: string;
 }
 export interface ValidationErrorJSON extends Error {
   errors: LocationError[];
@@ -180,6 +200,7 @@ export type Version = Dictionary<Operation>;
 // Operation
 export type ErrorHandler = (err: Error, ctx: Context) => any;
 export interface Operation {
+  readonly route: Route;
   readonly id: string;
   readonly version: string;
   readonly deprecated: boolean;

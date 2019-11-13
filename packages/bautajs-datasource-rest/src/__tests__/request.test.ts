@@ -33,6 +33,19 @@ describe('request decorator', () => {
     nock.cleanAll();
   });
 
+  test('should do a request and get the full response if resolveBodyOnly is false', async () => {
+    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
+      p.push(testDatasource.operation1({ resolveBodyOnly: false }));
+    });
+
+    const response = await bautajs.operations.v1.operation1.run({
+      req: { id: 1 },
+      res: { statusCode: 200 }
+    });
+
+    expect(response.body).toStrictEqual([{ id: 3, name: 'pet3' }]);
+  });
+
   test('should do a request', async () => {
     bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
       p.push(testDatasource.operation1());
@@ -41,18 +54,5 @@ describe('request decorator', () => {
     expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
       { id: 3, name: 'pet3' }
     ]);
-  });
-
-  test('should do a request and get the full response if resolveBodyOnly is false', async () => {
-    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
-      p.push(testDatasource.operation1({ resolveBodyOnly: false }));
-    });
-
-    const response = await bautajs.operations.v1.operation1.run({
-      req: { id: 1 },
-      res: {}
-    });
-
-    expect(response.body).toStrictEqual([{ id: 3, name: 'pet3' }]);
   });
 });

@@ -35,8 +35,8 @@ describe('cache push', () => {
     );
     bautajs.operations.v1.operation1.setup(p => p.push(cache(pp, ([, ctx]) => ctx.id)));
 
-    await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
-    await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
+    await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} });
+    await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} });
 
     expect(fn.mock.calls).toHaveLength(1);
   });
@@ -58,9 +58,9 @@ describe('cache push', () => {
       )
     );
     jest.runAllTimers();
-    await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
+    await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} });
     jest.runAllTimers();
-    await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} });
+    await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} });
     jest.runAllTimers();
     expect(fn.mock.calls).toHaveLength(2);
   });
