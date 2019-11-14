@@ -36,7 +36,6 @@
     "ajv-oai": "1.1.5",
     "deasync": "0.1.15",
     "debug": "4.1.1",
-    "decimal.js": "^10.2.0",
     "fast-glob": "3.1.0",
     "fast-safe-stringify": "2.0.7",
     "hyperid": "2.0.2",

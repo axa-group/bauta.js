@@ -835,6 +835,9 @@ describe('datasource rest test', () => {
 
   describe('datasource compile', () => {
     test('datasource must compile complex templating properly as a function', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies/toto/documents')
+        .reply(200, {});
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -874,6 +877,9 @@ describe('datasource rest test', () => {
     });
 
     test('datasource must compile complex templating properly as a JSON template', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies/toto/documents')
+        .reply(200, {});
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -911,6 +917,9 @@ describe('datasource rest test', () => {
     });
 
     test('should merge global options with local options and local options have priority', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies/toto/documents')
+        .reply(200, {});
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -966,6 +975,9 @@ describe('datasource rest test', () => {
     });
 
     test('should compile a restDataSourceTemplate', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies/toto/documents')
+        .reply(200, {});
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -1012,18 +1024,19 @@ describe('datasource rest test', () => {
   });
   describe('request cancelation', () => {
     test('should cancel the request if the a cancel is executed', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies')
+        .reply(200, {});
+
       const myContext = { ...context, req: { id: 'toto' }, data: { bar: 'bar' } };
       const template = {
         providers: [
           {
             id: 'op1',
-            options(_: any, ctx: Context) {
+            options() {
               return {
-                url: `http://pets.com/v1/policies/${ctx.req.id}/documents`,
-                method: 'GET',
-                json: {
-                  foo: `${ctx.data.bar} dead live & robots ${ctx.data.bar}`
-                }
+                url: `http://pets.com/v1/policies`,
+                method: 'GET'
               };
             }
           }

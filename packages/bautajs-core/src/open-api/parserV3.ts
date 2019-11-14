@@ -24,6 +24,12 @@ class ParserV3 {
 
   constructor({ paths, ...spec }: OpenAPIV3.Document) {
     this.document = { generic: spec, routes: [] };
+
+    // Retrocompatibility with Bautajs 2.x
+    if (!this.document.generic.basePath) {
+      const basePath = spec.servers && spec.servers[0].url ? spec.servers[0].url : undefined;
+      this.document.generic.basePath = basePath;
+    }
     this.processPaths(paths);
   }
 
@@ -159,7 +165,9 @@ class ParserV3 {
       schema: ParserV3.makeSchema(routeSchema, data),
       operationId: data.operationId || ParserV3.makeOperationId(path),
       openapiSource: data,
-      isV2: false
+      isV2: false,
+      basePath: this.document.generic.basePath,
+      path
     };
     this.document.routes.push(route);
   }

@@ -17,7 +17,8 @@ import morgan from 'morgan';
 import cors, { CorsOptions } from 'cors';
 import { Application, json, urlencoded } from 'express';
 import helmet from 'helmet';
-import { Document } from '@bautajs/core';
+import { Document, Operations } from '@bautajs/core';
+import { OpenAPIV3, OpenAPIV2 } from '@bautajs/core/node_modules/openapi-types';
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
 
 export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOptions>) {
@@ -71,15 +72,25 @@ export function initBodyParser(app: Application, opt?: MiddlewareOption<BodyPars
 export function initExplorer(
   app: Application,
   apiDefinitions: Document[],
+  operations: Operations,
   opt?: MiddlewareOption<ExplorerOptions>
 ) {
   swaggerUiExpress.setup();
 
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     apiDefinitions.forEach(apiDefinition => {
+      const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
+
+      Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
+        const operation = operations[apiDefinition.info.version][key];
+        if (!paths[operation.route.path]) {
+          paths[operation.route.path] = {};
+        }
+        paths[operation.route.path][operation.route.method] = operation.route.openapiSource;
+      });
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
       app.get(openAPIPath, (_, res) => {
-        res.json(apiDefinition);
+        res.json({ ...apiDefinition, paths });
         res.end();
       });
       app.use(
@@ -93,9 +104,19 @@ export function initExplorer(
   } else if (opt && opt.enabled === true && opt.options) {
     const opts: ExplorerOptions = opt.options;
     apiDefinitions.forEach(apiDefinition => {
+      const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
+
+      Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
+        const operation = operations[apiDefinition.info.version][key];
+        if (!paths[operation.route.path]) {
+          paths[operation.route.path] = {};
+        }
+        paths[operation.route.path][operation.route.method] = operation.route.openapiSource;
+      });
+
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
       app.get(openAPIPath, (_, res) => {
-        res.json(apiDefinition);
+        res.json({ ...apiDefinition, paths });
         res.end();
       });
       app.use(

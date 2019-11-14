@@ -39,14 +39,15 @@ export interface Route {
   openapiSource: OpenAPI.Operation;
   operation?: Operation;
   isV2: boolean;
+  basePath?: string;
+  path: string;
 }
 
-export type Generic = Omit<OpenAPI.Document, 'paths'>;
+export type Generic = Omit<OpenAPI.Document, 'paths'> & { basePath?: string };
 
 export interface DocumentParsed {
   generic: Generic;
   routes: Route[];
-  prefix?: string;
 }
 
 export interface Dictionary<T> {
@@ -67,6 +68,7 @@ export interface OpenAPIV2Document extends OpenAPIV2.Document {
 export interface OpenAPIV3Document extends OpenAPIV3.Document {
   validateRequest?: boolean;
   validateResponse?: boolean;
+  basePath?: string;
 }
 export interface SwaggerComponents {
   validateRequest?: boolean;

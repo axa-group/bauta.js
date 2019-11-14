@@ -12,20 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import path from 'path';
 import compression from 'compression';
 import chalk from 'chalk';
 import express, { Application, Request, Response } from 'express';
 import http from 'http';
 import https from 'https';
 import routeOrder from 'route-order';
-import {
-  BautaJS,
-  BautaJSOptions,
-  Dictionary,
-  Document,
-  LoggerBuilder,
-  Operation
-} from '@bautajs/core';
+import { BautaJS, BautaJSOptions, Document, LoggerBuilder, Operation } from '@bautajs/core';
 import { MiddlewareOptions, ICallback, EventTypes } from './types';
 import { initMorgan, initBodyParser, initHelmet, initCors, initExplorer } from './middlewares';
 import { getContentType } from './utils';
@@ -48,8 +42,6 @@ export * from './types';
  * bautaJS.listen();
  */
 export class BautaJSExpress extends BautaJS {
-  private routes: Dictionary<Operation> = {};
-
   /**
    * @type {Application}
    * @memberof BautaJSExpress
@@ -64,13 +56,13 @@ export class BautaJSExpress extends BautaJS {
     this.moduleLogger = new LoggerBuilder('bautajs-express');
   }
 
-  private addRoute(expressRoute: string) {
-    const operation = this.routes[expressRoute];
+  private addRoute(operation: Operation) {
     const method = operation.route.method.toLowerCase() as keyof express.Application;
     const responses = operation.route.schema.response;
+    const { url, basePath } = operation.route;
+    const route = path.normalize(basePath + url);
 
-    console.log('ola', expressRoute);
-    this.app[method](expressRoute, (req: Request, res: Response, next: ICallback) => {
+    this.app[method](route, (req: Request, res: Response, next: ICallback) => {
       const startTime = new Date();
       const resolverWrapper = (response: any) => {
         if (res.headersSent || res.finished) {
@@ -94,7 +86,7 @@ export class BautaJSExpress extends BautaJS {
         const finalTime = new Date().getTime() - startTime.getTime();
 
         this.moduleLogger.info(
-          `The operation execution of ${expressRoute} took: ${
+          `The operation execution of ${url} took: ${
             typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
           } ms`
         );
@@ -112,7 +104,7 @@ export class BautaJSExpress extends BautaJS {
         res.status(response.statusCode || 500);
         const finalTime = new Date().getTime() - startTime.getTime();
         this.moduleLogger.info(
-          `The operation execution of ${expressRoute} took: ${
+          `The operation execution of ${url} took: ${
             typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
           } ms`
         );
@@ -134,25 +126,28 @@ export class BautaJSExpress extends BautaJS {
     this.moduleLogger.info(
       '[OK]',
       chalk.yellowBright(
-        `[${method.toUpperCase()}] ${expressRoute} operation exposed on the API from ${
-          operation.version
-        }.${operation.id}`
+        `[${method.toUpperCase()}] ${url} operation exposed on the API from ${operation.version}.${
+          operation.id
+        }`
       )
     );
     this.moduleLogger.events.emit(EventTypes.EXPOSE_OPERATION, {
       operation,
-      route: expressRoute
+      route: url
     });
   }
 
-  private updateRoutes() {
-    Object.values(this.operations).forEach(versions =>
+  private processOperations() {
+    return Object.values(this.operations).reduce((routes, versions) => {
       Object.values(versions).forEach(operation => {
-        this.routes[operation.route.url] = operation;
-      })
-    );
+        if (!operation.isPrivate()) {
+          // eslint-disable-next-line no-param-reassign
+          routes[operation.route.url] = operation;
+        }
+      });
 
-    return this.routes;
+      return routes;
+    }, {});
   }
 
   /**
@@ -203,13 +198,12 @@ export class BautaJSExpress extends BautaJS {
     this.app.use(compression());
     initBodyParser(this.app, options.bodyParser);
 
-    this.updateRoutes();
-
-    Object.keys(this.routes)
+    const routes = this.processOperations();
+    Object.keys(routes)
       .sort(routeOrder())
-      .forEach(this.addRoute.bind(this));
+      .forEach(route => this.addRoute(routes[route]));
 
-    initExplorer(this.app, this.apiDefinitions, options.explorer);
+    initExplorer(this.app, this.apiDefinitions, this.operations, options.explorer);
 
     return this;
   }

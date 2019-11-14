@@ -19,8 +19,8 @@ import { stripResponseFormats } from './from-openapi-to-ajv';
 class ParserV2 {
   public document: DocumentParsed;
 
-  constructor({ paths, basePath, ...spec }: OpenAPIV2.Document) {
-    this.document = { generic: spec, routes: [], prefix: basePath };
+  constructor({ paths, ...spec }: OpenAPIV2.Document) {
+    this.document = { generic: spec, routes: [] };
     this.processPaths(paths);
   }
 
@@ -155,7 +155,9 @@ class ParserV2 {
       schema: ParserV2.makeSchema(data),
       operationId: data.operationId || ParserV2.makeOperationId(path),
       openapiSource: data,
-      isV2: true
+      isV2: true,
+      basePath: this.document.generic.basePath,
+      path
     };
     this.document.routes.push(route);
   }

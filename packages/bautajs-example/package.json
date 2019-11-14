@@ -21,6 +21,7 @@
   "dependencies": {
     "@bautajs/core": "2.2.2",
     "@bautajs/datasource-rest": "2.2.2",
-    "@bautajs/express": "2.2.2"
+    "@bautajs/express": "2.2.2",
+    "@hapi/boom": "^8.0.1"
   }
 }
