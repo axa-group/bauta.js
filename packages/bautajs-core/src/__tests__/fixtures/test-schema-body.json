@@ -52,5 +52,61 @@
         }
       }
     }
+  },
+  "/testStream": {
+    "get": {
+      "operationId": "testStream",
+      "summary": "Download a file as Stream",
+      "description": "Download one of the files as Stream test",
+      "parameters": [],
+      "tags": ["testStream"],
+      "responses": {
+        "200": {
+          "description": "The requested file.",
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "default": {
+          "description": "unexpected error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/emptyResponseContent": {
+    "get": {
+      "operationId": "emptyResponseContent",
+      "summary": "test endpoint to test empty response content operations",
+      "description": "test endpoint to test empty response content operations",
+      "parameters": [],
+      "tags": ["emptyResponseContent"],
+      "responses": {
+        "200": {
+          "description": "Something since content does not exist"
+        },
+        "default": {
+          "description": "unexpected error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

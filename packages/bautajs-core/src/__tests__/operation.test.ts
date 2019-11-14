@@ -13,12 +13,17 @@
  * limitations under the License.
  */
 import { OpenAPI, OpenAPIV3 } from 'openapi-types';
+import { Readable, Writable } from 'stream';
+import httpMocks from 'node-mocks-http';
+import { EventEmitter } from 'events';
+import { ObjectWritableMock } from 'stream-mock';
 import { OperationBuilder } from '../core/operation';
 import { logger } from '../index';
 import { OpenAPIComponents, OpenAPIV3Document, Operation } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaBodyJson from './fixtures/test-schema-body.json';
 import { pipelineBuilder } from '../decorators/pipeline';
+import { asPromise } from '../decorators/as-promise';
 
 describe('operation class tests', () => {
   let operationSchema: OpenAPI.Operation;
@@ -588,10 +593,37 @@ describe('operation class tests', () => {
 
   describe('operation ctx.validateResponse tests', () => {
     let operationTest: Operation;
+    let streamOperationTest: Operation;
+    let emptyResponseContentTest: Operation;
+
     beforeEach(() => {
       operationTest = OperationBuilder.create(
         'operation1',
         testSchemaBodyJson['/oauth2/token'].post as OpenAPI.Operation,
+        schemaComponents,
+        {
+          staticConfig: {},
+          operations: {},
+          logger,
+          apiDefinitions: []
+        }
+      );
+
+      streamOperationTest = OperationBuilder.create(
+        'testStream',
+        testSchemaBodyJson['/testStream'].get as OpenAPI.Operation,
+        schemaComponents,
+        {
+          staticConfig: {},
+          operations: {},
+          logger,
+          apiDefinitions: []
+        }
+      );
+
+      emptyResponseContentTest = OperationBuilder.create(
+        'emptyResponseContent',
+        testSchemaBodyJson['/emptyResponseContent'].get as OpenAPI.Operation,
         schemaComponents,
         {
           staticConfig: {},
@@ -796,6 +828,65 @@ describe('operation class tests', () => {
           code: 'foo'
         }
       ]);
+    });
+
+    test('should validate that the response when there is no content response in the schema definition', async () => {
+      emptyResponseContentTest.setup(p =>
+        p.push(() => {
+          return null;
+        })
+      );
+
+      const result = await emptyResponseContentTest.run({
+        req: { headers: { 'content-type': 'application/json' } },
+        res: {}
+      });
+
+      expect(result).toBeNull();
+    });
+
+    // eslint-disable-next-line jest/no-test-callback
+    test('should not validate the response if the response is a stream', done => {
+      const {
+        input: inputStreamTest,
+        expected: expectedStream
+        // eslint-disable-next-line global-require
+      } = require('./fixtures/test-long-string-stream.json');
+
+      streamOperationTest.setup(p =>
+        p
+          .push(() => {
+            const s = new Readable();
+            inputStreamTest.forEach((l: string) => s.push(l));
+            s.push(null);
+            return s;
+          })
+          .push(
+            asPromise((fileStream, ctx, _, promiseDone) => {
+              fileStream.pipe(ctx.res as Writable);
+              fileStream.on('end', promiseDone);
+              fileStream.on('error', promiseDone);
+            })
+          )
+      );
+
+      const req = httpMocks.createRequest({ headers: { 'content-type': 'application/json' } });
+      const res = httpMocks.createResponse({
+        eventEmitter: EventEmitter,
+        writableStream: ObjectWritableMock,
+        req
+      });
+
+      res.on('end', function finish() {
+        // eslint-disable-next-line no-underscore-dangle
+        expect(res._getBuffer().toString()).toStrictEqual(expectedStream);
+        done();
+      });
+
+      streamOperationTest.run({
+        req,
+        res
+      });
     });
   });
 });

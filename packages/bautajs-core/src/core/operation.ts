@@ -26,7 +26,8 @@ import {
   SwaggerComponents,
   EventTypes,
   OperatorFunction,
-  PipelineSetup
+  PipelineSetup,
+  TResponse
 } from '../utils/types';
 import { buildDefaultPipeline } from '../utils/default-pipeline';
 import { ValidationError } from './validation-error';
@@ -124,6 +125,7 @@ export class OperationBuilder implements Operation {
       ...operationSchema,
       schemas
     });
+
     const validateResponse = new OpenapiResponseValidator({
       ...operationSchema,
       components: { schemas },
@@ -168,6 +170,49 @@ export class OperationBuilder implements Operation {
     }
   }
 
+  private isResponseJson(statusCode?: number): boolean {
+    const { responses } = this.schema;
+
+    if (responses) {
+      // If default is not defined in the schema, we take as default response that for 200 response.
+      const defaultStatus = responses.default ? 'default' : 200;
+      const targetStatusCode = statusCode || defaultStatus;
+
+      if (responses[targetStatusCode] && responses[targetStatusCode].content) {
+        const content = Object.keys(responses[targetStatusCode].content)[0];
+
+        if (content.startsWith('application/json')) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  private static getStatusCode(res: TResponse): number | undefined {
+    return res.statusCode !== null &&
+      res.statusCode !== undefined &&
+      Number.isInteger(res.statusCode)
+      ? res.statusCode
+      : undefined;
+  }
+
+  private mustValidate(context: Context, statusCode?: number): boolean {
+    // If we have a stream, the headers and finished flags are true as soon as the response
+    // is piped and thus we cannot use those flags to determine if validation is required
+    if (!this.isResponseJson(statusCode)) {
+      return false; // No validation for streams
+    }
+
+    const isValidationFunctionSet =
+      this.validation.validateResEnabled === true && !!context.validateResponse;
+
+    const isResponseFinished = context.res.headersSent || context.res.finished;
+
+    return isValidationFunctionSet && !isResponseFinished;
+  }
+
   public run(ctx: ContextData = {}): PCancelable<any> {
     const context: Context = createContext(ctx);
 
@@ -207,20 +252,10 @@ export class OperationBuilder implements Operation {
         }
 
         return result.then((finalResult: any) => {
-          if (
-            this.validation.validateResEnabled === true &&
-            context.validateResponse &&
-            !context.res.headersSent &&
-            !context.res.finished
-          ) {
-            context.validateResponse(
-              finalResult,
-              context.res.statusCode !== null &&
-                context.res.statusCode !== undefined &&
-                Number.isInteger(context.res.statusCode)
-                ? context.res.statusCode
-                : undefined
-            );
+          const statusCode = OperationBuilder.getStatusCode(context.res);
+
+          if (this.mustValidate(context, statusCode)) {
+            context.validateResponse(finalResult, statusCode);
           }
 
           return finalResult;
