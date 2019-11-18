@@ -254,7 +254,7 @@ export interface Operation {
   isPrivate(): boolean;
 }
 export type ValidationReqBuilder = (req?: TRequest) => null;
-export type ValidationResBuilder = (res: TResponse, statusCode?: number) => null;
+export type ValidationResBuilder = (res: any, statusCode?: number | string) => null;
 
 export interface ContextData {
   /**
@@ -309,12 +309,21 @@ export interface Context extends Session {
    */
   validateRequest: ValidationReqBuilder;
   /**
-   * Validate the given response againts the specified OpenAPI response schema for that operation ID.
+   * Validate the given response against the specified OpenAPI response schema for that operation ID.
+   *
+   * @type {ValidationResBuilder}
+   * @memberof Context
+   * @deprecated use validateResponseSchema
+   */
+  validateResponse: ValidationResBuilder;
+  /**
+   * Validate the given object against the specified OpenAPI response schema for current operation and the given status code.
+   * If status code is not defined 'default' will be used.
    *
    * @type {ValidationResBuilder}
    * @memberof Context
    */
-  validateResponse: ValidationResBuilder;
+  validateResponseSchema: ValidationResBuilder;
   /**
    *  A dictionary to add custom data to pass between OperatorFunctions
    * @type {Dictionary<any>}

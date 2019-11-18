@@ -13,56 +13,32 @@
  * limitations under the License.
  */
 import { BautaJS, Document, pipelineBuilder } from '@bautajs/core';
+import memoizee from 'memoizee';
 import { cache } from '../index';
+import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
-const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
+jest.mock('memoizee');
 
 describe('cache push', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
-    jest.useFakeTimers();
+    jest.clearAllMocks();
 
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
-
-  test('should cache the requests with the same id', async () => {
-    const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
+  test('should pass the options to memoize fn', () => {
     const pp = pipelineBuilder(p =>
-      p
-        .push(() => [{ a: '123' }])
-        .push((result: any) => ({ ...result[0], new: 1 }))
-        .push(fn)
+      p.push(() => [{ a: '123' }]).push((result: any) => ({ ...result[0], new: 1 }))
     );
-    bautajs.operations.v1.operation1.setup(p => p.push(cache(pp, ([, ctx]) => ctx.id)));
-
-    await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} });
-    await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} });
-
-    expect(fn.mock.calls).toHaveLength(1);
-  });
-
-  test('should allow memoizee options', async () => {
-    const fn = jest.fn(() => [{ id: 1, name: 'pet' }]);
-    const pp = pipelineBuilder(p =>
-      p
-        .push(() => [{ a: '123' }])
-        .push((result: any) => ({ ...result[0], new: 1 }))
-        .push(fn)
-    );
-
+    const normalizer = ([, ctx]) => ctx.id;
     bautajs.operations.v1.operation1.setup(p =>
       p.push(
-        cache(pp, ([, ctx]) => ctx.id, {
+        cache(pp, <any>normalizer, {
           maxAge: 1000
         })
       )
     );
-    jest.runAllTimers();
-    await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} });
-    jest.runAllTimers();
-    await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} });
-    jest.runAllTimers();
-    expect(fn.mock.calls).toHaveLength(2);
+    expect(memoizee).toHaveBeenCalledWith(pp, { normalizer, maxAge: 1000 });
   });
 
   test('should throw an error if normalizer function is not specified', async () => {

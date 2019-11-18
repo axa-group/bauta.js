@@ -50,9 +50,11 @@
     "jest-junit": "9.0.0",
     "lint-staged": "9.4.2",
     "nock": "11.7.0",
+    "node-mocks-http": "1.8.0",
     "pre-commit": "1.2.2",
     "prettier": "1.18.2",
     "prettier-check": "2.0.0",
+    "stream-mock": "2.0.5",
     "supertest": "4.0.2",
     "ts-jest": "24.1.0",
     "typescript": "3.7.2"
@@ -65,7 +67,7 @@
     "postinstall": "npx lerna bootstrap --no-ci && npm run compile",
     "clean": "npx lerna clean --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
     "release": "npm run clean && npm i && npm run test && npx lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
-    "test": "npm run lint && jest --verbose --forceExit --detectOpenHandles",
+    "test": "jest --verbose --forceExit --detectOpenHandles",
     "coverage": "npm test -- --coverage",
     "test:clean": "jest --clearCache",
     "test:watch": "jest --verbose --watchAll",
@@ -89,6 +91,7 @@
     ]
   },
   "pre-commit": [
+    "lint",
     "test"
   ],
   "jest": {

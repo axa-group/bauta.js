@@ -53,7 +53,6 @@ export const cache: CacheDecorator = <TIn, TOut>(
     ...options,
     normalizer
   });
-
   return async (value: TIn, ctx: Context, bautajs: BautaJSInstance) => cached(value, ctx, bautajs);
 };
 

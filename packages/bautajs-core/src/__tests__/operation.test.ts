@@ -12,13 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Readable, Writable } from 'stream';
+import httpMocks from 'node-mocks-http';
+import { EventEmitter } from 'events';
+import { ObjectWritableMock } from 'stream-mock';
 import { OperationBuilder } from '../core/operation';
 import { logger } from '../index';
 import { Operation, DocumentParsed, Route } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
-import testSchemaBodyJson from './fixtures/test-schema-body.json';
+import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
 import { pipelineBuilder } from '../decorators/pipeline';
 import Parser from '../open-api/parser';
+import { asPromise } from '../decorators/as-promise';
 
 describe('operation class tests', () => {
   let route: Route;
@@ -369,9 +374,8 @@ describe('operation class tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
       const parser = new Parser();
-      parser.parse(testSchemaBodyJson);
+      parser.parse(testSchemaRareCasesJson);
       const document = parser.document() as DocumentParsed;
-
       operationTest = OperationBuilder.create(document.routes[0], 'v1', {
         staticConfig: {},
         operations: {},
@@ -510,8 +514,29 @@ describe('operation class tests', () => {
 
   describe('operation ctx.validateResponse tests', () => {
     let operationTest: Operation;
+    let streamOperationTest: Operation;
+    let emptyResponseContentTest: Operation;
+
     beforeEach(() => {
-      operationTest = OperationBuilder.create(route, 'v1', {
+      const parser = new Parser();
+      parser.parse(testSchemaRareCasesJson);
+      const document = parser.document() as DocumentParsed;
+
+      operationTest = OperationBuilder.create(document.routes[0], 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
+
+      streamOperationTest = OperationBuilder.create(document.routes[1], 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
+
+      emptyResponseContentTest = OperationBuilder.create(document.routes[2], 'v1', {
         staticConfig: {},
         operations: {},
         logger,
@@ -531,7 +556,7 @@ describe('operation class tests', () => {
               code: 'foo'
             }
           ])
-          .push((response, ctx) => ctx.validateResponse(response))
+          .push((response, ctx) => ctx.validateResponse(response, 200))
       );
 
       const expected = [
@@ -721,6 +746,65 @@ describe('operation class tests', () => {
           code: 'foo'
         }
       ]);
+    });
+
+    test('should validate that the response when there is no content response in the schema definition', async () => {
+      emptyResponseContentTest.setup(p =>
+        p.push(() => {
+          return null;
+        })
+      );
+
+      const result = await emptyResponseContentTest.run({
+        req: { headers: { 'content-type': 'application/json' } },
+        res: { statusCode: 200 }
+      });
+
+      expect(result).toBeNull();
+    });
+
+    // eslint-disable-next-line jest/no-test-callback
+    test('should not validate the response if the response is a stream', done => {
+      const {
+        input: inputStreamTest,
+        expected: expectedStream
+        // eslint-disable-next-line global-require
+      } = require('./fixtures/test-long-string-stream.json');
+
+      streamOperationTest.setup(p =>
+        p
+          .push(() => {
+            const s = new Readable();
+            inputStreamTest.forEach((l: string) => s.push(l));
+            s.push(null);
+            return s;
+          })
+          .push(
+            asPromise((fileStream, ctx, _, promiseDone) => {
+              fileStream.pipe(ctx.res as Writable);
+              fileStream.on('end', promiseDone);
+              fileStream.on('error', promiseDone);
+            })
+          )
+      );
+
+      const req = httpMocks.createRequest({ headers: { 'content-type': 'application/json' } });
+      const res = httpMocks.createResponse({
+        eventEmitter: EventEmitter,
+        writableStream: ObjectWritableMock,
+        req
+      });
+
+      res.on('end', function finish() {
+        // eslint-disable-next-line no-underscore-dangle
+        expect(res._getBuffer().toString()).toStrictEqual(expectedStream);
+        done();
+      });
+
+      streamOperationTest.run({
+        req,
+        res
+      });
     });
   });
 });

@@ -86,17 +86,22 @@ function validateRequest(context: Dictionary<Ajv.ValidateFunction>, request: any
   }
 }
 
+function getDefaultStatusCode(responses: any = {}) {
+  return responses.default ? 'default' : 200;
+}
+
 function validateResponse(
   context: Dictionary<Dictionary<Ajv.ValidateFunction>>,
   response: any,
-  statusCode: number | string
+  statusCode?: number | string
 ): void {
   const validate = (validators: Dictionary<Ajv.ValidateFunction>): ValidationError | null => {
-    const isValid = validators && validators[statusCode] ? validators[statusCode](response) : null;
+    const status = statusCode || getDefaultStatusCode(validators);
+    const isValid = validators && validators[status] ? validators[status](response) : null;
     if (isValid === false) {
-      return new ValidationError(
+      throw new ValidationError(
         'Internal error',
-        formatLocationErrors(validators[statusCode].errors, 'response') || [],
+        formatLocationErrors(validators[status].errors, 'response') || [],
         500,
         response
       );
@@ -140,6 +145,7 @@ function buildSchemaCompiler(schema: JSONSchema): Ajv.ValidateFunction {
 }
 
 export {
+  getDefaultStatusCode,
   validateResponse,
   validateRequest,
   buildSchemaCompiler,

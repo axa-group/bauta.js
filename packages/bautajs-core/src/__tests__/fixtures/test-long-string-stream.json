@@ -1,0 +1,15 @@
+{
+  "input": [
+    "In a castle of Westphalia, belonging to the Baron of ",
+    "Thunder-ten-Tronckh, lived a youth, whom nature had endowed with the ",
+    "most gentle manners. His countenance was a true picture of his soul. He ",
+    "combined a true judgment with simplicity of spirit, which was the ",
+    "reason, I apprehend, of his being called Candide. The old servants of ",
+    "the family suspected him to have been the son of the Baron's sister, by ",
+    "a good, honest gentleman of the neighborhood, whom that young lady would ",
+    "never marry because he had been able to prove only seventy-one ",
+    "quarterings, the rest of his genealogical tree having been lost through ",
+    "the injuries of time."
+  ],
+  "expected": "In a castle of Westphalia, belonging to the Baron of Thunder-ten-Tronckh, lived a youth, whom nature had endowed with the most gentle manners. His countenance was a true picture of his soul. He combined a true judgment with simplicity of spirit, which was the reason, I apprehend, of his being called Candide. The old servants of the family suspected him to have been the son of the Baron's sister, by a good, honest gentleman of the neighborhood, whom that young lady would never marry because he had been able to prove only seventy-one quarterings, the rest of his genealogical tree having been lost through the injuries of time."
+}
