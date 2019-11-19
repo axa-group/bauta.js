@@ -49,7 +49,7 @@ using `operations.v1.operation1.validateRequest(false);`
 
 `bautajs` comes with a default response validation using the [openAPI schema v2 or v3][15]. **_BY DEFAULT IT'S SET TO TRUE_**.
 This feature is always enabled while you have a valid openAPI schema response schema. You can disable it globally setting up `validateResponse: false` on your API swagger definition or disable it locally for every operation
-using `operations.v1.operation1.validateResponses(false);`
+using `operations.v1.operation1.validateResponse(false);`
 s
 **_It's recomended to have an error handler since this will throw a [ValidationError](../packages/bautajs/src/core/validation-error.ts), you are free to convert them to a 400 or 422 errors_**
 
@@ -79,12 +79,12 @@ s
 }
 ```
 
-  Alternative you can also validate inside every resolver by accesing to the context `ctx.validateResponse()`.
+  Alternative you can also validate inside every resolver by accesing to the context `ctx.validateResponseSchema()`.
 
 ```js
   operations.v1.findCats.setup(p => 
     p.pipe(function pFn(response, ctx) {
-      ctx.validateResponse(response);
+      ctx.validateResponseSchema(response);
       // if the response is not valid this will throw an ValidationError error 
     })
   );
@@ -95,7 +95,7 @@ s
 ```js
   operations.v1.findCats.setup(p => 
     p.pipe(function pFn(response, ctx) {
-      ctx.validateResponse(response, 201);
+      ctx.validateResponseSchema(response, 201);
     })
   );
 ```

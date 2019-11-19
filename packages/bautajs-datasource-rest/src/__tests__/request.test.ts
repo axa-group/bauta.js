@@ -34,7 +34,7 @@ describe('request decorator', () => {
   });
 
   test('should do a request and get the full response if resolveBodyOnly is false', async () => {
-    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
+    bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
       p.push(testDatasource.operation1({ resolveBodyOnly: false }));
     });
 
@@ -47,7 +47,7 @@ describe('request decorator', () => {
   });
 
   test('should do a request', async () => {
-    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
+    bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
       p.push(testDatasource.operation1());
     });
 

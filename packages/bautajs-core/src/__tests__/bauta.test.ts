@@ -425,7 +425,7 @@ describe('core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.validateResponses(false).setup(p =>
+            operations.v1.operation1.validateResponse(false).setup(p =>
               p
                 .push((_, ctx) => {
                   ctx.token.onCancel(onCancel);
@@ -467,8 +467,8 @@ describe('core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
-            operations.v2.operation1.validateResponses(false);
-            operations.v1.operation1.validateResponses(false).setup(p =>
+            operations.v2.operation1.validateResponse(false);
+            operations.v1.operation1.validateResponse(false).setup(p =>
               p.push(() => {
                 return 'ok';
               })
@@ -490,7 +490,7 @@ describe('core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.validateResponses(false).setup(p =>
+            operations.v1.operation1.validateResponse(false).setup(p =>
               p.push(() => {
                 return {
                   key: 1
@@ -498,7 +498,7 @@ describe('core tests', () => {
               })
             );
 
-            operations.v2.operation1.validateResponses(false).setup(p =>
+            operations.v2.operation1.validateResponse(false).setup(p =>
               p.push((response: any = {}) => {
                 return {
                   ...response,
@@ -524,7 +524,7 @@ describe('core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
-            operations.v2.operation1.validateResponses(false).setup(p =>
+            operations.v2.operation1.validateResponse(false).setup(p =>
               p.push((response: any = {}) => {
                 return {
                   ...response,
@@ -534,7 +534,7 @@ describe('core tests', () => {
             );
           }),
           resolver(operations => {
-            operations.v1.operation1.validateResponses(false).setup(p =>
+            operations.v1.operation1.validateResponse(false).setup(p =>
               p.push(() => {
                 return {
                   key: 1
@@ -561,7 +561,7 @@ describe('core tests', () => {
           resolver(operations => {
             operations.v1.operation1
               .setAsDeprecated()
-              .validateResponses(false)
+              .validateResponse(false)
               .setup(p =>
                 p.push(() => {
                   return {
@@ -586,7 +586,7 @@ describe('core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.validateResponses(false).setup(p =>
+            operations.v1.operation1.validateResponse(false).setup(p =>
               p
                 .push(() => {
                   return Promise.reject(new Error('error'));
@@ -640,7 +640,7 @@ describe('core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitions2VersionsJson as Document[], {
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.validateResponses(false).setup(p =>
+            operations.v1.operation1.validateResponse(false).setup(p =>
               p.push(() => {
                 return 'ok';
               })
@@ -660,7 +660,7 @@ describe('core tests', () => {
         resolvers: [
           resolver(operations => {
             operations.v1.operation1
-              .validateResponses(false)
+              .validateResponse(false)
               .setAsPrivate()
               .setup(p =>
                 p.push(() => {

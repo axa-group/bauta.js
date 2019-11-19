@@ -21,9 +21,9 @@ import { logger } from '../logger';
 import { DocumentParsed, Document } from '../utils/types';
 
 class Parser {
-  private validateRequestsToggle: boolean = true;
+  private validateRequestToggle: boolean = true;
 
-  private validateResponsesToggle: boolean = true;
+  private validateResponseToggle: boolean = true;
 
   private documentParsed?: DocumentParsed;
 
@@ -37,16 +37,16 @@ class Parser {
    * global validate request toggle
    * @returns {object}
    */
-  public validateRequests(): boolean {
-    return this.validateRequestsToggle;
+  public validateRequest(): boolean {
+    return this.validateRequestToggle;
   }
 
   /**
    * global validate responses toggle
    * @returns {object}
    */
-  public validateResponses(): boolean {
-    return this.validateResponsesToggle;
+  public validateResponse(): boolean {
+    return this.validateResponseToggle;
   }
 
   /**
@@ -69,8 +69,8 @@ class Parser {
   }: Document): Promise<DocumentParsed> {
     let spec;
     let data: OpenAPI.Document;
-    this.validateRequestsToggle = validateRequest !== false;
-    this.validateResponsesToggle = validateRequest !== false;
+    this.validateRequestToggle = validateRequest !== false;
+    this.validateResponseToggle = validateRequest !== false;
 
     try {
       // parse first, to avoid dereferencing of $ref's

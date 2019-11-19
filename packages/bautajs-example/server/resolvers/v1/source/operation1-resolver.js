@@ -18,8 +18,8 @@ const myPipeline = pipelineBuilder(p =>
 
 module.exports = resolver(operations => {
   operations.v1.operation1
-    .validateRequests(false)
-    .validateResponses(false)
+    .validateRequest(false)
+    .validateResponse(false)
     .setup(p =>
       p.pipe(
         provider1(),

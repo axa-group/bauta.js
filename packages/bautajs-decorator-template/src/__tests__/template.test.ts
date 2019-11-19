@@ -31,7 +31,7 @@ describe('template decorator', () => {
 
   test('should bypass not valid template', async () => {
     const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
-    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
+    bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
       p.push(() => '1').push(template(undefined));
     });
 

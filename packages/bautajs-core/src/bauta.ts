@@ -142,8 +142,8 @@ export class BautaJS implements BautaJSInstance {
         document.routes.forEach(route => {
           const operation = OperationBuilder.create(route, apiVersion, this);
 
-          operation.validateRequests(apiDefinition.validateRequests());
-          operation.validateResponses(apiDefinition.validateResponses());
+          operation.validateRequest(apiDefinition.validateRequest());
+          operation.validateResponse(apiDefinition.validateResponse());
 
           if (
             prevApiVersion &&

@@ -115,6 +115,20 @@ export class OperationBuilder implements Operation {
     return this;
   }
 
+  public validateRequest(toggle: boolean): Operation {
+    if (this.validators) {
+      this.requestValidationEnabled = toggle;
+    }
+    return this;
+  }
+
+  public validateResponse(toggle: boolean): Operation {
+    if (this.validators) {
+      this.responseValidationEnabled = toggle;
+    }
+    return this;
+  }
+
   private generateValidators(operationSchema: RouteSchema): void {
     if (operationSchema.body) {
       this.validators[bodySchema.toString()] = buildSchemaCompiler(operationSchema.body);

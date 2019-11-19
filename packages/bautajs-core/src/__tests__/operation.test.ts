@@ -110,8 +110,8 @@ describe('operation class tests', () => {
       const error = new Error('someError');
       const ctx = { req: {}, res: {} };
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p.push(() => {
             throw new Error('someError');
@@ -143,8 +143,8 @@ describe('operation class tests', () => {
     test('pushed OperatorFunctions must be executed in order', async () => {
       const expected = 'this will be showed';
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.push(() => 'next3').push(() => expected));
       const ctx = { req: {}, res: {} };
 
@@ -157,8 +157,8 @@ describe('operation class tests', () => {
         p.push(() => 'next3').push(() => expected);
       });
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.pushPipeline(pipe));
       const ctx = { req: {}, res: {} };
 
@@ -199,8 +199,8 @@ describe('operation class tests', () => {
       const ctx = { req: {}, res: {} };
       const expected = new Error('error');
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.push(() => Promise.reject(new Error('crashhh!!!'))).onError(errorHandler));
 
       await expect(operationTest.run(ctx)).rejects.toThrow(expected);
@@ -213,8 +213,8 @@ describe('operation class tests', () => {
       const OperatorFunction3 = () => Promise.reject(new Error('crashhh!!!'));
       const OperatorFunction4 = () => 'bender4';
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p
             .push(OperatorFunction1)
@@ -234,15 +234,15 @@ describe('operation class tests', () => {
       const errorHandler = () => Promise.reject(new Error('error'));
       const errorHandlerV2 = () => Promise.reject(new Error('errorV2'));
       const OperatorFunction = () => Promise.reject(new Error('crashhh!!!'));
-      operationTest.validateResponses(false).validateRequests(false);
+      operationTest.validateResponse(false).validateRequest(false);
       const operationV2 = OperationBuilder.create(route, 'v1', {
         staticConfig: {},
         operations: {},
         logger,
         apiDefinitions: []
       })
-        .validateResponses(false)
-        .validateRequests(false);
+        .validateResponse(false)
+        .validateRequest(false);
 
       operationTest.nextVersionOperation = operationV2;
 
@@ -283,8 +283,8 @@ describe('operation class tests', () => {
     test('should be able to use previous values', async () => {
       const expected = 10;
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p.pipe(
             () => 5,
@@ -299,8 +299,8 @@ describe('operation class tests', () => {
     test('should execute the pipe OperatorFunctions in order', async () => {
       const expected = 'this will be showed';
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p.pipe(
             () => 'next3',
@@ -316,8 +316,8 @@ describe('operation class tests', () => {
       const expected = 'this will be showed';
       const pp = pipelineBuilder(p => p.pipe(() => expected));
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p.pipe(
             () => 'next3',
@@ -332,8 +332,8 @@ describe('operation class tests', () => {
     test('should allow async functions', async () => {
       const expected = 'next3';
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.pipe(() => Promise.resolve('next3')));
       const ctx = { req: {}, res: {} };
 
@@ -354,8 +354,8 @@ describe('operation class tests', () => {
 
     test('should allow a context without req', async () => {
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.push(() => 'good'));
 
       expect(await operationTest.run({ res: {} })).toStrictEqual('good');
@@ -363,8 +363,8 @@ describe('operation class tests', () => {
 
     test('should allow a context without res', async () => {
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.push(() => 'good'));
 
       expect(await operationTest.run({ req: {} })).toStrictEqual('good');
@@ -481,7 +481,7 @@ describe('operation class tests', () => {
 
     test('should allow a valid schema', async () => {
       operationTest
-        .validateResponses(false)
+        .validateResponse(false)
         .setup(p =>
           p
             .push((_, ctx) => ctx.validateRequest())
@@ -499,7 +499,7 @@ describe('operation class tests', () => {
     });
 
     test('should use default OperatorFunction if setup is not done', async () => {
-      operationTest.validateResponses(false);
+      operationTest.validateResponse(false);
       const body = {
         grant_type: 'password',
         username: 'user',
@@ -545,7 +545,7 @@ describe('operation class tests', () => {
     });
 
     test('should validate an not valid response', async () => {
-      operationTest.validateRequests(false);
+      operationTest.validateRequest(false);
       operationTest.setup(p =>
         p
           .push(() => [
@@ -599,7 +599,7 @@ describe('operation class tests', () => {
       ).rejects.toThrow(expect.objectContaining({ errors: expected }));
     });
     test('should validate the response by default', async () => {
-      operationTest.validateRequests(false);
+      operationTest.validateRequest(false);
       operationTest.setup(p =>
         p.push(() => [
           {
@@ -664,7 +664,7 @@ describe('operation class tests', () => {
     });
 
     test('should validate an valid response', async () => {
-      operationTest.validateRequests(false);
+      operationTest.validateRequest(false);
       operationTest.setup(p =>
         p
           .push(() => [
