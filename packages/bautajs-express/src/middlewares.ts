@@ -18,8 +18,23 @@ import cors, { CorsOptions } from 'cors';
 import { Application, json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { Document, Operations } from '@bautajs/core';
-import { OpenAPIV3, OpenAPIV2 } from '@bautajs/core/node_modules/openapi-types';
+import { OpenAPIV3, OpenAPIV2, OpenAPI } from '@bautajs/core/node_modules/openapi-types';
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
+
+function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operations) {
+  const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
+
+  Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
+    const operation = operations[apiDefinition.info.version][key];
+    if (!paths[operation.route.path]) {
+      paths[operation.route.path] = {};
+    }
+    paths[operation.route.path][operation.route.method.toLocaleLowerCase()] =
+      operation.route.openapiSource;
+  });
+
+  return paths;
+}
 
 export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOptions>) {
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
@@ -79,16 +94,8 @@ export function initExplorer(
 
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     apiDefinitions.forEach(apiDefinition => {
-      const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
-
-      Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
-        const operation = operations[apiDefinition.info.version][key];
-        if (!paths[operation.route.path]) {
-          paths[operation.route.path] = {};
-        }
-        paths[operation.route.path][operation.route.method] = operation.route.openapiSource;
-      });
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
+      const paths = buildOpenAPIPaths(apiDefinition, operations);
       app.get(openAPIPath, (_, res) => {
         res.json({ ...apiDefinition, paths });
         res.end();
@@ -104,17 +111,8 @@ export function initExplorer(
   } else if (opt && opt.enabled === true && opt.options) {
     const opts: ExplorerOptions = opt.options;
     apiDefinitions.forEach(apiDefinition => {
-      const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
-
-      Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
-        const operation = operations[apiDefinition.info.version][key];
-        if (!paths[operation.route.path]) {
-          paths[operation.route.path] = {};
-        }
-        paths[operation.route.path][operation.route.method] = operation.route.openapiSource;
-      });
-
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
+      const paths = buildOpenAPIPaths(apiDefinition, operations);
       app.get(openAPIPath, (_, res) => {
         res.json({ ...apiDefinition, paths });
         res.end();

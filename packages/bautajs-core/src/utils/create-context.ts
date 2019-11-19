@@ -30,6 +30,7 @@ export function createContext(ctx: ContextData): Context {
   return {
     validateResponse: () => null,
     validateRequest: () => null,
+    validateResponseSchema: () => null,
     data: ctx.data || {},
     req: ctx.req,
     res: ctx.res,
