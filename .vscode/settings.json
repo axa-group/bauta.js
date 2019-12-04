@@ -1,6 +1,6 @@
 {
-    "prettier.eslintIntegration": true,
-    "eslint.validate": [{
+  "eslint.validate": [
+    {
         "language": "typescript",
         "autoFix": true
     }],
