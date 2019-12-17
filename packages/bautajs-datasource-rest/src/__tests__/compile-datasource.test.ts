@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import nock from 'nock';
-import { BautaJS, Document } from '@bautajs/core/src';
+import { BautaJS, Document } from '@bautajs/core';
 import testDatasource from './fixtures/test-datasource-dynamic';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
