@@ -101,7 +101,7 @@ s
 ```
 
 ## Response validation is dependant on the schema response definition and the statusCode
-Reading [this](https://nodejs.org/es/docs/guides/anatomy-of-an-http-transaction/#http-status-code) may help you to understand this section.
+Knowledge of node's behavior around http status codes is required for understanding this section. Check [this](https://nodejs.org/es/docs/guides/anatomy-of-an-http-transaction/#http-status-code) in order to get a better understanding.
 
 At the moment of validation, we check the statusCode, that may be:
 - set specifically by you using ```res.writeHead(statusCode, ...)``` or similar
