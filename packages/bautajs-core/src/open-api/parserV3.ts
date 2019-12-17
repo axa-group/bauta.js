@@ -51,8 +51,9 @@ class ParserV3 {
 
   public static copyProps(source: any, target: any, list: string[]) {
     list.forEach(item => {
-      // eslint-disable-next-line no-param-reassign
-      if (source[item]) target[item] = source[item];
+      if (source[item]) {
+        Object.assign(target, { [item]: source[item] });
+      }
     });
   }
 

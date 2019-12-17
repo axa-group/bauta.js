@@ -77,8 +77,7 @@ export class OperationBuilder implements Operation {
     this.operatorFunction = buildDefaultPipeline();
     this.id = route.operationId;
     this.schema = route.openapiSource;
-    this.deprecated =
-      route.openapiSource.deprecated === undefined ? false : route.openapiSource.deprecated;
+    this.deprecated = route.openapiSource.deprecated === true;
   }
 
   public isSetup() {

@@ -65,7 +65,7 @@ describe('core tests', () => {
           new BautaJS([{}], {
             staticConfig: config
           })
-      ).toThrow('[object Object] is not a valid Openapi API definition');
+      ).toThrow('The Openapi API definition provided is not valid.');
     });
   });
 

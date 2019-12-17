@@ -84,8 +84,8 @@ class Parser {
       // and validate
       spec = await SwaggerParser.validate(copy);
     } catch (e) {
-      logger.error('Error on validate and parser the current openAPI definition');
-      throw e;
+      logger.error('Error on validate and parser the current openAPI definition', e);
+      throw new Error('The Openapi API definition provided is not valid.');
     }
     const openAPI = spec as OpenAPIV3.Document;
     const swagger = spec as OpenAPIV2.Document;

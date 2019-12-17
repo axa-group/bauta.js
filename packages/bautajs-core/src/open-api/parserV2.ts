@@ -56,10 +56,7 @@ class ParserV2 {
     data.forEach(item => {
       // item.type "file" breaks ajv, so treat is as a special here
       if (item.type === 'file') {
-        // eslint-disable-next-line no-param-reassign
-        item.type = 'string';
-        // eslint-disable-next-line no-param-reassign
-        item.isFile = true;
+        Object.assign(item, { type: 'string', isFile: true });
       }
       //
       params.properties[item.name] = {};
