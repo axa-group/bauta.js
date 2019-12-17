@@ -57,7 +57,7 @@ function validateParam(
   request: any,
   paramName: string
 ): ValidationError | null {
-  const isValid = validators ? validators(request[paramName]) : null;
+  const isValid = validators ? validators(request[paramName]) : true;
   if (isValid === false) {
     return new ValidationError(
       'The request was not valid',
