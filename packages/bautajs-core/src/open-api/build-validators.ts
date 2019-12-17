@@ -119,6 +119,8 @@ function validateResponse(
   }
 }
 
+// We need to clean the ID's before compile the schema with ajv, otherwise ajv will throw an error because i$d is not
+// a valid key for the schema.
 function cleanId(schema: JSONSchema) {
   Object.keys(schema).forEach(key => {
     if (key === '$id') {
