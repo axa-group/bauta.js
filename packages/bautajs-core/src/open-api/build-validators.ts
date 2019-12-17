@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import fastJson from 'fast-safe-stringify';
 import crypto from 'crypto';
 import Ajv from 'ajv';
 import AjvOai from 'ajv-oai';
@@ -21,6 +22,7 @@ import { ValidationError } from '../core/validation-error';
 const cache: any = new Map();
 cache.put = cache.set;
 const ajv = new AjvOai({
+  unknownFormats: 'ignore',
   coerceTypes: true,
   useDefaults: true,
   removeAdditional: true,
@@ -98,6 +100,7 @@ function validateResponse(
   const validate = (validators: Dictionary<Ajv.ValidateFunction>): ValidationError | null => {
     const status = statusCode || getDefaultStatusCode(validators);
     const isValid = validators && validators[status] ? validators[status](response) : null;
+
     if (isValid === false) {
       throw new ValidationError(
         'Internal error',
@@ -128,20 +131,32 @@ function cleanId(schema: JSONSchema) {
   });
 }
 
+function clearCircluar(schema: JSONSchema) {
+  return JSON.parse(
+    fastJson(schema, (_key, value) => {
+      if (value === '[Circular]') {
+        return undefined;
+      }
+      return value;
+    })
+  );
+}
+
 function buildSchemaCompiler(schema: JSONSchema): Ajv.ValidateFunction {
-  if (schema.$id) {
-    const compiledSchema = ajv.getSchema(schema.$id);
+  const cleanSchema = clearCircluar(schema);
+  if (cleanSchema.$id) {
+    const compiledSchema = ajv.getSchema(cleanSchema.$id);
     if (compiledSchema) {
       return compiledSchema;
     }
-    ajv.addSchema(schema);
+    ajv.addSchema(cleanSchema);
   } else {
-    Object.assign(schema, { $id: crypto.randomBytes(16).toString('hex') });
-    ajv.addSchema(schema);
+    Object.assign(cleanSchema, { $id: crypto.randomBytes(16).toString('hex') });
+    ajv.addSchema(cleanSchema);
   }
-  cleanId(schema);
 
-  return ajv.compile(schema);
+  cleanId(cleanSchema);
+  return ajv.compile(cleanSchema);
 }
 
 export {

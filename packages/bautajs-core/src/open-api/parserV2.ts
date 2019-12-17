@@ -14,7 +14,6 @@
  */
 import { OpenAPIV2 } from 'openapi-types';
 import { DocumentParsed, Route, RouteSchema } from '../utils/types';
-import { stripResponseFormats } from './from-openapi-to-ajv';
 
 class ParserV2 {
   public document: DocumentParsed;
@@ -143,7 +142,7 @@ class ParserV2 {
     if (data.parameters) ParserV2.parseParameters(routeSchema, data.parameters);
     const response = ParserV2.parseResponses(data.responses);
     if (response) {
-      routeSchema.response = stripResponseFormats(response);
+      routeSchema.response = response;
     }
     return routeSchema;
   }

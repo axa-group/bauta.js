@@ -74,7 +74,11 @@ class Parser {
 
     try {
       // parse first, to avoid dereferencing of $ref's
-      data = await SwaggerParser.parse(specification);
+      data = await SwaggerParser.parse({
+        ...specification,
+        // Compatibility, older version of validation didn't validate termsOfService
+        info: { termsOfService: 'http://test.test', ...specification.info }
+      });
       // save the original (with $refs) because swp.validate modifies its input
       const copy = JSON.parse(JSON.stringify(data, null, 2));
       // and validate

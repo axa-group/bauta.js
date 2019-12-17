@@ -15,7 +15,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { DocumentParsed, RouteSchema } from '../utils/types';
 import { logger } from '../logger';
-import { stripResponseFormats } from './from-openapi-to-ajv';
 
 const HttpOperations = new Set(['delete', 'get', 'head', 'patch', 'post', 'put', 'options']);
 
@@ -115,7 +114,7 @@ class ParserV3 {
     const responseObject = data as OpenAPIV3.ResponseObject;
     if (responseObject && responseObject.content) {
       Object.keys(responseObject.content).forEach(mimeType => {
-        if (mimeType !== 'application/json') {
+        if (!mimeType.startsWith('application/json')) {
           logger.debug(`body type: ${mimeType} found`);
         }
         schema = responseObject.content && responseObject.content[mimeType].schema;
@@ -148,7 +147,7 @@ class ParserV3 {
     if (body) schema.body = body;
     const response = ParserV3.parseResponses(data.responses);
     if (response) {
-      schema.response = stripResponseFormats(response);
+      schema.response = response;
     }
     return schema;
   }
