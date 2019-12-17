@@ -392,6 +392,15 @@ export function restProvider<TIn>(
   return Object.assign(request, { compile: compiler });
 }
 
+/**
+ * Generates one provider datasource from a stjs template {@link https://github.com/SelectTransform/st.js/ |stjs}.
+ *
+ * @template TIn
+ * @param providerTemplate
+ * @param template with global options
+ * @returns the generated provider datasource
+ * @deprecated better use restProvider
+ */
 export function restProviderTemplate<TIn>(
   providerTemplate: RestProviderTemplate<RequestParamsTemplate>,
   globalOptions?: RequestOptionsTemplate
@@ -421,6 +430,14 @@ export function restDataSource<TIn>(
 
   return result;
 }
+/**
+ * Generates a list of rest of provider datasources from a stjs template {@link https://github.com/SelectTransform/st.js/ |stjs}.
+ *
+ * @template TIn
+ * @param dsTemplate
+ * @returns the generated provider datasources
+ * @deprecated better use restDataSource
+ */
 export function restDataSourceTemplate<TIn>(
   dsTemplate: RestDataSourceTemplate<RequestParamsTemplate, RequestOptionsTemplate>
 ): RestDataSource<TIn> {

@@ -14,11 +14,97 @@
       }
     ],
     "paths": {
+      "/randomYear": {
+        "get": {
+          "summary": "List all articles",
+          "operationId": "randomYear",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/randomYear2": {
+        "get": {
+          "summary": "List all articles",
+          "operationId": "randomYear2",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/factNumber/{number}": {
+        "get": {
+          "summary": "get a fact from a number",
+          "operationId": "factNumber",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/factNumber2/{number}": {
+        "get": {
+          "summary": "get a fact from a number",
+          "operationId": "factNumber2",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "/test": {
         "get": {
           "summary": "List all articles",
           "operationId": "operation1",
-          "tags": ["articles"],
+          "tags": [
+            "articles"
+          ],
           "parameters": [
             {
               "name": "limit",
@@ -52,7 +138,9 @@
         "get": {
           "summary": "Endpoint without pipeline",
           "operationId": "noPipeline",
-          "tags": ["articles"],
+          "tags": [
+            "articles"
+          ],
           "parameters": [
             {
               "name": "limit",
@@ -86,7 +174,10 @@
     "components": {
       "schemas": {
         "ThisShouldNotBeIncluded": {
-          "required": ["userId", "title"],
+          "required": [
+            "userId",
+            "title"
+          ],
           "properties": {
             "userId": {
               "type": "integer",
@@ -131,7 +222,9 @@
           }
         },
         "Error": {
-          "required": ["message"],
+          "required": [
+            "message"
+          ],
           "properties": {
             "code": {
               "type": "integer",
