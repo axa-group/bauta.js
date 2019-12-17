@@ -13,6 +13,8 @@
         "url": "http://petstore.swagger.io/v1"
       }
     ],
+    "validateResponse": false,
+    "validateRequest": false,
     "paths": {
       "/test": {
         "get": {

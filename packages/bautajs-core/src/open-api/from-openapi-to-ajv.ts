@@ -12,31 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ContextData, Context } from './types';
-import { CancelableTokenBuilder } from '../core/cancelable-token';
-import { sessionFactory } from '../session-factory';
+import { Dictionary, Response } from '../utils/types';
 
-export function createContext(ctx: ContextData): Context {
-  if (!ctx.req) {
-    ctx.req = {};
-  }
+const unknownFormats: Dictionary<Boolean> = { int32: true, int64: true };
 
-  if (!ctx.res) {
-    ctx.res = {};
-  }
-
-  const token = new CancelableTokenBuilder();
-
-  return {
-    validateResponse: () => null,
-    validateRequest: () => null,
-    validateResponseSchema: () => null,
-    data: ctx.data || {},
-    req: ctx.req,
-    res: ctx.res,
-    token,
-    ...sessionFactory(ctx.req)
-  };
+function isObject(obj: any) {
+  return typeof obj === 'object' && obj !== null;
 }
 
-export default createContext;
+export function stripResponseFormats(schema: Response): Response {
+  Object.keys(schema).forEach(item => {
+    if (isObject(schema[item])) {
+      if (schema[item].format && unknownFormats[schema[item].format]) {
+        // eslint-disable-next-line no-param-reassign
+        schema[item].format = undefined;
+      }
+      stripResponseFormats(schema[item]);
+    }
+  });
+
+  return schema;
+}

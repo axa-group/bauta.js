@@ -12,60 +12,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 import { Readable, Writable } from 'stream';
 import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'events';
 import { ObjectWritableMock } from 'stream-mock';
 import { OperationBuilder } from '../core/operation';
 import { logger } from '../index';
-import { OpenAPIComponents, OpenAPIV3Document, Operation } from '../utils/types';
+import { Operation, DocumentParsed, Route } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
-import testSchemaBodyJson from './fixtures/test-schema-body.json';
+import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
 import { pipelineBuilder } from '../decorators/pipeline';
+import Parser from '../open-api/parser';
 import { asPromise } from '../decorators/as-promise';
 
 describe('operation class tests', () => {
-  let operationSchema: OpenAPI.Operation;
-  let schemaComponents: OpenAPIComponents;
+  let route: Route;
   beforeEach(() => {
-    operationSchema = { ...(testApiDefinitionsJson[0] as OpenAPIV3Document).paths['/test'].get };
-    schemaComponents = {
-      ...((testApiDefinitionsJson[0] as OpenAPIV3Document)
-        .components as OpenAPIV3.ComponentsObject),
-      swaggerVersion: '3',
-      apiVersion: 'v1'
-    };
+    const parser = new Parser();
+    parser.parse(testApiDefinitionsJson[0]);
+    const document = parser.document() as DocumentParsed;
+    [route] = document.routes;
   });
   describe('build operations cases', () => {
     test('should let you build an operation without schema', () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        operationSchema,
-        schemaComponents,
-        {
-          staticConfig: {},
-          operations: {},
-          logger,
-          apiDefinitions: []
-        }
-      );
+      const operationTest = OperationBuilder.create(route, 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
 
       expect(operationTest).toBeInstanceOf(OperationBuilder);
     });
 
     test('should build the request validator from the schema parameters', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        operationSchema,
-        schemaComponents,
-        {
-          staticConfig: {},
-          operations: {},
-          logger,
-          apiDefinitions: []
-        }
-      );
+      const operationTest = OperationBuilder.create(route, 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
       const req = {
         query: {
           limit: 'string'
@@ -74,39 +60,37 @@ describe('operation class tests', () => {
       const res = {};
       const expected = [
         {
-          errorCode: 'type.openapi.validation',
+          path: '.limit',
           location: 'query',
           message: 'should be integer',
-          path: 'limit'
+          errorCode: 'type'
         }
       ];
       const ctx = { req, res };
+      operationTest.setup(p => p.pipe(() => 'new'));
       await expect(operationTest.run(ctx)).rejects.toThrow(
         expect.objectContaining({ errors: expected })
       );
     });
 
     test('should build the response validator from the schema response', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        operationSchema,
-        schemaComponents,
-        {
-          staticConfig: {},
-          operations: {},
-          logger,
-          apiDefinitions: []
-        }
-      );
+      const operationTest = OperationBuilder.create(route, 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
       const req = {
-        prop: 1
+        prop: 1,
+        query: {}
       };
       const res = {};
       const expected = [
         {
-          path: 'response',
-          errorCode: 'type.openapi.responseValidation',
-          message: 'should be array'
+          path: '',
+          location: 'response',
+          message: 'should be array',
+          errorCode: 'type'
         }
       ];
       const ctx = { req, res };
@@ -117,22 +101,17 @@ describe('operation class tests', () => {
     });
 
     test('the default error handler should be a promise reject of the given error', async () => {
-      const operationTest = OperationBuilder.create(
-        'operation1',
-        operationSchema,
-        schemaComponents,
-        {
-          staticConfig: {},
-          operations: {},
-          logger,
-          apiDefinitions: []
-        }
-      );
+      const operationTest = OperationBuilder.create(route, 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
       const error = new Error('someError');
       const ctx = { req: {}, res: {} };
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p.push(() => {
             throw new Error('someError');
@@ -147,7 +126,7 @@ describe('operation class tests', () => {
     let operationTest: Operation;
 
     beforeEach(() => {
-      operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+      operationTest = OperationBuilder.create(route, 'v1', {
         staticConfig: {},
         operations: {},
         logger,
@@ -164,8 +143,8 @@ describe('operation class tests', () => {
     test('pushed OperatorFunctions must be executed in order', async () => {
       const expected = 'this will be showed';
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.push(() => 'next3').push(() => expected));
       const ctx = { req: {}, res: {} };
 
@@ -178,8 +157,8 @@ describe('operation class tests', () => {
         p.push(() => 'next3').push(() => expected);
       });
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.pushPipeline(pipe));
       const ctx = { req: {}, res: {} };
 
@@ -200,7 +179,7 @@ describe('operation class tests', () => {
   describe('operation.pipeline.onError tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
-      operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+      operationTest = OperationBuilder.create(route, 'v1', {
         staticConfig: {},
         operations: {},
         logger,
@@ -220,8 +199,8 @@ describe('operation class tests', () => {
       const ctx = { req: {}, res: {} };
       const expected = new Error('error');
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.push(() => Promise.reject(new Error('crashhh!!!'))).onError(errorHandler));
 
       await expect(operationTest.run(ctx)).rejects.toThrow(expected);
@@ -234,8 +213,8 @@ describe('operation class tests', () => {
       const OperatorFunction3 = () => Promise.reject(new Error('crashhh!!!'));
       const OperatorFunction4 = () => 'bender4';
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p
             .push(OperatorFunction1)
@@ -255,15 +234,15 @@ describe('operation class tests', () => {
       const errorHandler = () => Promise.reject(new Error('error'));
       const errorHandlerV2 = () => Promise.reject(new Error('errorV2'));
       const OperatorFunction = () => Promise.reject(new Error('crashhh!!!'));
-      operationTest.validateResponses(false).validateRequests(false);
-      const operationV2 = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+      operationTest.validateResponse(false).validateRequest(false);
+      const operationV2 = OperationBuilder.create(route, 'v1', {
         staticConfig: {},
         operations: {},
         logger,
         apiDefinitions: []
       })
-        .validateResponses(false)
-        .validateRequests(false);
+        .validateResponse(false)
+        .validateRequest(false);
 
       operationTest.nextVersionOperation = operationV2;
 
@@ -280,7 +259,7 @@ describe('operation class tests', () => {
   describe('operation.pipeline.pipe tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
-      operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+      operationTest = OperationBuilder.create(route, 'v1', {
         staticConfig: {},
         operations: {},
         logger,
@@ -304,8 +283,8 @@ describe('operation class tests', () => {
     test('should be able to use previous values', async () => {
       const expected = 10;
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p.pipe(
             () => 5,
@@ -320,8 +299,8 @@ describe('operation class tests', () => {
     test('should execute the pipe OperatorFunctions in order', async () => {
       const expected = 'this will be showed';
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p.pipe(
             () => 'next3',
@@ -337,8 +316,8 @@ describe('operation class tests', () => {
       const expected = 'this will be showed';
       const pp = pipelineBuilder(p => p.pipe(() => expected));
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p =>
           p.pipe(
             () => 'next3',
@@ -353,8 +332,8 @@ describe('operation class tests', () => {
     test('should allow async functions', async () => {
       const expected = 'next3';
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.pipe(() => Promise.resolve('next3')));
       const ctx = { req: {}, res: {} };
 
@@ -365,7 +344,7 @@ describe('operation class tests', () => {
   describe('operation.run tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
-      operationTest = OperationBuilder.create('operation1', operationSchema, schemaComponents, {
+      operationTest = OperationBuilder.create(route, 'v1', {
         staticConfig: {},
         operations: {},
         logger,
@@ -375,8 +354,8 @@ describe('operation class tests', () => {
 
     test('should allow a context without req', async () => {
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.push(() => 'good'));
 
       expect(await operationTest.run({ res: {} })).toStrictEqual('good');
@@ -384,8 +363,8 @@ describe('operation class tests', () => {
 
     test('should allow a context without res', async () => {
       operationTest
-        .validateResponses(false)
-        .validateRequests(false)
+        .validateResponse(false)
+        .validateRequest(false)
         .setup(p => p.push(() => 'good'));
 
       expect(await operationTest.run({ req: {} })).toStrictEqual('good');
@@ -394,17 +373,15 @@ describe('operation class tests', () => {
   describe('operation ctx.validateRequest tests', () => {
     let operationTest: Operation;
     beforeEach(() => {
-      operationTest = OperationBuilder.create(
-        'operation1',
-        testSchemaBodyJson['/oauth2/token'].post as OpenAPI.Operation,
-        schemaComponents,
-        {
-          staticConfig: {},
-          operations: {},
-          logger,
-          apiDefinitions: []
-        }
-      );
+      const parser = new Parser();
+      parser.parse(testSchemaRareCasesJson);
+      const document = parser.document() as DocumentParsed;
+      operationTest = OperationBuilder.create(document.routes[0], 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
     });
 
     test('should validate the request by default', async () => {
@@ -423,38 +400,10 @@ describe('operation class tests', () => {
 
       const expected = [
         {
+          path: '',
           location: 'body',
-          message: 'request.body was not present in the request.  Is a body-parser being used?',
-          schema: {
-            properties: {
-              code: {
-                description:
-                  'The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory',
-                type: 'string'
-              },
-              grant_type: {
-                enum: ['password', 'refresh_token', 'authorization_code'],
-                type: 'string'
-              },
-              password: {
-                description:
-                  "The resource owner password, e.g. the customer's digital account password",
-                type: 'string'
-              },
-              refresh_token: {
-                description:
-                  'The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)',
-                type: 'string'
-              },
-              username: {
-                description:
-                  "The resource owner user name, e.g. the customer's digital account login",
-                type: 'string'
-              }
-            },
-            required: ['grant_type'],
-            type: 'object'
-          }
+          message: 'should be object',
+          errorCode: 'type'
         }
       ];
       const body = null;
@@ -482,41 +431,13 @@ describe('operation class tests', () => {
 
       const expected = [
         {
+          path: '',
           location: 'body',
-          message: 'request.body was not present in the request.  Is a body-parser being used?',
-          schema: {
-            properties: {
-              code: {
-                description:
-                  'The code shall be provided only with grant-type equals authorization_code, and is in that case mandatory',
-                type: 'string'
-              },
-              grant_type: {
-                enum: ['password', 'refresh_token', 'authorization_code'],
-                type: 'string'
-              },
-              password: {
-                description:
-                  "The resource owner password, e.g. the customer's digital account password",
-                type: 'string'
-              },
-              refresh_token: {
-                description:
-                  'The refresh token most recently acquired via the last call to this service (either with grant type password or refresh)',
-                type: 'string'
-              },
-              username: {
-                description:
-                  "The resource owner user name, e.g. the customer's digital account login",
-                type: 'string'
-              }
-            },
-            required: ['grant_type'],
-            type: 'object'
-          }
+          message: "should have required property 'grant_type'",
+          errorCode: 'required'
         }
       ];
-      const body = null;
+      const body = {};
 
       await expect(
         operationTest.run({
@@ -541,10 +462,10 @@ describe('operation class tests', () => {
       );
       const expected = [
         {
-          errorCode: 'enum.openapi.validation',
+          path: '.grant_type',
           location: 'body',
           message: 'should be equal to one of the allowed values',
-          path: 'grant_type'
+          errorCode: 'enum'
         }
       ];
       const body = {
@@ -560,7 +481,7 @@ describe('operation class tests', () => {
 
     test('should allow a valid schema', async () => {
       operationTest
-        .validateResponses(false)
+        .validateResponse(false)
         .setup(p =>
           p
             .push((_, ctx) => ctx.validateRequest())
@@ -578,7 +499,7 @@ describe('operation class tests', () => {
     });
 
     test('should use default OperatorFunction if setup is not done', async () => {
-      operationTest.validateResponses(false);
+      operationTest.validateResponse(false);
       const body = {
         grant_type: 'password',
         username: 'user',
@@ -597,45 +518,34 @@ describe('operation class tests', () => {
     let emptyResponseContentTest: Operation;
 
     beforeEach(() => {
-      operationTest = OperationBuilder.create(
-        'operation1',
-        testSchemaBodyJson['/oauth2/token'].post as OpenAPI.Operation,
-        schemaComponents,
-        {
-          staticConfig: {},
-          operations: {},
-          logger,
-          apiDefinitions: []
-        }
-      );
+      const parser = new Parser();
+      parser.parse(testSchemaRareCasesJson);
+      const document = parser.document() as DocumentParsed;
 
-      streamOperationTest = OperationBuilder.create(
-        'testStream',
-        testSchemaBodyJson['/testStream'].get as OpenAPI.Operation,
-        schemaComponents,
-        {
-          staticConfig: {},
-          operations: {},
-          logger,
-          apiDefinitions: []
-        }
-      );
+      operationTest = OperationBuilder.create(document.routes[0], 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
 
-      emptyResponseContentTest = OperationBuilder.create(
-        'emptyResponseContent',
-        testSchemaBodyJson['/emptyResponseContent'].get as OpenAPI.Operation,
-        schemaComponents,
-        {
-          staticConfig: {},
-          operations: {},
-          logger,
-          apiDefinitions: []
-        }
-      );
+      streamOperationTest = OperationBuilder.create(document.routes[1], 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
+
+      emptyResponseContentTest = OperationBuilder.create(document.routes[2], 'v1', {
+        staticConfig: {},
+        operations: {},
+        logger,
+        apiDefinitions: []
+      });
     });
 
     test('should validate an not valid response', async () => {
-      operationTest.validateRequests(false);
+      operationTest.validateRequest(false);
       operationTest.setup(p =>
         p
           .push(() => [
@@ -646,29 +556,33 @@ describe('operation class tests', () => {
               code: 'foo'
             }
           ])
-          .push((response, ctx) => ctx.validateResponse(response))
+          .push((response, ctx) => ctx.validateResponse(response, 200))
       );
 
       const expected = [
         {
-          errorCode: 'required.openapi.responseValidation',
+          path: '[0]',
+          location: 'response',
           message: "should have required property 'id'",
-          path: 'response[0]'
+          errorCode: 'required'
         },
         {
-          errorCode: 'required.openapi.responseValidation',
+          path: '[0]',
+          location: 'response',
           message: "should have required property 'name'",
-          path: 'response[0]'
+          errorCode: 'required'
         },
         {
-          errorCode: 'required.openapi.responseValidation',
+          path: '[1]',
+          location: 'response',
           message: "should have required property 'id'",
-          path: 'response[1]'
+          errorCode: 'required'
         },
         {
-          errorCode: 'required.openapi.responseValidation',
+          path: '[1]',
+          location: 'response',
           message: "should have required property 'name'",
-          path: 'response[1]'
+          errorCode: 'required'
         }
       ];
       const body = {
@@ -685,7 +599,7 @@ describe('operation class tests', () => {
       ).rejects.toThrow(expect.objectContaining({ errors: expected }));
     });
     test('should validate the response by default', async () => {
-      operationTest.validateRequests(false);
+      operationTest.validateRequest(false);
       operationTest.setup(p =>
         p.push(() => [
           {
@@ -699,24 +613,28 @@ describe('operation class tests', () => {
 
       const expected = [
         {
-          errorCode: 'required.openapi.responseValidation',
+          path: '[0]',
+          location: 'response',
           message: "should have required property 'id'",
-          path: 'response[0]'
+          errorCode: 'required'
         },
         {
-          errorCode: 'required.openapi.responseValidation',
+          path: '[0]',
+          location: 'response',
           message: "should have required property 'name'",
-          path: 'response[0]'
+          errorCode: 'required'
         },
         {
-          errorCode: 'required.openapi.responseValidation',
+          path: '[1]',
+          location: 'response',
           message: "should have required property 'id'",
-          path: 'response[1]'
+          errorCode: 'required'
         },
         {
-          errorCode: 'required.openapi.responseValidation',
+          path: '[1]',
+          location: 'response',
           message: "should have required property 'name'",
-          path: 'response[1]'
+          errorCode: 'required'
         }
       ];
       const body = {
@@ -746,7 +664,7 @@ describe('operation class tests', () => {
     });
 
     test('should validate an valid response', async () => {
-      operationTest.validateRequests(false);
+      operationTest.validateRequest(false);
       operationTest.setup(p =>
         p
           .push(() => [
@@ -816,7 +734,7 @@ describe('operation class tests', () => {
       };
 
       await operationTest.run({
-        req: { body, headers: { 'content-type': 'application/json' } },
+        req: { query: {}, body, headers: { 'content-type': 'application/json' } },
         res
       });
 
@@ -839,7 +757,7 @@ describe('operation class tests', () => {
 
       const result = await emptyResponseContentTest.run({
         req: { headers: { 'content-type': 'application/json' } },
-        res: {}
+        res: { statusCode: 200 }
       });
 
       expect(result).toBeNull();

@@ -33,9 +33,9 @@ describe('match decorator', () => {
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
-      { id: 1, name: 'pet' }
-    ]);
+    expect(
+      await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
+    ).toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 
   test('should use the default option if non of the options match', async () => {
@@ -52,8 +52,8 @@ describe('match decorator', () => {
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 3 }, res: {} })).toStrictEqual([
-      { id: 3, name: 'pet' }
-    ]);
+    expect(
+      await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 3 }, res: {} })
+    ).toStrictEqual([{ id: 3, name: 'pet' }]);
   });
 });

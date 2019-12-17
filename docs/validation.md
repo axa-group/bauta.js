@@ -48,8 +48,8 @@ using `operations.v1.operation1.validateRequest(false);`
 # Response Validation
 
 `bautajs` comes with a default response validation using the [openAPI schema v2 or v3][15]. **_BY DEFAULT IT'S SET TO TRUE_**.
-This feature is always enabled while you have a valid openAPI schema response schema. You can disable it globally setting up `validateResponse: false` on your API swagger definition or disable it locally for every operation
-using `operations.v1.operation1.validateResponses(false);`
+This feature is always disabled by default, but if you have a valid openAPI schema response schema you will be able to enable this feature manually. You can enable it globally setting up `validateResponse: true` on your API swagger definition or disable it locally for every operation
+using `operations.v1.operation1.validateResponses(true);`
 s
 **_It's recomended to have an error handler since this will throw a [ValidationError](../packages/bautajs/src/core/validation-error.ts), you are free to convert them to a 400 or 422 errors_**
 
@@ -79,12 +79,12 @@ s
 }
 ```
 
-  Alternative you can also validate inside every resolver by accesing to the context `ctx.validateResponse()`.
+  Alternative you can also validate inside every resolver by accessing to the context `ctx.validateResponseSchema()`.
 
 ```js
   operations.v1.findCats.setup(p => 
     p.pipe(function pFn(response, ctx) {
-      ctx.validateResponse(response);
+      ctx.validateResponseSchema(response);
       // if the response is not valid this will throw an ValidationError error 
     })
   );
@@ -95,16 +95,16 @@ s
 ```js
   operations.v1.findCats.setup(p => 
     p.pipe(function pFn(response, ctx) {
-      ctx.validateResponse(response, 201);
+      ctx.validateResponseSchema(response, 201);
     })
   );
 ```
 
 ## Response validation is dependant on the schema response definition and the statusCode
-Reading [this](https://nodejs.org/es/docs/guides/anatomy-of-an-http-transaction/#http-status-code) may help you to understand this section.
+Knowledge of node's behavior around http status codes is required for understanding this section. Check [this](https://nodejs.org/es/docs/guides/anatomy-of-an-http-transaction/#http-status-code) in order to get a better understanding.
 
 At the moment of validation, we check the statusCode, that may be:
-- set specifically by you using ```res.writeHead(statusCode, ...)``` or similars
+- set specifically by you using ```res.writeHead(statusCode, ...)``` or similar
 - set by default as 200 if calling ```res.end()```
 - special case: in special situations when bauta is used alone without a server library, statusCode could be undefined, and in this case bauta will use 200 anyways as default
 

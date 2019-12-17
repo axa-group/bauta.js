@@ -12,23 +12,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * Copyright (c) AXA Shared Services Spain S.A.
- *
- * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
- * may not use this file except in compliance with the License.
- * A copy of the License can be found in the LICENSE.TXT file distributed
- * together with this file.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import { EventEmitter } from 'events';
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import PCancelable from 'p-cancelable';
+
+export type JSONSchema = any;
+
+export interface Response {
+  [code: number]: JSONSchema;
+  [code: string]: JSONSchema;
+}
+
+export interface RouteSchema {
+  body?: JSONSchema;
+  querystring?: JSONSchema;
+  params?: JSONSchema;
+  headers?: JSONSchema;
+  response?: Response;
+}
+
+export interface Route {
+  method: string;
+  url: string;
+  schema: RouteSchema;
+  operationId: string;
+  openapiSource: OpenAPI.Operation;
+  operation?: Operation;
+  isV2: boolean;
+  basePath?: string;
+  path: string;
+}
+
+export type Generic = Omit<OpenAPI.Document, 'paths'> & { basePath?: string };
+
+export interface DocumentParsed {
+  generic: Generic;
+  routes: Route[];
+}
 
 export interface Dictionary<T> {
   [key: string]: T;
@@ -42,12 +62,29 @@ export interface TResponse {
 
 // OpenAPI document
 export interface OpenAPIV2Document extends OpenAPIV2.Document {
+  /**
+   * Set request validation to true. This will validate all req.body, req.query and req.params.
+   * @memberof Operation
+   */
   validateRequest?: boolean;
+  /**
+   * Set the response validation to true. This will validate the operation result againts the operation responses schemas.
+   * @memberof Operation
+   */
   validateResponse?: boolean;
 }
 export interface OpenAPIV3Document extends OpenAPIV3.Document {
+  /**
+   * Set request validation to true. This will validate all req.body, req.query and req.params.
+   * @memberof Operation
+   */
   validateRequest?: boolean;
+  /**
+   * Set the response validation to true. This will validate the operation result againts the operation responses schemas.
+   * @memberof Operation
+   */
   validateResponse?: boolean;
+  basePath?: string;
 }
 export interface SwaggerComponents {
   validateRequest?: boolean;
@@ -79,6 +116,7 @@ export interface LocationError {
   path: string;
   location: string;
   message: string;
+  errorCode: string;
 }
 export interface ValidationErrorJSON extends Error {
   errors: LocationError[];
@@ -180,6 +218,7 @@ export type Version = Dictionary<Operation>;
 // Operation
 export type ErrorHandler = (err: Error, ctx: Context) => any;
 export interface Operation {
+  readonly route: Route;
   readonly id: string;
   readonly version: string;
   readonly deprecated: boolean;
@@ -198,8 +237,28 @@ export interface Operation {
    * @memberof Operation
    */
   isSetup(): boolean;
+  /**
+   * Set request validation to true. This will validate all req.body, req.query and req.params.
+   * @deprecated use validateRequest instead
+   * @memberof Operation
+   */
   validateRequests(toggle: boolean): Operation;
+  /**
+   * Set the response validation to true. This will validate the operation result againts the operation responses schemas.
+   * @deprecated use validateResponse instead
+   * @memberof Operation
+   */
   validateResponses(toggle: boolean): Operation;
+  /**
+   * Set request validation to true. This will validate all req.body, req.query and req.params.
+   * @memberof Operation
+   */
+  validateRequest(toggle: boolean): Operation;
+  /**
+   * Set the response validation to true. This will validate the operation result againts the operation responses schemas.
+   * @memberof Operation
+   */
+  validateResponse(toggle: boolean): Operation;
   /**
    * Setup a new pipeline for the operation.
    * Each time you setup a pipeline if there is already a pipeline setup it will be overrided.
@@ -231,7 +290,7 @@ export interface Operation {
   isPrivate(): boolean;
 }
 export type ValidationReqBuilder = (req?: TRequest) => null;
-export type ValidationResBuilder = (res: TResponse, statusCode?: number) => null;
+export type ValidationResBuilder = (res: any, statusCode?: number | string) => null;
 
 export interface ContextData {
   /**
@@ -286,12 +345,21 @@ export interface Context extends Session {
    */
   validateRequest: ValidationReqBuilder;
   /**
-   * Validate the given response againts the specified OpenAPI response schema for that operation ID.
+   * Validate the given response against the specified OpenAPI response schema for that operation ID.
+   *
+   * @type {ValidationResBuilder}
+   * @memberof Context
+   * @deprecated use validateResponseSchema
+   */
+  validateResponse: ValidationResBuilder;
+  /**
+   * Validate the given object against the specified OpenAPI response schema for current operation and the given status code.
+   * If status code is not defined 'default' will be used.
    *
    * @type {ValidationResBuilder}
    * @memberof Context
    */
-  validateResponse: ValidationResBuilder;
+  validateResponseSchema: ValidationResBuilder;
   /**
    *  A dictionary to add custom data to pass between OperatorFunctions
    * @type {Dictionary<any>}

@@ -26,15 +26,14 @@ describe('parallel decorator', () => {
     bautajs.operations.v1.operation1.setup(p => {
       p.push(
         parallel(
-          () => Promise.resolve([{ id: 3, name: 'pet3' }]),
-          () => Promise.resolve([{ id: 1, name: 'pet' }])
+          () => Promise.resolve({ id: 3, name: 'pet3' }),
+          () => Promise.resolve({ id: 1, name: 'pet' })
         )
       );
     });
 
-    expect(await bautajs.operations.v1.operation1.run({ req: { id: 1 }, res: {} })).toStrictEqual([
-      [{ id: 3, name: 'pet3' }],
-      [{ id: 1, name: 'pet' }]
-    ]);
+    expect(
+      await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
+    ).toStrictEqual([{ id: 3, name: 'pet3' }, { id: 1, name: 'pet' }]);
   });
 });

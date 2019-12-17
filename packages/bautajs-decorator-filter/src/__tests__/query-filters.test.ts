@@ -24,7 +24,7 @@ describe('query filter decorator', () => {
   });
 
   test('should filter the given array with the given loobpack filters', async () => {
-    bautajs.operations.v1.operation1.validateResponses(false).setup(p => {
+    bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
       p.push((_, ctx) => [{ id: ctx.req.id, name: 'pet' }, { id: ctx.req.id, name: 'pet2' }]).push(
         queryFilters()
       );

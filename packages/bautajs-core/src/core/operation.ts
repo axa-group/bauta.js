@@ -12,40 +12,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import OpenapiDefaultSetter from 'openapi-default-setter';
-import OpenapiRequestValidator from 'openapi-request-validator';
-import OpenapiResponseValidator from 'openapi-response-validator';
 import { OpenAPI } from 'openapi-types';
+import Ajv from 'ajv';
 import PCancelable from 'p-cancelable';
 import {
   BautaJSInstance,
   Context,
   ContextData,
-  OpenAPIComponents,
   Operation,
-  SwaggerComponents,
   EventTypes,
   OperatorFunction,
   PipelineSetup,
+  Route,
+  RouteSchema,
+  Dictionary,
   TResponse
 } from '../utils/types';
 import { buildDefaultPipeline } from '../utils/default-pipeline';
-import { ValidationError } from './validation-error';
 import { logger } from '../logger';
 import { createContext } from '../utils/create-context';
 import { pipelineBuilder } from '../decorators/pipeline';
+import {
+  bodySchema,
+  buildSchemaCompiler,
+  querystringSchema,
+  paramsSchema,
+  headersSchema,
+  responseSchema,
+  validateRequest,
+  validateResponse,
+  getDefaultStatusCode
+} from '../open-api/build-validators';
 
 export class OperationBuilder implements Operation {
-  public static create(
-    id: string,
-    operationSchema: OpenAPI.Operation,
-    components: SwaggerComponents | OpenAPIComponents,
-    bautajs: BautaJSInstance
-  ): Operation {
-    return new OperationBuilder(id, operationSchema, components, bautajs);
+  public static create(route: Route, version: string, bautajs: BautaJSInstance): Operation {
+    return new OperationBuilder(route, version, bautajs);
   }
 
-  public version: string;
+  public id: string;
+
+  public schema: OpenAPI.Operation;
 
   public nextVersionOperation?: Operation;
 
@@ -57,23 +63,21 @@ export class OperationBuilder implements Operation {
 
   private setupDone: boolean = false;
 
-  private readonly validation: any = {
-    validateReqBuilder: null,
-    validateResBuilder: null,
-    validateReqEnabled: false,
-    validateResEnabled: false
-  };
+  private validators: Dictionary<Dictionary<Ajv.ValidateFunction> | Ajv.ValidateFunction> = {};
+
+  private requestValidationEnabled: Boolean = true;
+
+  private responseValidationEnabled: Boolean = true;
 
   constructor(
-    public readonly id: string,
-    public readonly schema: OpenAPI.Operation,
-    components: SwaggerComponents | OpenAPIComponents,
+    public readonly route: Route,
+    public version: string,
     private readonly bautajs: BautaJSInstance
   ) {
     this.operatorFunction = buildDefaultPipeline();
-    this.deprecated = schema.deprecated === undefined ? false : schema.deprecated;
-    this.version = components.apiVersion;
-    this.generateValidators(schema, components);
+    this.id = route.operationId;
+    this.schema = route.openapiSource;
+    this.deprecated = route.openapiSource.deprecated === true;
   }
 
   public isSetup() {
@@ -97,76 +101,58 @@ export class OperationBuilder implements Operation {
   }
 
   public validateRequests(toggle: boolean): Operation {
-    if (this.validation) {
-      this.validation.validateReqEnabled = toggle;
+    if (this.validators) {
+      this.requestValidationEnabled = toggle;
     }
     return this;
   }
 
   public validateResponses(toggle: boolean): Operation {
-    if (this.validation) {
-      this.validation.validateResEnabled = toggle;
+    if (this.validators) {
+      this.responseValidationEnabled = toggle;
     }
     return this;
   }
 
-  private generateValidators(
-    operationSchema: any,
-    components: SwaggerComponents | OpenAPIComponents
-  ): void {
-    let schemas: any;
-    if (components.swaggerVersion === '2') {
-      schemas = (components as SwaggerComponents).definitions;
-    } else {
-      // eslint-disable-next-line prefer-destructuring
-      schemas = (components as OpenAPIComponents).schemas;
+  public validateRequest(toggle: boolean): Operation {
+    if (this.validators) {
+      this.requestValidationEnabled = toggle;
     }
-    const validateRequest = new OpenapiRequestValidator({
-      ...operationSchema,
-      schemas
-    });
+    return this;
+  }
 
-    const validateResponse = new OpenapiResponseValidator({
-      ...operationSchema,
-      components: { schemas },
-      definitions: schemas
-    });
-
-    // BUG related to: https://github.com/kogosoftwarellc/open-api/issues/381
-    const defaultSetter = new OpenapiDefaultSetter({ parameters: [], ...operationSchema });
-    this.validation.validateReqBuilder = (req: any) => {
-      defaultSetter.handle(req);
-      if (!req.headers) {
-        // if is not a Nodejs request set the content-type to force validation
-        req.headers = { 'content-type': 'application/json' };
-      }
-
-      const verror = validateRequest.validateRequest(req);
-      if (verror && verror.errors && verror.errors.length > 0) {
-        throw new ValidationError(
-          'The request was not valid',
-          verror.errors,
-          verror.status === 400 ? 422 : verror.status
-        );
-      }
-
-      return null;
-    };
-    this.validation.validateResBuilder = (res: any, statusCode: number = 200) => {
-      const verror = validateResponse.validateResponse(statusCode, res);
-
-      if (verror && verror.errors && verror.errors.length > 0) {
-        throw new ValidationError(verror.message, verror.errors, 500, res);
-      }
-
-      return null;
-    };
-    if (components.validateRequest === undefined || components.validateRequest === true) {
-      this.validateRequests(true);
+  public validateResponse(toggle: boolean): Operation {
+    if (this.validators) {
+      this.responseValidationEnabled = toggle;
     }
+    return this;
+  }
 
-    if (components.validateResponse === undefined || components.validateResponse === true) {
-      this.validateResponses(true);
+  private generateValidators(operationSchema: RouteSchema): void {
+    if (operationSchema.body) {
+      this.validators[bodySchema.toString()] = buildSchemaCompiler(operationSchema.body);
+    }
+    if (operationSchema.querystring) {
+      this.validators[querystringSchema.toString()] = buildSchemaCompiler(
+        operationSchema.querystring
+      );
+    }
+    if (operationSchema.params) {
+      this.validators[paramsSchema.toString()] = buildSchemaCompiler(operationSchema.params);
+    }
+    if (operationSchema.headers) {
+      this.validators[headersSchema.toString()] = buildSchemaCompiler(operationSchema.headers);
+    }
+    if (operationSchema.response) {
+      this.validators[responseSchema.toString()] = Object.keys(operationSchema.response).reduce(
+        (acc: Dictionary<Ajv.ValidateFunction>, statusCode: string) => {
+          if (operationSchema.response && operationSchema.response[statusCode]) {
+            acc[statusCode] = buildSchemaCompiler(operationSchema.response[statusCode]);
+          }
+          return acc;
+        },
+        {}
+      );
     }
   }
 
@@ -175,7 +161,7 @@ export class OperationBuilder implements Operation {
 
     if (responses) {
       // If default is not defined in the schema, we take as default response that for 200 response.
-      const defaultStatus = responses.default ? 'default' : 200;
+      const defaultStatus = getDefaultStatusCode(responses);
       const targetStatusCode = statusCode || defaultStatus;
 
       if (responses[targetStatusCode] && responses[targetStatusCode].content) {
@@ -206,7 +192,7 @@ export class OperationBuilder implements Operation {
     }
 
     const isValidationFunctionSet =
-      this.validation.validateResEnabled === true && !!context.validateResponse;
+      this.responseValidationEnabled === true && !!context.validateResponse;
 
     const isResponseFinished = context.res.headersSent || context.res.finished;
 
@@ -216,21 +202,26 @@ export class OperationBuilder implements Operation {
   public run(ctx: ContextData = {}): PCancelable<any> {
     const context: Context = createContext(ctx);
 
-    if (this.validation.validateReqBuilder) {
+    if (this.requestValidationEnabled) {
       Object.assign(context, {
         validateRequest: (request: any = ctx.req) =>
-          this.validation.validateReqBuilder && this.validation.validateReqBuilder(request)
+          validateRequest(this.validators as Dictionary<Ajv.ValidateFunction>, request)
       });
     }
 
-    if (this.validation.validateResBuilder) {
+    if (this.responseValidationEnabled) {
       Object.assign(context, {
-        validateResponse: this.validation.validateResBuilder
+        validateResponse: (response: any, statusCode?: number | string) =>
+          validateResponse(
+            this.validators as Dictionary<Dictionary<Ajv.ValidateFunction>>,
+            response,
+            statusCode
+          )
       });
     }
 
     // Validate the request
-    if (context.validateRequest && this.validation.validateReqEnabled === true) {
+    if (context.validateRequest && this.requestValidationEnabled === true) {
       try {
         context.validateRequest(ctx.req);
       } catch (e) {
@@ -267,6 +258,11 @@ export class OperationBuilder implements Operation {
   }
 
   public setup(pipelineSetup: PipelineSetup<undefined>): void {
+    // Generate validators on setup operations only
+    if (!this.setupDone) {
+      this.generateValidators(this.route.schema);
+    }
+
     this.operatorFunction = pipelineBuilder<undefined, any>(pipelineSetup, param => {
       logger.debug(
         `[OK] ${param.name || 'anonymous function or pipeline'} pushed to .${this.version}.${

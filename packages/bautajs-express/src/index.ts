@@ -12,29 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import path from 'path';
 import compression from 'compression';
 import chalk from 'chalk';
 import express, { Application, Request, Response } from 'express';
 import http from 'http';
 import https from 'https';
 import routeOrder from 'route-order';
-import {
-  BautaJS,
-  BautaJSOptions,
-  Dictionary,
-  Document,
-  LoggerBuilder,
-  OpenAPIV2Document,
-  OpenAPIV3Document
-} from '@bautajs/core';
-import { Route, MiddlewareOptions, ICallback, EventTypes } from './types';
+import { BautaJS, BautaJSOptions, Document, LoggerBuilder, Operation } from '@bautajs/core';
+import { MiddlewareOptions, ICallback, EventTypes } from './types';
 import { initMorgan, initBodyParser, initHelmet, initCors, initExplorer } from './middlewares';
+import { getContentType } from './utils';
 
 export * from './types';
-
-function toExpressParams(part: string) {
-  return part.replace(/\{([^}]+)}/g, ':$1');
-}
 
 /**
  * Create an Express server using the BautaJS library with almost 0 configuration
@@ -52,8 +42,6 @@ function toExpressParams(part: string) {
  * bautaJS.listen();
  */
 export class BautaJSExpress extends BautaJS {
-  private routes: Dictionary<Dictionary<Route>> = {};
-
   /**
    * @type {Application}
    * @memberof BautaJSExpress
@@ -68,123 +56,98 @@ export class BautaJSExpress extends BautaJS {
     this.moduleLogger = new LoggerBuilder('bautajs-express');
   }
 
-  private addRoute(expressRoute: string) {
-    Object.keys(this.routes[expressRoute]).forEach((method: string) => {
-      const { operation, responses, produces, isSwagger }: Route = this.routes[expressRoute][
-        method
-      ];
-      // @ts-ignore
-      this.app[method](expressRoute, (req: Request, res: Response, next: ICallback) => {
-        const startTime = new Date();
-        const resolverWrapper = (response: any) => {
-          if (res.headersSent || res.finished) {
-            return null;
-          }
+  private addRoute(operation: Operation) {
+    const method = operation.route.method.toLowerCase() as keyof express.Application;
+    const responses = operation.route.schema.response;
+    const { url, basePath } = operation.route;
+    const route = path.normalize(basePath + url);
 
-          if (!res.statusCode) {
-            res.status(200);
-          }
+    this.app[method](route, (req: Request, res: Response, next: ICallback) => {
+      const startTime = new Date();
+      const resolverWrapper = (response: any) => {
+        if (res.headersSent || res.finished) {
+          return null;
+        }
 
-          if (responses && responses[res.statusCode]) {
-            const contentType = !isSwagger
-              ? responses[res.statusCode].content &&
-                Object.keys(responses[res.statusCode].content)[0]
-              : produces && produces[0];
-            res.set({
-              ...(contentType ? { 'Content-type': contentType } : {}),
-              ...responses[res.statusCode].headers,
-              ...res.getHeaders()
-            });
-          }
+        if (!res.statusCode) {
+          res.status(200);
+        }
 
-          res.json(response || {});
-          const finalTime = new Date().getTime() - startTime.getTime();
+        if (responses && responses[res.statusCode]) {
+          const contentType = getContentType(operation.route, res.statusCode);
+          res.set({
+            ...(contentType ? { 'Content-type': contentType } : {}),
+            ...responses[res.statusCode].headers,
+            ...res.getHeaders()
+          });
+        }
 
-          this.moduleLogger.info(
-            `The operation execution of ${expressRoute} took: ${
-              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
-            } ms`
+        res.json(response || {});
+        const finalTime = new Date().getTime() - startTime.getTime();
+
+        this.moduleLogger.info(
+          `The operation execution of ${url} took: ${
+            typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
+          } ms`
+        );
+        return res.end();
+      };
+      const rejectWrapper = (response: any) => {
+        if (res.headersSent || res.finished) {
+          this.moduleLogger.error(
+            'Response has been sent to the user, but the promise throwed an error',
+            response
           );
-          return res.end();
-        };
-        const rejectWrapper = (response: any) => {
-          if (res.headersSent || res.finished) {
-            this.moduleLogger.error(
-              'Response has been sent to the user, but the promise throwed an error',
-              response
-            );
-            return null;
-          }
+          return null;
+        }
 
-          res.status(response.statusCode || 500);
-          const finalTime = new Date().getTime() - startTime.getTime();
-          this.moduleLogger.info(
-            `The operation execution of ${expressRoute} took: ${
-              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
-            } ms`
-          );
+        res.status(response.statusCode || 500);
+        const finalTime = new Date().getTime() - startTime.getTime();
+        this.moduleLogger.info(
+          `The operation execution of ${url} took: ${
+            typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
+          } ms`
+        );
 
-          return next(response);
-        };
+        return next(response);
+      };
 
-        const op = operation.run({ req, res });
-        req.on('abort', () => {
-          op.cancel('Request was aborted by the client intentionally');
-        });
-        req.on('timeout', () => {
-          op.cancel('Request was aborted by the client because of a timeout');
-        });
-
-        op.then(resolverWrapper).catch(rejectWrapper);
+      const op = operation.run({ req, res });
+      req.on('abort', () => {
+        op.cancel('Request was aborted by the client intentionally');
+      });
+      req.on('timeout', () => {
+        op.cancel('Request was aborted by the client because of a timeout');
       });
 
-      this.moduleLogger.info(
-        '[OK]',
-        chalk.yellowBright(
-          `[${method.toUpperCase()}] ${expressRoute} operation exposed on the API from ${
-            operation.version
-          }.${operation.id}`
-        )
-      );
-      this.moduleLogger.events.emit(EventTypes.EXPOSE_OPERATION, {
-        operation,
-        route: expressRoute
-      });
+      op.then(resolverWrapper).catch(rejectWrapper);
+    });
+
+    this.moduleLogger.info(
+      '[OK]',
+      chalk.yellowBright(
+        `[${method.toUpperCase()}] ${url} operation exposed on the API from ${operation.version}.${
+          operation.id
+        }`
+      )
+    );
+    this.moduleLogger.events.emit(EventTypes.EXPOSE_OPERATION, {
+      operation,
+      route: url
     });
   }
 
-  private updateRoutes() {
-    this.apiDefinitions.forEach(apiDefinition => {
-      const openAPIV3Def = apiDefinition as OpenAPIV3Document;
-      const openAPIV2Def = apiDefinition as OpenAPIV2Document;
-      const basePath: string | undefined =
-        openAPIV3Def.servers && openAPIV3Def.servers[0].url
-          ? openAPIV3Def.servers[0].url
-          : openAPIV2Def.basePath;
-
-      Object.keys(apiDefinition.paths).forEach(path => {
-        const route = path
-          .substring(1)
-          .split('/')
-          .map(toExpressParams)
-          .join('/');
-        const expressRoute = basePath + route;
-
-        this.routes[expressRoute] = {};
-
-        Object.keys(apiDefinition.paths[path]).forEach(method => {
-          const { operationId, responses, produces } = apiDefinition.paths[path][method];
-          this.routes[expressRoute][method] = {
-            operation: this.operations[apiDefinition.info.version][operationId],
-            responses,
-            produces,
-            isSwagger: !openAPIV3Def.openapi
-          };
-        });
+  private processOperations() {
+    return Object.values(this.operations).reduce((routes, versions) => {
+      Object.values(versions).forEach(operation => {
+        if (!operation.isPrivate()) {
+          // eslint-disable-next-line no-param-reassign
+          routes[operation.route.url] = operation;
+        }
       });
-    });
 
-    return this.routes;
+      return routes;
+    }, {});
   }
 
   /**
@@ -235,13 +198,12 @@ export class BautaJSExpress extends BautaJS {
     this.app.use(compression());
     initBodyParser(this.app, options.bodyParser);
 
-    this.updateRoutes();
-
-    Object.keys(this.routes)
+    const routes = this.processOperations();
+    Object.keys(routes)
       .sort(routeOrder())
-      .forEach(this.addRoute.bind(this));
+      .forEach(route => this.addRoute(routes[route]));
 
-    initExplorer(this.app, this.apiDefinitions, options.explorer);
+    initExplorer(this.app, this.apiDefinitions, this.operations, options.explorer);
 
     return this;
   }

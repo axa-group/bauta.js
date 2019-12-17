@@ -29,7 +29,7 @@
             "200": {
               "description": "A paged array of pets",
               "schema": {
-                "$ref": "#/components/schemas/Pets"
+                "$ref": "#/definitions/Pets"
               }
             }
           }
@@ -55,7 +55,7 @@
       "Pets": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/Pet"
+          "$ref": "#/definitions/Pet"
         }
       },
       "Error": {

@@ -13,12 +13,9 @@
  * limitations under the License.
  */
 import fastGlob from 'fast-glob';
-import OpenapiSchemaValidator, { OpenAPISchemaValidatorResult } from 'openapi-schema-validator';
-import { IJsonSchema, OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { resolve } from 'path';
 import { OperationBuilder } from './core/operation';
 import { logger } from './logger';
-import { getComponents, getStrictDefinition } from './utils/strict-definitions';
 import {
   Dictionary,
   BautaJSInstance,
@@ -26,51 +23,9 @@ import {
   Document,
   EventTypes,
   Logger,
-  Operation,
   Operations
 } from './utils/types';
-
-const extendOpenapiSchemaJson = require('./validators/extend-openapi-schema.json');
-
-interface SchemaCache {
-  path: string;
-  method: string;
-  apiDefinitionIndex: number;
-  operation: Operation;
-}
-
-function setDefinitionDefaults(apiDefinition: Document): Document {
-  return {
-    ...apiDefinition,
-    validateRequest: apiDefinition.validateRequest !== false,
-    validateResponse: apiDefinition.validateResponse !== false
-  };
-}
-
-function parseApiDefinition(apiDefinition: Document) {
-  const newApiDefinition = setDefinitionDefaults(apiDefinition);
-  const apiDefinitionValidator = new OpenapiSchemaValidator({
-    extensions: extendOpenapiSchemaJson as IJsonSchema,
-    version: (apiDefinition as OpenAPIV3.Document).openapi ? 3 : 2
-  });
-
-  const validation = apiDefinitionValidator.validate(apiDefinition);
-  if (validation.errors.length > 0) {
-    throw new Error(
-      `Invalid API definitions, "${
-        (validation as OpenAPISchemaValidatorResult).errors[0].dataPath
-      }" ${(validation as OpenAPISchemaValidatorResult).errors[0].message}`
-    );
-  }
-
-  const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
-  Object.keys(newApiDefinition.paths).forEach(path => {
-    paths[path] = { ...newApiDefinition.paths[path] };
-  });
-  newApiDefinition.paths = paths;
-
-  return newApiDefinition;
-}
+import Parser from './open-api/parser';
 
 /**
  *
@@ -95,8 +50,6 @@ function parseApiDefinition(apiDefinition: Document) {
  * await bautaJS.operations.v1.find.run({});
  */
 export class BautaJS implements BautaJSInstance {
-  private schemaCache: SchemaCache[] = [];
-
   /**
    * @type {Operations}
    * @memberof BautaJS
@@ -116,15 +69,12 @@ export class BautaJS implements BautaJSInstance {
    */
   public readonly logger: Logger;
 
-  /**
-   * An array of OpenAPI definitions
-   * @type {Document[]}
-   * @memberof BautaJS
-   */
-  public readonly apiDefinitions: Document[];
-
-  constructor(apiDefinitions: Document[], options: BautaJSOptions = {}) {
-    const parsedApiDefinitions = apiDefinitions.map(parseApiDefinition);
+  constructor(public readonly apiDefinitions: Document[], options: BautaJSOptions = {}) {
+    const parsedApiDefinitions = apiDefinitions.map(apiDefinition => {
+      const parser = new Parser();
+      parser.parse(apiDefinition);
+      return parser;
+    });
 
     this.staticConfig = options.staticConfig;
     /**
@@ -146,30 +96,9 @@ export class BautaJS implements BautaJSInstance {
         [this.operations]
       );
     }
-
-    // Filter api definitions
-    this.apiDefinitions = this.filterApiDefinitions(parsedApiDefinitions);
-    // Clean the cache
-    this.schemaCache = [];
   }
 
-  private filterApiDefinitions(defaultApiDefinitions: Document[]) {
-    // No need to copy definitions, already done on setDefinitionDefaults
-    this.schemaCache.forEach(({ path, method, operation, apiDefinitionIndex }) => {
-      if (operation.isPrivate()) {
-        // eslint-disable-next-line
-        delete defaultApiDefinitions[apiDefinitionIndex].paths[path][method];
-        if (Object.keys(defaultApiDefinitions[apiDefinitionIndex].paths[path]).length === 0) {
-          // eslint-disable-next-line
-          delete defaultApiDefinitions[apiDefinitionIndex].paths[path];
-        }
-      }
-    });
-
-    return defaultApiDefinitions.map(ap => getStrictDefinition(ap));
-  }
-
-  private registerOperations(apiDefinitions: Document[]): Operations {
+  private registerOperations(apiDefinitions: Parser[]): Operations {
     const operations: Operations = new Proxy(
       {},
       {
@@ -184,51 +113,37 @@ export class BautaJS implements BautaJSInstance {
         }
       }
     );
+
     apiDefinitions.forEach((apiDefinition, apiIndex) => {
-      const apiVersion = apiDefinition.info.version;
-      const components = getComponents(apiDefinition);
-      let prevApiVersion: string;
-      if (apiIndex > 0) {
-        prevApiVersion = apiDefinitions[apiIndex - 1].info.version;
-      }
-      operations[apiVersion] = new Proxy(
-        {},
-        {
-          get(target: Dictionary<any>, prop: string) {
-            if (!Object.prototype.hasOwnProperty.call(target, prop)) {
-              throw new Error(
-                `[ERROR] API operationId "${prop}" not found on your apiDefinitions[${apiVersion}].paths[path][method].operationId`
-              );
-            }
-
-            return target[prop];
-          }
+      const document = apiDefinition.document();
+      if (document) {
+        const apiVersion = document.generic.info.version;
+        let prevApiVersion: string;
+        const previousDocument =
+          apiDefinitions[apiIndex - 1] && apiDefinitions[apiIndex - 1].document();
+        if (apiIndex > 0 && previousDocument) {
+          prevApiVersion = previousDocument.generic.info.version;
         }
-      );
+        operations[apiVersion] = new Proxy(
+          {},
+          {
+            get(target: Dictionary<any>, prop: string) {
+              if (!Object.prototype.hasOwnProperty.call(target, prop)) {
+                throw new Error(
+                  `[ERROR] API operationId "${prop}" not found on your apiDefinitions[${apiVersion}].paths[path][method].operationId`
+                );
+              }
 
-      const paths = Object.values(apiDefinition.paths);
-      paths.forEach((pathSchema, pathIndex) => {
-        const methods: OpenAPI.Operation[] = Object.values(pathSchema);
-        methods.forEach((operationSchema: OpenAPI.Operation, methodIndex: number) => {
-          if (!operationSchema.operationId) {
-            throw new Error(
-              `Operation id is a mandatory field on [${methods[methodIndex]}] ${paths[pathIndex]}`
-            );
+              return target[prop];
+            }
           }
+        );
 
-          const operation = OperationBuilder.create(
-            operationSchema.operationId,
-            operationSchema,
-            components,
-            this
-          );
+        document.routes.forEach(route => {
+          const operation = OperationBuilder.create(route, apiVersion, this);
 
-          this.schemaCache.push({
-            path: Object.keys(apiDefinition.paths)[pathIndex],
-            method: Object.keys(pathSchema)[methodIndex],
-            apiDefinitionIndex: apiIndex,
-            operation
-          });
+          operation.validateRequest(apiDefinition.validateRequest());
+          operation.validateResponse(apiDefinition.validateResponse());
 
           if (
             prevApiVersion &&
@@ -246,8 +161,9 @@ export class BautaJS implements BautaJSInstance {
             operation
           });
         });
-      });
+      }
     });
+
     return operations;
   }
 

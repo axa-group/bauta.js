@@ -19,39 +19,26 @@ import https from 'https';
 import { createHttpsAgent } from 'native-proxy-agent';
 import nock from 'nock';
 import path from 'path';
-import { BautaJSInstance, Context, Document, logger, LoggerBuilder } from '@bautajs/core';
+import {
+  BautaJSInstance,
+  Context,
+  Document,
+  logger,
+  LoggerBuilder,
+  createContext
+} from '@bautajs/core';
 import { ContextLogger } from '@bautajs/core/src';
 import { restDataSource, restDataSourceTemplate } from '../datasource-rest';
 import { CompiledRestProvider } from '../utils/types';
-
-class CancelableTokenBuilder {
-  private cancelStack: any[] = [];
-
-  public isCanceled: boolean = false;
-
-  cancel() {
-    this.cancelStack.forEach(onCancel => onCancel());
-  }
-
-  onCancel(fn: any) {
-    this.cancelStack.push(fn);
-  }
-}
 
 describe('datasource rest test', () => {
   let context: Context;
   let bautaInstance: BautaJSInstance;
   beforeEach(() => {
-    context = {
-      validateRequest: (request: any = {}) => request,
-      validateResponse: (response: any) => response,
-      req: {},
-      res: {},
-      data: {},
-      url: '',
-      logger: new LoggerBuilder('test'),
-      token: new CancelableTokenBuilder()
-    };
+    context = createContext({
+      req: { headers: { 'request-id': 1 } },
+      res: {}
+    });
     bautaInstance = {
       operations: {},
       staticConfig: {},
@@ -139,7 +126,7 @@ describe('datasource rest test', () => {
       const expectedData = {
         body: '{"password":"1234"}',
         headers:
-          '{"user-agent":"bautaJS","accept":"application/json","accept-encoding":"gzip, deflate","content-type":"application/json","content-length":19}',
+          '{"user-agent":"bautaJS","x-request-id":1,"accept":"application/json","accept-encoding":"gzip, deflate","content-type":"application/json","content-length":19}',
         method: 'POST',
         url: 'https://pets.com/v1/policies'
       };
@@ -226,7 +213,7 @@ describe('datasource rest test', () => {
       const expectedData = {
         body: 'someString',
         headers:
-          '{"user-agent":"bautaJS","accept":"application/json","accept-encoding":"gzip, deflate","content-length":10}',
+          '{"user-agent":"bautaJS","accept":"application/json","x-request-id":1,"accept-encoding":"gzip, deflate","content-length":10}',
         method: 'POST',
         url: 'https://pets.com/v1/policies'
       };
@@ -835,6 +822,9 @@ describe('datasource rest test', () => {
 
   describe('datasource compile', () => {
     test('datasource must compile complex templating properly as a function', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies/toto/documents')
+        .reply(200, {});
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -874,6 +864,9 @@ describe('datasource rest test', () => {
     });
 
     test('datasource must compile complex templating properly as a JSON template', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies/toto/documents')
+        .reply(200, {});
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -911,6 +904,9 @@ describe('datasource rest test', () => {
     });
 
     test('should merge global options with local options and local options have priority', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies/toto/documents')
+        .reply(200, {});
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -966,6 +962,9 @@ describe('datasource rest test', () => {
     });
 
     test('should compile a restDataSourceTemplate', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies/toto/documents')
+        .reply(200, {});
       const expected = {
         url: 'http://pets.com/v1/policies/toto/documents',
         method: 'GET',
@@ -1012,18 +1011,19 @@ describe('datasource rest test', () => {
   });
   describe('request cancelation', () => {
     test('should cancel the request if the a cancel is executed', async () => {
+      nock('https://pets.com')
+        .get('/v1/policies')
+        .reply(200, {});
+
       const myContext = { ...context, req: { id: 'toto' }, data: { bar: 'bar' } };
       const template = {
         providers: [
           {
             id: 'op1',
-            options(_: any, ctx: Context) {
+            options() {
               return {
-                url: `http://pets.com/v1/policies/${ctx.req.id}/documents`,
-                method: 'GET',
-                json: {
-                  foo: `${ctx.data.bar} dead live & robots ${ctx.data.bar}`
-                }
+                url: `http://pets.com/v1/policies`,
+                method: 'GET'
               };
             }
           }

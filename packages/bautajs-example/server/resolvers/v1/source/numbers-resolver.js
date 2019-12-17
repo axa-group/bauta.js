@@ -16,8 +16,8 @@ const transformResponse = response => {
 
 module.exports = resolver(operations => {
   operations.v1.randomYear
-    .validateRequests(false)
-    .validateResponses(false)
+    .validateRequest(false)
+    .validateResponse(false)
     .setup(p =>
       p.pipe(
         exampleRestDataSourceTemplate.obtainRandomYearFact(),
@@ -25,8 +25,8 @@ module.exports = resolver(operations => {
       )
     );
   operations.v1.randomYear2
-    .validateRequests(false)
-    .validateResponses(false)
+    .validateRequest(false)
+    .validateResponse(false)
     .setup(p =>
       p.pipe(
         exampleRestDataSource.obtainRandomYearFact(),
@@ -35,8 +35,8 @@ module.exports = resolver(operations => {
     );
 
   operations.v1.factNumber
-    .validateRequests(false)
-    .validateResponses(false)
+    .validateRequest(false)
+    .validateResponse(false)
     .setup(p =>
       p.pipe(
         exampleRestProviderTemplate(),
@@ -45,8 +45,8 @@ module.exports = resolver(operations => {
     );
 
   operations.v1.factNumber2
-    .validateRequests(false)
-    .validateResponses(false)
+    .validateRequest(false)
+    .validateResponse(false)
     .setup(p =>
       p.pipe(
         exampleRestProvider(),
