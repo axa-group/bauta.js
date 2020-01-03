@@ -27,9 +27,9 @@
   "dependencies": {
     "@bautajs/core": "2.2.2",
     "callsites": "3.1.0",
-    "deepmerge": "4.2.1",
-    "form-data": "2.5.1",
-    "got": "9.x",
+    "deepmerge": "4.2.2",
+    "form-data": "3.0.0",
+    "got": "^9.6.0",
     "is-plain-object": "3.0.0",
     "multipart-request-builder": "2.x",
     "native-proxy-agent": "2.x",

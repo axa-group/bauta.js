@@ -103,8 +103,8 @@ export function initExplorer(
       app.use(
         `/${apiDefinition.info.version}/explorer`,
         swaggerUiExpress.serve,
-        swaggerUiExpress.setup(null, {
-          url: openAPIPath
+        swaggerUiExpress.setup(undefined, {
+          swaggerUrl: openAPIPath
         })
       );
     });
@@ -120,12 +120,9 @@ export function initExplorer(
       app.use(
         `/${apiDefinition.info.version}/${opts.path || 'explorer'}`,
         swaggerUiExpress.serve,
-        swaggerUiExpress.setup(null, {
+        swaggerUiExpress.setup(undefined, {
           ...opt,
-          swaggerOptions: {
-            ...(opts.swaggerOptions ? opts.swaggerOptions : {}),
-            url: openAPIPath
-          }
+          swaggerUrl: openAPIPath
         })
       );
     });

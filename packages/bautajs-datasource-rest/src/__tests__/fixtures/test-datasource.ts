@@ -7,6 +7,7 @@ export default restDataSource({
       options(_, ctx) {
         return {
           someVariableOption: ctx.req.variableOption,
+          method: 'GET',
           url: 'https://google.com/'
         };
       }

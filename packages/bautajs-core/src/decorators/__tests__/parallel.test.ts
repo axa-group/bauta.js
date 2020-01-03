@@ -34,6 +34,9 @@ describe('parallel decorator', () => {
 
     expect(
       await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
-    ).toStrictEqual([{ id: 3, name: 'pet3' }, { id: 1, name: 'pet' }]);
+    ).toStrictEqual([
+      { id: 3, name: 'pet3' },
+      { id: 1, name: 'pet' }
+    ]);
   });
 });

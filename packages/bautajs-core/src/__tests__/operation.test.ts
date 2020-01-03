@@ -318,12 +318,7 @@ describe('operation class tests', () => {
       operationTest
         .validateResponse(false)
         .validateRequest(false)
-        .setup(p =>
-          p.pipe(
-            () => 'next3',
-            pp
-          )
-        );
+        .setup(p => p.pipe(() => 'next3', pp));
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
@@ -480,15 +475,19 @@ describe('operation class tests', () => {
     });
 
     test('should allow a valid schema', async () => {
-      operationTest
-        .validateResponse(false)
-        .setup(p =>
-          p
-            .push((_, ctx) => ctx.validateRequest())
-            .push(() => [{ id: 1, name: '2' }, { id: 3, name: '2' }])
-        );
+      operationTest.validateResponse(false).setup(p =>
+        p
+          .push((_, ctx) => ctx.validateRequest())
+          .push(() => [
+            { id: 1, name: '2' },
+            { id: 3, name: '2' }
+          ])
+      );
 
-      const expected = [{ id: 1, name: '2' }, { id: 3, name: '2' }];
+      const expected = [
+        { id: 1, name: '2' },
+        { id: 3, name: '2' }
+      ];
       const body = {
         grant_type: 'password',
         username: 'user',

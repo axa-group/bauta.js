@@ -45,8 +45,6 @@ describe('datasource rest test', () => {
       logger: new LoggerBuilder('test'),
       apiDefinitions: {} as Document[]
     };
-    nock.disableNetConnect();
-    nock.enableNetConnect('127.0.0.1');
   });
   afterEach(() => {
     nock.cleanAll();
@@ -117,9 +115,6 @@ describe('datasource rest test', () => {
   });
 
   describe('logs on requests', () => {
-    afterEach(() => {
-      nock.cleanAll();
-    });
     test('should log the requests data on debug mode', async () => {
       process.env.LOG_LEVEL = 'debug';
       const expectedMsg = 'request-logger: Request data: ';
@@ -257,9 +252,6 @@ describe('datasource rest test', () => {
   });
 
   describe('logs on response', () => {
-    afterEach(() => {
-      nock.cleanAll();
-    });
     test('should log an error if the response body could not be parsed', async () => {
       process.env.LOG_LEVEL = 'debug';
       // With nock got is not able to get the response method, doing a normal request this field is returned
@@ -683,6 +675,9 @@ describe('datasource rest test', () => {
     });
 
     test('should allow to set a custom agent', async () => {
+      nock('http://pets.com')
+        .post('/v1/policies')
+        .reply(200, {});
       await new Promise(done => {
         https.request = (options: any) => {
           expect(options.agent.keepAliveMsecs).toStrictEqual(5000);
@@ -822,7 +817,7 @@ describe('datasource rest test', () => {
 
   describe('datasource compile', () => {
     test('datasource must compile complex templating properly as a function', async () => {
-      nock('https://pets.com')
+      nock('http://pets.com')
         .get('/v1/policies/toto/documents')
         .reply(200, {});
       const expected = {
@@ -864,7 +859,7 @@ describe('datasource rest test', () => {
     });
 
     test('datasource must compile complex templating properly as a JSON template', async () => {
-      nock('https://pets.com')
+      nock('http://pets.com')
         .get('/v1/policies/toto/documents')
         .reply(200, {});
       const expected = {
@@ -904,7 +899,7 @@ describe('datasource rest test', () => {
     });
 
     test('should merge global options with local options and local options have priority', async () => {
-      nock('https://pets.com')
+      nock('http://pets.com')
         .get('/v1/policies/toto/documents')
         .reply(200, {});
       const expected = {
@@ -962,7 +957,7 @@ describe('datasource rest test', () => {
     });
 
     test('should compile a restDataSourceTemplate', async () => {
-      nock('https://pets.com')
+      nock('http://pets.com')
         .get('/v1/policies/toto/documents')
         .reply(200, {});
       const expected = {
@@ -1011,7 +1006,7 @@ describe('datasource rest test', () => {
   });
   describe('request cancelation', () => {
     test('should cancel the request if the a cancel is executed', async () => {
-      nock('https://pets.com')
+      nock('http://pets.com')
         .get('/v1/policies')
         .reply(200, {});
 

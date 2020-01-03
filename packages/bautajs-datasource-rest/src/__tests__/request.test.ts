@@ -22,7 +22,6 @@ describe('request decorator', () => {
   let bautajs: BautaJS;
   beforeEach(() => {
     nock('https://google.com')
-      .persist()
       .get('/')
       .reply(200, [{ id: 3, name: 'pet3' }]);
 
