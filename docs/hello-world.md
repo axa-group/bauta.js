@@ -4,7 +4,6 @@ The goal of this section is to describe the OperatorFunctions required to have b
 
 ## Prerequisites
 - An empty project
-- Artifactory configured
 - Project already initialized (it has a package.json). ``npm init``
 - A npm start script on the package.json with the command `node server.js`
 
