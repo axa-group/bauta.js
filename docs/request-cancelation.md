@@ -37,7 +37,7 @@ module.exports = resolver((operations) => {
 
 In the example of above if the request is canceled before complete all OperatorFunctions, an error will be thrown and the pending OperatorFunctions won't be executed.
 
-- In case of a request to a datasource, if a request is canceled, the request to the third party API will be discarded.
+- In case of a request to a provider, if a request is canceled, the request to the third party API will be discarded.
 
 ## Cancel the pipeline manually
 

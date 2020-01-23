@@ -1,22 +1,12 @@
-const { restDataSource } = require('@bautajs/datasource-rest');
+const { restProvider } = require('@bautajs/datasource-rest');
 
-module.exports = restDataSource({
-  options: {
-    cache: new Map()
-  },
-  providers: [
-    {
-      id: 'provider1',
-      options(_, ctx, $static) {
-        return {
-          reqId: ctx.req.query.a,
-          method: 'GET',
-          url: `https://jsonplaceholder.typicode.com/posts?limit=${ctx.req.query.limit}`,
-          headers: {
-            'custom-header': $static.someVar
-          }
-        };
-      }
+module.exports.provider1 = restProvider((client, _, ctx, bautajs) => {
+  return client.get(`https://jsonplaceholder.typicode.com/posts?limit=${ctx.req.query.limit}`, {
+    cache: new Map(),
+    reqId: ctx.req.query.a,
+    method: 'GET',
+    headers: {
+      'custom-header': bautajs.staticConfig.someVar
     }
-  ]
+  });
 });

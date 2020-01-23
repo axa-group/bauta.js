@@ -51,7 +51,7 @@ import Parser from './open-api/parser';
  *
  * const bautaJS = new BautaJS(apiDefinitions, {
  *  resolversPath:  './resolvers/*-resolver.js',
- *  dataSourceStatic: static,
+ *  staticConfig: static,
  * });
  *
  * // Assuming we have an api definition with version equals to 'v1' and have an operationId called 'find' we can run the following code:

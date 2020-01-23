@@ -10,6 +10,12 @@ It allows to do requests to third party APIs using [got](https://github.com/sind
   npm install @bautajs/datasource-rest
 ```
 
+## Features
+
+- Logs on response and requests via the `bautajs` context logger.
+- Proxy Agent with no_proxy and http_proxy env variables support [native-proxy-agent](https://github.axa.com/Digital/native-proxy-agent).
+- Add `x-request-id` on every request done coming from the `bautajs` context.id.
+- Request (promise and stream) cancellation perfectly integrated with `@bautajs/express` client cancellation events. 
 
 ## Usage
 
@@ -17,39 +23,28 @@ Create the datasource
 
 ```js
   // my-datasource.js
-const { restDataSource } = require('@bautajs/datasource-rest');
+const { restProvider } = require('@bautajs/datasource-rest');
 
-module.exports = restDataSource({
-  providers:[
-    {
-      id:"test",
-      options(_, ctx, $static){
-        const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
+module.exports.testProvider = restProvider((client, _, ctx, bautajs) => {
+  const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
 
-        return {
-          url: $static.config.url,
-          json: true,
-          headers: {
-            "Accept-Language": acceptLanguage,
-            "user-agent": ctx.req.headers['user-agent']
-          }
-        }
-      }
-    }
-  ]
+  return client.get(bautajs.staticConfig.config.url, {
+    headers: {
+      "Accept-Language": acceptLanguage,
+      "user-agent": ctx.req.headers['user-agent']
+    }s
+  })
 });
 ```
-
-Use it on your resolver. Note the datasource is exposed by its `id`.
 
 ```js
 // my-resolver.js
 const { resolver } = require('@bautajs/express');
-const { test } = require('./my-datasource');
+const { testProvider } = require('./my-datasource');
 
 module.exports = resolver((operations) => {
   operations.v1.findCats.setup(p => 
-    p.push(test())
+    p.pipe(testProvider())
   )
 });
 ```

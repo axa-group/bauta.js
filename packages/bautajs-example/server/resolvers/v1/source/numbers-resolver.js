@@ -1,10 +1,5 @@
-const { resolver, pipelineBuilder, match } = require('@bautajs/core');
-const {
-  exampleRestDataSourceTemplate,
-  exampleRestDataSource,
-  exampleRestProviderTemplate,
-  exampleRestProvider
-} = require('./numbers-datasource');
+const { resolver } = require('@bautajs/core');
+const { exampleRestProviderYear, exampleRestProvider } = require('./numbers-datasource');
 
 const transformResponse = response => {
   const result = {
@@ -18,39 +13,19 @@ module.exports = resolver(operations => {
   operations.v1.randomYear
     .validateRequest(false)
     .validateResponse(false)
-    .setup(p =>
-      p.pipe(
-        exampleRestDataSourceTemplate.obtainRandomYearFact(),
-        transformResponse
-      )
-    );
+    .setup(p => p.pipe(exampleRestProviderYear(), transformResponse));
   operations.v1.randomYear2
     .validateRequest(false)
     .validateResponse(false)
-    .setup(p =>
-      p.pipe(
-        exampleRestDataSource.obtainRandomYearFact(),
-        transformResponse
-      )
-    );
+    .setup(p => p.pipe(exampleRestProviderYear(), transformResponse));
 
   operations.v1.factNumber
     .validateRequest(false)
     .validateResponse(false)
-    .setup(p =>
-      p.pipe(
-        exampleRestProviderTemplate(),
-        transformResponse
-      )
-    );
+    .setup(p => p.pipe(exampleRestProvider(), transformResponse));
 
   operations.v1.factNumber2
     .validateRequest(false)
     .validateResponse(false)
-    .setup(p =>
-      p.pipe(
-        exampleRestProvider(),
-        transformResponse
-      )
-    );
+    .setup(p => p.pipe(exampleRestProvider(), transformResponse));
 });

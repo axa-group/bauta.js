@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /*
  * Copyright (c) AXA Group Operations Spain S.A.
  *
@@ -20,239 +21,212 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import Events from 'events';
-import fs from 'fs';
-import http from 'http';
-import https from 'https';
-import { createHttpsAgent } from 'native-proxy-agent';
 import nock from 'nock';
-import path from 'path';
-import {
-  BautaJSInstance,
-  Context,
-  Document,
-  logger,
-  LoggerBuilder,
-  createContext
-} from '@bautajs/core';
-import { ContextLogger } from '@bautajs/core/src';
-import { restDataSource, restDataSourceTemplate } from '../datasource-rest';
-import { CompiledRestProvider } from '../utils/types';
+import { createContext, ContextLogger, BautaJS, Document, LoggerBuilder } from '@bautajs/core';
+import { CancelableRequest, ResponseStream } from 'got';
+import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
-describe('datasource rest test', () => {
-  let context: Context;
-  let bautaInstance: BautaJSInstance;
+describe('provider rest', () => {
+  let bautajs: BautaJS;
   beforeEach(() => {
-    context = createContext({
-      req: { headers: { 'request-id': 1 } },
-      res: {}
-    });
-    bautaInstance = {
-      operations: {},
-      staticConfig: {},
-      logger: new LoggerBuilder('test'),
-      apiDefinitions: {} as Document[]
-    };
+    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
   });
+
   afterEach(() => {
     nock.cleanAll();
   });
-  describe('request alias features', () => {
-    test('should allow a request with application/json header using the field json as an object', async () => {
-      const expected = { bender: 'ok' };
-      nock('https://pets.com')
-        .post('/v1/policies', '{"field1":"value"}')
-        .reply(200, expected);
 
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              json: {
-                field1: 'value'
-              }
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({ resolveBodyOnly: true })(
-        null,
-        context,
-        bautaInstance
-      );
-      expect(response).toStrictEqual(expected);
+  describe('got extends defaults', () => {
+    test('should allow do a requests with GOT options and the built in agent', async () => {
+      const { restProvider } = require('../index');
+
+      const Id = '123';
+      nock('https://google.com')
+        .get(`/${Id}`)
+        .reply(200, [{ id: 3, name: 'pet3' }]);
+
+      const provider = restProvider((client, _, ctx) => {
+        return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
+      });
+
+      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
+        p.pipe((_, ctx) => {
+          ctx.data.myId = Id;
+        }, provider());
+      });
+
+      const response = await bautajs.operations.v1.operation1.run({
+        req: { id: 1 },
+        res: { statusCode: 200 }
+      });
+
+      expect(response).toStrictEqual([{ id: 3, name: 'pet3' }]);
     });
 
-    test('should allow a request with application/x-www-form-urlencoded using the field form as an object', async () => {
-      const expected = { bender: 'ok' };
-      nock('https://pets.com', {
-        reqheaders: {
-          'content-type': 'application/x-www-form-urlencoded'
-        }
-      })
-        .post('/v1/policies', {
-          field1: 'value'
-        })
-        .reply(200, expected);
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              form: {
-                field1: 'value'
-              }
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({ resolveBodyOnly: true })(
-        null,
-        context,
-        bautaInstance
+    test('should allow do a requests with GOT options and the built in agent with de default set up', async () => {
+      const { restProvider } = require('../index');
+      const Id = '123';
+      nock('https://google.com')
+        .get(`/${Id}`)
+        .reply(200, [{ id: 3, name: 'pet3' }]);
+
+      const provider = restProvider((client, _, ctx) => {
+        return client.get(`https://google.com/${ctx.data.myId}`);
+      });
+
+      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
+        p.pipe((_, ctx) => {
+          ctx.data.myId = Id;
+        }, provider());
+      });
+
+      const response = await bautajs.operations.v1.operation1.run({
+        req: { id: 1 },
+        res: { statusCode: 200 }
+      });
+
+      expect(response).toStrictEqual([{ id: 3, name: 'pet3' }]);
+    });
+  });
+
+  describe('request cancelation', () => {
+    test('should cancel the request if the a cancel is executed', async () => {
+      const { restProvider } = require('../index');
+      nock('http://pets.com')
+        .get('/v1/policies')
+        .reply(200, {});
+
+      const myContext = createContext({ req: {}, res: {} });
+      const provider = restProvider(client => {
+        return client.get('http://pets.com/v1/policies', { responseType: 'json' });
+      });
+      const request1 = provider()(null, myContext, bautajs);
+
+      myContext.token.cancel();
+
+      await expect(request1).rejects.toThrow(
+        expect.objectContaining({ message: 'Promise was canceled' })
       );
-      expect(response).toStrictEqual(expected);
+      expect((request1 as CancelableRequest<any>).isCanceled).toStrictEqual(true);
+    });
+
+    test('should cancel the request if the a cancel is executed and the request is an stream', async () => {
+      const { restProvider } = require('../index');
+      nock('http://pets.com')
+        .get('/v1/policies')
+        .reply(200, {});
+
+      const myContext = createContext({ req: {}, res: {} });
+      const provider = restProvider(client => {
+        return client.stream('http://pets.com/v1/policies', { responseType: 'json' });
+      });
+      const request1 = provider()(null, myContext, bautajs);
+
+      myContext.token.cancel();
+      await request1;
+      expect((request1 as ResponseStream<any>).destroyed).toStrictEqual(true);
     });
   });
 
   describe('logs on requests', () => {
+    beforeEach(() => {
+      jest.resetModules();
+    });
     test('should log the requests data on debug mode', async () => {
       process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = require('../index');
       const expectedMsg = 'request-logger: Request data: ';
       const expectedData = {
-        body: '{"password":"1234"}',
-        headers:
-          '{"user-agent":"bautaJS","x-request-id":1,"accept":"application/json","accept-encoding":"gzip, deflate","content-type":"application/json","content-length":19}',
+        body: '{"test":"1234"}',
+        headers: '{"user-agent":"got (https://github.com/sindresorhus/got)","x-request-id":1}',
         method: 'POST',
         url: 'https://pets.com/v1/policies'
       };
 
       nock('https://pets.com')
-        .post('/v1/policies')
+        .post('/v1/policies', { test: '1234' })
         .reply(200, { bender: 'ok' });
-
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              json: {
-                password: '1234'
-              }
-            }
-          }
-        ]
-      };
       const debugLogs: any[] = [];
-
-      const loggerMock: ContextLogger = {
-        ...logger
-      };
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
 
       loggerMock.debug = jest.fn((...params: any[]) => debugLogs.push(params)) as any;
-      const datasource = restDataSource(template);
-      await datasource.op1({ resolveBodyOnly: true })(
-        null,
-        { ...context, logger: loggerMock },
-        bautaInstance
-      );
+      const provider = restProvider(client => {
+        return client.post('https://pets.com/v1/policies', {
+          json: {
+            test: '1234'
+          },
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      await provider()(null, ctx, bautajs);
       expect(debugLogs[0][0]).toStrictEqual(expectedMsg);
       expect(debugLogs[0][1]).toStrictEqual(expectedData);
     });
 
     test('should log the requests method and url info mode', async () => {
       process.env.LOG_LEVEL = 'info';
+      const { restProvider } = require('../index');
       const expectedMsg = 'request-logger: Request to [POST] https://pets.com/v1/policies';
 
       nock('https://pets.com')
         .post('/v1/policies', {
-          field1: 'value'
+          test: '1234'
         })
         .reply(200, { bender: 'ok' });
 
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              json: {
-                field1: 'value'
-              }
-            }
-          }
-        ]
-      };
-
       const infoLogs: any[] = [];
-      const loggerMock = {
-        ...logger
-      };
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
 
       loggerMock.info = jest.fn((...params: any[]) => infoLogs.push(params)) as any;
 
-      const datasource = restDataSource(template);
-      await datasource.op1({ resolveBodyOnly: true })(
-        null,
-        { ...context, logger: loggerMock },
-        bautaInstance
-      );
+      const provider = restProvider(client => {
+        return client.post('https://pets.com/v1/policies', {
+          json: {
+            test: '1234'
+          },
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      await provider()(null, ctx, bautajs);
       expect(infoLogs[0][0]).toStrictEqual(expectedMsg);
     });
 
     test('should log the requests data on debug mode if the request body is not a json', async () => {
       process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = require('../index');
       const expectedMsg = 'request-logger: Request data: ';
       const expectedData = {
         body: 'someString',
         headers:
-          '{"user-agent":"bautaJS","accept":"application/json","x-request-id":1,"accept-encoding":"gzip, deflate","content-length":10}',
+          '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","x-request-id":1}',
         method: 'POST',
         url: 'https://pets.com/v1/policies'
       };
 
       nock('https://pets.com')
-        .post('/v1/policies')
+        .post('/v1/policies', 'someString')
         .reply(200, { bender: 'ok' });
 
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              json: false,
-              body: 'someString',
-              headers: {
-                accept: 'application/json'
-              }
-            }
-          }
-        ]
-      };
       const debugLogs: any[] = [];
-      const loggerMock: ContextLogger = {
-        ...logger
-      };
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
 
       loggerMock.debug = jest.fn((...params: any[]) => debugLogs.push(params)) as any;
-      const datasource = restDataSource(template);
-      await datasource.op1({ resolveBodyOnly: true })(
-        null,
-        { ...context, logger: loggerMock },
-        bautaInstance
-      );
+      const provider = restProvider(client => {
+        return client.post('https://pets.com/v1/policies', {
+          body: 'someString',
+          headers: {
+            accept: 'application/json'
+          },
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      await provider()(null, ctx, bautajs);
 
       expect(debugLogs[0][0]).toStrictEqual(expectedMsg);
       expect(debugLogs[0][1]).toStrictEqual(expectedData);
@@ -260,11 +234,51 @@ describe('datasource rest test', () => {
   });
 
   describe('logs on response', () => {
-    test('should log an error if the response body could not be parsed', async () => {
+    beforeEach(() => {
+      jest.resetModules();
+    });
+    test('should log a network error', async () => {
       process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = require('../index');
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'response-logger: Response for [GET]  https://pets.com/v1/policies: ',
+        'response-logger: Error for [GET] https://pets.com/v1/policies:',
+        {
+          code: undefined,
+          name: 'RequestError',
+          message: 'something awful happened'
+        }
+      ];
+
+      nock('https://pets.com/v1')
+        .get('/policies')
+        .replyWithError('something awful happened');
+
+      const errorConsole: any[] = [];
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
+      loggerMock.error = jest.fn((...params: any[]) => errorConsole.push(params)) as any;
+
+      const provider = restProvider(client => {
+        return client.get('https://pets.com/v1/policies', {
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      try {
+        await provider()(null, ctx, bautajs);
+      } catch (e) {
+        // Empty
+      }
+      expect(errorConsole[0]).toStrictEqual(expectedMsg);
+    });
+
+    test('should log an error if the response body could not be parsed', async () => {
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = require('../index');
+      // With nock got is not able to get the response method, doing a normal request this field is returned
+      const expectedMsg = [
+        'response-logger: Response for [GET] https://pets.com/v1/policies: ',
         {
           body: '{"bender":1}',
           headers: '{"content-type":"application/json"}',
@@ -276,36 +290,26 @@ describe('datasource rest test', () => {
         .get('/policies')
         .reply(200, { bender: 1 });
 
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'GET'
-            }
-          }
-        ]
-      };
       const debugConsole: any[] = [];
       const infoConsole: any[] = [];
-      const loggerMock: ContextLogger = {
-        ...logger
-      };
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
       loggerMock.debug = jest.fn((...params: any[]) => debugConsole.push(params)) as any;
       loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
 
-      const datasource = restDataSource(template);
-      await datasource.op1({ resolveBodyOnly: true })(
-        null,
-        { ...context, logger: loggerMock },
-        bautaInstance
-      );
+      const provider = restProvider(client => {
+        return client.get('https://pets.com/v1/policies', {
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      await provider()(null, ctx, bautajs);
       expect(debugConsole[1]).toStrictEqual(expectedMsg);
     });
 
     test('should log the response time', async () => {
       process.env.LOG_LEVEL = 'info';
+      const { restProvider } = require('../index');
       const expectedMsg = new RegExp(
         'response-logger: The request to https://pets.com/v1/policies took: (.*) ms'
       );
@@ -314,37 +318,27 @@ describe('datasource rest test', () => {
         .get('/policies')
         .reply(200, { bender: 1 });
 
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'GET'
-            }
-          }
-        ]
-      };
       const infoConsole: any[] = [];
-      const loggerMock: ContextLogger = {
-        ...logger
-      };
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
       loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
 
-      const datasource = restDataSource(template);
-      await datasource.op1({ resolveBodyOnly: true })(
-        null,
-        { ...context, logger: loggerMock },
-        bautaInstance
-      );
+      const provider = restProvider(client => {
+        return client.get('https://pets.com/v1/policies', {
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      await provider()(null, ctx, bautajs);
       expect(infoConsole[1][0]).toMatch(expectedMsg);
     });
 
     test('should not crash if the response body could not be parsed', async () => {
       process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = require('../index');
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'response-logger: Response for [GET]  https://pets.com/v1/policies: ',
+        'response-logger: Response for [GET] https://pets.com/v1/policies: ',
         {
           body: '<html><div></div></html>',
           headers: '{"content-type":"text/html"}',
@@ -357,691 +351,23 @@ describe('datasource rest test', () => {
         .reply(200, '<html><div></div></html>', {
           'content-type': 'text/html'
         });
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'GET',
-              json: false
-            }
-          }
-        ]
-      };
+
       const debugConsole: any[] = [];
       const infoConsole: any[] = [];
-      const loggerMock = {
-        ...logger
-      };
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
 
       loggerMock.debug = jest.fn((...params: any[]) => debugConsole.push(params)) as any;
       loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
 
-      const datasource = restDataSource(template);
-      await datasource.op1({ resolveBodyOnly: true })(
-        null,
-        { ...context, logger: loggerMock },
-        bautaInstance
-      );
-      expect(debugConsole[1]).toStrictEqual(expectedMsg);
-    });
-  });
-
-  describe('multipart request', () => {
-    test('should build a new multipart request if the multipart options is set', async () => {
-      nock('https://pets.com/v1')
-        .post(
-          '/policies',
-          (body: any) =>
-            body.includes('message.txt') &&
-            body.includes('I am an attachment') &&
-            // the attached file content
-            body.includes('number of results to return, as sorted by increasing')
-        )
-        .reply(200, { ok: true });
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              headers: {
-                'content-type': 'multipart/related'
-              },
-              preambleCRLF: true,
-              postambleCRLF: true
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({
-        multipart: [
-          {
-            headers: {
-              'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-              foo: 'bar',
-              _attachments: {
-                'message.txt': {
-                  follows: true,
-                  length: 18,
-                  content_type: 'text/plain'
-                }
-              }
-            })
-          },
-          { body: 'I am an attachment' },
-          {
-            body: fs.createReadStream(path.resolve(__dirname, './fixtures/test-path-schema.json'))
-          }
-        ],
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
-
-      expect(response).toStrictEqual({ ok: true });
-    });
-
-    test('should build a new multipart request if multipart do not have data object', async () => {
-      nock('https://pets.com/v1')
-        .post(
-          '/policies',
-          (body: any) =>
-            body.includes('message.txt') &&
-            body.includes('I am an attachment') &&
-            // the attached file content
-            body.includes('number of results to return, as sorted by increasing')
-        )
-        .reply(200, { ok: true });
-
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              headers: {
-                'content-type': 'multipart/related'
-              },
-              preambleCRLF: true,
-              postambleCRLF: true
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({
-        multipart: [
-          {
-            headers: {
-              'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-              foo: 'bar',
-              _attachments: {
-                'message.txt': {
-                  follows: true,
-                  length: 18,
-                  content_type: 'text/plain'
-                }
-              }
-            })
-          },
-          { body: 'I am an attachment' },
-          {
-            body: fs.createReadStream(path.resolve(__dirname, './fixtures/test-path-schema.json'))
-          }
-        ],
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
-      expect(response).toStrictEqual({ ok: true });
-    });
-
-    test('should add the content type multipart related if is not set', async () => {
-      nock('https://pets.com/v1')
-        .matchHeader('content-type', /multipart\/related/g)
-        .post(
-          '/policies',
-          (body: any) =>
-            body.includes('message.txt') &&
-            body.includes('I am an attachment') &&
-            // the attached file content
-            body.includes('number of results to return, as sorted by increasing')
-        )
-        .reply(200, { ok: true });
-
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              preambleCRLF: true,
-              postambleCRLF: true
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({
-        multipart: [
-          {
-            headers: {
-              'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-              foo: 'bar',
-              _attachments: {
-                'message.txt': {
-                  follows: true,
-                  length: 18,
-                  content_type: 'text/plain'
-                }
-              }
-            })
-          },
-          { body: 'I am an attachment' },
-          {
-            body: fs.createReadStream(path.resolve(__dirname, './fixtures/test-path-schema.json'))
-          }
-        ],
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
-
-      expect(response).toStrictEqual({ ok: true });
-    });
-  });
-
-  describe('form-data request', () => {
-    test('should allow a multipart/form-data request', async () => {
-      nock('https://pets.com/v1')
-        .post(
-          '/policies',
-          (body: any) =>
-            body.includes('my_value') &&
-            // the attached file content
-            body.includes('number of results to return, as sorted by increasing')
-        )
-        .reply(200, { ok: true });
-
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              preambleCRLF: true,
-              postambleCRLF: true
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({
-        formData: {
-          my_field: 'my_value',
-          my_file: fs.createReadStream(path.resolve(__dirname, './fixtures/test-path-schema.json'))
-        },
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
-
-      expect(response).toStrictEqual({ ok: true });
-    });
-
-    test('should allow a multipart/form-data request with options and attachements', async () => {
-      nock('https://pets.com/v1')
-        .post(
-          '/policies',
-          (body: any) =>
-            body.includes('my_value') &&
-            // the attached file content
-            body.includes('number of results to return, as sorted by increasing') &&
-            body.includes('my-file.jpg')
-        )
-        .reply(200, { ok: true });
-
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'POST',
-              preambleCRLF: true,
-              postambleCRLF: true
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({
-        formData: {
-          my_field: 'my_value',
-          custom_file: {
-            value: fs.createReadStream(path.resolve(__dirname, './fixtures/test-path-schema.json')),
-            options: {
-              filename: 'my-file.jpg',
-              contentType: 'image/jpeg'
-            }
-          },
-          attachments: [
-            fs.createReadStream(path.resolve(__dirname, './fixtures/test-path-schema.json'))
-          ]
-        },
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
-
-      expect(response).toStrictEqual({ ok: true });
-    });
-  });
-
-  describe('timeout parser, fullResponse and stric ssl features', () => {
-    const originalHttpRequest = http.request;
-    const originalHttpsRequest = https.request;
-    let emmiter: any;
-    beforeEach(() => {
-      emmiter = new Events();
-      Object.assign(emmiter, { end: () => {} });
-    });
-    afterEach(() => {
-      http.request = originalHttpRequest;
-      https.request = originalHttpsRequest;
-      emmiter.removeAllListeners();
-    });
-
-    test('should set rejectUnauthorized as true by default', async () => {
-      nock('http://pets.com')
-        .get('/v1/policies')
-        .reply(200, {});
-      http.request = (options: any, cb: any) => {
-        expect(options.agent.options.rejectUnauthorized).toBeUndefined();
-
-        return originalHttpRequest(options, cb);
-      };
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'http://pets.com/v1/policies',
-              method: 'GET'
-            }
-          }
-        ]
-      };
-      expect.assertions(1);
-      const datasource = restDataSource(template);
-      await datasource.op1({
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
-    });
-
-    test('should allow to set a custom agent', async () => {
-      nock('http://pets.com')
-        .post('/v1/policies')
-        .reply(200, {});
-      await new Promise(done => {
-        https.request = (options: any) => {
-          expect(options.agent.keepAliveMsecs).toStrictEqual(5000);
-          done();
-
-          return emmiter;
-        };
-        const template = {
-          providers: [
-            {
-              id: 'op1',
-              options: {
-                url: 'https://pets.com/v1/policies',
-                method: 'POST',
-                timeout: 5000,
-                agent: createHttpsAgent({
-                  keepAliveMsecs: 5000
-                })
-              }
-            }
-          ]
-        };
-
-        const datasource = restDataSource(template);
-        datasource.op1({
-          resolveBodyOnly: true
-        })(null, context, bautaInstance);
+      const provider = restProvider(client => {
+        return client.get('https://pets.com/v1/policies', {
+          responseType: 'text'
+        });
       });
-    });
-
-    test('should allow to set the agent certificates by a custom agent', async () => {
-      nock('http://pets.com')
-        .get('/v1/policies')
-        .reply(200, {});
-      http.request = (options: any, cb: any) => {
-        expect(options.agent.options.cert).toStrictEqual('132');
-        expect(options.agent.options.key).toStrictEqual('123');
-
-        return originalHttpRequest(options, cb);
-      };
-
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'http://pets.com/v1/policies',
-              method: 'GET',
-              timeout: 5000,
-              agent: createHttpsAgent({
-                cert: '132',
-                key: '123'
-              })
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      expect.assertions(2);
-      await datasource.op1({
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
-    });
-
-    test('should allow get the full response object', async () => {
-      const expectedBody = { ok: true };
-      nock('https://pets.com')
-        .get('/v1/policies')
-        .reply(200, expectedBody);
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'GET'
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({
-        resolveBodyOnly: false
-      })(null, context, bautaInstance);
-
-      expect(response.body).toStrictEqual(expectedBody);
-      expect(response.headers).toStrictEqual({ 'content-type': 'application/json' });
-    });
-
-    test('should throw an error if a request is done without url', async () => {
-      const template = {
-        providers: [
-          {
-            id: 'myads',
-            options: {
-              method: 'GET'
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      expect(() =>
-        datasource.myads({
-          resolveBodyOnly: false
-        })(null, context, bautaInstance)
-      ).toThrow('URL is a mandatory parameter for a datasource request on operation: myads');
-    });
-
-    test('request parameters should override template fields', async () => {
-      const expectedBody = { ok: true };
-      nock('https://pets.com')
-        .matchHeader('x-custom-header', 'override')
-        .get('/v1/policies')
-        .reply(200, expectedBody);
-
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'https://pets.com/v1/policies',
-              method: 'GET'
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const response = await datasource.op1({
-        headers: { 'x-custom-header': 'override' },
-        resolveBodyOnly: true
-      })(null, context, bautaInstance);
-
-      expect(response).toStrictEqual(expectedBody);
-      expect(nock.isDone()).toBe(true);
-    });
-  });
-
-  describe('datasource compile', () => {
-    test('datasource must compile complex templating properly as a function', async () => {
-      nock('http://pets.com')
-        .get('/v1/policies/toto/documents')
-        .reply(200, {});
-      const expected = {
-        url: 'http://pets.com/v1/policies/toto/documents',
-        method: 'GET',
-        options: {
-          timeout: '5000'
-        },
-        json: {
-          foo: 'bar dead live & robots bar'
-        }
-      };
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options(_: any, ctx: Context) {
-              return {
-                url: `http://pets.com/v1/policies/${ctx.req.id}/documents`,
-                method: 'GET',
-                json: {
-                  foo: `${ctx.data.bar} dead live & robots ${ctx.data.bar}`
-                }
-              };
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      expect.assertions(2);
-      await datasource.op1.compile(
-        (_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
-          expect(provider.options && provider.options.url).toStrictEqual(expected.url);
-          expect(
-            provider.options && provider.options.json && (provider.options.json as any).foo
-          ).toStrictEqual(expected.json.foo);
-        }
-      )(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar' } }, bautaInstance);
-    });
-
-    test('datasource must compile complex templating properly as a JSON template', async () => {
-      nock('http://pets.com')
-        .get('/v1/policies/toto/documents')
-        .reply(200, {});
-      const expected = {
-        url: 'http://pets.com/v1/policies/toto/documents',
-        method: 'GET',
-        options: {
-          timeout: '5000'
-        },
-        json: {
-          foo: 'bar dead live & robots bar'
-        }
-      };
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
-              method: 'GET',
-              json: {
-                foo: '{{ctx.data.bar}} dead live & robots {{ctx.data.bar}}'
-              }
-            }
-          }
-        ]
-      };
-      const datasource = restDataSourceTemplate(template);
-      expect.assertions(2);
-      await datasource.op1.compile(
-        (_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
-          expect(provider.options && provider.options.url).toStrictEqual(expected.url);
-          expect(
-            provider.options && provider.options.json && (provider.options.json as any).foo
-          ).toStrictEqual(expected.json.foo);
-        }
-      )(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar' } }, bautaInstance);
-    });
-
-    test('should merge global options with local options and local options have priority', async () => {
-      nock('http://pets.com')
-        .get('/v1/policies/toto/documents')
-        .reply(200, {});
-      const expected = {
-        url: 'http://pets.com/v1/policies/toto/documents',
-        method: 'GET',
-        options: {
-          timeout: '5000'
-        },
-        json: {
-          foo: 'bar dead live & robots bar'
-        }
-      };
-      const template = {
-        options: {
-          headers: {
-            'x-header': 1
-          }
-        },
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
-              method: 'GET',
-              headers: {
-                token: '{{ctx.data.token}}'
-              },
-              json: {
-                foo: '{{ctx.data.bar}} dead live & robots {{ctx.data.bar}}'
-              }
-            }
-          }
-        ]
-      };
-      const datasource = restDataSourceTemplate(template);
-      expect.assertions(4);
-      await datasource.op1.compile(
-        (_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
-          expect(provider.options && provider.options.url).toStrictEqual(expected.url);
-          expect(
-            provider.options && provider.options.json && (provider.options.json as any).foo
-          ).toStrictEqual(expected.json.foo);
-          expect(
-            provider.options && provider.options.headers && provider.options.headers.token
-          ).toStrictEqual('1234');
-          expect(
-            provider.options && provider.options.headers && provider.options.headers['x-header']
-          ).toStrictEqual(1);
-        }
-      )(
-        null,
-        { ...context, req: { id: 'toto' }, data: { bar: 'bar', token: '1234' } },
-        bautaInstance
-      );
-    });
-
-    test('should compile a restDataSourceTemplate', async () => {
-      nock('http://pets.com')
-        .get('/v1/policies/toto/documents')
-        .reply(200, {});
-      const expected = {
-        url: 'http://pets.com/v1/policies/toto/documents',
-        method: 'GET',
-        options: {
-          timeout: '5000'
-        },
-        json: {
-          foo: 'bar dead live & robots bar'
-        }
-      };
-      const template = {
-        options: {
-          headers: {
-            'x-header': 1
-          }
-        },
-        providers: [
-          {
-            id: 'op1',
-            options: {
-              url: 'http://pets.com/v1/policies/{{ctx.req.id}}/documents',
-              method: 'GET',
-              headers: {
-                token: '{{ctx.data.token}}'
-              },
-              json: {
-                foo: '{{ctx.data.bar}} dead live & robots {{ctx.data.bar}}'
-              }
-            }
-          }
-        ]
-      };
-      const datasource = restDataSourceTemplate(template);
-      expect.assertions(2);
-      await datasource.op1.compile(
-        (_: any, _ctx: any, _bautajs: any, provider: CompiledRestProvider) => {
-          expect(provider.options && provider.options.url).toStrictEqual(expected.url);
-          expect(
-            provider.options && provider.options.json && (provider.options.json as any).foo
-          ).toStrictEqual(expected.json.foo);
-        }
-      )(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar', token: '1' } }, bautaInstance);
-    });
-  });
-  describe('request cancelation', () => {
-    test('should cancel the request if the a cancel is executed', async () => {
-      nock('http://pets.com')
-        .get('/v1/policies')
-        .reply(200, {});
-
-      const myContext = { ...context, req: { id: 'toto' }, data: { bar: 'bar' } };
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options() {
-              return {
-                url: `http://pets.com/v1/policies`,
-                method: 'GET'
-              };
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const request1 = datasource.op1({
-        resolveBodyOnly: true
-      })(null, myContext, bautaInstance);
-
-      myContext.token.cancel();
-
-      await expect(request1).rejects.toThrow(
-        expect.objectContaining({ message: 'Promise was canceled' })
-      );
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      await provider()(null, ctx, bautajs);
+      expect(debugConsole[1]).toStrictEqual(expectedMsg);
     });
   });
 });

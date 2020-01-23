@@ -179,7 +179,7 @@ export interface BautaJSOptions {
   resolversPath?: string | string[];
   /**
    *
-   *  The static context that will be use to do a first parse to the dataSource on run time.
+   *  The static context that will be available on all bautajs.staticConfig instance.
    * @type {any}
    * @memberof BautaJSOptions
    */
