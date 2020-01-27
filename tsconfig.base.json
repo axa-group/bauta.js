@@ -1,26 +1,22 @@
 {
   "compilerOptions": {
-    "composite": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "lib": [
-      "es2017",
-      "dom"
-    ],
-    "moduleResolution":"node" ,
-    "target": "es6",
-    "module": "commonjs",
+    "alwaysStrict": true,
+    "baseUrl": ".",
     "declaration": true,
-    "strict": true,
-    "removeComments": false,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedParameters": true,
+    "noImplicitThis": true,
     "noUnusedLocals": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2019",
     "paths": {
       "*" : ["types/*"]
     }

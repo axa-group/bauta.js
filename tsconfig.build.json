@@ -1,10 +1,12 @@
 {
   "extends": "./tsconfig.base",
   "compilerOptions": {
-    "composite":true
+    "composite":true,
+    "typeRoots": ["node_modules/@types", "./types"]
   },
   "files": [],
-  "exclude": ["__tests__"],
+  "include": ["src/**/*.ts", "src/**/*.json"],
+  "exclude": ["**/__tests__"],
   "references": [
     { "path": "./packages/bautajs-core" },
     { "path": "./packages/bautajs-datasource-rest" },

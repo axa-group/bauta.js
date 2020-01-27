@@ -4,6 +4,6 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "include": ["src/**/*.ts", "src/validators/*.json"],
-  "exclude": ["**/__tests__", "**/__mocks__", "dist"]
+  "include": ["src/**/*", "src/**/*.json"],
+  "exclude": ["**/__tests__", "**/__mocks__"]
 }

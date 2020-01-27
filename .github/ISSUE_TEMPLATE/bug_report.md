@@ -1,30 +1,27 @@
----
-name: Bug report
-about: Create a report to help us improve
+# Bug report
 
----
+## Describe the bug
 
-**Describe the bug**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+### To Reproduce
 
-**Expected behavior**
+A code snippet or a repository with a test project where the issue can be reproduced.
+
+### Expected behavior
+
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+### Screenshots
+
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Version [e.g. 22]
- - Node version [e.g. 8.0.0]
- - Package [e.g. @bautajs/core]
+### Desktop (please complete the following information):\*\*
 
-**Additional context**
+- OS: [e.g. Linux, MacOSX, Windows 10]
+- fp-toolbox version [e.g. v1.0.0]
+- Node.js version [e.g. v12.14.1]
+
+### Additional context
+
 Add any other context about the problem here.

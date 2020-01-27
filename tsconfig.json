@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.base",
   "files": [],
-  "include": [],
+  "compilerOptions": {
+    "target": "es6"
+  },
   "references": [
     { "path": "./tsconfig.build.json" },
     { "path": "./tsconfig.test.base.json" },
