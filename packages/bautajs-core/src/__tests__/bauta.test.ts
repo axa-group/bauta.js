@@ -21,7 +21,7 @@ import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-ve
 
 describe('core tests', () => {
   describe('express initialization tests', () => {
-    test('should initialize the core with the given parameters', () => {
+    test('should initialize the core with the given parameters', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -29,10 +29,11 @@ describe('core tests', () => {
       const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       expect(bautaJS.operations.v1.operation1).toBeDefined();
     });
 
-    test('should initialize the core with the given api versions', () => {
+    test('should initialize the core with the given api versions', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -49,6 +50,8 @@ describe('core tests', () => {
           staticConfig: config
         }
       );
+
+      await bautaJS.bootstrap();
 
       expect(bautaJS.operations.v1.operation1).toBeDefined();
       expect(bautaJS.operations.v2.operation1).toBeDefined();
@@ -85,6 +88,8 @@ describe('core tests', () => {
         staticConfig: config,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
+      await bautaJS.bootstrap();
+
       await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
         expect.objectContaining({
           message: 'The request was not valid',
@@ -100,7 +105,7 @@ describe('core tests', () => {
       );
     });
 
-    test('should not validate the request if set validateRequest to false', async () => {
+    test('should not validate the request if validateRequest is set to false globally', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -111,13 +116,12 @@ describe('core tests', () => {
       };
       const res = {};
 
-      const bautaJS = new BautaJS(
-        [{ ...testApiDefinitionsJson[0], validateRequest: false }] as Document[],
-        {
-          resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-          staticConfig: config
-        }
-      );
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
+        staticConfig: config,
+        enableRequestValidation: false,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+      });
+      await bautaJS.bootstrap();
 
       expect(await bautaJS.operations.v1.operation1.run({ req, res })).toStrictEqual([
         {
@@ -126,50 +130,42 @@ describe('core tests', () => {
         }
       ]);
     });
-  });
-
-  describe('validate response globally', () => {
-    test('should validate the response by default', async () => {
+    test('should priorize the local operation toggle over the global one', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
       const req = {
         query: {
-          limit: 123
+          limit: 'string'
         }
       };
       const res = {};
 
       const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
-        staticConfig: config
+        staticConfig: config,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        enableRequestValidation: false
       });
-
-      bautaJS.operations.v1.operation1.setup(p =>
-        p.push(() => ({
-          id: 1,
-          name: 'pety'
-        }))
-      );
+      bautaJS.operations.v1.operation1.validateRequest(true);
+      await bautaJS.bootstrap();
 
       await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
         expect.objectContaining({
-          message: 'Internal error',
+          message: 'The request was not valid',
           errors: [
             {
-              path: '',
-              location: 'response',
-              message: 'should be array',
+              path: '.limit',
+              location: 'query',
+              message: 'should be integer',
               errorCode: 'type'
             }
-          ],
-          response: {
-            id: 1,
-            name: 'pety'
-          }
+          ]
         })
       );
     });
+  });
 
+  describe('validate response globally', () => {
     test('should format the validation error to string', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -186,8 +182,13 @@ describe('core tests', () => {
         staticConfig: config
       });
 
-      bautaJS.operations.v1.operation1.setup(p => p.push(() => [{ id: '22' }]));
+      bautaJS.operations.v1.operation1
+        .validateResponse(true)
+        .setup(p => p.push(() => [{ id: '22' }]));
 
+      await bautaJS.bootstrap();
+
+      expect.assertions(1);
       try {
         await bautaJS.operations.v1.operation1.run({ req, res });
       } catch (e) {
@@ -198,7 +199,7 @@ describe('core tests', () => {
       }
     });
 
-    test('should not validate the response if set validateResponse to false', async () => {
+    test('should not validate the response by default', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -209,21 +210,114 @@ describe('core tests', () => {
       };
       const res = {};
 
-      const bautaJS = new BautaJS(
-        [{ ...testApiDefinitionsJson[0], validateResponse: false }] as Document[],
-        {
-          resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-          staticConfig: config
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        staticConfig: config
+      });
+      bautaJS.operations.v1.operation1.setup(p =>
+        p.push(() => ({
+          id: 1,
+          name: 'pety'
+        }))
+      );
+      await bautaJS.bootstrap();
+
+      expect(await bautaJS.operations.v1.operation1.run({ req, res })).toStrictEqual({
+        id: 1,
+        name: 'pety'
+      });
+    });
+
+    test('should validate the response if is set true globally', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const req = {
+        query: {
+          limit: 123
         }
+      };
+      const res = {};
+
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
+        staticConfig: config,
+        enableResponseValidation: true
+      });
+
+      bautaJS.operations.v1.operation1.setup(p =>
+        p.push(() => ({
+          id: 1,
+          name: 'pety'
+        }))
       );
 
-      await bautaJS.operations.v1.operation1.run({ req, res });
-      expect(await bautaJS.operations.v1.operation1.run({ req, res })).toStrictEqual([
-        {
-          id: 134,
-          name: 'pet2'
+      await bautaJS.bootstrap();
+
+      await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
+        expect.objectContaining({
+          name: 'Validation Error',
+          errors: [
+            {
+              path: '',
+              location: 'response',
+              message: 'should be array',
+              errorCode: 'type'
+            }
+          ],
+          statusCode: 500,
+          response: {
+            id: 1,
+            name: 'pety'
+          },
+          message: 'Internal error'
+        })
+      );
+    });
+
+    test('should priorize the local operation toggle over the global one', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const req = {
+        query: {
+          limit: 123
         }
-      ]);
+      };
+      const res = {};
+
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
+        staticConfig: config,
+        enableResponseValidation: false
+      });
+
+      bautaJS.operations.v1.operation1.validateResponse(true).setup(p =>
+        p.push(() => ({
+          id: 1,
+          name: 'pety'
+        }))
+      );
+
+      await bautaJS.bootstrap();
+
+      await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
+        expect.objectContaining({
+          name: 'Validation Error',
+          errors: [
+            {
+              path: '',
+              location: 'response',
+              message: 'should be array',
+              errorCode: 'type'
+            }
+          ],
+          statusCode: 500,
+          response: {
+            id: 1,
+            name: 'pety'
+          },
+          message: 'Internal error'
+        })
+      );
     });
   });
 
@@ -260,6 +354,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
 
       expect(
         await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
@@ -293,6 +388,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
 
       const doRequest = async () => {
@@ -332,6 +428,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
 
       expect.assertions(1);
@@ -363,6 +460,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
       const doRequest = async () => {
         await expect(request1).rejects.toThrow(
@@ -405,6 +503,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
 
       request1.cancel();
@@ -447,6 +546,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       const request1 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
       const request2 = bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
 
@@ -477,6 +577,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       const request1 = await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
       const request2 = await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
 
@@ -510,6 +611,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       const request1 = await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
       const request2 = await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
 
@@ -545,6 +647,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       const request1 = await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
       const request2 = await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
 
@@ -573,7 +676,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
-
+      await bautaJS.bootstrap();
       await expect(
         bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} })
       ).rejects.toThrow(new Error('Not found'));
@@ -599,6 +702,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       let error1;
       let error2;
       try {
@@ -626,6 +730,7 @@ describe('core tests', () => {
         resolvers: [],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
 
       expect.assertions(1);
       Object.keys(bautaJS.operations.v1).map((key: string) =>
@@ -649,6 +754,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       expect(bautaJS.operations.v1.operation1.isPrivate()).toStrictEqual(false);
     });
 
@@ -671,6 +777,7 @@ describe('core tests', () => {
         ],
         staticConfig: config
       });
+      await bautaJS.bootstrap();
       expect(bautaJS.operations.v1.operation1.isPrivate()).toStrictEqual(true);
     });
   });

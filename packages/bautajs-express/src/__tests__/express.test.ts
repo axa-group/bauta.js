@@ -30,7 +30,7 @@ describe('bautaJS express', () => {
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
-    bautajs.applyMiddlewares();
+    await bautajs.applyMiddlewares();
 
     const res = await supertest(bautajs.app)
       .get('/api/v1/test')
@@ -68,7 +68,7 @@ describe('bautaJS express', () => {
       )
     });
 
-    bautajs.applyMiddlewares();
+    await bautajs.applyMiddlewares();
 
     const res = await supertest(bautajs.app)
       .get('/api/v1/test')
@@ -104,7 +104,7 @@ describe('bautaJS express', () => {
       ]
     });
 
-    bautajs.applyMiddlewares();
+    await bautajs.applyMiddlewares();
 
     await supertest(bautajs.app)
       .get('/api/v1/test')
@@ -136,7 +136,7 @@ describe('bautaJS express', () => {
       ]
     });
 
-    bautajs.applyMiddlewares();
+    await bautajs.applyMiddlewares();
 
     await supertest(bautajs.app)
       .get('/api/v1/test')
@@ -149,7 +149,7 @@ describe('bautaJS express', () => {
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
-    bautajs.applyMiddlewares();
+    await bautajs.applyMiddlewares();
 
     const res = await supertest(bautajs.app)
       .get('/api/v1/test')
@@ -169,7 +169,7 @@ describe('bautaJS express', () => {
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
-    bautajs.applyMiddlewares({ explorer: { enabled: false } });
+    await bautajs.applyMiddlewares({ explorer: { enabled: false } });
 
     const res = await supertest(bautajs.app)
       .get('/v1/explorer')
@@ -186,7 +186,7 @@ describe('bautaJS express', () => {
       )
     });
 
-    bautajs.applyMiddlewares();
+    await bautajs.applyMiddlewares();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bautajs.app.use((err: any, _: any, res: any, _next: any) => {

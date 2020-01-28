@@ -96,11 +96,13 @@ API versions are now accesible by code:
 
 ```js
 // server.js
-const { BautaJSExpress } = require('@bautajs/express');
+const { BautaJS } = require('@bautajs/core');
 const apiDefinition = require('./api-definitions.json');
 
 
-const bautajs = new BautaJSExpress(apiDefinition);
+const bautajs = new BautaJS(apiDefinition);
+
+await bautajs.bootstrap();
 
 const res1 = await bautajs.operations.v1.findCat.run();
 

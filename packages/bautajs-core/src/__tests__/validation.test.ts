@@ -37,7 +37,7 @@ describe('validation tests', () => {
     const bautaJS = new BautaJS(circularSchema as Document[], {
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(p =>
+          operations.v1.operation1.validateResponse(true).setup(p =>
             p.push(() => {
               return expected;
             })
@@ -46,6 +46,7 @@ describe('validation tests', () => {
       ],
       staticConfig: config
     });
+    await bautaJS.bootstrap();
     expect(
       await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
     ).toStrictEqual(expected);
@@ -70,7 +71,7 @@ describe('validation tests', () => {
     const bautaJS = new BautaJS(circularSchema as Document[], {
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(p =>
+          operations.v1.operation1.validateResponse(true).setup(p =>
             p.push(() => {
               return expected;
             })
@@ -79,6 +80,7 @@ describe('validation tests', () => {
       ],
       staticConfig: config
     });
+    await bautaJS.bootstrap();
     await expect(
       bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
     ).rejects.toThrow(
@@ -114,7 +116,7 @@ describe('validation tests', () => {
     const bautaJS = new BautaJS(formatSchema as Document[], {
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(p =>
+          operations.v1.operation1.validateResponse(true).setup(p =>
             p.push(() => {
               return expected;
             })
@@ -123,6 +125,7 @@ describe('validation tests', () => {
       ],
       staticConfig: config
     });
+    await bautaJS.bootstrap();
     await expect(
       bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
     ).rejects.toThrow(
@@ -158,7 +161,7 @@ describe('validation tests', () => {
     const bautaJS = new BautaJS(formatSchema as Document[], {
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(p =>
+          operations.v1.operation1.validateResponse(true).setup(p =>
             p.push(() => {
               return expected;
             })
@@ -167,6 +170,7 @@ describe('validation tests', () => {
       ],
       staticConfig: config
     });
+    await bautaJS.bootstrap();
     await expect(
       bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
     ).rejects.toThrow(

@@ -18,7 +18,7 @@ import { EventEmitter } from 'events';
 import { ObjectWritableMock } from 'stream-mock';
 import { OperationBuilder } from '../core/operation';
 import { logger } from '../index';
-import { Operation, DocumentParsed, Route } from '../utils/types';
+import { Operation, Route, BautaJSInstance } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
 import { pipelineBuilder } from '../decorators/pipeline';
@@ -27,31 +27,30 @@ import { asPromise } from '../decorators/as-promise';
 
 describe('operation class tests', () => {
   let route: Route;
-  beforeEach(() => {
+  const bautaJS: BautaJSInstance = {
+    staticConfig: {},
+    operations: {},
+    logger,
+    apiDefinitions: [],
+    bootstrap() {
+      return Promise.resolve();
+    }
+  };
+  beforeEach(async () => {
     const parser = new Parser();
-    parser.parse(testApiDefinitionsJson[0]);
-    const document = parser.document() as DocumentParsed;
+    const document = await parser.asyncParse(testApiDefinitionsJson[0]);
     [route] = document.routes;
   });
   describe('build operations cases', () => {
-    test('should let you build an operation without schema', () => {
-      const operationTest = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+    test('should let you build an operation without schema', async () => {
+      const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      await operationTest.addRoute(route);
 
       expect(operationTest).toBeInstanceOf(OperationBuilder);
     });
 
     test('should build the request validator from the schema parameters', async () => {
-      const operationTest = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+      const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
       const req = {
         query: {
           limit: 'string'
@@ -68,18 +67,14 @@ describe('operation class tests', () => {
       ];
       const ctx = { req, res };
       operationTest.setup(p => p.pipe(() => 'new'));
+      await operationTest.addRoute(route);
       await expect(operationTest.run(ctx)).rejects.toThrow(
         expect.objectContaining({ errors: expected })
       );
     });
 
     test('should build the response validator from the schema response', async () => {
-      const operationTest = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+      const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
       const req = {
         prop: 1,
         query: {}
@@ -94,29 +89,22 @@ describe('operation class tests', () => {
         }
       ];
       const ctx = { req, res };
-      operationTest.setup(p => p.push(() => 1));
+      operationTest.validateResponse(true).setup(p => p.push(() => 1));
+      await operationTest.addRoute(route);
       await expect(operationTest.run(ctx)).rejects.toThrow(
         expect.objectContaining({ errors: expected })
       );
     });
 
     test('the default error handler should be a promise reject of the given error', async () => {
-      const operationTest = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+      const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
       const error = new Error('someError');
       const ctx = { req: {}, res: {} };
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p =>
-          p.push(() => {
-            throw new Error('someError');
-          })
-        );
+      operationTest.validateRequest(false).setup(p =>
+        p.push(() => {
+          throw new Error('someError');
+        })
+      );
 
       await expect(operationTest.run(ctx)).rejects.toThrow(error);
     });
@@ -125,13 +113,9 @@ describe('operation class tests', () => {
   describe('operation.setup tests', () => {
     let operationTest: Operation;
 
-    beforeEach(() => {
-      operationTest = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+    beforeEach(async () => {
+      operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      await operationTest.addRoute(route);
     });
 
     test('should throw an error if the given OperatorFunction fn is undefined', () => {
@@ -142,10 +126,7 @@ describe('operation class tests', () => {
     });
     test('pushed OperatorFunctions must be executed in order', async () => {
       const expected = 'this will be showed';
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p => p.push(() => 'next3').push(() => expected));
+      operationTest.validateRequest(false).setup(p => p.push(() => 'next3').push(() => expected));
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
@@ -156,10 +137,7 @@ describe('operation class tests', () => {
       const pipe = pipelineBuilder(p => {
         p.push(() => 'next3').push(() => expected);
       });
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p => p.pushPipeline(pipe));
+      operationTest.validateRequest(false).setup(p => p.pushPipeline(pipe));
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
@@ -178,13 +156,9 @@ describe('operation class tests', () => {
 
   describe('operation.pipeline.onError tests', () => {
     let operationTest: Operation;
-    beforeEach(() => {
-      operationTest = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+    beforeEach(async () => {
+      operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      await operationTest.addRoute(route);
     });
     test('should throw an error if the first argument is not a function', () => {
       const errorHandler = 'String';
@@ -199,7 +173,6 @@ describe('operation class tests', () => {
       const ctx = { req: {}, res: {} };
       const expected = new Error('error');
       operationTest
-        .validateResponse(false)
         .validateRequest(false)
         .setup(p => p.push(() => Promise.reject(new Error('crashhh!!!'))).onError(errorHandler));
 
@@ -235,14 +208,9 @@ describe('operation class tests', () => {
       const errorHandlerV2 = () => Promise.reject(new Error('errorV2'));
       const OperatorFunction = () => Promise.reject(new Error('crashhh!!!'));
       operationTest.validateResponse(false).validateRequest(false);
-      const operationV2 = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      })
-        .validateResponse(false)
-        .validateRequest(false);
+      const operationV2 = OperationBuilder.create(route.operationId, 'v1', bautaJS).validateRequest(
+        false
+      );
 
       operationTest.nextVersionOperation = operationV2;
 
@@ -258,13 +226,9 @@ describe('operation class tests', () => {
 
   describe('operation.pipeline.pipe tests', () => {
     let operationTest: Operation;
-    beforeEach(() => {
-      operationTest = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+    beforeEach(async () => {
+      operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      await operationTest.addRoute(route);
     });
     test('should throw an error on pipe 0 OperatorFunctions', () => {
       const expected = new Error(`At least one OperatorFunction must be specified.`);
@@ -282,15 +246,12 @@ describe('operation class tests', () => {
 
     test('should be able to use previous values', async () => {
       const expected = 10;
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p =>
-          p.pipe(
-            () => 5,
-            prev => prev + 5
-          )
-        );
+      operationTest.validateRequest(false).setup(p =>
+        p.pipe(
+          () => 5,
+          prev => prev + 5
+        )
+      );
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
@@ -298,15 +259,12 @@ describe('operation class tests', () => {
 
     test('should execute the pipe OperatorFunctions in order', async () => {
       const expected = 'this will be showed';
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p =>
-          p.pipe(
-            () => 'next3',
-            () => expected
-          )
-        );
+      operationTest.validateRequest(false).setup(p =>
+        p.pipe(
+          () => 'next3',
+          () => expected
+        )
+      );
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
@@ -315,10 +273,7 @@ describe('operation class tests', () => {
     test('should allow pipelines on pipe method', async () => {
       const expected = 'this will be showed';
       const pp = pipelineBuilder(p => p.pipe(() => expected));
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p => p.pipe(() => 'next3', pp));
+      operationTest.validateRequest(false).setup(p => p.pipe(() => 'next3', pp));
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
@@ -326,10 +281,7 @@ describe('operation class tests', () => {
 
     test('should allow async functions', async () => {
       const expected = 'next3';
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p => p.pipe(() => Promise.resolve('next3')));
+      operationTest.validateRequest(false).setup(p => p.pipe(() => Promise.resolve('next3')));
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
@@ -338,45 +290,29 @@ describe('operation class tests', () => {
 
   describe('operation.run tests', () => {
     let operationTest: Operation;
-    beforeEach(() => {
-      operationTest = OperationBuilder.create(route, 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+    beforeEach(async () => {
+      operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
     });
 
     test('should allow a context without req', async () => {
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p => p.push(() => 'good'));
-
+      operationTest.validateRequest(false).setup(p => p.push(() => 'good'));
+      await operationTest.addRoute(route);
       expect(await operationTest.run({ res: {} })).toStrictEqual('good');
     });
 
     test('should allow a context without res', async () => {
-      operationTest
-        .validateResponse(false)
-        .validateRequest(false)
-        .setup(p => p.push(() => 'good'));
-
+      operationTest.validateRequest(false).setup(p => p.push(() => 'good'));
+      await operationTest.addRoute(route);
       expect(await operationTest.run({ req: {} })).toStrictEqual('good');
     });
   });
   describe('operation ctx.validateRequest tests', () => {
     let operationTest: Operation;
-    beforeEach(() => {
+    let document;
+    beforeEach(async () => {
       const parser = new Parser();
-      parser.parse(testSchemaRareCasesJson);
-      const document = parser.document() as DocumentParsed;
-      operationTest = OperationBuilder.create(document.routes[0], 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+      document = await parser.asyncParse(testSchemaRareCasesJson);
+      operationTest = OperationBuilder.create(document.routes[0].operationId, 'v1', bautaJS);
     });
 
     test('should validate the request by default', async () => {
@@ -393,6 +329,7 @@ describe('operation class tests', () => {
         ])
       );
 
+      await operationTest.addRoute(document.routes[0]);
       const expected = [
         {
           path: '',
@@ -423,7 +360,7 @@ describe('operation class tests', () => {
           ]
         ])
       );
-
+      await operationTest.addRoute(document.routes[0]);
       const expected = [
         {
           path: '',
@@ -455,6 +392,7 @@ describe('operation class tests', () => {
           ]
         ])
       );
+      await operationTest.addRoute(document.routes[0]);
       const expected = [
         {
           path: '.grant_type',
@@ -483,7 +421,7 @@ describe('operation class tests', () => {
             { id: 3, name: '2' }
           ])
       );
-
+      await operationTest.addRoute(document.routes[0]);
       const expected = [
         { id: 1, name: '2' },
         { id: 3, name: '2' }
@@ -515,36 +453,29 @@ describe('operation class tests', () => {
     let operationTest: Operation;
     let streamOperationTest: Operation;
     let emptyResponseContentTest: Operation;
+    let document;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       const parser = new Parser();
-      parser.parse(testSchemaRareCasesJson);
-      const document = parser.document() as DocumentParsed;
+      document = await parser.asyncParse(testSchemaRareCasesJson);
 
-      operationTest = OperationBuilder.create(document.routes[0], 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+      operationTest = OperationBuilder.create(document.routes[0].operationId, 'v1', bautaJS);
+      await operationTest.addRoute(document.routes[0]);
 
-      streamOperationTest = OperationBuilder.create(document.routes[1], 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+      streamOperationTest = OperationBuilder.create(document.routes[1].operationId, 'v1', bautaJS);
+      await streamOperationTest.addRoute(document.routes[1]);
 
-      emptyResponseContentTest = OperationBuilder.create(document.routes[2], 'v1', {
-        staticConfig: {},
-        operations: {},
-        logger,
-        apiDefinitions: []
-      });
+      emptyResponseContentTest = OperationBuilder.create(
+        document.routes[2].operationId,
+        'v1',
+        bautaJS
+      );
+
+      await emptyResponseContentTest.addRoute(document.routes[2]);
     });
 
     test('should validate an not valid response', async () => {
-      operationTest.validateRequest(false);
+      operationTest.validateRequest(false).validateResponse(true);
       operationTest.setup(p =>
         p
           .push(() => [
@@ -557,7 +488,7 @@ describe('operation class tests', () => {
           ])
           .push((response, ctx) => ctx.validateResponse(response, 200))
       );
-
+      await operationTest.addRoute(document.routes[0]);
       const expected = [
         {
           path: '[0]',
@@ -597,70 +528,6 @@ describe('operation class tests', () => {
         })
       ).rejects.toThrow(expect.objectContaining({ errors: expected }));
     });
-    test('should validate the response by default', async () => {
-      operationTest.validateRequest(false);
-      operationTest.setup(p =>
-        p.push(() => [
-          {
-            code: 'boo'
-          },
-          {
-            code: 'foo'
-          }
-        ])
-      );
-
-      const expected = [
-        {
-          path: '[0]',
-          location: 'response',
-          message: "should have required property 'id'",
-          errorCode: 'required'
-        },
-        {
-          path: '[0]',
-          location: 'response',
-          message: "should have required property 'name'",
-          errorCode: 'required'
-        },
-        {
-          path: '[1]',
-          location: 'response',
-          message: "should have required property 'id'",
-          errorCode: 'required'
-        },
-        {
-          path: '[1]',
-          location: 'response',
-          message: "should have required property 'name'",
-          errorCode: 'required'
-        }
-      ];
-      const body = {
-        grant_type: 'password',
-        username: 'user',
-        password: 'pass'
-      };
-
-      await expect(
-        operationTest.run({
-          req: { body, headers: { 'content-type': 'application/json' } },
-          res: {}
-        })
-      ).rejects.toThrow(
-        expect.objectContaining({
-          errors: expected,
-          response: [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ]
-        })
-      );
-    });
 
     test('should validate an valid response', async () => {
       operationTest.validateRequest(false);
@@ -682,7 +549,7 @@ describe('operation class tests', () => {
             return response;
           })
       );
-
+      await operationTest.addRoute(document.routes[0]);
       const expected = [
         {
           id: 13,
@@ -718,6 +585,7 @@ describe('operation class tests', () => {
             return response;
           })
       );
+      await operationTest.addRoute(document.routes[0]);
       const body = {
         grant_type: 'password',
         username: 'user',
@@ -753,7 +621,7 @@ describe('operation class tests', () => {
           return null;
         })
       );
-
+      await emptyResponseContentTest.addRoute(document.routes[2]);
       const result = await emptyResponseContentTest.run({
         req: { headers: { 'content-type': 'application/json' } },
         res: { statusCode: 200 }

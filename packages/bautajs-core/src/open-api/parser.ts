@@ -14,40 +14,13 @@
  */
 import { OpenAPI, OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import SwaggerParser from 'swagger-parser';
-import deasync from 'deasync';
 import ParserV2 from './parserV2';
 import ParserV3 from './parserV3';
 import { logger } from '../logger';
 import { DocumentParsed, Document } from '../utils/types';
 
 class Parser {
-  private validateRequestToggle: boolean = true;
-
-  private validateResponseToggle: boolean = true;
-
   private documentParsed?: DocumentParsed;
-
-  public parse = deasync((apiDefinition: OpenAPI.Document, cb: any) =>
-    this.asyncParse(apiDefinition)
-      .then(res => cb(undefined, res))
-      .catch(cb)
-  );
-
-  /**
-   * global validate request toggle
-   * @returns {object}
-   */
-  public validateRequest(): boolean {
-    return this.validateRequestToggle;
-  }
-
-  /**
-   * global validate responses toggle
-   * @returns {object}
-   */
-  public validateResponse(): boolean {
-    return this.validateResponseToggle;
-  }
 
   /**
    * get the parsed document
@@ -62,15 +35,9 @@ class Parser {
    * @param {string|object} specification Filename of JSON/YAML file or object containing an openapi specification
    * @returns {object} fastify configuration information
    */
-  private async asyncParse({
-    validateRequest,
-    validateResponse,
-    ...specification
-  }: Document): Promise<DocumentParsed> {
+  public async asyncParse(specification: Document): Promise<DocumentParsed> {
     let spec;
     let data: OpenAPI.Document;
-    this.validateRequestToggle = validateRequest !== false;
-    this.validateResponseToggle = validateRequest !== false;
 
     try {
       // parse first, to avoid dereferencing of $ref's
@@ -85,7 +52,7 @@ class Parser {
       spec = await SwaggerParser.validate(copy);
     } catch (e) {
       logger.error('Error on validate and parser the current openAPI definition', e);
-      throw new Error('The Openapi API definition provided is not valid.');
+      throw new Error(`The Openapi API definition provided is not valid. Error ${e.message}`);
     }
     const openAPI = spec as OpenAPIV3.Document;
     const swagger = spec as OpenAPIV2.Document;

@@ -57,9 +57,9 @@ export class BautaJSExpress extends BautaJS {
   }
 
   private addRoute(operation: Operation) {
-    const method = operation.route.method.toLowerCase() as keyof express.Application;
-    const responses = operation.route.schema.response;
-    const { url, basePath } = operation.route;
+    const method = operation.route?.method.toLowerCase() as keyof express.Application;
+    const responses = operation.route?.schema.response;
+    const { url = '', basePath = '' } = operation.route || {};
     const route = path.normalize(basePath + url);
 
     this.app[method](route, (req: Request, res: Response, next: ICallback) => {
@@ -74,7 +74,7 @@ export class BautaJSExpress extends BautaJS {
         }
 
         if (responses && responses[res.statusCode]) {
-          const contentType = getContentType(operation.route, res.statusCode);
+          const contentType = operation.route && getContentType(operation.route, res.statusCode);
           res.set({
             ...(contentType ? { 'Content-type': contentType } : {}),
             ...responses[res.statusCode].headers,
@@ -140,7 +140,7 @@ export class BautaJSExpress extends BautaJS {
   private processOperations() {
     return Object.values(this.operations).reduce((routes, versions) => {
       Object.values(versions).forEach(operation => {
-        if (!operation.isPrivate()) {
+        if (!operation.isPrivate() && operation.route) {
           // eslint-disable-next-line no-param-reassign
           routes[operation.route.url] = operation;
         }
@@ -152,7 +152,8 @@ export class BautaJSExpress extends BautaJS {
 
   /**
    *
-   * Add the standard express middlewares and expose the operations routes using the given OpenAPI definition.
+   * Add the standard express middlewares, bootstrap the bautajs instance and expose the operations routes using the given OpenAPI definition.
+   * @async
    * @param {MiddlewareOptions} [options={
    *       cors: {
    *         enabled: true
@@ -173,7 +174,7 @@ export class BautaJSExpress extends BautaJS {
    * @returns
    * @memberof BautaJSExpress
    */
-  public applyMiddlewares(
+  public async applyMiddlewares(
     options: MiddlewareOptions = {
       cors: {
         enabled: true
@@ -198,6 +199,8 @@ export class BautaJSExpress extends BautaJS {
     this.app.use(compression());
     initBodyParser(this.app, options.bodyParser);
 
+    await this.bootstrap();
+
     const routes = this.processOperations();
     Object.keys(routes)
       .sort(routeOrder())
@@ -220,7 +223,7 @@ export class BautaJSExpress extends BautaJS {
    * @returns {http|https} - nodejs http/https server
    * @memberof BautaJSExpress#
    */
-  listen(port = 3000, host = 'localhost', httpsEnabled = false, httpsOptions = {}) {
+  async listen(port = 3000, host = 'localhost', httpsEnabled = false, httpsOptions = {}) {
     let server;
     let protocol = 'http://';
 

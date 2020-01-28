@@ -26,11 +26,13 @@ function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operatio
 
   Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
     const operation = operations[apiDefinition.info.version][key];
-    if (!paths[operation.route.path]) {
-      paths[operation.route.path] = {};
+    if (operation.route) {
+      if (!paths[operation.route.path]) {
+        paths[operation.route?.path] = {};
+      }
+      paths[operation.route?.path][operation.route?.method.toLowerCase()] =
+        operation.route?.openapiSource;
     }
-    paths[operation.route.path][operation.route.method.toLocaleLowerCase()] =
-      operation.route.openapiSource;
   });
 
   return paths;

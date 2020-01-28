@@ -21,10 +21,11 @@ jest.mock('memoizee');
 
 describe('cache push', () => {
   let bautajs: BautaJS;
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
+    await bautajs.bootstrap();
   });
   test('should pass the options to memoize fn', () => {
     const pp = pipelineBuilder(p =>

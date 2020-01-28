@@ -23,6 +23,12 @@ export interface Response {
   [code: string]: JSONSchema;
 }
 
+export interface BasicOperation {
+  readonly id: string;
+  readonly deprecated: boolean;
+  readonly version: string;
+}
+
 export interface RouteSchema {
   body?: JSONSchema;
   querystring?: JSONSchema;
@@ -61,29 +67,8 @@ export interface TResponse {
 }
 
 // OpenAPI document
-export interface OpenAPIV2Document extends OpenAPIV2.Document {
-  /**
-   * Set request validation to true. This will validate all req.body, req.query and req.params.
-   * @memberof Operation
-   */
-  validateRequest?: boolean;
-  /**
-   * Set the response validation to true. This will validate the operation result againts the operation responses schemas.
-   * @memberof Operation
-   */
-  validateResponse?: boolean;
-}
+export interface OpenAPIV2Document extends OpenAPIV2.Document {}
 export interface OpenAPIV3Document extends OpenAPIV3.Document {
-  /**
-   * Set request validation to true. This will validate all req.body, req.query and req.params.
-   * @memberof Operation
-   */
-  validateRequest?: boolean;
-  /**
-   * Set the response validation to true. This will validate the operation result againts the operation responses schemas.
-   * @memberof Operation
-   */
-  validateResponse?: boolean;
   basePath?: string;
 }
 export interface SwaggerComponents {
@@ -171,6 +156,22 @@ export interface BautaJSOptions {
   resolversPath?: string | string[];
   /**
    *
+   * If set to true, all operation responses will be validated. This will be override for the local operation configuration.
+   * @type {boolean}
+   * @default false
+   * @memberof BautaJSOptions
+   */
+  enableResponseValidation?: boolean;
+  /**
+   *
+   * If set to true, all operation requests will be validated. This will be override for the local operation configuration.
+   * @type {boolean}
+   * @default true
+   * @memberof BautaJSOptions
+   */
+  enableRequestValidation?: boolean;
+  /**
+   *
    *  The static context that will be available on all bautajs.staticConfig instance.
    * @type {any}
    * @memberof BautaJSOptions
@@ -206,6 +207,13 @@ export interface BautaJSInstance {
    * @memberof BautaJSInstance
    */
   readonly staticConfig: any;
+  /**
+   * Run all async process such dereference the api definitions and build the operation validators. You can still use the bautaJS instance
+   * without execute this method, but take in account that OpenAPI features such request or response validation won't be available.
+   * @async
+   * @memberof BautaJSInstance
+   */
+  bootstrap(): Promise<void>;
 }
 
 // Service
@@ -217,13 +225,11 @@ export type Version = Dictionary<Operation>;
 
 // Operation
 export type ErrorHandler = (err: Error, ctx: Context) => any;
-export interface Operation {
-  readonly route: Route;
-  readonly id: string;
-  readonly version: string;
-  readonly deprecated: boolean;
-  schema: OpenAPI.Operation;
+export interface Operation extends BasicOperation {
+  route?: Route;
+  schema?: OpenAPI.Operation;
   nextVersionOperation?: Operation;
+  addRoute(route: Route): void;
   /**
    * Set the operation as deprecated. If the operation is deprecated the link between
    * the operations version will be broken, meaning that operations from new version won't

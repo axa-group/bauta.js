@@ -60,7 +60,7 @@ export type ProviderOperation<TOut> = (
 
 const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
-const isDebugLogLevel = process.env.LOG_LEVEL?.toLocaleLowerCase() === 'debug';
+const isDebugLogLevel = process.env.LOG_LEVEL?.toLowerCase() === 'debug';
 
 function logRequestHook(logger: ContextLogger) {
   return (options: NormalizedOptions) => {

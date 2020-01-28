@@ -20,8 +20,9 @@ import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
 describe('provider rest', () => {
   let bautajs: BautaJS;
-  beforeEach(() => {
+  beforeEach(async () => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
+    await bautajs.bootstrap();
   });
 
   afterEach(() => {

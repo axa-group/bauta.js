@@ -20,6 +20,7 @@ const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 describe('template decorator', () => {
   test('should allow put a template', async () => {
     const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
+    await bautajs.bootstrap();
     bautajs.operations.v1.operation1.setup(p => {
       p.push(() => '1').push(template([{ id: '{{ctx.req.id}}', name: '{{previousValue}}' }]));
     });
@@ -31,6 +32,8 @@ describe('template decorator', () => {
 
   test('should bypass not valid template', async () => {
     const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
+    await bautajs.bootstrap();
+
     bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
       p.push(() => '1').push(template(undefined));
     });

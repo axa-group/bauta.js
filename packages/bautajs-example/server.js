@@ -15,22 +15,24 @@
 const { notFound } = require('@hapi/boom');
 const bautaJS = require('./server/instances/bauta');
 
-bautaJS.applyMiddlewares();
+(async () => {
+  await bautaJS.applyMiddlewares();
 
-/* Error handler */
-// 404 error
-bautaJS.app.use((req, res, next) => next(notFound()));
-// Error handler
-/* eslint-disable-next-line */
-bautaJS.app.use((err, req, res, next) => {
-  // eslint-disable-next-line no-console
-  console.error(err);
-  res
-    .status(err.output ? err.output.statusCode : err.status || 500)
-    .json(err.errors || { message: err.message });
-});
+  /* Error handler */
+  // 404 error
+  bautaJS.app.use((req, res, next) => next(notFound()));
+  // Error handler
+  /* eslint-disable-next-line */
+  bautaJS.app.use((err, req, res, next) => {
+    // eslint-disable-next-line no-console
+    console.error(err);
+    res
+      .status(err.output ? err.output.statusCode : err.status || 500)
+      .json(err.errors || { message: err.message });
+  });
 
-bautaJS.listen();
+  bautaJS.listen();
+})();
 
 process.on('unhandledRejection', () => {
   process.exit(1);

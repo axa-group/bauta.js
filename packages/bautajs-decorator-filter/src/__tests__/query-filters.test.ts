@@ -19,8 +19,9 @@ const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
 describe('query filter decorator', () => {
   let bautajs: BautaJS;
-  beforeEach(() => {
+  beforeEach(async () => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
+    await bautajs.bootstrap();
   });
 
   test('should filter the given array with the given loobpack filters', async () => {

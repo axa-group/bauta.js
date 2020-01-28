@@ -23,9 +23,36 @@ import {
   Document,
   EventTypes,
   Logger,
-  Operations
+  Operations,
+  BasicOperation
 } from './utils/types';
 import Parser from './open-api/parser';
+
+interface API {
+  version: string;
+  operations: BasicOperation[];
+}
+
+function prebuildApi(apiDefinitions: Document[]): API[] {
+  return apiDefinitions.map((apiDefinition: Document) => {
+    try {
+      return {
+        version: apiDefinition.info.version,
+        operations: Object.keys(apiDefinition.paths)
+          .map(path =>
+            Object.keys(apiDefinition.paths[path]).map(method => ({
+              id: apiDefinition.paths[path][method].operationId,
+              version: apiDefinition.info.version,
+              deprecated: apiDefinition.paths[path][method].deprecated
+            }))
+          )
+          .flat(1)
+      };
+    } catch (e) {
+      throw new Error(`The Openapi API definition provided is not valid. Error ${e.message}`);
+    }
+  });
+}
 
 /**
  *
@@ -70,11 +97,9 @@ export class BautaJS implements BautaJSInstance {
   public readonly logger: Logger;
 
   constructor(public readonly apiDefinitions: Document[], options: BautaJSOptions = {}) {
-    const parsedApiDefinitions = apiDefinitions.map(apiDefinition => {
-      const parser = new Parser();
-      parser.parse(apiDefinition);
-      return parser;
-    });
+    const apis: API[] = prebuildApi(apiDefinitions);
+    let responseValidation = false;
+    let requestValidation = true;
 
     this.staticConfig = options.staticConfig;
     /**
@@ -82,7 +107,15 @@ export class BautaJS implements BautaJSInstance {
      * @property {Logger} logger - A [debug]{@link https://www.npmjs.com/package/debug} logger instance
      */
     this.logger = logger;
-    this.operations = this.registerOperations(parsedApiDefinitions);
+    if (typeof options.enableRequestValidation === 'boolean') {
+      requestValidation = options.enableRequestValidation;
+    }
+
+    if (typeof options.enableResponseValidation === 'boolean') {
+      responseValidation = options.enableResponseValidation;
+    }
+
+    this.operations = this.registerOperations(apis, requestValidation, responseValidation);
 
     // Load custom resolvers and operations modifiers
     if (options.resolvers) {
@@ -98,7 +131,24 @@ export class BautaJS implements BautaJSInstance {
     }
   }
 
-  private registerOperations(apiDefinitions: Parser[]): Operations {
+  public async bootstrap(): Promise<void> {
+    const asyncTasks = this.apiDefinitions.map(async apiDefinition => {
+      const parser = new Parser();
+      const parsedApiDefinition = await parser.asyncParse(apiDefinition);
+      const { version } = parsedApiDefinition.generic.info;
+      parsedApiDefinition.routes.forEach(route => {
+        this.operations[version][route.operationId].addRoute(route);
+      });
+    });
+
+    await Promise.all(asyncTasks);
+  }
+
+  private registerOperations(
+    apis: API[],
+    enableRequestValidation: boolean,
+    enableResponseValidation: boolean
+  ): Operations {
     const operations: Operations = new Proxy(
       {},
       {
@@ -114,54 +164,52 @@ export class BautaJS implements BautaJSInstance {
       }
     );
 
-    apiDefinitions.forEach((apiDefinition, apiIndex) => {
-      const document = apiDefinition.document();
-      if (document) {
-        const apiVersion = document.generic.info.version;
-        let prevApiVersion: string;
-        const previousDocument =
-          apiDefinitions[apiIndex - 1] && apiDefinitions[apiIndex - 1].document();
-        if (apiIndex > 0 && previousDocument) {
-          prevApiVersion = previousDocument.generic.info.version;
-        }
-        operations[apiVersion] = new Proxy(
-          {},
-          {
-            get(target: Dictionary<any>, prop: string) {
-              if (!Object.prototype.hasOwnProperty.call(target, prop)) {
-                throw new Error(
-                  `[ERROR] API operationId "${prop}" not found on your apiDefinitions[${apiVersion}].paths[path][method].operationId`
-                );
-              }
-
-              return target[prop];
-            }
-          }
-        );
-
-        document.routes.forEach(route => {
-          const operation = OperationBuilder.create(route, apiVersion, this);
-
-          operation.validateRequest(apiDefinition.validateRequest());
-          operation.validateResponse(apiDefinition.validateResponse());
-
-          if (
-            prevApiVersion &&
-            operations[prevApiVersion][operation.id] &&
-            !operations[prevApiVersion][operation.id].deprecated
-          ) {
-            operations[prevApiVersion][operation.id].nextVersionOperation = operation;
-          }
-
-          operations[apiVersion][operation.id] = operation;
-
-          this.logger.info(`[OK] ${apiVersion}.${operation.id} operation registered on bautajs`);
-          this.logger.events.emit(EventTypes.REGISTER_OPERATION, {
-            apiVersion,
-            operation
-          });
-        });
+    apis.forEach((api, apiIndex) => {
+      const apiVersion = api.version;
+      let prevApiVersion: string;
+      const prevApi = apis[apiIndex - 1];
+      if (apiIndex > 0 && prevApi) {
+        prevApiVersion = prevApi.version;
       }
+      operations[apiVersion] = new Proxy(
+        {},
+        {
+          get(target: Dictionary<any>, prop: string) {
+            if (!Object.prototype.hasOwnProperty.call(target, prop)) {
+              throw new Error(
+                `[ERROR] API operationId "${prop}" not found on your apiDefinitions[${apiVersion}].paths[path][method].operationId`
+              );
+            }
+
+            return target[prop];
+          }
+        }
+      );
+
+      api.operations.forEach(op => {
+        const operation = OperationBuilder.create(op.id, apiVersion, this);
+        operation.validateResponse(enableResponseValidation);
+        operation.validateRequest(enableRequestValidation);
+
+        if (op.deprecated === true) {
+          operation.setAsDeprecated();
+        }
+        if (
+          prevApiVersion &&
+          operations[prevApiVersion][operation.id] &&
+          !operations[prevApiVersion][operation.id].deprecated
+        ) {
+          operations[prevApiVersion][operation.id].nextVersionOperation = operation;
+        }
+
+        operations[apiVersion][operation.id] = operation;
+
+        this.logger.info(`[OK] ${apiVersion}.${operation.id} operation registered on bautajs`);
+        this.logger.events.emit(EventTypes.REGISTER_OPERATION, {
+          apiVersion,
+          operation
+        });
+      });
     });
 
     return operations;

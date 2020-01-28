@@ -20,8 +20,9 @@ const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
 describe('match decorator', () => {
   let bautajs: BautaJS;
-  beforeEach(() => {
+  beforeEach(async () => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
+    await bautajs.bootstrap();
   });
 
   test('should select the pipeline execution depending on the condition', async () => {

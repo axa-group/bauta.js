@@ -2,38 +2,20 @@
 
 `bautajs` comes with a default request validation using the [openAPI schema v2 or v3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). **_BY DEFAULT IT'S SET TO TRUE_**.
 This feature is always enabled while you have a valid openAPI schema inputs. 
-You can disable it globally setting up `validateRequest: false` on your API schema definition or disable it locally for every operation
-using `operations.v1.operation1.validateRequest(false);`
+You can disable it locally for every operation using `operations.v1.operation1.validateRequest(false);`
 
 **_It's recomended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors), you are free to convert them to a 400 or 422 errors_**
 
-### Example
+The request validation can be globally enabled by set it on the `bautajs` initialization:
 
-  This is a open api schema:
+```js
+ const { BautaJS } = require('@bautajs/core');
+ const apiDefinitions = require('./my-api-definitions');
 
-```json
-{
-    "openapi": "3.0.0",
-    "info": {
-      "version": "v1",
-      "title": "Swagger Petstore",
-      "license": {
-        "name": "MIT"
-      }
-    },
-    "servers": [
-      {
-        "url": "http://petstore.swagger.io/v1"
-      }
-    ],
-    "validateRequest": true,
-    "paths": {
-      ...
-    }
-}
+ const bautajs = new BautaJS(apiDefinitions, { enableRequestValidation: true });
 ```
 
-  Alternative you can also validate inside every resolver by accesing to the context `ctx.validateRequest()`.
+Alternative you can also validate inside every resolver by accessing to the context `ctx.validateRequest()`.
 
 ```js
   operations.v1.findCats.setup(p => 
@@ -47,39 +29,22 @@ using `operations.v1.operation1.validateRequest(false);`
 
 # Response Validation
 
-`bautajs` comes with a default response validation using the [openAPI schema v2 or v3][15]. **_BY DEFAULT IT'S SET TO TRUE_**.
-This feature is always disabled by default, but if you have a valid openAPI schema response schema you will be able to enable this feature manually. You can enable it globally setting up `validateResponse: true` on your API swagger definition or disable it locally for every operation
+`bautajs` comes with a default response validation using the [openAPI schema v2 or v3][15]. **_BY DEFAULT IT'S SET TO FALSE_**.
+This feature is always disabled by default, but if you have a valid openAPI schema response schema you will be able to enable this feature manually. You can enable it locally for every operation
 using `operations.v1.operation1.validateResponse(true);`
 s
 **_It's recomended to have an error handler since this will throw a [ValidationError](../packages/bautajs/src/core/validation-error.ts), you are free to convert them to a 400 or 422 errors_**
 
-### Example
+The response validation can be globally enabled by set it on the `bautajs` initialization:
 
-  This is a open api schema:
+```js
+ const { BautaJS } = require('@bautajs/core');
+ const apiDefinitions = require('./my-api-definitions');
 
-```json
-{
-    "openapi": "3.0.0",
-    "info": {
-      "version": "v1",
-      "title": "Swagger Petstore",
-      "license": {
-        "name": "MIT"
-      }
-    },
-    "servers": [
-      {
-        "url": "http://petstore.swagger.io/v1"
-      }
-    ],
-    "validateResponse": true,
-    "paths": {
-      ...
-    }
-}
+ const bautajs = new BautaJS(apiDefinitions, { enableResponseValidation: true });
 ```
 
-  Alternative you can also validate inside every resolver by accessing to the context `ctx.validateResponseSchema()`.
+Alternative you can also validate inside every resolver by accessing to the context `ctx.validateResponseSchema()`.
 
 ```js
   operations.v1.findCats.setup(p => 
@@ -90,7 +55,7 @@ s
   );
 ```
 
-  Alternative you can also set what is the valid response status that you want to validate to.
+Alternative you can also set what is the valid response status that you want to validate to.
 
 ```js
   operations.v1.findCats.setup(p => 

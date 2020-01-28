@@ -19,9 +19,11 @@ The goal of this section is to describe the OperatorFunctions required to have b
 const { BautaJSExpress } = require('@bautajs/express');
 const apiDefinitions = {};
 const apiOptions = {};
+(async () => {
 const bautJSExpress = new BautaJSExpress(apiDefinitions, apiOptions);
-bautJSExpress.applyMiddlewares();
+await bautJSExpress.applyMiddlewares();
 bautJSExpress.listen();
+})();
 ```
 
 At this point, if you try to start the server, it will not work because api definitions are empty.

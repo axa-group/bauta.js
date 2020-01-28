@@ -45,13 +45,13 @@ import {
 } from '../open-api/build-validators';
 
 export class OperationBuilder implements Operation {
-  public static create(route: Route, version: string, bautajs: BautaJSInstance): Operation {
-    return new OperationBuilder(route, version, bautajs);
+  public static create(id: string, version: string, bautajs: BautaJSInstance): Operation {
+    return new OperationBuilder(id, version, bautajs);
   }
 
-  public id: string;
+  public route?: Route;
 
-  public schema: OpenAPI.Operation;
+  public schema?: OpenAPI.Operation;
 
   public nextVersionOperation?: Operation;
 
@@ -67,17 +67,14 @@ export class OperationBuilder implements Operation {
 
   private requestValidationEnabled: Boolean = true;
 
-  private responseValidationEnabled: Boolean = true;
+  private responseValidationEnabled: Boolean = false;
 
   constructor(
-    public readonly route: Route,
+    public readonly id: string,
     public version: string,
     private readonly bautajs: BautaJSInstance
   ) {
     this.operatorFunction = buildDefaultPipeline();
-    this.id = route.operationId;
-    this.schema = route.openapiSource;
-    this.deprecated = route.openapiSource.deprecated === true;
   }
 
   public isSetup() {
@@ -128,6 +125,15 @@ export class OperationBuilder implements Operation {
     return this;
   }
 
+  public addRoute(route: Route) {
+    this.schema = route.openapiSource;
+    this.route = route;
+    // Generate validators on setup operations only
+    if (this.setupDone === true) {
+      this.generateValidators(route.schema);
+    }
+  }
+
   private generateValidators(operationSchema: RouteSchema): void {
     if (operationSchema.body) {
       this.validators[bodySchema.toString()] = buildSchemaCompiler(operationSchema.body);
@@ -157,7 +163,7 @@ export class OperationBuilder implements Operation {
   }
 
   private isResponseJson(statusCode?: number): boolean {
-    const { responses } = this.schema;
+    const responses = this.schema?.responses;
 
     if (responses) {
       // If default is not defined in the schema, we take as default response that for 200 response.
@@ -258,11 +264,6 @@ export class OperationBuilder implements Operation {
   }
 
   public setup(pipelineSetup: PipelineSetup<undefined>): void {
-    // Generate validators on setup operations only
-    if (!this.setupDone) {
-      this.generateValidators(this.route.schema);
-    }
-
     this.operatorFunction = pipelineBuilder<undefined, any>(pipelineSetup, param => {
       logger.debug(
         `[OK] ${param.name || 'anonymous function or pipeline'} pushed to .${this.version}.${
