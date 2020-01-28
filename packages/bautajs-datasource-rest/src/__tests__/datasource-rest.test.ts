@@ -128,7 +128,7 @@ describe('provider rest', () => {
     test('should log the requests data on debug mode', async () => {
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
-      const expectedMsg = 'request-logger: Request data: ';
+      const expectedMsg = 'request-logger[1]: Request data: ';
       const expectedData = {
         body: '{"test":"1234"}',
         headers: '{"user-agent":"got (https://github.com/sindresorhus/got)","x-request-id":1}',
@@ -158,10 +158,44 @@ describe('provider rest', () => {
       expect(debugLogs[0][1]).toStrictEqual(expectedData);
     });
 
+    test(`should not log the request id if it's not defined`, async () => {
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = require('../index');
+      const expectedMsg = 'request-logger[No req id]: Request data: ';
+      const expectedData = {
+        body: '{"test":"1234"}',
+        headers: '{"user-agent":"got (https://github.com/sindresorhus/got)"}',
+        method: 'POST',
+        url: 'https://pets.com/v1/policies'
+      };
+
+      nock('https://pets.com')
+        .post('/v1/policies', { test: '1234' })
+        .reply(200, { bender: 'ok' });
+      const debugLogs: any[] = [];
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
+
+      loggerMock.debug = jest.fn((...params: any[]) => debugLogs.push(params)) as any;
+      const provider = restProvider(client => {
+        return client.post('https://pets.com/v1/policies', {
+          json: {
+            test: '1234'
+          },
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      ctx.id = undefined;
+      await provider()(null, ctx, bautajs);
+      expect(debugLogs[0][0]).toStrictEqual(expectedMsg);
+      expect(debugLogs[0][1]).toStrictEqual(expectedData);
+    });
+
     test('should log the requests method and url info mode', async () => {
       process.env.LOG_LEVEL = 'info';
       const { restProvider } = require('../index');
-      const expectedMsg = 'request-logger: Request to [POST] https://pets.com/v1/policies';
+      const expectedMsg = 'request-logger[1]: Request to [POST] https://pets.com/v1/policies';
 
       nock('https://pets.com')
         .post('/v1/policies', {
@@ -191,7 +225,7 @@ describe('provider rest', () => {
     test('should log the requests data on debug mode if the request body is not a json', async () => {
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
-      const expectedMsg = 'request-logger: Request data: ';
+      const expectedMsg = 'request-logger[1]: Request data: ';
       const expectedData = {
         body: 'someString',
         headers:
@@ -235,7 +269,7 @@ describe('provider rest', () => {
       const { restProvider } = require('../index');
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'response-logger: Error for [GET] https://pets.com/v1/policies:',
+        'response-logger[1]: Error for [GET] https://pets.com/v1/policies:',
         {
           code: undefined,
           name: 'RequestError',
@@ -266,12 +300,46 @@ describe('provider rest', () => {
       expect(errorConsole[0]).toStrictEqual(expectedMsg);
     });
 
-    test('should log an error if the response body could not be parsed', async () => {
+    test('should not log the id if no id is provided', async () => {
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
       // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'response-logger: Response for [GET] https://pets.com/v1/policies: ',
+        'response-logger[No req id]: Response for [GET] https://pets.com/v1/policies: ',
+        {
+          body: '{"bender":1}',
+          headers: '{"content-type":"application/json"}',
+          statusCode: 200
+        }
+      ];
+
+      nock('https://pets.com/v1')
+        .get('/policies')
+        .reply(200, { bender: 1 });
+
+      const debugConsole: any[] = [];
+      const infoConsole: any[] = [];
+      const loggerMock: ContextLogger = new LoggerBuilder('test');
+      loggerMock.debug = jest.fn((...params: any[]) => debugConsole.push(params)) as any;
+      loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
+
+      const provider = restProvider(client => {
+        return client.get('https://pets.com/v1/policies', {
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
+      ctx.logger = loggerMock;
+      ctx.id = undefined;
+      await provider()(null, ctx, bautajs);
+      expect(debugConsole[1]).toStrictEqual(expectedMsg);
+    });
+
+    test('should log an error if the response body could not be parsed', async () => {
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = require('../index');
+      const expectedMsg = [
+        'response-logger[1]: Response for [GET] https://pets.com/v1/policies: ',
         {
           body: '{"bender":1}',
           headers: '{"content-type":"application/json"}',
@@ -304,7 +372,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'info';
       const { restProvider } = require('../index');
       const expectedMsg = new RegExp(
-        'response-logger: The request to https://pets.com/v1/policies took: (.*) ms'
+        'response-logger\\[1\\]: The request to https://pets.com/v1/policies took: (.*) ms'
       );
 
       nock('https://pets.com/v1')
@@ -329,9 +397,8 @@ describe('provider rest', () => {
     test('should not crash if the response body could not be parsed', async () => {
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
-      // With nock got is not able to get the response method, doing a normal request this field is returned
       const expectedMsg = [
-        'response-logger: Response for [GET] https://pets.com/v1/policies: ',
+        'response-logger[1]: Response for [GET] https://pets.com/v1/policies: ',
         {
           body: '<html><div></div></html>',
           headers: '{"content-type":"text/html"}',

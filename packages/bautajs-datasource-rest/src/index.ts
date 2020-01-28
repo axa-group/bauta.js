@@ -62,9 +62,9 @@ const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
 const isDebugLogLevel = process.env.LOG_LEVEL?.toLowerCase() === 'debug';
 
-function logRequestHook(logger: ContextLogger) {
+function logRequestHook(logger: ContextLogger, reqId: string = 'No req id') {
   return (options: NormalizedOptions) => {
-    logger.info(`request-logger: Request to [${options.method}] ${options.url.href}`);
+    logger.info(`request-logger[${reqId}]: Request to [${options.method}] ${options.url.href}`);
     if (isDebugLogLevel) {
       const requestData: RequestLog = {
         url: options.url.href,
@@ -74,18 +74,18 @@ function logRequestHook(logger: ContextLogger) {
       if (options.body || options.json) {
         requestData.body = utils.prepareToLog(options.body || options.json);
       }
-      logger.debug(`request-logger: Request data: `, requestData);
+      logger.debug(`request-logger[${reqId}]: Request data: `, requestData);
       logger.events.emit(EventTypes.PROVIDER_EXECUTION, options);
     }
   };
 }
-function logErrorsHook(logger: ContextLogger) {
+function logErrorsHook(logger: ContextLogger, reqId: string = 'No req id') {
   return (error: GeneralError) => {
     const parseError = error as ParseError;
     const genericError = error as GotError;
     if (parseError.response && parseError.response.body) {
       logger.error(
-        `response-logger: Error for [${parseError.options.method}] ${parseError.options.url}:`,
+        `response-logger[${reqId}]: Error for [${parseError.options.method}] ${parseError.options.url}:`,
         {
           statusCode: parseError.response.statusCode,
           body: utils.prepareToLog(parseError.response.body)
@@ -93,7 +93,7 @@ function logErrorsHook(logger: ContextLogger) {
       );
     } else if (genericError.options) {
       logger.error(
-        `response-logger: Error for [${genericError.options.method}] ${genericError.options.url}:`,
+        `response-logger[${reqId}]: Error for [${genericError.options.method}] ${genericError.options.url}:`,
         {
           name: genericError.name,
           code: genericError.code,
@@ -101,7 +101,7 @@ function logErrorsHook(logger: ContextLogger) {
         }
       );
     } else {
-      logger.error(`response-logger: Internal error on the datasource request:`, {
+      logger.error(`response-logger[${reqId}]: Internal error on the datasource request:`, {
         message: error.message,
         name: error.name
       });
@@ -110,14 +110,14 @@ function logErrorsHook(logger: ContextLogger) {
     return error;
   };
 }
-function logResponseHook(logger: ContextLogger) {
+function logResponseHook(logger: ContextLogger, reqId: string = 'No req id') {
   return (response: Response) => {
     if (response.fromCache) {
-      logger.info(`response-logger: Response for ${response.requestUrl} is cached`);
+      logger.info(`response-logger[${reqId}]: Response for ${response.requestUrl} is cached`);
     } else {
       if (isDebugLogLevel) {
         logger.debug(
-          `response-logger: Response for [${response.request.options.method}] ${response.requestUrl}: `,
+          `response-logger[${reqId}]: Response for [${response.request.options.method}] ${response.requestUrl}: `,
           {
             headers: utils.prepareToLog(response.headers),
             statusCode: response.statusCode,
@@ -126,7 +126,9 @@ function logResponseHook(logger: ContextLogger) {
         );
       }
       const totalTime = response.timings.phases.total;
-      logger.info(`response-logger: The request to ${response.requestUrl} took: ${totalTime} ms`);
+      logger.info(
+        `response-logger[${reqId}]: The request to ${response.requestUrl} took: ${totalTime} ms`
+      );
     }
     logger.events.emit(EventTypes.PROVIDER_RESULT, response);
 
@@ -140,8 +142,10 @@ function addRequestId(ctx: Context) {
       // eslint-disable-next-line no-param-reassign
       options.headers = {};
     }
-    // eslint-disable-next-line no-param-reassign
-    options.headers['x-request-id'] = ctx.id;
+    if (ctx.id) {
+      // eslint-disable-next-line no-param-reassign
+      options.headers['x-request-id'] = ctx.id;
+    }
   };
 }
 
@@ -159,9 +163,9 @@ function operatorFn(client: Got, fn: ProviderOperation<any>) {
     const promiseOrStream = fn(
       client.extend({
         hooks: {
-          beforeRequest: [addRequestId(ctx), logRequestHook(ctx.logger)],
-          afterResponse: [logResponseHook(ctx.logger)],
-          beforeError: [logErrorsHook(ctx.logger)]
+          beforeRequest: [addRequestId(ctx), logRequestHook(ctx.logger, ctx.id)],
+          afterResponse: [logResponseHook(ctx.logger, ctx.id)],
+          beforeError: [logErrorsHook(ctx.logger, ctx.id)]
         }
       }),
       value,
