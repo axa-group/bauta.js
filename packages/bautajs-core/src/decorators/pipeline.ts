@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PipelineSetup, OperatorFunction, EventTypes } from '../utils/types';
+import { PipelineSetup, OperatorFunction, EventTypes, GenericError } from '../utils/types';
 import { Builder } from '../core/pipeline-builder';
 import { Accesor } from '../core/accesor';
 import { logger } from '../logger';
@@ -67,7 +67,7 @@ export function pipelineBuilder<TIn, TOut>(
     }
 
     if (result instanceof Promise) {
-      result = result.catch(async (e: Error) => pp.accesor.errorHandler(e, ctx));
+      result = result.catch(async (e: GenericError) => pp.accesor.errorHandler(e, ctx));
     }
 
     return result;

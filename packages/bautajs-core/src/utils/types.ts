@@ -18,6 +18,12 @@ import PCancelable from 'p-cancelable';
 
 export type JSONSchema = any;
 
+export type GenericError =
+  | (Error & {
+      [key: string]: any;
+    })
+  | null;
+
 export interface Response {
   [code: number]: JSONSchema;
   [code: string]: JSONSchema;
@@ -224,7 +230,7 @@ export type Resolver = (operations: Operations) => void;
 export type Version = Dictionary<Operation>;
 
 // Operation
-export type ErrorHandler = (err: Error, ctx: Context) => any;
+export type ErrorHandler = (err: GenericError, ctx: Context) => any;
 export interface Operation extends BasicOperation {
   route?: Route;
   schema?: OpenAPI.Operation;

@@ -12,12 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { HandlerAccesor, OperatorFunction, ErrorHandler } from '../utils/types';
+import { HandlerAccesor, OperatorFunction, ErrorHandler, GenericError } from '../utils/types';
 
 export class Accesor implements HandlerAccesor {
   private accesor: OperatorFunction<any, any> = val => val;
 
-  private errorAccesor: ErrorHandler = (err: Error) => Promise.reject(err);
+  private errorAccesor: ErrorHandler = (err: GenericError) => Promise.reject(err);
 
   get handler(): OperatorFunction<any, any> {
     return this.accesor;

@@ -17,7 +17,7 @@ import { CorsOptions } from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-import { Operation } from '@bautajs/core';
+import { Operation, GenericError } from '@bautajs/core';
 
 export enum EventTypes {
   /**
@@ -27,7 +27,7 @@ export enum EventTypes {
 }
 
 export interface ICallback {
-  (error?: Error | null, result?: any): void;
+  (error?: GenericError, result?: any): void;
 }
 
 export type SwaggerGenericOptions = string | false | null;
