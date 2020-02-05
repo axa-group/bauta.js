@@ -1010,35 +1010,4 @@ describe('datasource rest test', () => {
       )(null, { ...context, req: { id: 'toto' }, data: { bar: 'bar', token: '1' } }, bautaInstance);
     });
   });
-  describe('request cancelation', () => {
-    test('should cancel the request if the a cancel is executed', async () => {
-      const myContext = { ...context, req: { id: 'toto' }, data: { bar: 'bar' } };
-      const template = {
-        providers: [
-          {
-            id: 'op1',
-            options(_: any, ctx: Context) {
-              return {
-                url: `http://pets.com/v1/policies/${ctx.req.id}/documents`,
-                method: 'GET',
-                json: {
-                  foo: `${ctx.data.bar} dead live & robots ${ctx.data.bar}`
-                }
-              };
-            }
-          }
-        ]
-      };
-      const datasource = restDataSource(template);
-      const request1 = datasource.op1({
-        resolveBodyOnly: true
-      })(null, myContext, bautaInstance);
-
-      myContext.token.cancel();
-
-      await expect(request1).rejects.toThrow(
-        expect.objectContaining({ message: 'Promise was canceled' })
-      );
-    });
-  });
 });

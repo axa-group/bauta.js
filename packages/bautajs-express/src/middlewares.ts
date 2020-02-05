@@ -17,25 +17,38 @@ import morgan from 'morgan';
 import cors, { CorsOptions } from 'cors';
 import { Application, json, urlencoded } from 'express';
 import helmet from 'helmet';
-import { Document } from '@bautajs/core';
+import { Document, genReqId } from '@bautajs/core';
+
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
 
+export function initReqIdGenerator(app: Application) {
+  app.use((req: any, _, next) => {
+    const { headers } = req;
+    req.id = genReqId(headers);
+    next();
+  });
+}
+
 export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOptions>) {
+  morgan.token('reqId', (req: any) => req.id);
+  const tinyWithTimestampAndreqId =
+    ':date[iso] :reqId :method :url :status :res[content-length] - :response-time ms';
+
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     app.use(
-      morgan('tiny', {
+      morgan(tinyWithTimestampAndreqId, {
         immediate: true
       })
     );
     app.use(
-      morgan('tiny', {
+      morgan(tinyWithTimestampAndreqId, {
         immediate: false
       })
     );
   } else if (opt && opt.enabled === true && opt.options) {
     app.use(morgan(opt.options.format, opt.options.options));
     app.use(
-      morgan('tiny', {
+      morgan(tinyWithTimestampAndreqId, {
         immediate: false
       })
     );

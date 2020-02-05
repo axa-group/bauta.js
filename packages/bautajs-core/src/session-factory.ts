@@ -12,20 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import hyperid from 'hyperid';
+
 import { logger } from './logger';
 import { Session } from './utils/types';
-
-const idGenerator = hyperid();
-const requestIdHeader = 'request-id';
-
-function genReqId(headers: any): string {
-  if (headers && headers[requestIdHeader]) {
-    return headers[requestIdHeader];
-  }
-
-  return idGenerator();
-}
+import { genReqId } from './utils/generator-request-id';
 
 /**
  * @ignore

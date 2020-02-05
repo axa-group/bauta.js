@@ -12,21 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { prepareToLog } from './utils/prepare-to-log';
+import hyperid from 'hyperid';
 
-export * from './bauta';
-export * from './decorators/match';
-export * from './decorators/resolver';
-export * from './decorators/step';
-export * from './decorators/pipeline';
-export * from './decorators/as-promise';
-export * from './decorators/as-value';
-export * from './decorators/parallel';
-export * from './utils/types';
-export * from './utils/create-context';
-export * from './logger';
-export * from './utils/generator-request-id';
+const idGenerator = hyperid();
+const requestIdHeader = 'request-id';
 
-export const utils = {
-  prepareToLog
-};
+export function genReqId(headers: any): string {
+  if (headers && headers[requestIdHeader]) {
+    return headers[requestIdHeader];
+  }
+
+  return idGenerator();
+}
+
+export default genReqId;
