@@ -20,7 +20,6 @@ import {
   Context,
   ContextData,
   Operation,
-  EventTypes,
   OperatorFunction,
   PipelineSetup,
   Route,
@@ -29,7 +28,7 @@ import {
   TResponse
 } from '../utils/types';
 import { buildDefaultPipeline } from '../utils/default-pipeline';
-import { logger } from '../logger';
+
 import { createContext } from '../utils/create-context';
 import { pipelineBuilder } from '../decorators/pipeline';
 import {
@@ -206,7 +205,7 @@ export class OperationBuilder implements Operation {
   }
 
   public run(ctx: ContextData = {}): PCancelable<any> {
-    const context: Context = createContext(ctx);
+    const context: Context = createContext(ctx, this.bautajs.logger);
 
     if (this.requestValidationEnabled) {
       Object.assign(context, {
@@ -265,16 +264,11 @@ export class OperationBuilder implements Operation {
 
   public setup(pipelineSetup: PipelineSetup<undefined>): void {
     this.operatorFunction = pipelineBuilder<undefined, any>(pipelineSetup, param => {
-      logger.debug(
+      this.bautajs.logger.debug(
         `[OK] ${param.name || 'anonymous function or pipeline'} pushed to .${this.version}.${
           this.id
         }`
       );
-      logger.events.emit(EventTypes.PUSH_OPERATOR, {
-        operator: param,
-        version: this.version,
-        operationId: this.id
-      });
     });
 
     if (!this.deprecated && this.nextVersionOperation && !this.nextVersionOperation.isSetup()) {

@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { EventEmitter } from 'events';
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import PCancelable from 'p-cancelable';
 
@@ -120,29 +119,16 @@ export interface IValidationError extends Error {
   response: any;
   toJSON: () => ValidationErrorJSON;
 }
-export enum EventTypes {
-  /**
-   * An OperatorFunction has been pushed to some pipeline
-   */
-  PUSH_OPERATOR = '1',
-  /**
-   * An operation was registered on bautajs.
-   */
-  REGISTER_OPERATION = '2'
-}
+
 export type Log = (...args: any[]) => any;
 export interface Logger {
-  debug: Log;
   trace: Log;
-  log: Log;
+  debug: Log;
   info: Log;
   warn: Log;
   error: Log;
-  events: EventEmitter;
-  create: (namespace: string) => ContextLogger;
+  fatal: Log;
 }
-
-export interface ContextLogger extends Omit<Logger, 'create'> {}
 
 // BautaJS
 export interface BautaJSOptions {
@@ -183,6 +169,14 @@ export interface BautaJSOptions {
    * @memberof BautaJSOptions
    */
   staticConfig?: any;
+
+  /**
+   *  Custom logger defined by the user to be used by bautajs. If it is not specified default bautajs logger is used.
+   *
+   * @type {Logger}
+   * @memberof BautaJSOptions
+   */
+  logger?: Logger;
 }
 export interface BautaJSInstance {
   /**
@@ -396,12 +390,12 @@ export interface Session {
    */
   userId?: string;
   /**
-   * An instance of the logger with the id and userId scopes.
+   * An instance of the logger available to the session
    *
-   * @type {ContextLogger}
+   * @type {Logger}
    * @memberof Session
    */
-  logger: ContextLogger;
+  logger: Logger;
   /**
    * The url that is being requested.
    *

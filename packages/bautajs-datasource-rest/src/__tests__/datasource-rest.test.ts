@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 import nock from 'nock';
-import { createContext, ContextLogger, BautaJS, Document, LoggerBuilder } from '@bautajs/core';
+import { createContext, BautaJS, Document } from '@bautajs/core';
 import { CancelableRequest, ResponseStream } from 'got';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
 describe('provider rest', () => {
   let bautajs: BautaJS;
+
   beforeEach(async () => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
     await bautajs.bootstrap();
@@ -89,7 +90,7 @@ describe('provider rest', () => {
         .get('/v1/policies')
         .reply(200, {});
 
-      const myContext = createContext({ req: {}, res: {} });
+      const myContext = createContext({ req: {}, res: {} }, bautajs.logger);
       const provider = restProvider(client => {
         return client.get('http://pets.com/v1/policies', { responseType: 'json' });
       });
@@ -109,7 +110,7 @@ describe('provider rest', () => {
         .get('/v1/policies')
         .reply(200, {});
 
-      const myContext = createContext({ req: {}, res: {} });
+      const myContext = createContext({ req: {}, res: {} }, bautajs.logger);
       const provider = restProvider(client => {
         return client.stream('http://pets.com/v1/policies', { responseType: 'json' });
       });
@@ -121,28 +122,20 @@ describe('provider rest', () => {
     });
   });
 
-  describe('logs on requests', () => {
+  describe('logs on happy path', () => {
     beforeEach(() => {
       jest.resetModules();
     });
+
     test('should log the requests data on debug mode', async () => {
+      const spyOnDebug = jest.spyOn(bautajs.logger, 'debug');
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
-      const expectedMsg = 'request-logger[1]: Request data: ';
-      const expectedData = {
-        body: '{"test":"1234"}',
-        headers: '{"user-agent":"got (https://github.com/sindresorhus/got)","x-request-id":1}',
-        method: 'POST',
-        url: 'https://pets.com/v1/policies'
-      };
 
       nock('https://pets.com')
         .post('/v1/policies', { test: '1234' })
         .reply(200, { bender: 'ok' });
-      const debugLogs: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
 
-      loggerMock.debug = jest.fn((...params: any[]) => debugLogs.push(params)) as any;
       const provider = restProvider(client => {
         return client.post('https://pets.com/v1/policies', {
           json: {
@@ -151,31 +144,42 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+
       await provider()(null, ctx, bautajs);
-      expect(debugLogs[0][0]).toStrictEqual(expectedMsg);
-      expect(debugLogs[0][1]).toStrictEqual(expectedData);
+
+      expect(spyOnDebug).toHaveBeenNthCalledWith(
+        1,
+        'id:1,url:undefined',
+        'request-logger[1]: Request data: ',
+        {
+          body: '{"test":"1234"}',
+          headers: '{"user-agent":"got (https://github.com/sindresorhus/got)","x-request-id":1}',
+          method: 'POST',
+          url: 'https://pets.com/v1/policies'
+        }
+      );
+      expect(spyOnDebug).toHaveBeenNthCalledWith(
+        2,
+        'id:1,url:undefined',
+        'response-logger[1]: Response for [POST] https://pets.com/v1/policies: ',
+        {
+          statusCode: 200,
+          headers: JSON.stringify({ 'content-type': 'application/json' }),
+          body: JSON.stringify({ bender: 'ok' })
+        }
+      );
     });
 
     test(`should not log the request id if it's not defined`, async () => {
+      const spyOnDebug = jest.spyOn(bautajs.logger, 'debug');
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
-      const expectedMsg = 'request-logger[No req id]: Request data: ';
-      const expectedData = {
-        body: '{"test":"1234"}',
-        headers: '{"user-agent":"got (https://github.com/sindresorhus/got)"}',
-        method: 'POST',
-        url: 'https://pets.com/v1/policies'
-      };
 
       nock('https://pets.com')
         .post('/v1/policies', { test: '1234' })
         .reply(200, { bender: 'ok' });
-      const debugLogs: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
 
-      loggerMock.debug = jest.fn((...params: any[]) => debugLogs.push(params)) as any;
       const provider = restProvider(client => {
         return client.post('https://pets.com/v1/policies', {
           json: {
@@ -184,18 +188,41 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+      // This is a limit case to test the datasource behaviour if the request should have no id. Note that in a real
+      // case, bauta core always generates a request id and assigns it to the context. It is for this reason that in the next
+      // expectations, the second parameter has no request id, while the first, based on the namespace of the context, do have it.
       ctx.id = undefined;
       await provider()(null, ctx, bautajs);
-      expect(debugLogs[0][0]).toStrictEqual(expectedMsg);
-      expect(debugLogs[0][1]).toStrictEqual(expectedData);
+
+      expect(spyOnDebug).toHaveBeenNthCalledWith(
+        1,
+        'id:1,url:undefined',
+        'request-logger[No req id]: Request data: ',
+        {
+          body: '{"test":"1234"}',
+          headers: '{"user-agent":"got (https://github.com/sindresorhus/got)"}',
+          method: 'POST',
+          url: 'https://pets.com/v1/policies'
+        }
+      );
+      expect(spyOnDebug).toHaveBeenNthCalledWith(
+        2,
+        'id:1,url:undefined',
+        'response-logger[No req id]: Response for [POST] https://pets.com/v1/policies: ',
+        {
+          statusCode: 200,
+          headers: JSON.stringify({ 'content-type': 'application/json' }),
+          body: JSON.stringify({ bender: 'ok' })
+        }
+      );
     });
 
-    test('should log the requests method and url info mode', async () => {
+    test('should log only the requests method and url and response time if log level is info', async () => {
+      const spyOnDebug = jest.spyOn(bautajs.logger, 'debug');
+      const spyOnInfo = jest.spyOn(bautajs.logger, 'info');
       process.env.LOG_LEVEL = 'info';
       const { restProvider } = require('../index');
-      const expectedMsg = 'request-logger[1]: Request to [POST] https://pets.com/v1/policies';
 
       nock('https://pets.com')
         .post('/v1/policies', {
@@ -203,11 +230,6 @@ describe('provider rest', () => {
         })
         .reply(200, { bender: 'ok' });
 
-      const infoLogs: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
-
-      loggerMock.info = jest.fn((...params: any[]) => infoLogs.push(params)) as any;
-
       const provider = restProvider(client => {
         return client.post('https://pets.com/v1/policies', {
           json: {
@@ -216,32 +238,36 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+
       await provider()(null, ctx, bautajs);
-      expect(infoLogs[0][0]).toStrictEqual(expectedMsg);
+
+      expect(spyOnDebug).toHaveBeenCalledTimes(0);
+
+      expect(spyOnInfo).toHaveBeenNthCalledWith(
+        1,
+        'id:1,url:undefined',
+        'request-logger[1]: Request to [POST] https://pets.com/v1/policies'
+      );
+
+      expect(spyOnInfo).toHaveBeenNthCalledWith(
+        2,
+        'id:1,url:undefined',
+        expect.stringMatching(
+          /response-logger\[1\]: The request to https:\/\/pets\.com\/v1\/policies took: (\d*) ms/
+        )
+      );
     });
 
     test('should log the requests data on debug mode if the request body is not a json', async () => {
+      const spyOnDebug = jest.spyOn(bautajs.logger, 'debug');
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
-      const expectedMsg = 'request-logger[1]: Request data: ';
-      const expectedData = {
-        body: 'someString',
-        headers:
-          '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","x-request-id":1}',
-        method: 'POST',
-        url: 'https://pets.com/v1/policies'
-      };
 
       nock('https://pets.com')
         .post('/v1/policies', 'someString')
         .reply(200, { bender: 'ok' });
 
-      const debugLogs: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
-
-      loggerMock.debug = jest.fn((...params: any[]) => debugLogs.push(params)) as any;
       const provider = restProvider(client => {
         return client.post('https://pets.com/v1/policies', {
           body: 'someString',
@@ -251,160 +277,191 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+
       await provider()(null, ctx, bautajs);
 
-      expect(debugLogs[0][0]).toStrictEqual(expectedMsg);
-      expect(debugLogs[0][1]).toStrictEqual(expectedData);
+      expect(spyOnDebug).toHaveBeenNthCalledWith(
+        1,
+        'id:1,url:undefined',
+        'request-logger[1]: Request data: ',
+        {
+          body: 'someString',
+          headers:
+            '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","x-request-id":1}',
+          method: 'POST',
+          url: 'https://pets.com/v1/policies'
+        }
+      );
+
+      expect(spyOnDebug).toHaveBeenNthCalledWith(
+        2,
+        'id:1,url:undefined',
+        'response-logger[1]: Response for [POST] https://pets.com/v1/policies: ',
+        {
+          statusCode: 200,
+          headers: JSON.stringify({ 'content-type': 'application/json' }),
+          body: JSON.stringify({ bender: 'ok' })
+        }
+      );
     });
   });
 
-  describe('logs on response', () => {
+  describe('logs when there is an error', () => {
     beforeEach(() => {
       jest.resetModules();
     });
     test('should log a network error', async () => {
+      const spyOnError = jest.spyOn(bautajs.logger, 'error');
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
-      // With nock got is not able to get the response method, doing a normal request this field is returned
-      const expectedMsg = [
+
+      nock('https://pets.com/v1')
+        .get('/policies')
+        .replyWithError('something awful happened');
+
+      const provider = restProvider(client => {
+        return client.get('https://pets.com/v1/policies', {
+          responseType: 'json'
+        });
+      });
+
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+
+      try {
+        await provider()(null, ctx, bautajs);
+      } catch (e) {
+        // Empty
+      }
+
+      expect(spyOnError).toHaveBeenNthCalledWith(
+        1,
+        'id:1,url:undefined',
         'response-logger[1]: Error for [GET] https://pets.com/v1/policies:',
         {
           code: undefined,
           name: 'RequestError',
           message: 'something awful happened'
         }
-      ];
+      );
+    });
+
+    test('should not log the id if no id is provided in an error', async () => {
+      const spyOnError = jest.spyOn(bautajs.logger, 'error');
+      const spyOnDebug = jest.spyOn(bautajs.logger, 'debug');
+      process.env.LOG_LEVEL = 'error';
+      const { restProvider } = require('../index');
 
       nock('https://pets.com/v1')
         .get('/policies')
         .replyWithError('something awful happened');
 
-      const errorConsole: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
-      loggerMock.error = jest.fn((...params: any[]) => errorConsole.push(params)) as any;
-
       const provider = restProvider(client => {
         return client.get('https://pets.com/v1/policies', {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
+
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+
+      ctx.id = undefined;
+
       try {
         await provider()(null, ctx, bautajs);
       } catch (e) {
         // Empty
       }
-      expect(errorConsole[0]).toStrictEqual(expectedMsg);
-    });
 
-    test('should not log the id if no id is provided', async () => {
-      process.env.LOG_LEVEL = 'debug';
-      const { restProvider } = require('../index');
-      // With nock got is not able to get the response method, doing a normal request this field is returned
-      const expectedMsg = [
-        'response-logger[No req id]: Response for [GET] https://pets.com/v1/policies: ',
+      expect(spyOnDebug).toHaveBeenCalledTimes(0);
+
+      expect(spyOnError).toHaveBeenNthCalledWith(
+        1,
+        'id:1,url:undefined',
+        'response-logger[No req id]: Error for [GET] https://pets.com/v1/policies:',
         {
-          body: '{"bender":1}',
-          headers: '{"content-type":"application/json"}',
-          statusCode: 200
+          code: undefined,
+          name: 'RequestError',
+          message: 'something awful happened'
         }
-      ];
-
-      nock('https://pets.com/v1')
-        .get('/policies')
-        .reply(200, { bender: 1 });
-
-      const debugConsole: any[] = [];
-      const infoConsole: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
-      loggerMock.debug = jest.fn((...params: any[]) => debugConsole.push(params)) as any;
-      loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
-
-      const provider = restProvider(client => {
-        return client.get('https://pets.com/v1/policies', {
-          responseType: 'json'
-        });
-      });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
-      ctx.id = undefined;
-      await provider()(null, ctx, bautajs);
-      expect(debugConsole[1]).toStrictEqual(expectedMsg);
+      );
     });
 
     test('should log an error if the response body could not be parsed', async () => {
+      const spyOnError = jest.spyOn(bautajs.logger, 'error');
+
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
-      const expectedMsg = [
-        'response-logger[1]: Response for [GET] https://pets.com/v1/policies: ',
-        {
-          body: '{"bender":1}',
-          headers: '{"content-type":"application/json"}',
-          statusCode: 200
-        }
-      ];
 
       nock('https://pets.com/v1')
         .get('/policies')
-        .reply(200, { bender: 1 });
-
-      const debugConsole: any[] = [];
-      const infoConsole: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
-      loggerMock.debug = jest.fn((...params: any[]) => debugConsole.push(params)) as any;
-      loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
+        .reply(200, 'this is not a json and this will generate a parser error');
 
       const provider = restProvider(client => {
         return client.get('https://pets.com/v1/policies', {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
-      await provider()(null, ctx, bautajs);
-      expect(debugConsole[1]).toStrictEqual(expectedMsg);
+
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+
+      try {
+        await provider()(null, ctx, bautajs);
+      } catch (e) {
+        // Empty
+      }
+
+      expect(spyOnError).toHaveBeenNthCalledWith(
+        1,
+        'id:1,url:undefined',
+        'response-logger[1]: Error for [GET] https://pets.com/v1/policies:',
+        {
+          code: undefined,
+          body: 'this is not a json and this will generate a parser error',
+          statusCode: 200,
+          message: 'Unexpected token h in JSON at position 1 in "https://pets.com/v1/policies"',
+          name: 'ParseError'
+        }
+      );
     });
 
-    test('should log the response time', async () => {
+    test('should not log the response time when there is an error', async () => {
+      const spyOnError = jest.spyOn(bautajs.logger, 'error');
+      const spyOnInfo = jest.spyOn(bautajs.logger, 'info');
       process.env.LOG_LEVEL = 'info';
       const { restProvider } = require('../index');
-      const expectedMsg = new RegExp(
-        'response-logger\\[1\\]: The request to https://pets.com/v1/policies took: (.*) ms'
-      );
 
       nock('https://pets.com/v1')
         .get('/policies')
-        .reply(200, { bender: 1 });
-
-      const infoConsole: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
-      loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
+        .reply(200, 'we force with this a parserError');
 
       const provider = restProvider(client => {
         return client.get('https://pets.com/v1/policies', {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
-      await provider()(null, ctx, bautajs);
-      expect(infoConsole[1][0]).toMatch(expectedMsg);
+
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+
+      async function providerThrowsAnError() {
+        return provider()(null, ctx, bautajs);
+      }
+
+      await expect(providerThrowsAnError()).rejects.toThrow(
+        new Error('Unexpected token w in JSON at position 0 in "https://pets.com/v1/policies"')
+      );
+
+      expect(spyOnError).toHaveBeenCalledTimes(1); // We check error logging in another test
+
+      expect(spyOnInfo).toHaveBeenCalledTimes(1); // If there was not an error, info is called twice
+      expect(spyOnInfo).toHaveBeenNthCalledWith(
+        1,
+        'id:1,url:undefined',
+        'request-logger[1]: Request to [GET] https://pets.com/v1/policies'
+      );
     });
 
-    test('should not crash if the response body could not be parsed', async () => {
-      process.env.LOG_LEVEL = 'debug';
+    test('should generate a meaningful error if there is an issue', async () => {
       const { restProvider } = require('../index');
-      const expectedMsg = [
-        'response-logger[1]: Response for [GET] https://pets.com/v1/policies: ',
-        {
-          body: '<html><div></div></html>',
-          headers: '{"content-type":"text/html"}',
-          statusCode: 200
-        }
-      ];
 
       nock('https://pets.com/v1')
         .get('/policies')
@@ -412,22 +469,21 @@ describe('provider rest', () => {
           'content-type': 'text/html'
         });
 
-      const debugConsole: any[] = [];
-      const infoConsole: any[] = [];
-      const loggerMock: ContextLogger = new LoggerBuilder('test');
-
-      loggerMock.debug = jest.fn((...params: any[]) => debugConsole.push(params)) as any;
-      loggerMock.info = jest.fn((...params: any[]) => infoConsole.push(params)) as any;
-
       const provider = restProvider(client => {
         return client.get('https://pets.com/v1/policies', {
-          responseType: 'text'
+          responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} });
-      ctx.logger = loggerMock;
-      await provider()(null, ctx, bautajs);
-      expect(debugConsole[1]).toStrictEqual(expectedMsg);
+
+      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+
+      async function providerThrowsAnError() {
+        return provider()(null, ctx, bautajs);
+      }
+
+      await expect(providerThrowsAnError()).rejects.toThrow(
+        new Error('Unexpected token < in JSON at position 0 in "https://pets.com/v1/policies"')
+      );
     });
   });
 });

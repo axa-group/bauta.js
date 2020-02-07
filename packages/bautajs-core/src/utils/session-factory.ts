@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 import hyperid from 'hyperid';
-import { logger } from './logger';
-import { Session } from './utils/types';
+import { Session, Logger } from './types';
+import { ContextLogger } from './context-logger';
 
 const idGenerator = hyperid();
 const requestIdHeader = 'request-id';
@@ -27,33 +27,41 @@ function genReqId(headers: any): string {
   return idGenerator();
 }
 
+function generateBaseSession(req: any): any {
+  const { headers } = req;
+  const id = !req.id ? genReqId(headers) : req.id;
+
+  const session = {
+    id,
+    url: req.url,
+    userId: null,
+    logger: null
+  };
+
+  if (headers && headers.authorization) {
+    session.userId = headers.authorization.substring(headers.authorization.length - 6);
+  }
+
+  return session;
+}
+
+function generateSessionNamespace(session: Session): string {
+  return session.userId
+    ? `id:${session.id},userId:${session.userId},url:${session.url}`
+    : `id:${session.id},url:${session.url}`;
+}
+
 /**
  * @ignore
  * Build a session id from the given req id and authorization token, that will be available a cross the operation chain
  */
-export function sessionFactory(req: any): Session {
-  const { headers } = req;
-  const loggerContext: {
-    id: string;
-    userId?: string;
-    url: string | undefined;
-  } = {
-    id: !req.id ? genReqId(headers) : req.id,
-    url: req.url
-  };
+export function sessionFactory(req: any, logger: Logger): Session {
+  const session: Session = generateBaseSession(req);
+  const namespace = generateSessionNamespace(session);
 
-  if (headers && headers.authorization) {
-    loggerContext.userId = headers.authorization.substring(headers.authorization.length - 6);
-  }
+  session.logger = new ContextLogger(logger, namespace);
 
-  return {
-    ...loggerContext,
-    logger: loggerContext.userId
-      ? logger.create(
-          `id:${loggerContext.id},userId:${loggerContext.userId},url:${loggerContext.url}`
-        )
-      : logger.create(`id:${loggerContext.id},url:${loggerContext.url}`)
-  };
+  return session;
 }
 
 export default sessionFactory;

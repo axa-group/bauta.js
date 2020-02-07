@@ -19,8 +19,8 @@ import express, { Application, Request, Response } from 'express';
 import http from 'http';
 import https from 'https';
 import routeOrder from 'route-order';
-import { BautaJS, BautaJSOptions, Document, LoggerBuilder, Operation } from '@bautajs/core';
-import { MiddlewareOptions, ICallback, EventTypes } from './types';
+import { BautaJS, BautaJSOptions, Document, Operation } from '@bautajs/core';
+import { MiddlewareOptions, ICallback } from './types';
 import { initMorgan, initBodyParser, initHelmet, initCors, initExplorer } from './middlewares';
 import { getContentType } from './utils';
 
@@ -48,12 +48,9 @@ export class BautaJSExpress extends BautaJS {
    */
   public app: Application;
 
-  public moduleLogger: LoggerBuilder;
-
   constructor(apiDefinitions: Document[], options: BautaJSOptions) {
     super(apiDefinitions, options);
     this.app = express();
-    this.moduleLogger = new LoggerBuilder('bautajs-express');
   }
 
   private addRoute(operation: Operation) {
@@ -85,7 +82,7 @@ export class BautaJSExpress extends BautaJS {
         res.json(response || {});
         const finalTime = new Date().getTime() - startTime.getTime();
 
-        this.moduleLogger.info(
+        this.logger.info(
           `The operation execution of ${url} took: ${
             typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
           } ms`
@@ -94,7 +91,7 @@ export class BautaJSExpress extends BautaJS {
       };
       const rejectWrapper = (response: any) => {
         if (res.headersSent || res.finished) {
-          this.moduleLogger.error(
+          this.logger.error(
             'Response has been sent to the user, but the promise throwed an error',
             response
           );
@@ -103,7 +100,7 @@ export class BautaJSExpress extends BautaJS {
 
         res.status(response.statusCode || 500);
         const finalTime = new Date().getTime() - startTime.getTime();
-        this.moduleLogger.info(
+        this.logger.info(
           `The operation execution of ${url} took: ${
             typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
           } ms`
@@ -123,7 +120,7 @@ export class BautaJSExpress extends BautaJS {
       op.then(resolverWrapper).catch(rejectWrapper);
     });
 
-    this.moduleLogger.info(
+    this.logger.info(
       '[OK]',
       chalk.yellowBright(
         `[${method.toUpperCase()}] ${url} operation exposed on the API from ${operation.version}.${
@@ -131,10 +128,6 @@ export class BautaJSExpress extends BautaJS {
         }`
       )
     );
-    this.moduleLogger.events.emit(EventTypes.EXPOSE_OPERATION, {
-      operation,
-      route: url
-    });
   }
 
   private processOperations() {
@@ -237,7 +230,7 @@ export class BautaJSExpress extends BautaJS {
     server.listen(port, () => {
       const baseUrl = `${protocol + host}:${port}`;
       if (process.env.DEBUG) {
-        this.moduleLogger.info(`Server listening on ${baseUrl}`);
+        this.logger.info(`Server listening on ${baseUrl}`);
       } else {
         // eslint-disable-next-line no-console
         console.info(`Server listening on ${baseUrl}`);

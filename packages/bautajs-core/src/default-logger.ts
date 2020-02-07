@@ -13,18 +13,15 @@
  * limitations under the License.
  */
 import debug from 'debug';
-import { EventEmitter } from 'events';
-import { ContextLogger, Log, Logger } from './utils/types';
 
-const moduleName = 'bautajs';
-const emmiter = new EventEmitter();
+import { Log, Logger } from './utils/types';
 
-export class LoggerBuilder implements Logger {
+const DEFAULT_LOGGER_NAME = 'bautajs';
+
+export class DefaultLogger implements Logger {
   public debug: Log;
 
   public trace: Log;
-
-  public log: Log;
 
   public info: Log;
 
@@ -32,33 +29,19 @@ export class LoggerBuilder implements Logger {
 
   public error: Log;
 
-  public events: EventEmitter;
+  public fatal: Log;
 
   private debugInstance: debug.Debugger;
 
-  constructor(namespace: string) {
+  constructor(namespace: string = DEFAULT_LOGGER_NAME) {
     this.debugInstance = debug(namespace);
     this.debug = this.debugInstance.extend(':debug');
     this.trace = this.debugInstance.extend(':trace');
-    this.log = this.debugInstance.extend(':log');
+    this.fatal = this.debugInstance.extend(':fatal');
     this.info = this.debugInstance.extend(':info');
     this.warn = this.debugInstance.extend(':warn');
     this.error = this.debugInstance.extend(':error');
-    this.events = emmiter;
-  }
-
-  create(namespace: string): ContextLogger {
-    return {
-      debug: (...args: any[]) => this.debug(namespace, ...args),
-      trace: (...args: any[]) => this.trace(namespace, ...args),
-      log: (...args: any[]) => this.log(namespace, ...args),
-      info: (...args: any[]) => this.info(namespace, ...args),
-      warn: (...args: any[]) => this.warn(namespace, ...args),
-      error: (...args: any[]) => this.error(namespace, ...args),
-      events: emmiter
-    };
   }
 }
 
-export const logger = new LoggerBuilder(moduleName);
-export default logger;
+export default DefaultLogger;

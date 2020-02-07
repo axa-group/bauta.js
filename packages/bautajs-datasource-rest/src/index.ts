@@ -25,7 +25,7 @@ import got, {
   GotError
 } from 'got';
 import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
-import { Context, BautaJSInstance, utils, ContextLogger } from '@bautajs/core';
+import { Context, BautaJSInstance, utils, Logger } from '@bautajs/core';
 
 export enum EventTypes {
   /**
@@ -62,7 +62,7 @@ const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
 const isDebugLogLevel = process.env.LOG_LEVEL?.toLowerCase() === 'debug';
 
-function logRequestHook(logger: ContextLogger, reqId: string = 'No req id') {
+function logRequestHook(logger: Logger, reqId: string = 'No req id') {
   return (options: NormalizedOptions) => {
     logger.info(`request-logger[${reqId}]: Request to [${options.method}] ${options.url.href}`);
     if (isDebugLogLevel) {
@@ -75,11 +75,10 @@ function logRequestHook(logger: ContextLogger, reqId: string = 'No req id') {
         requestData.body = utils.prepareToLog(options.body || options.json);
       }
       logger.debug(`request-logger[${reqId}]: Request data: `, requestData);
-      logger.events.emit(EventTypes.PROVIDER_EXECUTION, options);
     }
   };
 }
-function logErrorsHook(logger: ContextLogger, reqId: string = 'No req id') {
+function logErrorsHook(logger: Logger, reqId: string = 'No req id') {
   return (error: GeneralError) => {
     const parseError = error as ParseError;
     const genericError = error as GotError;
@@ -88,7 +87,9 @@ function logErrorsHook(logger: ContextLogger, reqId: string = 'No req id') {
         `response-logger[${reqId}]: Error for [${parseError.options.method}] ${parseError.options.url}:`,
         {
           statusCode: parseError.response.statusCode,
-          body: utils.prepareToLog(parseError.response.body)
+          body: utils.prepareToLog(parseError.response.body),
+          name: parseError.name,
+          message: parseError.message
         }
       );
     } else if (genericError.options) {
@@ -110,7 +111,7 @@ function logErrorsHook(logger: ContextLogger, reqId: string = 'No req id') {
     return error;
   };
 }
-function logResponseHook(logger: ContextLogger, reqId: string = 'No req id') {
+function logResponseHook(logger: Logger, reqId: string = 'No req id') {
   return (response: Response) => {
     if (response.fromCache) {
       logger.info(`response-logger[${reqId}]: Response for ${response.requestUrl} is cached`);
@@ -130,7 +131,6 @@ function logResponseHook(logger: ContextLogger, reqId: string = 'No req id') {
         `response-logger[${reqId}]: The request to ${response.requestUrl} took: ${totalTime} ms`
       );
     }
-    logger.events.emit(EventTypes.PROVIDER_RESULT, response);
 
     return response;
   };

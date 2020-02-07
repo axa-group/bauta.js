@@ -12,20 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { prepareToLog } from './utils/prepare-to-log';
+import { Logger } from './types';
 
-export * from './bauta';
-export * from './decorators/match';
-export * from './decorators/resolver';
-export * from './decorators/step';
-export * from './decorators/pipeline';
-export * from './decorators/as-promise';
-export * from './decorators/as-value';
-export * from './decorators/parallel';
-export * from './utils/types';
-export * from './utils/create-context';
-export * from './default-logger';
+export function isLoggerValid(logger: Logger): boolean {
+  if (!logger) {
+    return false;
+  }
+  return true;
+}
 
-export const utils = {
-  prepareToLog
-};
+export default isLoggerValid;

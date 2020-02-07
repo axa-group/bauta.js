@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ContextData, Context } from './types';
+import { ContextData, Context, Logger } from './types';
 import { CancelableTokenBuilder } from '../core/cancelable-token';
-import { sessionFactory } from '../session-factory';
+import { sessionFactory } from './session-factory';
 
-export function createContext(ctx: ContextData): Context {
+export function createContext(ctx: ContextData, logger: Logger): Context {
   if (!ctx.req) {
     ctx.req = {};
   }
@@ -35,7 +35,7 @@ export function createContext(ctx: ContextData): Context {
     req: ctx.req,
     res: ctx.res,
     token,
-    ...sessionFactory(ctx.req)
+    ...sessionFactory(ctx.req, logger)
   };
 }
 

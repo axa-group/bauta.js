@@ -15,17 +15,17 @@
 import fastGlob from 'fast-glob';
 import { resolve } from 'path';
 import { OperationBuilder } from './core/operation';
-import { logger } from './logger';
+import { DefaultLogger } from './default-logger';
 import {
   Dictionary,
   BautaJSInstance,
   BautaJSOptions,
   Document,
-  EventTypes,
   Logger,
   Operations,
   BasicOperation
 } from './utils/types';
+import { isLoggerValid } from './utils/logger-validator';
 import Parser from './open-api/parser';
 
 interface API {
@@ -102,11 +102,14 @@ export class BautaJS implements BautaJSInstance {
     let requestValidation = true;
 
     this.staticConfig = options.staticConfig;
-    /**
-     * @memberof BautaJS#
-     * @property {Logger} logger - A [debug]{@link https://www.npmjs.com/package/debug} logger instance
-     */
-    this.logger = logger;
+
+    this.logger = options.logger || new DefaultLogger();
+    if (!isLoggerValid(this.logger)) {
+      throw new Error(
+        'Logger is not valid. Must be compliant with basic logging levels(trace, debug, info, warn, error, fatal)'
+      );
+    }
+
     if (typeof options.enableRequestValidation === 'boolean') {
       requestValidation = options.enableRequestValidation;
     }
@@ -133,7 +136,7 @@ export class BautaJS implements BautaJSInstance {
 
   public async bootstrap(): Promise<void> {
     const asyncTasks = this.apiDefinitions.map(async apiDefinition => {
-      const parser = new Parser();
+      const parser = new Parser(this.logger);
       const parsedApiDefinition = await parser.asyncParse(apiDefinition);
       const { version } = parsedApiDefinition.generic.info;
       parsedApiDefinition.routes.forEach(route => {
@@ -205,10 +208,6 @@ export class BautaJS implements BautaJSInstance {
         operations[apiVersion][operation.id] = operation;
 
         this.logger.info(`[OK] ${apiVersion}.${operation.id} operation registered on bautajs`);
-        this.logger.events.emit(EventTypes.REGISTER_OPERATION, {
-          apiVersion,
-          operation
-        });
       });
     });
 

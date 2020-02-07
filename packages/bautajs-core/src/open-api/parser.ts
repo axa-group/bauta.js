@@ -16,11 +16,17 @@ import { OpenAPI, OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import SwaggerParser from 'swagger-parser';
 import ParserV2 from './parserV2';
 import ParserV3 from './parserV3';
-import { logger } from '../logger';
-import { DocumentParsed, Document } from '../utils/types';
+
+import { DocumentParsed, Document, Logger } from '../utils/types';
 
 class Parser {
   private documentParsed?: DocumentParsed;
+
+  private logger: Logger;
+
+  constructor(logger: Logger) {
+    this.logger = logger;
+  }
 
   /**
    * get the parsed document
@@ -51,7 +57,7 @@ class Parser {
       // and validate
       spec = await SwaggerParser.validate(copy);
     } catch (e) {
-      logger.error('Error on validate and parser the current openAPI definition', e);
+      this.logger.error('Error on validate and parser the current openAPI definition', e);
       throw new Error(`The Openapi API definition provided is not valid. Error ${e.message}`);
     }
     const openAPI = spec as OpenAPIV3.Document;
@@ -67,6 +73,7 @@ class Parser {
       this.documentParsed = parserV3.document;
       return this.documentParsed;
     }
+
     throw new Error(
       "'specification' parameter must contain a valid version 2.0 or 3.0.x specification"
     );

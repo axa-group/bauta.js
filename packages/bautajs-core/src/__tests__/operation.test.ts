@@ -17,7 +17,7 @@ import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'events';
 import { ObjectWritableMock } from 'stream-mock';
 import { OperationBuilder } from '../core/operation';
-import { logger } from '../index';
+import { DefaultLogger } from '../default-logger';
 import { Operation, Route, BautaJSInstance } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
@@ -30,14 +30,14 @@ describe('operation class tests', () => {
   const bautaJS: BautaJSInstance = {
     staticConfig: {},
     operations: {},
-    logger,
+    logger: new DefaultLogger(),
     apiDefinitions: [],
     bootstrap() {
       return Promise.resolve();
     }
   };
   beforeEach(async () => {
-    const parser = new Parser();
+    const parser = new Parser(bautaJS.logger);
     const document = await parser.asyncParse(testApiDefinitionsJson[0]);
     [route] = document.routes;
   });
@@ -310,7 +310,7 @@ describe('operation class tests', () => {
     let operationTest: Operation;
     let document;
     beforeEach(async () => {
-      const parser = new Parser();
+      const parser = new Parser(bautaJS.logger);
       document = await parser.asyncParse(testSchemaRareCasesJson);
       operationTest = OperationBuilder.create(document.routes[0].operationId, 'v1', bautaJS);
     });
@@ -456,7 +456,7 @@ describe('operation class tests', () => {
     let document;
 
     beforeEach(async () => {
-      const parser = new Parser();
+      const parser = new Parser(bautaJS.logger);
       document = await parser.asyncParse(testSchemaRareCasesJson);
 
       operationTest = OperationBuilder.create(document.routes[0].operationId, 'v1', bautaJS);

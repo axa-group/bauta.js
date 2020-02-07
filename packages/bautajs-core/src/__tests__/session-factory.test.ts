@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { sessionFactory } from '../session-factory';
+import { sessionFactory } from '../utils/session-factory';
 
 describe('session factory tests', () => {
   test('should return the request id and logger', () => {

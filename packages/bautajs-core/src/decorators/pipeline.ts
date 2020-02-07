@@ -12,21 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PipelineSetup, OperatorFunction, EventTypes, GenericError } from '../utils/types';
+import { PipelineSetup, OperatorFunction, GenericError } from '../utils/types';
 import { Builder } from '../core/pipeline-builder';
 import { Accesor } from '../core/accesor';
-import { logger } from '../logger';
 
-let pipelineCounter = 0;
-
-function defaultOnPush(param: any) {
-  logger.debug(
-    `[OK] ${param.name || 'anonymous function'} pushed to anonymous pipeline ${pipelineCounter}`
-  );
-  logger.events.emit(EventTypes.PUSH_OPERATOR, {
-    operator: param
-  });
-}
+function defaultOnPush() {}
 
 /**
  * A decorator to give itellicense to a pipeline.
@@ -52,8 +42,6 @@ export function pipelineBuilder<TIn, TOut>(
   pipelineSetup: PipelineSetup<TIn>,
   onPush?: (param: any) => void
 ): OperatorFunction<TIn, TOut> {
-  pipelineCounter += 1;
-
   const pp = new Builder<TIn>(new Accesor(), onPush || defaultOnPush);
   pipelineSetup(pp);
   return (prev, ctx, bautajs) => {
