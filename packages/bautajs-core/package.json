@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/core",
-  "version": "2.2.2",
+  "version": "3.0.0-alpha.0",
   "description": "A simple library to make middlewares",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
