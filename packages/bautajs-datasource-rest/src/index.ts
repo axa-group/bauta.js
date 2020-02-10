@@ -152,7 +152,7 @@ function addRequestId(ctx: Context) {
 function addAgent(options: NormalizedOptions, next: any) {
   if (options.agent === undefined) {
     // eslint-disable-next-line no-param-reassign
-    options.agent = options.url.protocol === 'https' ? httpsAgent : httpAgent;
+    options.agent = options.url.protocol === 'https:' ? httpsAgent : httpAgent;
   }
 
   return next(options);

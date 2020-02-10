@@ -1,5 +1,6 @@
 const { resolver } = require('@bautajs/core');
 const { exampleRestProviderYear, exampleRestProvider } = require('./numbers-datasource');
+const { catsRestProviderWithHttps } = require('./cats-datasource');
 
 const transformResponse = response => {
   const result = {
@@ -28,4 +29,9 @@ module.exports = resolver(operations => {
     .validateRequest(false)
     .validateResponse(false)
     .setup(p => p.pipe(exampleRestProvider(), transformResponse));
+
+  operations.v1.cats
+    .validateRequest(false)
+    .validateResponse(false)
+    .setup(p => p.pipe(catsRestProviderWithHttps(), transformResponse));
 });

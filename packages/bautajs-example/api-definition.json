@@ -169,6 +169,27 @@
             }
           }
         }
+      },
+      "/cats": {
+        "get": {
+          "summary": "List all fact cats",
+          "operationId": "cats",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "components": {
@@ -196,7 +217,9 @@
           }
         },
         "Article": {
-          "required": ["title"],
+          "required": [
+            "title"
+          ],
           "properties": {
             "userId": {
               "nullable": true,
