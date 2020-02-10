@@ -149,15 +149,6 @@ function addRequestId(ctx: Context) {
   };
 }
 
-function addAgent(options: NormalizedOptions, next: any) {
-  if (options.agent === undefined) {
-    // eslint-disable-next-line no-param-reassign
-    options.agent = options.url.protocol === 'https:' ? httpsAgent : httpAgent;
-  }
-
-  return next(options);
-}
-
 function operatorFn(client: Got, fn: ProviderOperation<any>) {
   return <TIn, TOut>(value: TIn, ctx: Context, bautajs: BautaJSInstance) => {
     const promiseOrStream = fn(
@@ -187,10 +178,13 @@ function operatorFn(client: Got, fn: ProviderOperation<any>) {
 export function restProvider(fn: ProviderOperation<any>) {
   return (options: ExtendOptions = {}) => {
     const client = got.extend({
-      ...options,
-      handlers: [addAgent],
+      agent: {
+        http: httpAgent,
+        https: httpsAgent
+      },
       responseType: 'json',
-      resolveBodyOnly: true
+      resolveBodyOnly: true,
+      ...options
     });
     return operatorFn(client, fn);
   };
