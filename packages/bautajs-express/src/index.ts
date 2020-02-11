@@ -131,11 +131,15 @@ export class BautaJSExpress extends BautaJS {
   }
 
   private processOperations() {
-    return Object.values(this.operations).reduce((routes, versions) => {
+    return Object.values(this.operations).reduce((routes: any, versions) => {
       Object.values(versions).forEach(operation => {
         if (!operation.isPrivate() && operation.route) {
+          if (!routes[operation.route.url]) {
+            // eslint-disable-next-line no-param-reassign
+            routes[operation.route.url] = {};
+          }
           // eslint-disable-next-line no-param-reassign
-          routes[operation.route.url] = operation;
+          routes[operation.route.url][operation.route.method] = operation;
         }
       });
 
@@ -195,9 +199,13 @@ export class BautaJSExpress extends BautaJS {
     await this.bootstrap();
 
     const routes = this.processOperations();
+
     Object.keys(routes)
       .sort(routeOrder())
-      .forEach(route => this.addRoute(routes[route]));
+      .forEach(route => {
+        const methods = Object.keys(routes[route]);
+        methods.forEach(method => this.addRoute(routes[route][method]));
+      });
 
     initExplorer(this.app, this.apiDefinitions, this.operations, options.explorer);
 
