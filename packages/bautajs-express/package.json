@@ -22,8 +22,25 @@
     "express",
     "middleware"
   ],
-  "author": "javier.blanco@axa.com",
-  "license": "SEE LICENSE IN LICENSE.txt",
+	"author": {
+    "email": "javier.blanco@axa.com",
+    "name": "Javier Blanco"
+  },
+  "maintainers": [
+    {
+      "email": "javier.blanco@axa.com",
+      "name": "Javier Blanco"
+    },
+    {
+      "email": "francisco.herrero@axa.com",
+      "name": "Francisco Herrero"
+    },
+    {
+      "email": "xavier.redondo@axa.com",
+      "name": "Xavier Redondo"
+    }
+	],
+	"license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "^2.3.0",
     "chalk": "2.4.2",

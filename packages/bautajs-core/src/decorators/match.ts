@@ -1,8 +1,8 @@
 /*
- * Copyright (c) AXA Shared Services Spain S.A.
+ * Copyright (c) AXA Group Operations Spain S.A.
  *
- * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
- * may not use this file except in compliance with the License.
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
  * A copy of the License can be found in the LICENSE.TXT file distributed
  * together with this file.
  *
@@ -63,7 +63,7 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
  * @returns {OperatorFunction<TIn, TOut>}
  * @example
  * const { match, pipeline } = require('@batuajs/core');
- * 
+ *
  * const findCatsPipeline = pipeline(...);
  * const logResultPipeline = pipeline(...);
  *
@@ -71,7 +71,7 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
  *  p =>
  *    p.push(() => 1)
  *    .push(
- *      match(m => 
+ *      match(m =>
  *        m.on((prev) => prev === 1, findCatsPipeline)
  *        .otherwise(logResultPipeline)
  *     )
