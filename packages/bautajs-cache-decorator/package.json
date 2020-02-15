@@ -18,8 +18,25 @@
     "cache",
     "middleware"
   ],
-  "author": "javier.blanco@axa.com",
-  "license": "SEE LICENSE IN LICENSE.txt",
+  "author": {
+    "email": "javier.blanco@axa.com",
+    "name": "Javier Blanco"
+  },
+  "maintainers": [
+    {
+      "email": "javier.blanco@axa.com",
+      "name": "Javier Blanco"
+    },
+    {
+      "email": "francisco.herrero@axa.com",
+      "name": "Francisco Herrero"
+    },
+    {
+      "email": "xavier.redondo@axa.com",
+      "name": "Xavier Redondo"
+    }
+  ],
+  "license": "see LICENSE.txt",
   "dependencies": {
     "bautajs": "1.5.1",
     "memoizee": "0.4.14"
