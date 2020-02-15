@@ -1,8 +1,8 @@
 /*
- * Copyright (c) AXA Shared Services Spain S.A.
+ * Copyright (c) AXA Group Operations Spain S.A.
  *
- * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
- * may not use this file except in compliance with the License.
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
  * A copy of the License can be found in the LICENSE.TXT file distributed
  * together with this file.
  *
@@ -35,9 +35,6 @@ describe('parallel decorator', () => {
 
     expect(
       await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
-    ).toStrictEqual([
-      { id: 3, name: 'pet3' },
-      { id: 1, name: 'pet' }
-    ]);
+    ).toStrictEqual([{ id: 3, name: 'pet3' }, { id: 1, name: 'pet' }]);
   });
 });

@@ -43,7 +43,7 @@
       "name": "Xavier Redondo"
     }
   ],
-  "license": "MIT",
+  "license": "se LICENSE.txt",
   "engines": {
     "node": ">=10",
     "npm": ">=5"

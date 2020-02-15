@@ -1,22 +1,16 @@
-# MIT License
+'License for ONE AXA SOFTWARE - Inner Source'
+                L O A S - I S
 
-Copyright (c) AXA Group Operations Spain S.A.
+The following License aims to be applied between the AXA Companies, according to the following definition:
+"AXA Companies" means AXA, Société Anonyme with a “AXA Companies ” Board of Directors having its principal offices at 25, avenue Matignon, 75008 Paris, registered on the Commercial Registry of Paris under the number 572 093 920; and (i) any other company controlled by, or controlling AXA, with a company being considered as controlling another: (a) when it holds directly or indirectly a portion of the capital according to it the majority of the voting rights in general meetings of shareholders of this company; (b) when it holds solely the majority of the voting rights in this company by virtue of an agreement concluded with other partners or shareholders and which is not contrary to the interest of the company; (c) when it determines de facto, by voting rights which it holds, the decisions in the general meetings of shareholders of this company; (d) in any event, when it holds, directly or indirectly, a portion of voting rights greater than 40% and when no other partner or shareholder holds directly or indirectly a portion which is greater than its own; (ii) any economic interest group in which AXA and/or one or more other Companies of the AXA Group participates for at least 50% in operating costs; (iii) in the cases where the law applicable to a company limits voting rights or control (such as defined here in above), this company will be deemed to be a company of the AXA Group, if the voting rights in 2 Binding Corporate Rules – AXA Group – version 2013 general shareholders’ meetings or the control held by a Company of the AXA Group reaches the maximum amount fixed by said applicable law; and (iv) all AXA Companies constitute the “AXA Group” (hereafter "One AXA").  (Binding Corporate Rules - AXA Group - version 2019).
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+Software credits:
+	Creator: BLANCO Javier <javier.blanco@axa.com>
+	Main contributors:  REDONDO Xavier <xavier.redondo@axa.com>; HERRERO Fran <francisco.herrero@axa.com>
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+Permission is hereby granted, free of charge, to any person or entity within One AXA obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software within One AXA, including the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+The above credit notice and this permission notice shall be included in all copies or substantial portions of the Software.
+Any improvement or modification of the Software shall be made available to the whole One AXA, under the terms of this License.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

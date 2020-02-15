@@ -1,9 +1,9 @@
 /* eslint-disable global-require */
 /*
- * Copyright (c) AXA Shared Services Spain S.A.
+ * Copyright (c) AXA Group Operations Spain S.A.
  *
- * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
- * may not use this file except in compliance with the License.
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
  * A copy of the License can be found in the LICENSE.TXT file distributed
  * together with this file.
  *
@@ -44,9 +44,12 @@ describe('provider rest', () => {
       });
 
       bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe((_, ctx) => {
-          ctx.data.myId = Id;
-        }, provider());
+        p.pipe(
+          (_, ctx) => {
+            ctx.data.myId = Id;
+          },
+          provider()
+        );
       });
 
       const response = await bautajs.operations.v1.operation1.run({
@@ -69,9 +72,12 @@ describe('provider rest', () => {
       });
 
       bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe((_, ctx) => {
-          ctx.data.myId = Id;
-        }, provider());
+        p.pipe(
+          (_, ctx) => {
+            ctx.data.myId = Id;
+          },
+          provider()
+        );
       });
 
       const response = await bautajs.operations.v1.operation1.run({

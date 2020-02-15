@@ -1,8 +1,8 @@
 /*
- * Copyright (c) AXA Shared Services Spain S.A.
+ * Copyright (c) AXA Group Operations Spain S.A.
  *
- * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
- * may not use this file except in compliance with the License.
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
  * A copy of the License can be found in the LICENSE.TXT file distributed
  * together with this file.
  *
@@ -273,7 +273,12 @@ describe('operation class tests', () => {
     test('should allow pipelines on pipe method', async () => {
       const expected = 'this will be showed';
       const pp = pipelineBuilder(p => p.pipe(() => expected));
-      operationTest.validateRequest(false).setup(p => p.pipe(() => 'next3', pp));
+      operationTest.validateRequest(false).setup(p =>
+        p.pipe(
+          () => 'next3',
+          pp
+        )
+      );
       const ctx = { req: {}, res: {} };
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
@@ -413,19 +418,15 @@ describe('operation class tests', () => {
     });
 
     test('should allow a valid schema', async () => {
-      operationTest.validateResponse(false).setup(p =>
-        p
-          .push((_, ctx) => ctx.validateRequest())
-          .push(() => [
-            { id: 1, name: '2' },
-            { id: 3, name: '2' }
-          ])
-      );
+      operationTest
+        .validateResponse(false)
+        .setup(p =>
+          p
+            .push((_, ctx) => ctx.validateRequest())
+            .push(() => [{ id: 1, name: '2' }, { id: 3, name: '2' }])
+        );
       await operationTest.addRoute(document.routes[0]);
-      const expected = [
-        { id: 1, name: '2' },
-        { id: 3, name: '2' }
-      ];
+      const expected = [{ id: 1, name: '2' }, { id: 3, name: '2' }];
       const body = {
         grant_type: 'password',
         username: 'user',

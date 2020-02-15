@@ -40,7 +40,7 @@
       "name": "Xavier Redondo"
     }
   ],
-  "license": "MIT",
+  "license": "see LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "^3.0.0-alpha.0",
     "memoizee": "0.4.14"

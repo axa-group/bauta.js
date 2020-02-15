@@ -1,8 +1,8 @@
 /*
- * Copyright (c) AXA Shared Services Spain S.A.
+ * Copyright (c) AXA Group Operations Spain S.A.
  *
- * Licensed under the AXA Shared Services Spain S.A. License (the "License"); you
- * may not use this file except in compliance with the License.
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
  * A copy of the License can be found in the LICENSE.TXT file distributed
  * together with this file.
  *
@@ -26,10 +26,9 @@ describe('query filter decorator', () => {
 
   test('should filter the given array with the given loobpack filters', async () => {
     bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-      p.push((_, ctx) => [
-        { id: ctx.req.id, name: 'pet' },
-        { id: ctx.req.id, name: 'pet2' }
-      ]).push(queryFilters());
+      p.push((_, ctx) => [{ id: ctx.req.id, name: 'pet' }, { id: ctx.req.id, name: 'pet2' }]).push(
+        queryFilters()
+      );
     });
 
     expect(
