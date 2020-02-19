@@ -1,6 +1,6 @@
 {
   "name": "bautajs-example",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "description": "A bautaJS example",
   "main": "./server.js",
   "scripts": {
@@ -36,9 +36,9 @@
   ],
   "license": "see LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "^3.0.0-alpha.0",
-    "@bautajs/datasource-rest": "^3.0.0-alpha.2",
-    "@bautajs/express": "^3.0.0-alpha.2",
+    "@bautajs/core": "^3.0.0-alpha.3",
+    "@bautajs/datasource-rest": "^3.0.0-alpha.3",
+    "@bautajs/express": "^3.0.0-alpha.3",
     "@hapi/boom": "^8.0.1"
   }
 }
