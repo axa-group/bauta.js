@@ -44,12 +44,9 @@ describe('provider rest', () => {
       });
 
       bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe(
-          (_, ctx) => {
-            ctx.data.myId = Id;
-          },
-          provider()
-        );
+        p.pipe((_, ctx) => {
+          ctx.data.myId = Id;
+        }, provider());
       });
 
       const response = await bautajs.operations.v1.operation1.run({
@@ -58,6 +55,58 @@ describe('provider rest', () => {
       });
 
       expect(response).toStrictEqual([{ id: 3, name: 'pet3' }]);
+    });
+
+    test('should add the response status code if an http error ocurres', async () => {
+      const { restProvider } = require('../index');
+
+      const Id = '123';
+      nock('https://google.com')
+        .get(`/${Id}`)
+        .reply(404, { message: 'not found' });
+
+      const provider = restProvider((client, _, ctx) => {
+        return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
+      });
+
+      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
+        p.pipe((_, ctx) => {
+          ctx.data.myId = Id;
+        }, provider());
+      });
+
+      await expect(
+        bautajs.operations.v1.operation1.run({
+          req: { id: 1 },
+          res: { statusCode: 200 }
+        })
+      ).rejects.toThrow(expect.objectContaining({ statusCode: 404, message: 'not found' }));
+    });
+
+    test('should add the response status code if an http error ocurres and message should be case insensitive', async () => {
+      const { restProvider } = require('../index');
+
+      const Id = '123';
+      nock('https://google.com')
+        .get(`/${Id}`)
+        .reply(404, { Message: 'not found' });
+
+      const provider = restProvider((client, _, ctx) => {
+        return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
+      });
+
+      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
+        p.pipe((_, ctx) => {
+          ctx.data.myId = Id;
+        }, provider());
+      });
+
+      await expect(
+        bautajs.operations.v1.operation1.run({
+          req: { id: 1 },
+          res: { statusCode: 200 }
+        })
+      ).rejects.toThrow(expect.objectContaining({ statusCode: 404, message: 'not found' }));
     });
 
     test('should allow do a requests with GOT options and the built in agent with de default set up', async () => {
@@ -72,12 +121,9 @@ describe('provider rest', () => {
       });
 
       bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe(
-          (_, ctx) => {
-            ctx.data.myId = Id;
-          },
-          provider()
-        );
+        p.pipe((_, ctx) => {
+          ctx.data.myId = Id;
+        }, provider());
       });
 
       const response = await bautajs.operations.v1.operation1.run({

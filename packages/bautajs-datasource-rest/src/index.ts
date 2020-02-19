@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 import got, {
+  HTTPError,
   ExtendOptions,
   NormalizedOptions,
   Response,
@@ -136,6 +137,17 @@ function logResponseHook(logger: Logger, reqId: string = 'No req id') {
   };
 }
 
+function addErrorStatusCode(error: GeneralError) {
+  if (error instanceof HTTPError) {
+    Object.assign(error, {
+      statusCode: error.response.statusCode,
+      message: (error.response.body as any)?.message || (error.response.body as any)?.Message
+    });
+  }
+
+  return error;
+}
+
 function addRequestId(ctx: Context) {
   return (options: NormalizedOptions) => {
     if (!options.headers) {
@@ -156,7 +168,7 @@ function operatorFn(client: Got, fn: ProviderOperation<any>) {
         hooks: {
           beforeRequest: [addRequestId(ctx), logRequestHook(ctx.logger, ctx.id)],
           afterResponse: [logResponseHook(ctx.logger, ctx.id)],
-          beforeError: [logErrorsHook(ctx.logger, ctx.id)]
+          beforeError: [logErrorsHook(ctx.logger, ctx.id), addErrorStatusCode]
         }
       }),
       value,
