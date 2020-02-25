@@ -180,7 +180,7 @@ describe('provider rest', () => {
     });
 
     test('should log the requests data on debug mode', async () => {
-      const spyOnDebug = jest.(bautajs.logger, 'debug');
+      const spyOnDebug = jest.spyOn(bautajs.logger, 'debug');
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
 
