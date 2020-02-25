@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/decorator-filter",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0-alpha.4",
   "description": "A bautaJS loopback filter decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
   ],
   "license": "see LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "^3.0.0-alpha.3",
+    "@bautajs/core": "^3.0.0-alpha.4",
     "loopback-filters": "1.0.0"
   }
 }
