@@ -21,7 +21,14 @@ import https from 'https';
 import routeOrder from 'route-order';
 import { BautaJS, BautaJSOptions, Document, Operation } from '@bautajs/core';
 import { MiddlewareOptions, ICallback } from './types';
-import { initMorgan, initBodyParser, initHelmet, initCors, initExplorer } from './middlewares';
+import {
+  initReqIdGenerator,
+  initMorgan,
+  initBodyParser,
+  initHelmet,
+  initCors,
+  initExplorer
+} from './middlewares';
 import { getContentType } from './utils';
 
 export * from './types';
@@ -190,6 +197,7 @@ export class BautaJSExpress extends BautaJS {
       }
     }
   ) {
+    initReqIdGenerator(this.app);
     initMorgan(this.app, options.morgan);
     initHelmet(this.app, options.helmet);
     initCors(this.app, options.cors);

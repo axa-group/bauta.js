@@ -17,9 +17,11 @@ import morgan from 'morgan';
 import cors, { CorsOptions } from 'cors';
 import { Application, json, urlencoded } from 'express';
 import helmet from 'helmet';
-import { Document, Operations } from '@bautajs/core';
+import { Document, Operations, genReqId } from '@bautajs/core';
 import { OpenAPIV3, OpenAPIV2, OpenAPI } from '@bautajs/core/node_modules/openapi-types';
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
+
+const morganJson = require('morgan-json');
 
 function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operations) {
   const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
@@ -38,22 +40,42 @@ function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operatio
   return paths;
 }
 
+export function initReqIdGenerator(app: Application) {
+  app.use((req: any, _, next) => {
+    const { headers } = req;
+    req.id = genReqId(headers);
+    next();
+  });
+}
+
 export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOptions>) {
+  morgan.token('reqId', (req: any) => req.id);
+
+  const tinyWithTimestampAndreqId = morganJson({
+    date: ':date[iso]',
+    reqId: ':reqId',
+    method: ':method',
+    url: ':url',
+    status: ':status',
+    length: ':res[content-length]',
+    'response-time': ':response-time ms'
+  });
+
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     app.use(
-      morgan('tiny', {
+      morgan(tinyWithTimestampAndreqId, {
         immediate: true
       })
     );
     app.use(
-      morgan('tiny', {
+      morgan(tinyWithTimestampAndreqId, {
         immediate: false
       })
     );
   } else if (opt && opt.enabled === true && opt.options) {
     app.use(morgan(opt.options.format, opt.options.options));
     app.use(
-      morgan('tiny', {
+      morgan(tinyWithTimestampAndreqId, {
         immediate: false
       })
     );

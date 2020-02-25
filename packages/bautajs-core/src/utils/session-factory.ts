@@ -12,20 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import hyperid from 'hyperid';
 import { Session, Logger } from './types';
 import { ContextLogger } from './context-logger';
-
-const idGenerator = hyperid();
-const requestIdHeader = 'request-id';
-
-function genReqId(headers: any): string {
-  if (headers && headers[requestIdHeader]) {
-    return headers[requestIdHeader];
-  }
-
-  return idGenerator();
-}
+import { genReqId } from './request-id-generator';
 
 function generateBaseSession(req: any): any {
   const { headers } = req;

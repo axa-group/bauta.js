@@ -25,6 +25,7 @@ export * from './decorators/parallel';
 export * from './utils/types';
 export * from './utils/create-context';
 export * from './default-logger';
+export * from './utils/request-id-generator';
 
 export const utils = {
   prepareToLog

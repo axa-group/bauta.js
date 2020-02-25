@@ -1,3 +1,25 @@
+# Logging
+
+One of the main purpose of `bautajs` is provide a nice logging experience. 
+The request options, the response body and the times a request takes are logged.
+
+Bauta exposes a logger, that can be overwritten by a custom logger that can be
+passed at creation time using the options field logger. 
+
+The only requirement that a custom logger has to be is to implement the standard log
+levels: fatal, error, warn, info, debug, trace. You can implement further custom log
+levels but if any of those are missing you will not be able to use it. 
+
+This is how you would pass a logger to bauta:
+
+```js
+const bautaJS = new BautaJS(apiDefinitionsJson as Document[], {
+        staticConfig: config,
+        logger: myCustomLogger
+      });
+```
+
+
 # Debug
 
 One of the main purpose of `bautajs` is provide a nice debugging experience. 

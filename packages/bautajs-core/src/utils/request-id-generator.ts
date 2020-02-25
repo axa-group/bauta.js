@@ -12,20 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Logger } from './types';
+import hyperid from 'hyperid';
 
-function isValidLoggerFunction(f: Function) {
-  return f && typeof f === 'function';
-}
+const idGenerator = hyperid();
+const requestIdHeader = 'request-id';
 
-export function isLoggerValid(logger: Logger): boolean {
-  if (!logger) {
-    return false;
+export function genReqId(headers: any): string {
+  if (headers && headers[requestIdHeader]) {
+    return headers[requestIdHeader];
   }
 
-  return ['trace', 'debug', 'info', 'warn', 'error', 'fatal'].every((level: string) =>
-    isValidLoggerFunction(logger[level as keyof Logger])
-  );
+  return idGenerator();
 }
 
-export default isLoggerValid;
+export default genReqId;

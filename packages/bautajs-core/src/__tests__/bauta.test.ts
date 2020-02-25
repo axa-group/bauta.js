@@ -1,13 +1,13 @@
 /*
- * Copyright (c) AXA Shared Services Spain S.A.
+ * Copyright (c) AXA Group Operations Spain S.A.
  *
- * Licensed under the AXA Shared Services Spain S.A. License (the 'License'); you
- * may not use this file except in compliance with the License.
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
  * A copy of the License can be found in the LICENSE.TXT file distributed
  * together with this file.
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an 'AS IS' BASIS,
+ * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -19,8 +19,8 @@ import { OnCancel, Document } from '../utils/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-versions.json';
 
-describe('core tests', () => {
-  describe('express initialization tests', () => {
+describe('bauta core tests', () => {
+  describe('core initialization tests', () => {
     test('should initialize the core with the given parameters', async () => {
       const config = {
         endpoint: 'http://google.es'

@@ -49,6 +49,7 @@
     "express": "4.x",
     "helmet": "3.x",
     "morgan": "1.x",
+    "morgan-json": "^1.1.0",
     "openapi-types": "1.3.5",
     "route-order": "0.1.0",
     "swagger-ui-express": "4.x"
