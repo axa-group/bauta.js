@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { notFound } = require('boom');
+const { notFound } = require('@hapi/boom');
 const bautaJS = require('./server/instances/bauta');
 
 bautaJS.applyMiddlewares();

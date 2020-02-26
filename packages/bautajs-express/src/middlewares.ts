@@ -21,6 +21,8 @@ import { Document, genReqId } from '@bautajs/core';
 
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
 
+const morganJson = require('morgan-json');
+
 export function initReqIdGenerator(app: Application) {
   app.use((req: any, _, next) => {
     const { headers } = req;
@@ -31,8 +33,16 @@ export function initReqIdGenerator(app: Application) {
 
 export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOptions>) {
   morgan.token('reqId', (req: any) => req.id);
-  const tinyWithTimestampAndreqId =
-    ':date[iso] :reqId :method :url :status :res[content-length] - :response-time ms';
+
+  const tinyWithTimestampAndreqId = morganJson({
+    date: ':date[iso]',
+    reqId: ':reqId',
+    method: ':method',
+    url: ':url',
+    status: ':status',
+    length: ':res[content-length]',
+    'response-time': ':response-time ms'
+  });
 
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     app.use(
