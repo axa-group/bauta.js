@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/datasource-rest",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "A bautaJS cache decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,7 +22,7 @@
     "cache",
     "middleware"
   ],
-	"author": {
+  "author": {
     "email": "javier.blanco@axa.com",
     "name": "Javier Blanco"
   },
@@ -39,10 +39,10 @@
       "email": "xavier.redondo@axa.com",
       "name": "Xavier Redondo"
     }
-	],
-	"license": "SEE LICENSE IN LICENSE.txt",
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "^2.3.0",
+    "@bautajs/core": "^2.4.0",
     "callsites": "3.1.0",
     "deepmerge": "4.2.1",
     "form-data": "2.5.1",

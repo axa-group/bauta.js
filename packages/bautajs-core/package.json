@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/core",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "A simple library to make middlewares",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +25,7 @@
     "bautajs",
     "middleware"
   ],
-	"author": {
+  "author": {
     "email": "javier.blanco@axa.com",
     "name": "Javier Blanco"
   },
@@ -42,8 +42,8 @@
       "email": "xavier.redondo@axa.com",
       "name": "Xavier Redondo"
     }
-	],
-	"license": "SEE LICENSE IN LICENSE.txt",
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
   "engines": {
     "node": ">=8",
     "npm": ">=5"
