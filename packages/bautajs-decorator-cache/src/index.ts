@@ -16,13 +16,15 @@ import memoizee from 'memoizee';
 import { BautaJSInstance, Context, OperatorFunction } from '@bautajs/core';
 
 export type Normalizer<TIn> = (value: [TIn, Context, BautaJSInstance]) => any;
-
+export type MemoizedOperation<TIn, TOut> = OperatorFunction<TIn, TOut> & {
+  memoized: Function & memoizee.Memoized<Function>;
+};
 export interface CacheDecorator {
   <TIn, TOut>(
     fn: OperatorFunction<TIn, TOut>,
     normalizer: Normalizer<TIn>,
     options?: memoizee.Options
-  ): OperatorFunction<TIn, TOut>;
+  ): MemoizedOperation<TIn, TOut>;
 }
 
 /**
@@ -43,7 +45,7 @@ export const cache: CacheDecorator = <TIn, TOut>(
   fn: any,
   normalizer: Normalizer<TIn>,
   options: memoizee.Options = {}
-): OperatorFunction<TIn, TOut> => {
+): MemoizedOperation<TIn, TOut> => {
   if (!normalizer) {
     throw new Error(
       'normalizer: (args)=>{} function is a mandatory parameter to calculate the cache key'
@@ -53,8 +55,11 @@ export const cache: CacheDecorator = <TIn, TOut>(
     ...options,
     normalizer
   });
+  const operatiorFn = async (value: TIn, ctx: Context, bautajs: BautaJSInstance) =>
+    cached(value, ctx, bautajs);
 
-  return async (value: TIn, ctx: Context, bautajs: BautaJSInstance) => cached(value, ctx, bautajs);
+  operatiorFn.memoized = cached;
+  return operatiorFn;
 };
 
 export default cache;
