@@ -63,7 +63,7 @@ export function pipelineBuilder<TIn, TOut>(
     try {
       result = pp.accesor.handler(prev, ctx, bautajs);
     } catch (e) {
-      return pp.accesor.errorHandler(e, ctx);
+      return pp.accesor.errorHandler(e, ctx, bautajs);
     }
 
     if (result instanceof Promise) {
