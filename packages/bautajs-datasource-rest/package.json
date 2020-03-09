@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/datasource-rest",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "A bautaJS cache decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "^2.5.1",
+    "@bautajs/core": "^2.5.2",
     "callsites": "3.1.0",
     "deepmerge": "4.2.1",
     "form-data": "2.5.1",
