@@ -178,7 +178,7 @@ export type Resolver = (operations: Operations) => void;
 export type Version = Dictionary<Operation>;
 
 // Operation
-export type ErrorHandler = (err: Error, ctx: Context, bautajs?: BautaJSInstance) => any;
+export type ErrorHandler = (err: Error, ctx: Context, bautajs: BautaJSInstance) => any;
 export interface Operation {
   readonly id: string;
   readonly version: string;

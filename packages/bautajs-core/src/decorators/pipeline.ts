@@ -67,7 +67,7 @@ export function pipelineBuilder<TIn, TOut>(
     }
 
     if (result instanceof Promise) {
-      result = result.catch(async (e: Error) => pp.accesor.errorHandler(e, ctx));
+      result = result.catch(async (e: Error) => pp.accesor.errorHandler(e, ctx, bautajs));
     }
 
     return result;

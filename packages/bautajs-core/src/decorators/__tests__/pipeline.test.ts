@@ -42,13 +42,43 @@ describe('pipeline decorator', () => {
     ).toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 
-  test('should execute the pipeline but go to the error handler', async () => {
+  test('should execute the pipeline but go to the error handler if step is not a promise', async () => {
     const myPipeline = pipelineBuilder(p =>
       p
         .push((_, ctx) => {
           return ctx.req.params.id;
         })
         .push(value => {
+          if (value === 0) {
+            throw new Error('I have zeros');
+          }
+          return [{ id: 1, name: 'pet' }];
+        })
+        .onError((err, _, bauta) => {
+          return { err, bauta };
+        })
+    );
+
+    const result = await myPipeline(
+      null,
+      createContext({ req: { id: 1, params: { id: 0 } }, res: {} }),
+      bautajs
+    );
+
+    // We are only interested in checking that bauta indeed is accessible from the onError handler
+    expect(result).toBeDefined();
+    expect(result.err).toBeDefined();
+    expect(result.bauta).toBeDefined();
+    expect(result.bauta.logger).toBeDefined();
+  });
+
+  test('should execute the pipeline but go to the error handler if step is a promise', async () => {
+    const myPipeline = pipelineBuilder(p =>
+      p
+        .push((_, ctx) => {
+          return ctx.req.params.id;
+        })
+        .push(async value => {
           if (value === 0) {
             throw new Error('I have zeros');
           }
