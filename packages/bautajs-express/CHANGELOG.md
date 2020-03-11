@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.4](https://github.axa.com/Digital/bauta-nodejs/compare/v2.5.3...v2.5.4) (2020-03-11)
+
+
+### Bug Fixes
+
+* **@bautajs/express:** Do not return response if user cancel the request ([15740e6](https://github.axa.com/Digital/bauta-nodejs/commit/15740e6a669f891b8fa67d8973cba3aa061d4b73))
+
+
+
+
+
 ## [2.5.3](https://github.axa.com/Digital/bauta-nodejs/compare/v2.5.2...v2.5.3) (2020-03-11)
 
 
