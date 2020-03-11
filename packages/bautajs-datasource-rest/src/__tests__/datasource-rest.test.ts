@@ -696,34 +696,35 @@ describe('datasource rest test', () => {
     });
 
     test('should allow to set a custom agent', async () => {
-      await new Promise(done => {
-        https.request = (options: any) => {
-          expect(options.agent.keepAliveMsecs).toStrictEqual(5000);
-          done();
+      nock('http://pets.com')
+        .get('/v1/policies')
+        .reply(200, {});
+      https.request = (options: any, cb: any) => {
+        expect(options.agent.keepAliveMsecs).toStrictEqual(5000);
 
-          return emmiter;
-        };
-        const template = {
-          providers: [
-            {
-              id: 'op1',
-              options: {
-                url: 'https://pets.com/v1/policies',
-                method: 'POST',
-                timeout: 5000,
-                agent: createHttpsAgent({
-                  keepAliveMsecs: 5000
-                })
-              }
+        return originalHttpRequest(options, cb);
+      };
+      const template = {
+        providers: [
+          {
+            id: 'op1',
+            options: {
+              url: 'https://pets.com/v1/policies',
+              method: 'GET',
+              timeout: 5000,
+              agent: createHttpsAgent({
+                keepAliveMsecs: 5000
+              })
             }
-          ]
-        };
+          }
+        ]
+      };
 
-        const datasource = restDataSource(template);
-        datasource.op1({
-          resolveBodyOnly: true
-        })(null, context, bautaInstance);
-      });
+      const datasource = restDataSource(template);
+      await datasource.op1({
+        resolveBodyOnly: true
+      })(null, context, bautaInstance);
+      expect.assertions(1);
     });
 
     test('should allow to set the agent certificates by a custom agent', async () => {

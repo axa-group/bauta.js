@@ -118,7 +118,11 @@ export class BautaJSExpress extends BautaJS {
           if (res.headersSent || res.finished) {
             this.moduleLogger.error(
               'Response has been sent to the user, but the promise throwed an error',
-              response
+              {
+                name: response.name,
+                code: response.code,
+                message: response.message
+              }
             );
             return null;
           }
@@ -136,6 +140,9 @@ export class BautaJSExpress extends BautaJS {
 
         const op = operation.run({ req, res });
         req.on('abort', () => {
+          op.cancel('Request was aborted by the client intentionally');
+        });
+        req.on('aborted', () => {
           op.cancel('Request was aborted by the client intentionally');
         });
         req.on('timeout', () => {
