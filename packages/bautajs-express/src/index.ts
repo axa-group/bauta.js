@@ -115,6 +115,10 @@ export class BautaJSExpress extends BautaJS {
           return res.end();
         };
         const rejectWrapper = (response: any) => {
+          // In case the request was canceled by the user there is no need to sent any message to the user.
+          if (response.name === 'CancelError') {
+            return null;
+          }
           if (res.headersSent || res.finished) {
             this.moduleLogger.error(
               'Response has been sent to the user, but the promise throwed an error',
