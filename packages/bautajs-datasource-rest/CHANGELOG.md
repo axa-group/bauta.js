@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.3](https://github.axa.com/Digital/bauta-nodejs/compare/v2.5.2...v2.5.3) (2020-03-11)
+
+
+### Bug Fixes
+
+* **@bautajs/express:** request cancelation and error log ([#155](https://github.axa.com/Digital/bauta-nodejs/issues/155)) ([7d03d5a](https://github.axa.com/Digital/bauta-nodejs/commit/7d03d5a3cc711e67d15652a90ab70ec72cc7d4a2)), closes [#154](https://github.axa.com/Digital/bauta-nodejs/issues/154)
+
+
+
+
+
 ## [2.2.2](https://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
 
 **Note:** Version bump only for package @bautajs/datasource-rest

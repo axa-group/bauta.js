@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/express",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "A bautaJS express plugin. Allows auto exposing the bautaJS operations.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
