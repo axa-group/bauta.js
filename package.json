@@ -88,7 +88,7 @@
     "postinstall": "npx lerna bootstrap --no-ci && npm run compile",
     "clean": "npx lerna clean --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
     "release": "npm run clean && npm i && npm run test && npx lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
-    "test": "jest --verbose --forceExit --detectOpenHandles --testTimeout=30000",
+    "test": "jest --verbose --detectOpenHandles --testTimeout=30000",
     "coverage": "npm test -- --coverage",
     "test:clean": "jest --clearCache --testTimeout=30000",
     "test:watch": "jest --verbose --watchAll --testTimeout=30000",
