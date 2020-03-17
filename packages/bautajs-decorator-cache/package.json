@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/decorator-cache",
-  "version": "3.0.0-alpha.4",
+  "version": "3.0.0-alpha.5",
   "description": "A bautaJS cache decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
   ],
   "license": "see LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "^3.0.0-alpha.4",
+    "@bautajs/core": "^3.0.0-alpha.5",
     "moize": "5.4.5"
   }
 }
