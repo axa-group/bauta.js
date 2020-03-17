@@ -51,11 +51,11 @@ export function pipelineBuilder<TIn, TOut>(
     try {
       result = pp.accesor.handler(prev, ctx, bautajs);
     } catch (e) {
-      return pp.accesor.errorHandler(e, ctx);
+      return pp.accesor.errorHandler(e, ctx, bautajs);
     }
 
     if (result instanceof Promise) {
-      result = result.catch(async (e: GenericError) => pp.accesor.errorHandler(e, ctx));
+      result = result.catch(async (e: GenericError) => pp.accesor.errorHandler(e, ctx, bautajs));
     }
 
     return result;

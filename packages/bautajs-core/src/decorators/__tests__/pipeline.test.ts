@@ -28,7 +28,11 @@ describe('pipeline decorator', () => {
     const myPipeline = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
 
     expect(
-      await myPipeline(null, createContext({ req: { query: {}, id: 1 }, res: {} }), bautajs)
+      await myPipeline(
+        null,
+        createContext({ req: { query: {}, id: 1 }, res: {} }, bautajs.logger),
+        bautajs
+      )
     ).toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 
@@ -41,5 +45,65 @@ describe('pipeline decorator', () => {
     expect(
       await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
     ).toStrictEqual([{ id: 1, name: 'pet' }]);
+  });
+
+  test('should execute the pipeline but go to the error handler if step is not a promise', async () => {
+    const myPipeline = pipelineBuilder(p =>
+      p
+        .push((_, ctx) => {
+          return ctx.req.params.id;
+        })
+        .push(value => {
+          if (value === 0) {
+            throw new Error('I have zeros');
+          }
+          return [{ id: 1, name: 'pet' }];
+        })
+        .onError((err, _, bauta) => {
+          return { err, bauta };
+        })
+    );
+
+    const result = await myPipeline(
+      null,
+      createContext({ req: { id: 1, params: { id: 0 } }, res: {} }, bautajs.logger),
+      bautajs
+    );
+
+    // We are only interested in checking that bauta indeed is accessible from the onError handler
+    expect(result).toBeDefined();
+    expect(result.err).toBeDefined();
+    expect(result.bauta).toBeDefined();
+    expect(result.bauta.logger).toBeDefined();
+  });
+
+  test('should execute the pipeline but go to the error handler if step is a promise', async () => {
+    const myPipeline = pipelineBuilder(p =>
+      p
+        .push((_, ctx) => {
+          return ctx.req.params.id;
+        })
+        .push(async value => {
+          if (value === 0) {
+            throw new Error('I have zeros');
+          }
+          return [{ id: 1, name: 'pet' }];
+        })
+        .onError((err, _, bauta) => {
+          return { err, bauta };
+        })
+    );
+
+    const result = await myPipeline(
+      null,
+      createContext({ req: { id: 1, params: { id: 0 } }, res: {} }, bautajs.logger),
+      bautajs
+    );
+
+    // We are only interested in checking that bauta indeed is accessible from the onError handler
+    expect(result).toBeDefined();
+    expect(result.err).toBeDefined();
+    expect(result.bauta).toBeDefined();
+    expect(result.bauta.logger).toBeDefined();
   });
 });

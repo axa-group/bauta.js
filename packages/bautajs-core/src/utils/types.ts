@@ -224,7 +224,7 @@ export type Resolver = (operations: Operations) => void;
 export type Version = Dictionary<Operation>;
 
 // Operation
-export type ErrorHandler = (err: GenericError, ctx: Context) => any;
+export type ErrorHandler = (err: GenericError, ctx: Context, bautajs: BautaJSInstance) => any;
 export interface Operation extends BasicOperation {
   route?: Route;
   schema?: OpenAPI.Operation;
