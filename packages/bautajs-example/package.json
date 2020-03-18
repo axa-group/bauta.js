@@ -39,6 +39,7 @@
     "@bautajs/core": "^3.0.0-alpha.5",
     "@bautajs/datasource-rest": "^3.0.0-alpha.5",
     "@bautajs/express": "^3.0.0-alpha.5",
-    "@hapi/boom": "^8.0.1"
+    "@hapi/boom": "^8.0.1",
+    "@bautajs/decorator-cache": "^3.0.0-alpha.5"
   }
 }

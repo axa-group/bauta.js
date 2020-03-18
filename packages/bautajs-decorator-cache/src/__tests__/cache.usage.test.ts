@@ -240,20 +240,20 @@ describe('cache decorator usage', () => {
 
       test('should be called with one add cache hit for first value', async () => {
         const spyOnDebug = jest.spyOn(validLogger, 'debug');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
         const result = await bautaJS.operations.v1.operation2.run({
           req: { params: { value: 144 } },
           res: {}
         });
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
-        expect(spyOnDebug).toHaveBeenNthCalledWith(
-          1,
-          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
-        );
+        expect(spyOnDebug).toHaveBeenNthCalledWith(1, 'Cache added key 144 size 1');
+        expect(spyOnTrace).not.toHaveBeenCalled();
       });
 
       test('should be called with one cache hit for the same value', async () => {
         const spyOnInfo = jest.spyOn(validLogger, 'info');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
 
         await bautaJS.operations.v1.operation2.run({
           req: { params: { value: 144 } },
@@ -266,14 +266,13 @@ describe('cache decorator usage', () => {
         });
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
-        expect(spyOnInfo).toHaveBeenNthCalledWith(
-          1,
-          'Cache hit in cache with keys 144 values [{"a":"123","b":144,"new":1}]'
-        );
+        expect(spyOnInfo).toHaveBeenNthCalledWith(1, 'Cache hit in cache with keys 144');
+        expect(spyOnTrace).not.toHaveBeenCalled();
       });
 
       test('should be called with no cache hit for different values', async () => {
         const spyOnDebug = jest.spyOn(validLogger, 'debug');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
 
         const result = await bautaJS.operations.v1.operation2.run({
           req: { params: { value: 144 } },
@@ -287,18 +286,15 @@ describe('cache decorator usage', () => {
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
         expect(result2).toStrictEqual({ a: '123', b: 255, new: 1 });
-        expect(spyOnDebug).toHaveBeenNthCalledWith(
-          1,
-          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
-        );
-        expect(spyOnDebug).toHaveBeenNthCalledWith(
-          2,
-          'Cache added key 255 value {"a":"123","b":255,"new":1} size 2'
-        );
+        expect(spyOnDebug).toHaveBeenNthCalledWith(1, 'Cache added key 144 size 1');
+        expect(spyOnDebug).toHaveBeenNthCalledWith(2, 'Cache added key 255 size 2');
+
+        expect(spyOnTrace).not.toHaveBeenCalled();
       });
 
       test('should be called with cache hit for each existing value in the cache', async () => {
         const spyOnInfo = jest.spyOn(validLogger, 'info');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
         await bautaJS.operations.v1.operation2.run({
           req: { params: { value: 144 } },
           res: {}
@@ -323,15 +319,11 @@ describe('cache decorator usage', () => {
 
         expect(result2).toStrictEqual({ a: '123', b: 144, new: 1 });
 
-        expect(spyOnInfo).toHaveBeenNthCalledWith(
-          1,
-          'Cache hit in cache with keys 255,144 values [{"a":"123","b":255,"new":1},{"a":"123","b":144,"new":1}]'
-        );
+        expect(spyOnInfo).toHaveBeenNthCalledWith(1, 'Cache hit in cache with keys 255,144');
 
-        expect(spyOnInfo).toHaveBeenNthCalledWith(
-          2,
-          'Cache hit in cache with keys 255,144 values [{"a":"123","b":255,"new":1},{"a":"123","b":144,"new":1}]'
-        );
+        expect(spyOnInfo).toHaveBeenNthCalledWith(2, 'Cache hit in cache with keys 255,144');
+
+        expect(spyOnTrace).not.toHaveBeenCalled();
       });
     });
 
@@ -374,20 +366,20 @@ describe('cache decorator usage', () => {
 
       test('should be called with one add cache hit for first value', async () => {
         const spyOnDebug = jest.spyOn(validLogger, 'debug');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
         const result = await bautaJS.operations.v1.operation2.run({
           req: { params: { value: 144 } },
           res: {}
         });
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
-        expect(spyOnDebug).toHaveBeenNthCalledWith(
-          1,
-          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
-        );
+        expect(spyOnDebug).toHaveBeenNthCalledWith(1, 'Cache added key 144 size 1');
+        expect(spyOnTrace).not.toHaveBeenCalled();
       });
 
       test('should be called with one cache hit for the same value', async () => {
         const spyOnInfo = jest.spyOn(validLogger, 'info');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
 
         await bautaJS.operations.v1.operation2.run({
           req: { params: { value: 144 } },
@@ -400,8 +392,176 @@ describe('cache decorator usage', () => {
         });
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
-        expect(spyOnInfo).toHaveBeenNthCalledWith(
+        expect(spyOnInfo).toHaveBeenNthCalledWith(1, 'Cache hit in cache with keys 144');
+        expect(spyOnTrace).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('using trace debug', () => {
+    let validLogger: Logger;
+
+    describe('normalizer using context', () => {
+      beforeEach(async () => {
+        jest.resetModules();
+
+        process.env.LOG_LEVEL = 'TRACE';
+        process.env.DEBUG = 'bautajs*';
+
+        // eslint-disable-next-line global-require
+        const { cache: myCache } = require('../index');
+
+        const configLogger = {
+          level: 'debug',
+          name: 'logger-custom-test',
+          prettyPrint: false
+        };
+
+        validLogger = (pino(configLogger, pino.destination(1)) as unknown) as Logger;
+
+        bautaJS = new BautaJS(testApiDefinitionsJson as Document[]);
+        await bautaJS.bootstrap();
+
+        const normalizer = ([, ctx]) => ctx.req.params.value;
+
+        const pp = pipelineBuilder(p =>
+          p
+            .push((_, ctx) => {
+              return ctx.req.params.value;
+            })
+            .push(value => ({ a: '123', b: value }))
+            .push(result => ({ ...result, new: 1 }))
+        );
+
+        bautaJS.operations.v1.operation2.setup(p =>
+          p.push(myCache(pp, <any>normalizer, null, validLogger))
+        );
+      });
+
+      test('should be called with one add cache hit for first value', async () => {
+        const spyOnDebug = jest.spyOn(validLogger, 'debug');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
+        const result = await bautaJS.operations.v1.operation2.run({
+          req: { params: { value: 144 } },
+          res: {}
+        });
+
+        expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
+        expect(spyOnDebug).toHaveBeenNthCalledWith(1, 'Cache added key 144 size 1');
+        expect(spyOnTrace).toHaveBeenNthCalledWith(
           1,
+          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
+        );
+      });
+
+      test('should be called with one cache hit for the same value', async () => {
+        const spyOnInfo = jest.spyOn(validLogger, 'info');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
+
+        await bautaJS.operations.v1.operation2.run({
+          req: { params: { value: 144 } },
+          res: {}
+        });
+
+        const result = await bautaJS.operations.v1.operation2.run({
+          req: { params: { value: 144 } },
+          res: {}
+        });
+
+        expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
+        expect(spyOnInfo).toHaveBeenNthCalledWith(1, 'Cache hit in cache with keys 144');
+        expect(spyOnTrace).toHaveBeenNthCalledWith(
+          1,
+          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
+        );
+        expect(spyOnTrace).toHaveBeenNthCalledWith(
+          2,
+          'Cache hit in cache with keys 144 values [{"a":"123","b":144,"new":1}]'
+        );
+      });
+    });
+
+    describe('normalizer using first param object', () => {
+      beforeEach(async () => {
+        jest.resetModules();
+
+        process.env.LOG_LEVEL = 'TRACE';
+        process.env.DEBUG = 'bautajs*';
+
+        // eslint-disable-next-line global-require
+        const { cache: myCache } = require('../index');
+
+        const configLogger = {
+          level: 'debug',
+          name: 'logger-custom-test',
+          prettyPrint: false
+        };
+
+        validLogger = (pino(configLogger, pino.destination(1)) as unknown) as Logger;
+
+        bautaJS = new BautaJS(testApiDefinitionsJson as Document[]);
+        await bautaJS.bootstrap();
+
+        const normalizer = ([obj]) => {
+          return obj.b;
+        };
+
+        const pp = pipelineBuilder(p =>
+          p
+            .push((_, ctx) => {
+              return ctx.req.params.value;
+            })
+            .push(value => ({ a: '123', b: value }))
+            .push(result => ({ ...result, new: 1 }))
+        );
+
+        bautaJS.operations.v1.operation2.setup(p =>
+          p
+            .push((_, ctx) => {
+              return { b: ctx.req.params.value };
+            })
+            .push(myCache(pp, <any>normalizer, null, validLogger))
+        );
+      });
+
+      test('should be called with one add cache hit for first value', async () => {
+        const spyOnDebug = jest.spyOn(validLogger, 'debug');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
+        const result = await bautaJS.operations.v1.operation2.run({
+          req: { params: { value: 144 } },
+          res: {}
+        });
+
+        expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
+        expect(spyOnDebug).toHaveBeenNthCalledWith(1, 'Cache added key 144 size 1');
+        expect(spyOnTrace).toHaveBeenNthCalledWith(
+          1,
+          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
+        );
+      });
+
+      test('should be called with one cache hit for the same value', async () => {
+        const spyOnInfo = jest.spyOn(validLogger, 'info');
+        const spyOnTrace = jest.spyOn(validLogger, 'trace');
+
+        await bautaJS.operations.v1.operation2.run({
+          req: { params: { value: 144 } },
+          res: {}
+        });
+
+        const result = await bautaJS.operations.v1.operation2.run({
+          req: { params: { value: 144 } },
+          res: {}
+        });
+
+        expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
+        expect(spyOnInfo).toHaveBeenNthCalledWith(1, 'Cache hit in cache with keys 144');
+        expect(spyOnTrace).toHaveBeenNthCalledWith(
+          1,
+          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
+        );
+        expect(spyOnTrace).toHaveBeenNthCalledWith(
+          2,
           'Cache hit in cache with keys 144 values [{"a":"123","b":144,"new":1}]'
         );
       });

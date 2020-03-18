@@ -18,6 +18,8 @@ import moize from 'moize';
 
 const defaultLogger = new DefaultLogger('bautajs-decorator-cache');
 
+const isTraceLogLevel = process.env.LOG_LEVEL?.toUpperCase() === 'TRACE';
+
 export type Normalizer<TIn> = (value: [TIn, Context, BautaJSInstance]) => any;
 
 /**
@@ -58,25 +60,37 @@ const configureCache = <TIn, TOut>(
   const getKeysFromCache = (cache: moize.Cache) => {
     return cache.keys.map(key => normalizer(key as [TIn, Context, BautaJSInstance]));
   };
+  // Utility function to manage the fact that cache.values is an array of promises that store the value
+  const getValuesFromCache = async (cache: moize.Cache) =>
+    Promise.all(cache.values.map(async value => value));
 
   const cacheOptions = {
     maxSize: 25, // defaults to 1, which is small for most use cases
     ...options,
-    // isMatchingKey,
     matchesKey,
-    onCacheAdd(cache: moize.Cache) {
+    async onCacheAdd(cache: moize.Cache) {
       logger.debug(
-        `Cache added key ${normalizer(
-          cache.keys[0] as [TIn, Context, BautaJSInstance]
-        )} value ${fastSafeStringify(cache.values[0])} size ${cache.values.length}`
+        `Cache added key ${normalizer(cache.keys[0] as [TIn, Context, BautaJSInstance])} size ${
+          cache.values.length
+        }`
       );
+      if (isTraceLogLevel) {
+        logger.trace(
+          `Cache added key ${normalizer(
+            cache.keys[0] as [TIn, Context, BautaJSInstance]
+          )} value ${fastSafeStringify(await cache.values[0])} size ${cache.values.length}`
+        );
+      }
     },
-    onCacheHit(cache: moize.Cache) {
-      logger.info(
-        `Cache hit in cache with keys ${getKeysFromCache(cache)} values ${fastSafeStringify(
-          cache.values
-        )}`
-      );
+    async onCacheHit(cache: moize.Cache) {
+      logger.info(`Cache hit in cache with keys ${getKeysFromCache(cache)}`);
+      if (isTraceLogLevel) {
+        logger.trace(
+          `Cache hit in cache with keys ${getKeysFromCache(cache)} values ${fastSafeStringify(
+            await getValuesFromCache(cache)
+          )}`
+        );
+      }
     }
   };
 
