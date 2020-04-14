@@ -143,6 +143,26 @@ describe('bautaJS express', () => {
       .expect('Content-type', `multipart/form-data; boundary=${form.getBoundary()}`)
       .expect(200);
   });
+  // eslint-disable-next-line jest/expect-expect
+  test('should not force empty object if the status code is 204', async () => {
+    const bautajs = new BautaJSExpress(apiDefinitions, {
+      resolvers: [
+        resolver(operations => {
+          operations.v1.operation1.setup(p =>
+            p.push((_, ctx) => {
+              ctx.res.status(204);
+            })
+          );
+        })
+      ]
+    });
+
+    bautajs.applyMiddlewares();
+
+    await supertest(bautajs.app)
+      .get('/api/v1/test')
+      .expect(204, '');
+  });
 
   test('should allow swagger 2.0', async () => {
     const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
