@@ -46,7 +46,9 @@ describe('bautaJS express', () => {
 
       await bautajs.applyMiddlewares();
 
-      const request = supertest(bautajs.app).get('/api/v1/test').set('request-id': '1');
+      const request = supertest(bautajs.app)
+        .get('/api/v1/test')
+        .set('request-id', '1');
       expect.assertions(1);
       try {
         await request;
@@ -146,6 +148,27 @@ describe('bautaJS express', () => {
         .expect('Content-disposition', 'attachment; filename="file.pdf')
         .expect(200)
         .expect('123');
+    });
+
+    // eslint-disable-next-line jest/expect-expect
+    test('should not force empty object if the status code is 204', async () => {
+      const bautajs = new BautaJSExpress(apiDefinitions, {
+        resolvers: [
+          resolver(operations => {
+            operations.v1.operation1.setup(p =>
+              p.push((_, ctx) => {
+                ctx.res.status(204);
+              })
+            );
+          })
+        ]
+      });
+
+      bautajs.applyMiddlewares();
+
+      await supertest(bautajs.app)
+        .get('/api/v1/test')
+        .expect(204, '');
     });
 
     // eslint-disable-next-line jest/expect-expect

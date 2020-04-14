@@ -86,7 +86,11 @@ export class BautaJSExpress extends BautaJS {
           });
         }
 
-        res.json(response || {});
+        if (res.statusCode === 204) {
+          res.send();
+        } else {
+          res.json(response || {});
+        }
         const finalTime = new Date().getTime() - startTime.getTime();
 
         this.logger.info(
