@@ -3,6 +3,65 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v2.5.5) (2020-04-16)
+
+### Chores
+
+*  add AXA innersource licenses (9b78f218)
+*  update dependencies (e84d561a)
+
+### Documentation Changes
+
+*  add migration guide for bautajs v2 to v3 (#157) (f984aa46)
+*  apply axa guidelines for open source (#134) (a257ace3)
+*  validation documentation was wrong regarding to the validateResponse function (6fe10bd3)
+*  add more info about response validation (ce220921)
+*  response validation is disabled by default (ae1fb5b2)
+
+### New Features
+
+* **@bautajs/core,@bautajs/fastify:**  add fastify plugin (c303cd70)
+
+### Bug Fixes
+
+* **@bautajs/express:**
+  *  manage 204 status code (52ab2a81)
+  *  Listen to aborted event for request cancel(#159) (681bd4ee)
+  *  swagger definition expose (b6e42b01)
+* **@bautajs/example, @bautajs/cache-decorator:**  add trace logs, add cache example (#160) (40e57acc)
+* **@bautajs/core:**
+  *  add bautajs to pipeline error handler (#158) (c211c08f)
+  *  error can have additional properties  (#139) (a0a89e49)
+*  add spyOn to test missing it (0a330262)
+* **@bautajs/datasource-rest:**
+  *  handle http error (a9ace6bb)
+  *  allow to override the agent (2ffbae3f)
+* **bautajs-core:**  no validate response streams (#122) (fe39e7e3)
+
+### Other Changes
+
+*  add test for validation of circular schemas (577f557e)
+*  building new validator (b0148f16)
+
+### Refactors
+
+*  deprecated validateResponses and validateRequests (a27ce262)
+*  conditions on operations.ts (2e165ad9)
+
+### BREAKING CHANGES
+
+* **bautajs-datasource-rest:**  remove template and datasource methods (6b2ba414)
+* **@bautajs/cache-decorator:**  use moize to implement cache instead of memoize (#156) (5b37d245)
+* **@bautajs/core, @bautajs/express:**
+  *  Improve logs (#146) (2b8e73ba)
+  *  bautajs boostraping now is an async process (#136) (2a974ca6)
+* **@bautajs/datasource-rest:**
+  *  log the request Id on the datasource log (#137) (18837a55)
+  *  Simplify datasource (#135) (051f9355)
+* **@bautajs/core,@bautajs/express,@bautajs/datasource-rest:**  logger (#142) (acee5cc6)
+*  Change the validator architecture (#125) (319fb856)
+*  change validator from open-api module to directly AJV (0be35150)
+
 ## [2.2.2](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
 
 

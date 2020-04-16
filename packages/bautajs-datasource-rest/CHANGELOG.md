@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+
+## [3.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v2.5.5) (2020-04-16)
+
+### Bug Fixes
+
+* **@bautajs/datasource-rest:**
+  *  handle http error (a9ace6bb)
+  *  allow to override the agent (2ffbae3f)
+
+### BREAKING CHANGES
+
+* **bautajs-datasource-rest:**  remove template and datasource methods (6b2ba414)
+* **@bautajs/datasource-rest:**
+  *  log the request Id on the datasource log (#137) (18837a55)
+  *  Simplify datasource (#135) (051f9355)
+* **@bautajs/datasource-rest:**  logger (#142) (acee5cc6)
+*  Change the validator architecture (#125) (319fb856)
+*  change validator from open-api module to directly AJV (0be35150)
+
 ## [2.2.2](https://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
 
 **Note:** Version bump only for package @bautajs/datasource-rest

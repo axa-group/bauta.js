@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v2.5.5) (2020-04-16)
+
+### Bug Fixes
+* **@bautajs/cache-decorator:**  add trace logs, add cache example (#160) (40e57acc)
+
+### BREAKING CHANGES
+* **@bautajs/cache-decorator:**  use moize to implement cache instead of memoize (#156) (5b37d245)
+
+
+
+
+
+
 ## [2.2.2](https://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
 
 **Note:** Version bump only for package @bautajs/decorator-cache

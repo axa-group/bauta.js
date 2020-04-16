@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v2.5.5) (2020-04-16)
+
+### Bug Fixes
+
+* **@bautajs/express:**
+  *  manage 204 status code (52ab2a81)
+  *  Listen to aborted event for request cancel(#159) (681bd4ee)
+  *  swagger definition expose (b6e42b01)
+
+### BREAKING CHANGES
+
+* **@bautajs/express:**
+  *  Improve logs (#146) (2b8e73ba)
+  *  bautajs boostraping now is an async process (#136) (2a974ca6)
+* **@bautajs/express:**  logger (#142) (acee5cc6)
+*  Change the validator architecture (#125) (319fb856)
+*  change validator from open-api module to directly AJV (0be35150)
+
+
+
+
+
 ## [2.2.2](https://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
 
 **Note:** Version bump only for package @bautajs/express
