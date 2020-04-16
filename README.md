@@ -1,6 +1,6 @@
 # Bauta Node JS
 
-## Migrate from 1.x.x to 2.x.x
+## Migrate from 2.x.x to 3.x.x
 
 See [migration guide](./docs/migration-guide.md) or [changelog](./CHANGELOG.md)
 
@@ -42,6 +42,7 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [BautaJS Filter Decorator](./packages/bautajs-decorator-filter)
 - [BautaJS Template Decorator](./packages/bautajs-decorator-template)
 - [BautaJS Rest Datasource](./packages/bautajs-datasource-rest)
+- [BautaJS Fastify](./packages/bautajs-fastify)
 
 ## Features
 
