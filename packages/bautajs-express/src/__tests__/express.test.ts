@@ -18,7 +18,7 @@ import FormData from 'form-data';
 import supertest from 'supertest';
 import { Readable } from 'stream';
 import { Response } from 'express';
-import { resolver, asPromise, DefaultLogger } from '@bautajs/core';
+import { resolver, asPromise, defaultLogger } from '@bautajs/core';
 import { BautaJSExpress } from '../index';
 
 const apiDefinitions = require('./fixtures/test-api-definitions.json');
@@ -27,7 +27,7 @@ const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-
 describe('bautaJS express', () => {
   describe('request cancelation', () => {
     test('should trigger the aborted event when the client close the connection and log the error', async () => {
-      const logger = new DefaultLogger();
+      const logger = defaultLogger();
       jest.spyOn(logger, 'error').mockImplementation();
       const bautajs = new BautaJSExpress(apiDefinitions, {
         resolvers: [
@@ -48,14 +48,15 @@ describe('bautaJS express', () => {
 
       const request = supertest(bautajs.app)
         .get('/api/v1/test')
-        .set('request-id', '1');
-      expect.assertions(1);
+        .set({ 'request-id': '1' });
+      expect.assertions(2);
       try {
         await request;
       } catch (e) {
         // eslint-disable-next-line jest/no-try-expect
-        expect(logger.error.mock.calls[0][0]).toStrictEqual(
-          'id:1,url:/api/v1/test',
+        expect(logger.error.mock.calls[0][0]).toStrictEqual('id:1,url:/api/v1/test');
+        // eslint-disable-next-line jest/no-try-expect
+        expect(logger.error.mock.calls[0][1]).toStrictEqual(
           'The request to /api/v1/test was canceled by the requester'
         );
       }

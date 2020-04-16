@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OperatorFunction, BautaJSInstance, Match, Context } from '../utils/types';
+import { OperatorFunction, BautaJSInstance, Match, Context } from '../types';
 
 class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
   public pipeline?: OperatorFunction<TIn, TOut>;

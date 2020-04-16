@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PipelineSetup, OperatorFunction, GenericError } from '../utils/types';
+import { PipelineSetup, OperatorFunction, GenericError } from '../types';
 import { Builder } from '../core/pipeline-builder';
 import { Accesor } from '../core/accesor';
 

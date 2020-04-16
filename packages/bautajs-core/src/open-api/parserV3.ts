@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { OpenAPIV3 } from 'openapi-types';
-import { DocumentParsed, RouteSchema } from '../utils/types';
+import { DocumentParsed, RouteSchema } from '../types';
 
 const HttpOperations = new Set(['delete', 'get', 'head', 'patch', 'post', 'put', 'options']);
 

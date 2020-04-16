@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { promisify } from 'util';
-import { BautaJSInstance, Context, OperatorFunction, GenericError } from '../utils/types';
+import { BautaJSInstance, Context, OperatorFunction, GenericError } from '../types';
 
 export type OperatorFunctionCallback<TIn, TOut> = (
   prev: TIn,

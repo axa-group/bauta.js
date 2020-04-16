@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import fastSafeStringify from 'fast-safe-stringify';
-import { IValidationError, LocationError } from '../utils/types';
+import { IValidationError, LocationError } from '../types';
 
 export class ValidationError extends Error implements IValidationError {
   public errors: LocationError[];

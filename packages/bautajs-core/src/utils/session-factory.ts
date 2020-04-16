@@ -12,8 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Session, Logger } from './types';
-import { ContextLogger } from './context-logger';
+import { Session, Logger } from '../types';
 import { genReqId } from './request-id-generator';
 
 function generateBaseSession(req: any): any {
@@ -46,9 +45,13 @@ function generateSessionNamespace(session: Session): string {
  */
 export function sessionFactory(req: any, logger: Logger): Session {
   const session: Session = generateBaseSession(req);
-  const namespace = generateSessionNamespace(session);
-
-  session.logger = new ContextLogger(logger, namespace);
+  if (!req.log) {
+    // Just create the session logger if there is no child logger already created by the framework used such fastify req.log
+    const namespace = generateSessionNamespace(session);
+    session.logger = logger.child({ session: namespace });
+  } else {
+    session.logger = req.log;
+  }
 
   return session;
 }

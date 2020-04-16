@@ -15,7 +15,7 @@
 import fastGlob from 'fast-glob';
 import { resolve } from 'path';
 import { OperationBuilder } from './core/operation';
-import { DefaultLogger } from './default-logger';
+import { defaultLogger } from './default-logger';
 import {
   Dictionary,
   BautaJSInstance,
@@ -24,9 +24,10 @@ import {
   Logger,
   Operations,
   BasicOperation
-} from './utils/types';
+} from './types';
 import { isLoggerValid } from './utils/logger-validator';
 import Parser from './open-api/parser';
+import { decorate } from './utils/decorate';
 
 interface API {
   version: string;
@@ -77,23 +78,10 @@ function prebuildApi(apiDefinitions: Document[]): API[] {
  * await bautaJS.operations.v1.find.run({});
  */
 export class BautaJS implements BautaJSInstance {
-  /**
-   * @type {Operations}
-   * @memberof BautaJS
-   */
   public readonly operations: Operations = {};
 
-  /**
-   * @type {any}
-   * @memberof BautaJS
-   */
   public readonly staticConfig: any;
 
-  /**
-   * A debug instance logger
-   * @type {Logger}
-   * @memberof BautaJS
-   */
   public readonly logger: Logger;
 
   constructor(public readonly apiDefinitions: Document[], options: BautaJSOptions = {}) {
@@ -103,7 +91,7 @@ export class BautaJS implements BautaJSInstance {
 
     this.staticConfig = options.staticConfig;
 
-    this.logger = options.logger || new DefaultLogger();
+    this.logger = options.logger || defaultLogger();
     if (!isLoggerValid(this.logger)) {
       throw new Error(
         'Logger is not valid. Must be compliant with basic logging levels(trace, debug, info, warn, error, fatal)'
@@ -145,6 +133,11 @@ export class BautaJS implements BautaJSInstance {
     });
 
     await Promise.all(asyncTasks);
+  }
+
+  public decorate(property: string | symbol, value: any, dependencies?: string[]) {
+    decorate(this, property, value, dependencies);
+    return this;
   }
 
   private registerOperations(

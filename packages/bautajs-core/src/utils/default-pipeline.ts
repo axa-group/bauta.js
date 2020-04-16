@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PipelineBuilder, OperatorFunction } from './types';
+import { PipelineBuilder, OperatorFunction } from '../types';
 import { pipelineBuilder } from '../decorators/pipeline';
 import { NotFoundError } from '../core/not-found-error';
 

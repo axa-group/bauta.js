@@ -17,8 +17,8 @@ import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'events';
 import { ObjectWritableMock } from 'stream-mock';
 import { OperationBuilder } from '../core/operation';
-import { DefaultLogger } from '../default-logger';
-import { Operation, Route, BautaJSInstance } from '../utils/types';
+import { defaultLogger } from '../default-logger';
+import { Operation, Route, BautaJSInstance, OpenAPIV3Document } from '../types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
 import { pipelineBuilder } from '../decorators/pipeline';
@@ -30,15 +30,18 @@ describe('operation class tests', () => {
   const bautaJS: BautaJSInstance = {
     staticConfig: {},
     operations: {},
-    logger: new DefaultLogger(),
+    logger: defaultLogger(),
     apiDefinitions: [],
     bootstrap() {
       return Promise.resolve();
+    },
+    decorate() {
+      return this;
     }
   };
   beforeEach(async () => {
     const parser = new Parser(bautaJS.logger);
-    const document = await parser.asyncParse(testApiDefinitionsJson[0]);
+    const document = await parser.asyncParse(testApiDefinitionsJson[0] as OpenAPIV3Document);
     [route] = document.routes;
   });
   describe('build operations cases', () => {
@@ -311,7 +314,7 @@ describe('operation class tests', () => {
     let document;
     beforeEach(async () => {
       const parser = new Parser(bautaJS.logger);
-      document = await parser.asyncParse(testSchemaRareCasesJson);
+      document = await parser.asyncParse(testSchemaRareCasesJson as OpenAPIV3Document);
       operationTest = OperationBuilder.create(document.routes[0].operationId, 'v1', bautaJS);
     });
 
@@ -457,7 +460,7 @@ describe('operation class tests', () => {
 
     beforeEach(async () => {
       const parser = new Parser(bautaJS.logger);
-      document = await parser.asyncParse(testSchemaRareCasesJson);
+      document = await parser.asyncParse(testSchemaRareCasesJson as OpenAPIV3Document);
 
       operationTest = OperationBuilder.create(document.routes[0].operationId, 'v1', bautaJS);
       await operationTest.addRoute(document.routes[0]);

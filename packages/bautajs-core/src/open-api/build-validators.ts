@@ -16,7 +16,7 @@ import fastJson from 'fast-safe-stringify';
 import crypto from 'crypto';
 import Ajv from 'ajv';
 import AjvOai from 'ajv-oai';
-import { JSONSchema, LocationError, Dictionary } from '../utils/types';
+import { JSONSchema, LocationError, Dictionary } from '../types';
 import { ValidationError } from '../core/validation-error';
 
 const cache: any = new Map();

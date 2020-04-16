@@ -67,6 +67,7 @@
     "components": {
       "schemas": {
         "Pet": {
+          "type": "object",
           "required": ["id", "name"],
           "properties": {
             "id": {
@@ -88,6 +89,7 @@
           }
         },
         "Error": {
+          "type": "object",
           "required": ["code", "message"],
           "properties": {
             "code": {
@@ -170,6 +172,7 @@
     "components": {
       "schemas": {
         "Pet": {
+          "type": "object",
           "required": ["id", "name"],
           "properties": {
             "id": {
@@ -191,6 +194,7 @@
           }
         },
         "Error": {
+          "type": "object",
           "required": ["code", "message"],
           "properties": {
             "code": {

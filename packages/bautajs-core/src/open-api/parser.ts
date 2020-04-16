@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 import { OpenAPI, OpenAPIV3, OpenAPIV2 } from 'openapi-types';
-import SwaggerParser from 'swagger-parser';
+import SwaggerParser from '@apidevtools/swagger-parser';
 import ParserV2 from './parserV2';
 import ParserV3 from './parserV3';
 
-import { DocumentParsed, Document, Logger } from '../utils/types';
+import { DocumentParsed, Document, Logger } from '../types';
 
 class Parser {
   private documentParsed?: DocumentParsed;

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OperatorFunction } from '../utils/types';
+import { OperatorFunction } from '../types';
 
 export interface StaticParallel {
   parallel<TIn, TOut1, TOut2>(

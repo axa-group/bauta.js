@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Resolver } from '../utils/types';
+import { Resolver } from '../types';
 
 export function resolver(fn: Resolver) {
   return fn;

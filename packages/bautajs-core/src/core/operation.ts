@@ -26,7 +26,7 @@ import {
   RouteSchema,
   Dictionary,
   TResponse
-} from '../utils/types';
+} from '../types';
 import { buildDefaultPipeline } from '../utils/default-pipeline';
 
 import { createContext } from '../utils/create-context';
@@ -56,6 +56,10 @@ export class OperationBuilder implements Operation {
 
   public deprecated: boolean = false;
 
+  public requestValidationEnabled: Boolean = true;
+
+  public responseValidationEnabled: Boolean = false;
+
   private private?: boolean;
 
   private operatorFunction: OperatorFunction<undefined, any>;
@@ -63,10 +67,6 @@ export class OperationBuilder implements Operation {
   private setupDone: boolean = false;
 
   private validators: Dictionary<Dictionary<Ajv.ValidateFunction> | Ajv.ValidateFunction> = {};
-
-  private requestValidationEnabled: Boolean = true;
-
-  private responseValidationEnabled: Boolean = false;
 
   constructor(
     public readonly id: string,

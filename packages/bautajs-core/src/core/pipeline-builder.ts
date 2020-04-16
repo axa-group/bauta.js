@@ -19,7 +19,7 @@ import {
   PipelineBuilder,
   OperatorFunction,
   ErrorHandler
-} from '../utils/types';
+} from '../types';
 import { Accesor } from './accesor';
 
 export class Builder<TIn> implements PipelineBuilder<TIn> {

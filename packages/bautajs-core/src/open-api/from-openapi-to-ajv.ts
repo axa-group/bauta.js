@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Dictionary, Response } from '../utils/types';
+import { Dictionary, Response } from '../types';
 
 const unknownFormats: Dictionary<Boolean> = { int32: true, int64: true };
 

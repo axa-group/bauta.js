@@ -14,9 +14,8 @@
  */
 import pino from 'pino';
 import { BautaJS } from '../index';
-import { Document, Logger } from '../utils/types';
-import { DefaultLogger } from '../default-logger';
-
+import { Document, Logger } from '../types';
+import { defaultLogger } from '../default-logger';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
 const validLevels = ['trace', 'info', 'error', 'debug', 'fatal', 'warn'];
@@ -38,7 +37,7 @@ describe('core tests', () => {
 
       expect(logger).toBeDefined();
 
-      validLevels.forEach((level: keyof Logger) => {
+      validLevels.forEach((level: any) => {
         const spy = jest.spyOn(logger, level);
         logger[level](message);
         expect(spy).toHaveBeenCalledWith(message);
@@ -46,27 +45,23 @@ describe('core tests', () => {
     });
 
     test('should not initialize the core if using an invalid logger', async () => {
-      const invalidLogger = new DefaultLogger();
+      const invalidLogger = defaultLogger();
       delete invalidLogger.info; // A custom made logger with no info is considered invalid
 
       const config = {
         endpoint: 'http://google.es'
       };
-
-      let expectedError = null;
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
-          staticConfig: config,
-          logger: invalidLogger
-        });
-      } catch (err) {
-        expectedError = err;
-      }
-
-      expect(expectedError).toBeDefined();
-      expect(expectedError.message).toStrictEqual(
-        'Logger is not valid. Must be compliant with basic logging levels(trace, debug, info, warn, error, fatal)'
+      expect(
+        () =>
+          new BautaJS(testApiDefinitionsJson as Document[], {
+            staticConfig: config,
+            logger: invalidLogger
+          })
+      ).toThrow(
+        expect.objectContaining({
+          message:
+            'Logger is not valid. Must be compliant with basic logging levels(trace, debug, info, warn, error, fatal)'
+        })
       );
     });
 
@@ -94,7 +89,7 @@ describe('core tests', () => {
 
       expect(logger).toBeDefined();
 
-      validLevels.forEach(level => {
+      validLevels.forEach((level: any) => {
         const spy = jest.spyOn(logger, level);
         logger[level](message);
         expect(spy).toHaveBeenCalledWith(message);
@@ -130,7 +125,7 @@ describe('core tests', () => {
 
       const customValidLevels = [...validLevels, 'always'];
 
-      customValidLevels.forEach(level => {
+      customValidLevels.forEach((level: any) => {
         const spy = jest.spyOn(logger, level);
         logger[level](message);
         expect(spy).toHaveBeenCalledWith(message);

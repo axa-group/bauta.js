@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 import { prepareToLog } from './utils/prepare-to-log';
+import { buildSchemaCompiler } from './open-api/build-validators';
 
 export * from './bauta';
 export * from './decorators/match';
@@ -22,11 +23,12 @@ export * from './decorators/pipeline';
 export * from './decorators/as-promise';
 export * from './decorators/as-value';
 export * from './decorators/parallel';
-export * from './utils/types';
 export * from './utils/create-context';
 export * from './default-logger';
 export * from './utils/request-id-generator';
+export * from './types';
 
 export const utils = {
-  prepareToLog
+  prepareToLog,
+  buildSchemaCompiler
 };

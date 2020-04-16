@@ -14,6 +14,7 @@
  */
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import PCancelable from 'p-cancelable';
+import { Bindings } from 'pino';
 
 export type JSONSchema = any;
 
@@ -120,14 +121,20 @@ export interface IValidationError extends Error {
   toJSON: () => ValidationErrorJSON;
 }
 
-export type Log = (...args: any[]) => any;
 export interface Logger {
-  trace: Log;
-  debug: Log;
-  info: Log;
-  warn: Log;
-  error: Log;
-  fatal: Log;
+  fatal(msg: string, ...args: any[]): void;
+  fatal(obj: {}, msg?: string, ...args: any[]): void;
+  error(msg: string, ...args: any[]): void;
+  error(obj: {}, msg?: string, ...args: any[]): void;
+  warn(msg: string, ...args: any[]): void;
+  warn(obj: {}, msg?: string, ...args: any[]): void;
+  info(msg: string, ...args: any[]): void;
+  info(obj: {}, msg?: string, ...args: any[]): void;
+  debug(msg: string, ...args: any[]): void;
+  debug(obj: {}, msg?: string, ...args: any[]): void;
+  trace(msg: string, ...args: any[]): void;
+  trace(obj: {}, msg?: string, ...args: any[]): void;
+  child: (bindings: Bindings) => Logger;
 }
 
 // BautaJS
@@ -187,7 +194,7 @@ export interface BautaJSInstance {
    */
   readonly operations: Operations;
   /**
-   * An instance of the logger under bautajs scope.
+   * An instance of the logger under bautajs scope. By default if non is provided a pino instance will be created
    *
    * @type {Logger}
    * @memberof BautaJSInstance
@@ -214,6 +221,12 @@ export interface BautaJSInstance {
    * @memberof BautaJSInstance
    */
   bootstrap(): Promise<void>;
+  /**
+   * Decorate current BautaJSInstance with new properties
+   * @memberof BautaJSInstance
+   */
+  decorate(name: string | symbol, fn: any, dependencies?: string[]): BautaJSInstance;
+  [key: string]: any;
 }
 
 // Service
@@ -229,6 +242,8 @@ export interface Operation extends BasicOperation {
   route?: Route;
   schema?: OpenAPI.Operation;
   nextVersionOperation?: Operation;
+  requestValidationEnabled: Boolean;
+  responseValidationEnabled: Boolean;
   addRoute(route: Route): void;
   /**
    * Set the operation as deprecated. If the operation is deprecated the link between

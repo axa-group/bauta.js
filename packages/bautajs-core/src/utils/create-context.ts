@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ContextData, Context, Logger } from './types';
+import { ContextData, Context, Logger } from '../types';
 import { CancelableTokenBuilder } from '../core/cancelable-token';
 import { sessionFactory } from './session-factory';
 

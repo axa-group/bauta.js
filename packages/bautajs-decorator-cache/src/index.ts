@@ -12,11 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJSInstance, Context, OperatorFunction, Logger, DefaultLogger } from '@bautajs/core';
+import { BautaJSInstance, Context, OperatorFunction, Logger, defaultLogger } from '@bautajs/core';
 import fastSafeStringify from 'fast-safe-stringify';
 import moize from 'moize';
-
-const defaultLogger = new DefaultLogger('bautajs-decorator-cache');
 
 const isTraceLogLevel = process.env.LOG_LEVEL?.toUpperCase() === 'TRACE';
 
@@ -55,7 +53,7 @@ const configureCache = <TIn, TOut>(
   options?: moize.Options,
   inputLogger?: Logger
 ): any => {
-  const logger = inputLogger || defaultLogger;
+  const logger = inputLogger || defaultLogger('bautajs-decorator-cache');
   const matchesKey = generateMatchingKeyFunction(normalizer);
   const getKeysFromCache = (cache: moize.Cache) => {
     return cache.keys.map(key => normalizer(key as [TIn, Context, BautaJSInstance]));

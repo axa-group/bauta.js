@@ -13,11 +13,16 @@
  * limitations under the License.
  */
 import { sessionFactory } from '../utils/session-factory';
+import { defaultLogger } from '../default-logger';
 
 describe('session factory tests', () => {
+  let logger;
+  beforeAll(() => {
+    logger = defaultLogger('test-logger');
+  });
   test('should return the request id and logger', () => {
     const req = { headers: {} };
-    const result = sessionFactory(req);
+    const result = sessionFactory(req, logger);
     expect(typeof result.id).toStrictEqual('string');
     expect(typeof result.logger.info).toStrictEqual('function');
   });
@@ -28,7 +33,7 @@ describe('session factory tests', () => {
         authorization: 'Bearer aaabbbccc'
       }
     };
-    const result = sessionFactory(req);
+    const result = sessionFactory(req, logger);
     expect(typeof result.userId).toStrictEqual('string');
   });
 
@@ -39,7 +44,7 @@ describe('session factory tests', () => {
         'request-id': '1234'
       }
     };
-    const result = sessionFactory(req);
+    const result = sessionFactory(req, logger);
     expect(result.id).toStrictEqual('1234');
   });
 });

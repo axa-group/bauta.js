@@ -15,7 +15,7 @@
 import fastSafeStringify from 'fast-safe-stringify';
 import path from 'path';
 import { BautaJS, resolver } from '../index';
-import { OnCancel, Document } from '../utils/types';
+import { OnCancel, Document } from '../types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-versions.json';
 

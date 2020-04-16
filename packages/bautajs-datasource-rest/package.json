@@ -43,7 +43,7 @@
   "license": "see LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "^3.0.0-alpha.5",
-    "got": "^10.2.1",
+    "got": "^10.7.0",
     "native-proxy-agent": "^2.5.0"
   }
 }

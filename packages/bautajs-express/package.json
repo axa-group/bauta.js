@@ -43,7 +43,7 @@
   "license": "see LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "^3.0.0-alpha.5",
-    "chalk": "3.0.0",
+    "chalk": "4.0.0",
     "compression": "1.x",
     "cors": "2.x",
     "express": "4.x",

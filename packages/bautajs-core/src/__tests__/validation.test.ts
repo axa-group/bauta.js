@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { BautaJS, resolver } from '../index';
-import { Document } from '../utils/types';
+import { Document } from '../types';
 import circularSchema from './fixtures/circular-schema.json';
 import formatSchema from './fixtures/schema-with-format.json';
 

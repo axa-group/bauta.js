@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { HandlerAccesor, OperatorFunction, ErrorHandler, GenericError } from '../utils/types';
+import { HandlerAccesor, OperatorFunction, ErrorHandler, GenericError } from '../types';
 
 export class Accesor implements HandlerAccesor {
   private accesor: OperatorFunction<any, any> = val => val;

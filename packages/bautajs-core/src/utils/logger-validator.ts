@@ -12,20 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Logger } from './types';
 
-function isValidLoggerFunction(f: Function) {
-  return f && typeof f === 'function';
-}
-
-export function isLoggerValid(logger: Logger): boolean {
+export function isLoggerValid(logger: any): boolean {
   if (!logger) {
     return false;
   }
+  const methods = ['info', 'error', 'debug', 'fatal', 'warn', 'trace', 'child'];
 
-  return ['trace', 'debug', 'info', 'warn', 'error', 'fatal'].every((level: string) =>
-    isValidLoggerFunction(logger[level as keyof Logger])
-  );
+  return methods.every(m => logger[m] && typeof logger[m] === 'function');
 }
 
 export default isLoggerValid;

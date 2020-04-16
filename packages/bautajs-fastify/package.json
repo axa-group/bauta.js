@@ -1,0 +1,57 @@
+{
+  "name": "@bautajs/fastify",
+  "version": "3.0.0-alpha.2",
+  "description": "A bautaJS fastify plugin. Allows auto exposing the bautaJS operations.",
+  "main": "dist",
+  "types": "dist",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "tsc": "tsc",
+    "example": "node ./examples/simple-usage/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.axa.com/Digital/bauta-nodejs"
+  },
+  "publishConfig": {
+    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+  },
+  "keywords": [
+    "bautajs",
+    "fastify",
+    "middleware"
+  ],
+  "author": {
+    "email": "javier.blanco@axa.com",
+    "name": "Javier Blanco"
+  },
+  "maintainers": [
+    {
+      "email": "javier.blanco@axa.com",
+      "name": "Javier Blanco"
+    },
+    {
+      "email": "francisco.herrero@axa.com",
+      "name": "Francisco Herrero"
+    },
+    {
+      "email": "xavier.redondo@axa.com",
+      "name": "Xavier Redondo"
+    }
+  ],
+  "license": "see LICENSE.txt",
+  "dependencies": {
+    "@bautajs/core": "^3.0.0-alpha.5",
+    "fastify": "^2.13.1",
+    "fastify-oas": "^2.6.2",
+    "fastify-helmet": "^3.0.2",
+    "fastify-plugin": "^1.6.1",
+    "fastify-sensible": "^2.1.1",
+    "route-order": "^0.1.0"
+  },
+  "devDependencies": {
+    "@bautajs/datasource-rest": "3.0.0-alpha.5"
+  }
+}

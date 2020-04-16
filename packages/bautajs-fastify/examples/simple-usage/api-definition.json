@@ -1,0 +1,295 @@
+[
+  {
+    "openapi": "3.0.0",
+    "info": {
+      "version": "v1",
+      "title": "Swagger Petstore",
+      "license": {
+        "name": "MIT"
+      }
+    },
+    "servers": [
+      {
+        "url": "/v1/api/"
+      }
+    ],
+    "paths": {
+      "/randomYear": {
+        "get": {
+          "summary": "List all articles",
+          "operationId": "randomYear",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/randomYear2": {
+        "get": {
+          "summary": "List all articles",
+          "operationId": "randomYear2",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/factNumber/{number}": {
+        "get": {
+          "summary": "get a fact from a number",
+          "operationId": "factNumber",
+          "parameters": [
+            {
+              "name": "number",
+              "in": "path",
+              "description": "number",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/factNumber2/{number}": {
+        "get": {
+          "summary": "get a fact from a number",
+          "operationId": "factNumber2",
+          "parameters": [
+            {
+              "name": "number",
+              "in": "path",
+              "description": "number",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/test": {
+        "get": {
+          "summary": "List all articles",
+          "operationId": "operation1",
+          "tags": [
+            "articles"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "How many items to return at one time (max 100)",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A paged array of articles",
+              "content": {
+                "application/json": {
+                  "schema":{
+                    "$ref": "#/components/schemas/Articles"
+                  }
+                }
+              }
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/no-pipeline": {
+        "get": {
+          "summary": "Endpoint without pipeline",
+          "operationId": "noPipeline",
+          "tags": [
+            "articles"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "How many items to return at one time (max 100)",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A paged array of articles"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/cats": {
+        "get": {
+          "summary": "List all fact cats",
+          "operationId": "cats",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "ThisShouldNotBeIncluded": {
+          "required": [
+            "userId",
+            "title"
+          ],
+          "properties": {
+            "userId": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            }
+          }
+        },
+        "Article": {
+          "required": [
+            "title"
+          ],
+          "properties": {
+            "userId": {
+              "nullable": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            }
+          }
+        },
+        "Articles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Article"
+          }
+        },
+        "Error": {
+          "required": [
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+]
