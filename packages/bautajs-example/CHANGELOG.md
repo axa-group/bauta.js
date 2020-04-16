@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [3.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v2.5.5) (2020-04-16)
+## [3.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v2.3.0) (2020-04-16)
 
 ### Bug Fixes
 
