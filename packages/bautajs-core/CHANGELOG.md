@@ -25,6 +25,28 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 *  Change the validator architecture (#125) (319fb856)
 *  change validator from open-api module to directly AJV (0be35150)
 
+## [2.5.2](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.1...v2.5.2) (2020-04-16) 
+
+### Bug Fixes
+
+* **@bautajs-core:**  added bautajs to the promise error handler (#151) (da269bcb)
+
+## [2.5.1](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.0...v2.5.1) (2020-04-16)
+
+### Bug Fixes
+
+* **@bautajs-core:**  add bauta reference in pipeline error handler (#150) (a4688ee7)
+
+## [2.3.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.2...v2.3.0) (2020-04-16) 
+
+### New Features
+
+* **@bautajs/core:**  improve morgan logs (#141) (ef3855de)
+
+### Bug Fixes
+
+* **@bautajs-core:**  validate response should be inisde promise resolve (3eb92f0c)
+
 ## [2.2.2](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
 
 

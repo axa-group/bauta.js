@@ -22,8 +22,29 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 *  change validator from open-api module to directly AJV (0be35150)
 
 
+## [2.5.4](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.3...v2.5.4) (2020-04-16)
 
+### Bug Fixes
 
+* **@bautajs/express:**  Do not return response if user cancel the request (15740e6a)
+
+## [2.5.3](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.2...v2.5.3) (2020-04-16)
+
+### Bug Fixes
+
+* **@bautajs/express:**  request cancellation and error log (#155) (7d03d5a3)
+
+## [2.4.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.3.0...v2.4.0) (2020-04-16)
+
+### New Features
+
+* **@bautajs/express:**  add morgan-json to logs (#147) (df4d2c3d)
+
+## [2.3.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.2...v2.3.0) (2020-04-16) 
+
+### New Features
+
+* **@bautajs@express:**  improve morgan logs (#141) (ef3855de)
 
 ## [2.2.2](https://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
 

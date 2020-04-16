@@ -12,8 +12,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **@bautajs/cache-decorator:**  use moize to implement cache instead of memoize (#156) (5b37d245)
 
 
+## [2.5.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.4.0...v2.5.0) (2020-04-16)
+
+### New Features
+
+* **@bautajs/decorator-cache:**  expose the memoized function Related #148 (9e3b3322)
 
 
+## [2.3.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.2...v2.3.0) (2020-04-16) 
+
+
+### Documentation Changes
+
+* **@bautajs/decorator-cache:**  fix documentation example (9a5cf66d)
 
 
 ## [2.2.2](https://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)

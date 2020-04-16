@@ -54,13 +54,86 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **@bautajs/cache-decorator:**  use moize to implement cache instead of memoize (#156) (5b37d245)
 * **@bautajs/core, @bautajs/express:**
   *  Improve logs (#146) (2b8e73ba)
-  *  bautajs boostraping now is an async process (#136) (2a974ca6)
+  *  bautajs bootstrapping now is an async process (#136) (2a974ca6)
 * **@bautajs/datasource-rest:**
   *  log the request Id on the datasource log (#137) (18837a55)
   *  Simplify datasource (#135) (051f9355)
 * **@bautajs/core,@bautajs/express,@bautajs/datasource-rest:**  logger (#142) (acee5cc6)
 *  Change the validator architecture (#125) (319fb856)
 *  change validator from open-api module to directly AJV (0be35150)
+
+## [2.5.5](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.4...v2.5.5) (2020-04-16)
+
+##### Bug Fixes
+
+*  on 204 status code don't return a body (#162) (785848b1)
+
+## [2.5.4](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.3...v2.5.4) (2020-04-16)
+
+### Bug Fixes
+
+* **@bautajs/express:**  Do not return response if user cancel the request (15740e6a)
+
+## [2.5.3](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.2...v2.5.3) (2020-04-16)
+
+### Bug Fixes
+
+* **@bautajs/express:**  request cancellation and error log (#155) (7d03d5a3)
+
+## [2.5.2](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.1...v2.5.2) (2020-04-16) 
+
+### Bug Fixes
+
+* **@bautajs-core:**  added bautajs to the promise error handler (#151) (da269bcb)
+
+## [2.5.1](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.0...v2.5.1) (2020-04-16)
+
+### Bug Fixes
+
+* **@bautajs-core:**  add bauta reference in pipeline error handler (#150) (a4688ee7)
+
+## [2.5.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.4.0...v2.5.0) (2020-04-16)
+
+### New Features
+
+* **@bautajs/decorator-cache:**  expose the memoized function Related #148 (9e3b3322)
+
+
+## [2.4.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.3.0...v2.4.0) (2020-04-16)
+
+### Chores
+
+*  remove nsp due to it is deprecated (9aa59af7)
+*  add AXA innersource licenses (ae2fba16)
+
+### New Features
+
+* **@bautajs/express:**  add morgan-json to logs (#147) (df4d2c3d)
+
+
+## [2.3.0](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.2...v2.3.0) (2020-04-16) 
+
+### Chores
+
+*  update gitignore (fb33467a)
+*  do not generate package lock on bootstrap (2c5d39af)
+*  add no package lock (4766dc16)
+*  ignore package lock (845c388b)
+*  remove not needed dependencies - Fix typo on datasources (d0566b50)
+*  update dev dependencies (cfb59d4f)
+
+### Documentation Changes
+
+* **@bautajs/decorator-cache:**  fix documentation example (9a5cf66d)
+
+### New Features
+
+* **@bautajs/core, @bautajs@express:**  improve morgan logs (#141) (ef3855de)
+
+### Bug Fixes
+
+* **@bautajs-core:**  validate response should be inisde promise resolve (3eb92f0c)
+*  operation run do not always returned a promise (#119) (bc5b7553)
 
 ## [2.2.2](http://github.axa.com/Digital/bauta-nodejs/compare/v2.2.1...v2.2.2) (2019-10-29)
 
