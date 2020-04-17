@@ -29,7 +29,7 @@ import {
   initCors,
   initExplorer
 } from './middlewares';
-import { getContentType } from './utils';
+import { getContentType, getServerAddress } from './utils';
 
 export * from './types';
 
@@ -244,7 +244,8 @@ export class BautaJSExpress extends BautaJS {
   }
 
   /**
-   * Start the express server as http/https listener
+   * Start the express server as http/https listener. In case you need to pass custom parameters to listen as backlog or a custom listen callback,
+   * create a custom listen function and use bautajs.app.
    * @param {number} [port=3000] - The port to listener
    * @param {string} [host='localhost'] - The api host
    * @param {boolean} [httpsEnabled=false] - True to start the server as https server
@@ -255,24 +256,26 @@ export class BautaJSExpress extends BautaJS {
    * @returns {http|https} - nodejs http/https server
    * @memberof BautaJSExpress#
    */
-  async listen(port = 3000, host = 'localhost', httpsEnabled = false, httpsOptions = {}) {
-    let server;
-    let protocol = 'http://';
+  listen(
+    port = 3000,
+    hostname = undefined,
+    httpsEnabled = false,
+    httpsOptions = {}
+  ): https.Server | http.Server {
+    let server: https.Server | http.Server;
 
     if (httpsEnabled) {
-      protocol = 'https://';
       server = https.createServer(httpsOptions, this.app);
     } else {
       server = http.createServer(this.app);
     }
-
-    server.listen(port, () => {
-      const baseUrl = `${protocol + host}:${port}`;
+    server.listen(port, hostname, () => {
+      const address = getServerAddress(server, httpsEnabled);
       if (process.env.DEBUG) {
-        this.logger.info(`Server listening on ${baseUrl}`);
+        this.logger.info(`Server listening at ${address}`);
       } else {
         // eslint-disable-next-line no-console
-        console.info(`Server listening on ${baseUrl}`);
+        console.info(`Server listening at ${address}`);
       }
     });
 
