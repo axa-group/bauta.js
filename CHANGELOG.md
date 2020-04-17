@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v3.0.1) (2020-04-17)
+
+
+### Bug Fixes
+
+* **@bautajs-express:** listen is not an async ([03ff036](https://github.axa.com/Digital/bauta-nodejs/commit/03ff036))
+
+
+
+
+
 ## [3.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v2.3.0) (2020-04-16)
 
 ### Chores
