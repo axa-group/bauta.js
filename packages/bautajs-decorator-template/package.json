@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/decorator-template",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "A bautaJS template decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
   ],
   "license": "see LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "3.1.0",
+    "@bautajs/core": "3.1.1",
     "stjs": "0.0.5"
   }
 }

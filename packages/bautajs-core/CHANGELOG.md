@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.1](http://github.axa.com/Digital/bauta-nodejs/compare/v3.1.0...v3.1.1) (2020-04-20)
+
+
+### Bug Fixes
+
+* **@bautajs/core:** hidde ajv logs ([be4b82b](http://github.axa.com/Digital/bauta-nodejs/commit/be4b82b)), closes [#165](http://github.axa.com/Digital/bauta-nodejs/issues/165)
+
+
+
+
+
 # [3.1.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.1...v3.1.0) (2020-04-20)
 
 
