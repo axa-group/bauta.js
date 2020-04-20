@@ -200,7 +200,7 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
 
       await provider()(null, ctx, bautajs);
 
@@ -253,7 +253,7 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
 
       await provider()(null, ctx, bautajs);
 
@@ -292,7 +292,7 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
 
       await provider()(null, ctx, bautajs);
 
@@ -346,7 +346,7 @@ describe('provider rest', () => {
         });
       });
 
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
 
       try {
         await provider()(null, ctx, bautajs);
@@ -385,7 +385,7 @@ describe('provider rest', () => {
         });
       });
 
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
 
       try {
         await provider()(null, ctx, bautajs);
@@ -427,7 +427,7 @@ describe('provider rest', () => {
         });
       });
 
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
 
       async function providerThrowsAnError() {
         return provider()(null, ctx, bautajs);
@@ -460,7 +460,10 @@ describe('provider rest', () => {
         });
       });
 
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, bautajs.logger);
+      const ctx = createContext(
+        { req: { headers: { 'x-request-id': 1 } }, res: {} },
+        bautajs.logger
+      );
 
       async function providerThrowsAnError() {
         return provider()(null, ctx, bautajs);

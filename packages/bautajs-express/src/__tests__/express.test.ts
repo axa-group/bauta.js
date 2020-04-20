@@ -49,7 +49,7 @@ describe('bautaJS express', () => {
 
       const request = supertest(bautajs.app)
         .get('/api/v1/test')
-        .set({ 'request-id': '1' });
+        .set({ 'x-request-id': '1' });
       expect.assertions(1);
       try {
         await request;

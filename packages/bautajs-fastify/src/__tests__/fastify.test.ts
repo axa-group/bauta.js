@@ -212,9 +212,60 @@ describe('bautaJS fastify tests', () => {
 
       expect(res.statusCode).toStrictEqual(200);
     });
+    test('should not give a timeout if response of the pipeline is undefined by a 204', async () => {
+      const fs = fastify();
+      fs.register(bautajsFastify, {
+        apiDefinitions,
+        resolvers: [
+          op => {
+            op.v1.operation204.setup(p => p.pipe(() => {}));
+          }
+        ]
+      });
+
+      const res = await fs.inject({
+        method: 'GET',
+        url: '/api/v1/test204',
+        headers: {
+          'x-request-id': 2
+        }
+      });
+      fs.close();
+
+      expect(res.body).toStrictEqual('');
+    });
   });
 
   describe('bautaJS fastify with plugins', () => {
+    test('should set the x-request-id on the response headers', async () => {
+      const fs = fastify({
+        requestIdHeader: 'x-request-id'
+      });
+      fs.register(bautajsFastify, {
+        apiDefinitions,
+        resolvers: [
+          op => {
+            op.v1.operation1.setup(p =>
+              p.pipe(() => {
+                return {};
+              })
+            );
+          }
+        ]
+      });
+
+      const res = await fs.inject({
+        method: 'GET',
+        url: '/api/v1/test',
+        headers: {
+          'x-request-id': 2
+        }
+      });
+      fs.close();
+
+      expect(res.headers['x-request-id']).toStrictEqual('2');
+    });
+
     test('should allow override the error handler', async () => {
       const fs = fastify();
       fs.register(bautajsFastify, {

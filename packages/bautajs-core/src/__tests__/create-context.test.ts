@@ -31,7 +31,7 @@ describe('create context tests', () => {
     const req = {
       headers: {
         authorization: 'Bearer aaabbbccc',
-        'request-id': '1234'
+        'x-request-id': '1234'
       }
     };
     const result = createContext({ req }, logger);

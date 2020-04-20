@@ -49,6 +49,7 @@
     "fastify-oas": "^2.6.2",
     "fastify-plugin": "^1.6.1",
     "fastify-sensible": "^2.1.1",
+    "fastify-x-request-id": "^1.2.0",
     "route-order": "^0.1.0"
   },
   "devDependencies": {

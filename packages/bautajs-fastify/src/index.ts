@@ -16,6 +16,7 @@ import path from 'path';
 import fp from 'fastify-plugin';
 import helmet, { FastifyHelmetOptions } from 'fastify-helmet';
 import { FastifyInstance, FastifyReply, FastifyRequest, HTTPMethod } from 'fastify';
+import responseXRequestId from 'fastify-x-request-id';
 import routeOrder from 'route-order';
 import {
   BautaJS,
@@ -96,6 +97,12 @@ function createHandler(operation: Operation) {
       if (reply.sent) {
         return {};
       }
+
+      // if the response is not defined return empty string by default
+      if (response === undefined) {
+        return '';
+      }
+
       return response;
     } catch (error) {
       if (error.name === 'CancelError') {
@@ -183,6 +190,8 @@ export async function bautajsFastify(
   // Include bautajs instance inside fastify instance
   fastify.decorate('bautajs', bautajs);
   fastify.setSchemaCompiler(schema => utils.buildSchemaCompiler(schema));
+  // Add x-request-id on the response
+  fastify.register(responseXRequestId);
 
   if (!opts.helmet || opts.helmet.enabled) {
     fastify.register(helmet, opts.helmet?.options);
