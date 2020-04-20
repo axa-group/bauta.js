@@ -22,6 +22,8 @@ import { ValidationError } from '../core/validation-error';
 const cache: any = new Map();
 cache.put = cache.set;
 const ajv = new AjvOai({
+  // disable ajv logs until issue #165 can be released
+  logger: false,
   unknownFormats: 'ignore',
   coerceTypes: true,
   useDefaults: true,
