@@ -12,29 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { sessionFactory } from '../utils/session-factory';
+import { createContext } from '../utils/create-context';
 import { defaultLogger } from '../default-logger';
 
-describe('session factory tests', () => {
+describe('create context tests', () => {
   let logger;
   beforeAll(() => {
     logger = defaultLogger('test-logger');
   });
   test('should return the request id and logger', () => {
     const req = { headers: {} };
-    const result = sessionFactory(req, logger);
+    const result = createContext({ req }, logger);
     expect(typeof result.id).toStrictEqual('string');
     expect(typeof result.logger.info).toStrictEqual('function');
-  });
-
-  test('should return the request id, the logger and the userId with the user token encripted in case of an Authenticated request', () => {
-    const req = {
-      headers: {
-        authorization: 'Bearer aaabbbccc'
-      }
-    };
-    const result = sessionFactory(req, logger);
-    expect(typeof result.userId).toStrictEqual('string');
   });
 
   test('should use the request-id header in case that exists as req.id', () => {
@@ -44,7 +34,7 @@ describe('session factory tests', () => {
         'request-id': '1234'
       }
     };
-    const result = sessionFactory(req, logger);
+    const result = createContext({ req }, logger);
     expect(result.id).toStrictEqual('1234');
   });
 });

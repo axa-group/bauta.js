@@ -63,9 +63,9 @@ const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
 const isDebugLogLevel = process.env.LOG_LEVEL?.toLowerCase() === 'debug';
 
-function logRequestHook(logger: Logger, reqId: string = 'No req id') {
+function logRequestHook(logger: Logger) {
   return (options: NormalizedOptions) => {
-    logger.info(`request-logger[${reqId}]: Request to [${options.method}] ${options.url.href}`);
+    logger.info(`request-logger: Request to [${options.method}] ${options.url.href}`);
     if (isDebugLogLevel) {
       const requestData: RequestLog = {
         url: options.url.href,
@@ -75,62 +75,74 @@ function logRequestHook(logger: Logger, reqId: string = 'No req id') {
       if (options.body || options.json) {
         requestData.body = utils.prepareToLog(options.body || options.json);
       }
-      logger.debug(`request-logger[${reqId}]: Request data: `, requestData);
+      logger.debug({ requestData }, 'request-logger: Request data');
     }
   };
 }
-function logErrorsHook(logger: Logger, reqId: string = 'No req id') {
+function logErrorsHook(logger: Logger) {
   return (error: GeneralError) => {
     const parseError = error as ParseError;
     const genericError = error as GotError;
     if (parseError.response && parseError.response.body) {
       logger.error(
-        `response-logger[${reqId}]: Error for [${parseError.options.method}] ${parseError.options.url}:`,
         {
-          statusCode: parseError.response.statusCode,
-          body: utils.prepareToLog(parseError.response.body),
-          name: parseError.name,
-          message: parseError.message
-        }
+          providerUrl: `[${parseError.options.method}] ${parseError.options.url}`,
+          error: {
+            statusCode: parseError.response.statusCode,
+            body: utils.prepareToLog(parseError.response.body),
+            name: parseError.name,
+            message: parseError.message
+          }
+        },
+        `response-logger: Error for [${parseError.options.method}] ${parseError.options.url}`
       );
     } else if (genericError.options) {
       logger.error(
-        `response-logger[${reqId}]: Error for [${genericError.options.method}] ${genericError.options.url}:`,
         {
-          name: genericError.name,
-          code: genericError.code,
-          message: genericError.message
-        }
+          providerUrl: `[${genericError.options.method}] ${genericError.options.url}`,
+          error: {
+            name: genericError.name,
+            code: genericError.code,
+            message: genericError.message
+          }
+        },
+        `response-logger: Error for [${genericError.options.method}] ${genericError.options.url}`
       );
     } else {
-      logger.error(`response-logger[${reqId}]: Internal error on the datasource request:`, {
-        message: error.message,
-        name: error.name
-      });
+      logger.error(
+        {
+          error: {
+            message: error.message,
+            name: error.name
+          }
+        },
+        `response-logger: Internal error on a provider request`
+      );
     }
 
     return error;
   };
 }
-function logResponseHook(logger: Logger, reqId: string = 'No req id') {
+function logResponseHook(logger: Logger) {
   return (response: Response) => {
-    if (response.fromCache) {
-      logger.info(`response-logger[${reqId}]: Response for ${response.requestUrl} is cached`);
+    if (response.isFromCache) {
+      logger.info(`response-logger: Response for ${response.requestUrl} is cached.`);
     } else {
       if (isDebugLogLevel) {
         logger.debug(
-          `response-logger[${reqId}]: Response for [${response.request.options.method}] ${response.requestUrl}: `,
           {
-            headers: utils.prepareToLog(response.headers),
-            statusCode: response.statusCode,
-            body: utils.prepareToLog(response.body)
-          }
+            providerUrl: `[${response.request.options.method}] ${response.requestUrl}`,
+            response: {
+              headers: utils.prepareToLog(response.headers),
+              statusCode: response.statusCode,
+              body: utils.prepareToLog(response.body)
+            }
+          },
+          `response-logger: Response for [${response.request.options.method}] ${response.requestUrl}`
         );
       }
-      const totalTime = response.timings.phases.total;
-      logger.info(
-        `response-logger[${reqId}]: The request to ${response.requestUrl} took: ${totalTime} ms`
-      );
+      const totalTime = response.timings ? response.timings.phases.total : 'unknown';
+      logger.info(`response-logger: The request to ${response.requestUrl} took: ${totalTime} ms`);
     }
 
     return response;
@@ -166,9 +178,9 @@ function operatorFn(client: Got, fn: ProviderOperation<any>) {
     const promiseOrStream = fn(
       client.extend({
         hooks: {
-          beforeRequest: [addRequestId(ctx), logRequestHook(ctx.logger, ctx.id)],
-          afterResponse: [logResponseHook(ctx.logger, ctx.id)],
-          beforeError: [logErrorsHook(ctx.logger, ctx.id), addErrorStatusCode]
+          beforeRequest: [addRequestId(ctx), logRequestHook(ctx.logger)],
+          afterResponse: [logResponseHook(ctx.logger)],
+          beforeError: [logErrorsHook(ctx.logger), addErrorStatusCode]
         }
       }),
       value,

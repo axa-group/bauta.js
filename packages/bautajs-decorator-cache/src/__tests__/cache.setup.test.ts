@@ -12,10 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document, pipelineBuilder, BautaJSInstance } from '@bautajs/core';
-
+import { BautaJS, pipelineBuilder, BautaJSInstance, OpenAPIV3Document } from '@bautajs/core';
 import moize from 'moize';
-
 import { cache } from '../index';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
@@ -26,7 +24,7 @@ describe('cache push', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
+    bautajs = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
     await bautajs.bootstrap();
   });
 
@@ -37,13 +35,15 @@ describe('cache push', () => {
     const normalizer = ([, ctx]) => ctx.id;
     bautajs.operations.v1.operation1.setup(p => p.push(cache(pp, <any>normalizer)));
 
-    expect(moize.mock.calls[0][0]).toStrictEqual(pp);
-    expect(moize.mock.calls[0][1]).toMatchObject({
-      matchesKey: expect.any(Function),
-      onCacheHit: expect.any(Function),
-      onCacheAdd: expect.any(Function),
-      maxSize: 25
-    });
+    expect(moize).toHaveBeenCalledWith(
+      pp,
+      expect.objectContaining({
+        matchesKey: expect.any(Function),
+        onCacheHit: expect.any(Function),
+        onCacheAdd: expect.any(Function),
+        maxSize: 25
+      })
+    );
   });
 
   test('should pass the options to memoize fn', () => {
@@ -59,11 +59,13 @@ describe('cache push', () => {
         })
       )
     );
-    expect(moize.mock.calls[0][0]).toStrictEqual(pp);
-    expect(moize.mock.calls[0][1]).toMatchObject({
-      maxAge: 1000,
-      maxSize: 14
-    });
+    expect(moize).toHaveBeenCalledWith(
+      pp,
+      expect.objectContaining({
+        maxAge: 1000,
+        maxSize: 14
+      })
+    );
   });
 
   test('should ignore the options onCacheHit, onCacheAdd, matchesKey since they are used by cache-decorator', () => {
@@ -74,20 +76,25 @@ describe('cache push', () => {
     bautajs.operations.v1.operation1.setup(p =>
       p.push(
         cache(pp, <any>normalizer, {
+          // @ts-ignore
           matchesKey: 'potato1',
+          // @ts-ignore
           onCacheHit: 'potato2',
+          // @ts-ignore
           onCacheAdd: 'potato3'
         })
       )
     );
 
-    expect(moize.mock.calls[0][0]).toStrictEqual(pp);
-    expect(moize.mock.calls[0][1]).toMatchObject({
-      matchesKey: expect.any(Function),
-      onCacheHit: expect.any(Function),
-      onCacheAdd: expect.any(Function),
-      maxSize: 25
-    });
+    expect(moize).toHaveBeenCalledWith(
+      pp,
+      expect.objectContaining({
+        matchesKey: expect.any(Function),
+        onCacheHit: expect.any(Function),
+        onCacheAdd: expect.any(Function),
+        maxSize: 25
+      })
+    );
   });
 
   test('should throw an error if normalizer function is not specified', async () => {

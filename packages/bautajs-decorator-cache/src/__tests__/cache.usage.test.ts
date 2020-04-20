@@ -13,7 +13,13 @@
  * limitations under the License.
  */
 //
-import { BautaJS, Document, pipelineBuilder, BautaJSInstance, Logger } from '@bautajs/core';
+import {
+  BautaJS,
+  OpenAPIV3Document,
+  pipelineBuilder,
+  BautaJSInstance,
+  Logger
+} from '@bautajs/core';
 import pino from 'pino';
 import { cache } from '../index';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
@@ -22,7 +28,7 @@ describe('cache decorator usage', () => {
   let bautaJS: BautaJSInstance;
 
   beforeAll(() => {
-    process.env.LOG_LEVEL = 'DEBUG';
+    process.env.LOG_LEVEL = 'debug';
     process.env.DEBUG = 'bautajs*';
   });
 
@@ -31,7 +37,7 @@ describe('cache decorator usage', () => {
       beforeEach(async () => {
         jest.resetModules();
 
-        bautaJS = new BautaJS(testApiDefinitionsJson as Document[]);
+        bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
         await bautaJS.bootstrap();
 
         const normalizer = ([, ctx]) => ctx.req.params.value;
@@ -115,7 +121,7 @@ describe('cache decorator usage', () => {
       beforeEach(async () => {
         jest.resetModules();
 
-        bautaJS = new BautaJS(testApiDefinitionsJson as Document[]);
+        bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
         await bautaJS.bootstrap();
 
         const normalizer = ([obj]) => {
@@ -219,7 +225,7 @@ describe('cache decorator usage', () => {
 
         validLogger = (pino(configLogger, pino.destination(1)) as unknown) as Logger;
 
-        bautaJS = new BautaJS(testApiDefinitionsJson as Document[]);
+        bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
         await bautaJS.bootstrap();
 
         const normalizer = ([, ctx]) => ctx.req.params.value;
@@ -339,7 +345,7 @@ describe('cache decorator usage', () => {
 
         validLogger = (pino(configLogger, pino.destination(1)) as unknown) as Logger;
 
-        bautaJS = new BautaJS(testApiDefinitionsJson as Document[]);
+        bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
         await bautaJS.bootstrap();
 
         const normalizer = ([obj]) => {
@@ -405,7 +411,7 @@ describe('cache decorator usage', () => {
       beforeEach(async () => {
         jest.resetModules();
 
-        process.env.LOG_LEVEL = 'TRACE';
+        process.env.LOG_LEVEL = 'trace';
         process.env.DEBUG = 'bautajs*';
 
         // eslint-disable-next-line global-require
@@ -419,7 +425,7 @@ describe('cache decorator usage', () => {
 
         validLogger = (pino(configLogger, pino.destination(1)) as unknown) as Logger;
 
-        bautaJS = new BautaJS(testApiDefinitionsJson as Document[]);
+        bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
         await bautaJS.bootstrap();
 
         const normalizer = ([, ctx]) => ctx.req.params.value;
@@ -448,10 +454,11 @@ describe('cache decorator usage', () => {
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
         expect(spyOnDebug).toHaveBeenNthCalledWith(1, 'Cache added key 144 size 1');
-        expect(spyOnTrace).toHaveBeenNthCalledWith(
-          1,
-          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
-        );
+        expect(spyOnTrace).toHaveBeenNthCalledWith(1, 'Cache added key 144 value %o size 1', {
+          a: '123',
+          b: 144,
+          new: 1
+        });
       });
 
       test('should be called with one cache hit for the same value', async () => {
@@ -470,13 +477,15 @@ describe('cache decorator usage', () => {
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
         expect(spyOnInfo).toHaveBeenNthCalledWith(1, 'Cache hit in cache with keys 144');
-        expect(spyOnTrace).toHaveBeenNthCalledWith(
-          1,
-          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
-        );
+        expect(spyOnTrace).toHaveBeenNthCalledWith(1, 'Cache added key 144 value %o size 1', {
+          a: '123',
+          b: 144,
+          new: 1
+        });
         expect(spyOnTrace).toHaveBeenNthCalledWith(
           2,
-          'Cache hit in cache with keys 144 values [{"a":"123","b":144,"new":1}]'
+          'Cache hit in cache with keys 144 values %o',
+          [{ a: '123', b: 144, new: 1 }]
         );
       });
     });
@@ -485,7 +494,7 @@ describe('cache decorator usage', () => {
       beforeEach(async () => {
         jest.resetModules();
 
-        process.env.LOG_LEVEL = 'TRACE';
+        process.env.LOG_LEVEL = 'trace';
         process.env.DEBUG = 'bautajs*';
 
         // eslint-disable-next-line global-require
@@ -499,7 +508,7 @@ describe('cache decorator usage', () => {
 
         validLogger = (pino(configLogger, pino.destination(1)) as unknown) as Logger;
 
-        bautaJS = new BautaJS(testApiDefinitionsJson as Document[]);
+        bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
         await bautaJS.bootstrap();
 
         const normalizer = ([obj]) => {
@@ -534,10 +543,11 @@ describe('cache decorator usage', () => {
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
         expect(spyOnDebug).toHaveBeenNthCalledWith(1, 'Cache added key 144 size 1');
-        expect(spyOnTrace).toHaveBeenNthCalledWith(
-          1,
-          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
-        );
+        expect(spyOnTrace).toHaveBeenNthCalledWith(1, 'Cache added key 144 value %o size 1', {
+          a: '123',
+          b: 144,
+          new: 1
+        });
       });
 
       test('should be called with one cache hit for the same value', async () => {
@@ -556,13 +566,15 @@ describe('cache decorator usage', () => {
 
         expect(result).toStrictEqual({ a: '123', b: 144, new: 1 });
         expect(spyOnInfo).toHaveBeenNthCalledWith(1, 'Cache hit in cache with keys 144');
-        expect(spyOnTrace).toHaveBeenNthCalledWith(
-          1,
-          'Cache added key 144 value {"a":"123","b":144,"new":1} size 1'
-        );
+        expect(spyOnTrace).toHaveBeenNthCalledWith(1, 'Cache added key 144 value %o size 1', {
+          a: '123',
+          b: 144,
+          new: 1
+        });
         expect(spyOnTrace).toHaveBeenNthCalledWith(
           2,
-          'Cache hit in cache with keys 144 values [{"a":"123","b":144,"new":1}]'
+          'Cache hit in cache with keys 144 values %o',
+          [{ a: '123', b: 144, new: 1 }]
         );
       });
     });

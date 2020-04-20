@@ -99,22 +99,20 @@ function createHandler(operation: Operation) {
       return response;
     } catch (error) {
       if (error.name === 'CancelError') {
-        request.log.error(
-          `id:${request.id},url:${request.req.url}`,
-          `The request to ${request.req.url} was canceled by the requester`
-        );
+        request.log.error(`The request to ${request.req.url} was canceled by the requester`);
         return {};
       }
 
       if (reply.sent) {
         request.log.error(
-          `id:${request.id},url:${request.req.url}`,
-          'Response has been sent to the requester, but the promise threw an error',
           {
-            name: error.name,
-            code: error.code,
-            message: error.message
-          }
+            error: {
+              name: error.name,
+              code: error.code,
+              message: error.message
+            }
+          },
+          `Response has been sent to the requester, but the promise threw an error`
         );
         return {};
       }
@@ -145,6 +143,7 @@ export async function bautajsFastify(
 
     fastify.register(
       async fastifyAPI => {
+        const route = path.resolve(basePath + url);
         fastifyAPI.route({
           method,
           url,
@@ -157,21 +156,21 @@ export async function bautajsFastify(
             res(res: any) {
               return {
                 statusCode: res.statusCode,
-                url: path.resolve(basePath + url)
+                url: route
               };
             }
           }
         });
+
+        fastify.log.info(
+          `[OK] [${method.toUpperCase()}] ${route} operation exposed on the API from ${
+            operation.version
+          }.${operation.id}`
+        );
       },
       {
         prefix: basePath
       }
-    );
-    fastify.log.info(
-      '[OK]',
-      `[${method.toUpperCase()}] ${url} operation exposed on the API from ${operation.version}.${
-        operation.id
-      }`
     );
   }
 

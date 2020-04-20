@@ -204,67 +204,28 @@ describe('provider rest', () => {
 
       await provider()(null, ctx, bautajs);
 
-      // @ts-ignore
-      expect(logger.debug).toHaveBeenCalledWith('request-logger[1]: Request data: ', {
-        body: '{"test":"1234"}',
-        headers: '{"user-agent":"got (https://github.com/sindresorhus/got)","x-request-id":1}',
-        method: 'POST',
-        url: 'https://pets.com/v1/policies'
-      });
-
-      // @ts-ignore
       expect(logger.debug).toHaveBeenCalledWith(
-        'response-logger[1]: Response for [POST] https://pets.com/v1/policies: ',
         {
-          statusCode: 200,
-          headers: JSON.stringify({ 'content-type': 'application/json' }),
-          body: JSON.stringify({ bender: 'ok' })
-        }
+          requestData: {
+            body: '{"test":"1234"}',
+            headers: '{"user-agent":"got (https://github.com/sindresorhus/got)","x-request-id":1}',
+            method: 'POST',
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'request-logger: Request data'
       );
-    });
-
-    test(`should not log the request id if it's not defined`, async () => {
-      const logger = defaultLogger();
-      jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
-      process.env.LOG_LEVEL = 'debug';
-      const { restProvider } = require('../index');
-
-      nock('https://pets.com')
-        .post('/v1/policies', { test: '1234' })
-        .reply(200, { bender: 'ok' });
-
-      const provider = restProvider(client => {
-        return client.post('https://pets.com/v1/policies', {
-          json: {
-            test: '1234'
-          },
-          responseType: 'json'
-        });
-      });
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, logger);
-      // This is a limit case to test the datasource behaviour if the request should have no id. Note that in a real
-      // case, bauta core always generates a request id and assigns it to the context. It is for this reason that in the next
-      // expectations, the second parameter has no request id, while the first, based on the namespace of the context, do have it.
-      ctx.id = undefined;
-      await provider()(null, ctx, bautajs);
-
-      expect(logger.debug).toHaveBeenCalledWith('request-logger[No req id]: Request data: ', {
-        body: '{"test":"1234"}',
-        headers: '{"user-agent":"got (https://github.com/sindresorhus/got)"}',
-        method: 'POST',
-        url: 'https://pets.com/v1/policies'
-      });
 
       expect(logger.debug).toHaveBeenCalledWith(
-        'response-logger[No req id]: Response for [POST] https://pets.com/v1/policies: ',
         {
-          statusCode: 200,
-          headers: JSON.stringify({ 'content-type': 'application/json' }),
-          body: JSON.stringify({ bender: 'ok' })
-        }
+          providerUrl: '[POST] https://pets.com/v1/policies',
+          response: {
+            body: '{"bender":"ok"}',
+            headers: '{"content-type":"application/json"}',
+            statusCode: 200
+          }
+        },
+        'response-logger: Response for [POST] https://pets.com/v1/policies'
       );
     });
 
@@ -299,12 +260,12 @@ describe('provider rest', () => {
       expect(logger.debug).toHaveBeenCalledTimes(0);
 
       expect(logger.info).toHaveBeenCalledWith(
-        'request-logger[1]: Request to [POST] https://pets.com/v1/policies'
+        'request-logger: Request to [POST] https://pets.com/v1/policies'
       );
 
       expect(logger.info).toHaveBeenCalledWith(
         expect.stringMatching(
-          /response-logger\[1\]: The request to https:\/\/pets\.com\/v1\/policies took: (\d*) ms/
+          /response-logger: The request to https:\/\/pets\.com\/v1\/policies took: (\d*) ms/
         )
       );
     });
@@ -335,21 +296,29 @@ describe('provider rest', () => {
 
       await provider()(null, ctx, bautajs);
 
-      expect(logger.debug).toHaveBeenCalledWith('request-logger[1]: Request data: ', {
-        body: 'someString',
-        headers:
-          '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","x-request-id":1}',
-        method: 'POST',
-        url: 'https://pets.com/v1/policies'
-      });
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          requestData: {
+            body: 'someString',
+            headers:
+              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","x-request-id":1}',
+            method: 'POST',
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'request-logger: Request data'
+      );
 
       expect(logger.debug).toHaveBeenCalledWith(
-        'response-logger[1]: Response for [POST] https://pets.com/v1/policies: ',
         {
-          statusCode: 200,
-          headers: JSON.stringify({ 'content-type': 'application/json' }),
-          body: JSON.stringify({ bender: 'ok' })
-        }
+          providerUrl: '[POST] https://pets.com/v1/policies',
+          response: {
+            statusCode: 200,
+            headers: JSON.stringify({ 'content-type': 'application/json' }),
+            body: JSON.stringify({ bender: 'ok' })
+          }
+        },
+        'response-logger: Response for [POST] https://pets.com/v1/policies'
       );
     });
   });
@@ -386,54 +355,15 @@ describe('provider rest', () => {
       }
 
       expect(logger.error).toHaveBeenCalledWith(
-        'response-logger[1]: Error for [GET] https://pets.com/v1/policies:',
         {
-          code: undefined,
-          name: 'RequestError',
-          message: 'something awful happened'
-        }
-      );
-    });
-
-    test('should not log the id if no id is provided in an error', async () => {
-      const logger = defaultLogger();
-      jest.spyOn(logger, 'error').mockImplementation();
-      jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
-      process.env.LOG_LEVEL = 'error';
-      const { restProvider } = require('../index');
-
-      nock('https://pets.com/v1')
-        .get('/policies')
-        .replyWithError('something awful happened');
-
-      const provider = restProvider(client => {
-        return client.get('https://pets.com/v1/policies', {
-          responseType: 'json'
-        });
-      });
-
-      const ctx = createContext({ req: { headers: { 'request-id': 1 } }, res: {} }, logger);
-
-      ctx.id = undefined;
-
-      try {
-        await provider()(null, ctx, bautajs);
-      } catch (e) {
-        // Empty
-      }
-
-      expect(logger.debug).toHaveBeenCalledTimes(0);
-
-      expect(logger.error).toHaveBeenCalledWith(
-        'response-logger[No req id]: Error for [GET] https://pets.com/v1/policies:',
-        {
-          code: undefined,
-          name: 'RequestError',
-          message: 'something awful happened'
-        }
+          error: {
+            code: undefined,
+            name: 'RequestError',
+            message: 'something awful happened'
+          },
+          providerUrl: '[GET] https://pets.com/v1/policies'
+        },
+        'response-logger: Error for [GET] https://pets.com/v1/policies'
       );
     });
 
@@ -464,14 +394,17 @@ describe('provider rest', () => {
       }
 
       expect(logger.error).toHaveBeenCalledWith(
-        'response-logger[1]: Error for [GET] https://pets.com/v1/policies:',
         {
-          code: undefined,
-          body: 'this is not a json and this will generate a parser error',
-          statusCode: 200,
-          message: 'Unexpected token h in JSON at position 1 in "https://pets.com/v1/policies"',
-          name: 'ParseError'
-        }
+          error: {
+            code: undefined,
+            body: 'this is not a json and this will generate a parser error',
+            statusCode: 200,
+            message: 'Unexpected token h in JSON at position 1 in "https://pets.com/v1/policies"',
+            name: 'ParseError'
+          },
+          providerUrl: '[GET] https://pets.com/v1/policies'
+        },
+        'response-logger: Error for [GET] https://pets.com/v1/policies'
       );
     });
 
@@ -508,7 +441,7 @@ describe('provider rest', () => {
 
       expect(logger.info).toHaveBeenCalledTimes(1); // If there was not an error, info is called twice
       expect(logger.info).toHaveBeenCalledWith(
-        'request-logger[1]: Request to [GET] https://pets.com/v1/policies'
+        'request-logger: Request to [GET] https://pets.com/v1/policies'
       );
     });
 

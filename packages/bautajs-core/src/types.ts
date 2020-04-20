@@ -398,13 +398,6 @@ export interface Session {
    */
   id?: string;
   /**
-   * A hash of the request AUTHORIZATION token representing the userId.
-   *
-   * @type {string}
-   * @memberof Session
-   */
-  userId?: string;
-  /**
    * An instance of the logger available to the session
    *
    * @type {Logger}

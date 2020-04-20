@@ -17,7 +17,7 @@ import morgan from 'morgan';
 import cors, { CorsOptions } from 'cors';
 import { Application, json, urlencoded } from 'express';
 import helmet from 'helmet';
-import { Document, Operations, genReqId } from '@bautajs/core';
+import { Document, Operations, genReqId, Logger } from '@bautajs/core';
 import { OpenAPIV3, OpenAPIV2, OpenAPI } from '@bautajs/core/node_modules/openapi-types';
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
 
@@ -40,10 +40,14 @@ function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operatio
   return paths;
 }
 
-export function initReqIdGenerator(app: Application) {
+export function initReqIdGenerator(app: Application, logger: Logger) {
   app.use((req: any, _, next) => {
     const { headers } = req;
     req.id = genReqId(headers);
+    req.log = logger.child({
+      url: req.url,
+      reqId: req.id
+    });
     next();
   });
 }

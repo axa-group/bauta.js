@@ -14,7 +14,7 @@
  */
 import { ContextData, Context, Logger } from '../types';
 import { CancelableTokenBuilder } from '../core/cancelable-token';
-import { sessionFactory } from './session-factory';
+import { genReqId } from './request-id-generator';
 
 export function createContext(ctx: ContextData, logger: Logger): Context {
   if (!ctx.req) {
@@ -26,6 +26,18 @@ export function createContext(ctx: ContextData, logger: Logger): Context {
   }
 
   const token = new CancelableTokenBuilder();
+  const { headers } = ctx.req;
+  const reqId = !ctx.req.id ? genReqId(headers) : ctx.req.id;
+  let ctxLogger: Logger;
+  if (!ctx.req.log) {
+    // Just create the context logger if there is no child logger already created by the framework used such fastify req.log
+    ctxLogger = logger.child({
+      url: ctx.req.url,
+      reqId
+    });
+  } else {
+    ctxLogger = ctx.req.log;
+  }
 
   return {
     validateResponse: () => null,
@@ -35,7 +47,9 @@ export function createContext(ctx: ContextData, logger: Logger): Context {
     req: ctx.req,
     res: ctx.res,
     token,
-    ...sessionFactory(ctx.req, logger)
+    id: reqId,
+    logger: ctxLogger,
+    url: ctx.req.url
   };
 }
 

@@ -14,12 +14,11 @@
  */
 import path from 'path';
 import compression from 'compression';
-import chalk from 'chalk';
 import express, { Application, Request, Response } from 'express';
 import http from 'http';
 import https from 'https';
 import routeOrder from 'route-order';
-import { BautaJS, BautaJSOptions, Document, Operation } from '@bautajs/core';
+import { BautaJS, BautaJSOptions, Document, Operation, Logger } from '@bautajs/core';
 import { MiddlewareOptions, ICallback } from './types';
 import {
   initReqIdGenerator,
@@ -66,97 +65,93 @@ export class BautaJSExpress extends BautaJS {
     const { url = '', basePath = '' } = operation.route || {};
     const route = path.normalize(basePath + url);
 
-    this.app[method](route, (req: Request & { id: string }, res: Response, next: ICallback) => {
-      const startTime = new Date();
-      const resolverWrapper = (response: any) => {
-        if (res.headersSent || res.finished) {
-          return null;
-        }
+    this.app[method](
+      route,
+      (req: Request & { id: string; log: Logger }, res: Response, next: ICallback) => {
+        const startTime = new Date();
+        const resolverWrapper = (response: any) => {
+          if (res.headersSent || res.finished) {
+            return null;
+          }
 
-        if (!res.statusCode) {
-          res.status(200);
-        }
+          if (!res.statusCode) {
+            res.status(200);
+          }
 
-        if (responses && responses[res.statusCode]) {
-          const contentType = operation.route && getContentType(operation.route, res.statusCode);
-          res.set({
-            ...(contentType ? { 'Content-type': contentType } : {}),
-            ...responses[res.statusCode].headers,
-            ...res.getHeaders()
-          });
-        }
+          if (responses && responses[res.statusCode]) {
+            const contentType = operation.route && getContentType(operation.route, res.statusCode);
+            res.set({
+              ...(contentType ? { 'Content-type': contentType } : {}),
+              ...responses[res.statusCode].headers,
+              ...res.getHeaders()
+            });
+          }
 
-        if (res.statusCode === 204) {
-          res.send();
-        } else {
-          res.json(response || {});
-        }
-        const finalTime = new Date().getTime() - startTime.getTime();
+          if (res.statusCode === 204) {
+            res.send();
+          } else {
+            res.json(response || {});
+          }
+          const finalTime = new Date().getTime() - startTime.getTime();
 
-        this.logger.info(
-          `id:${req.id},url:${req.url}`,
-          `The operation execution of ${url} took: ${
-            typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unknown'
-          } ms`
-        );
-        return res.end();
-      };
-      const rejectWrapper = (response: any) => {
-        // In case the request was canceled by the user there is no need to send any message to the user.
-        if (response.name === 'CancelError') {
-          this.logger.error(
-            `id:${req.id},url:${req.url}`,
-            `The request to ${req.url} was canceled by the requester`
+          req.log.info(
+            `The operation execution of ${url} took: ${
+              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unknown'
+            } ms`
           );
-          return null;
-        }
+          return res.end();
+        };
+        const rejectWrapper = (response: any) => {
+          // In case the request was canceled by the user there is no need to send any message to the user.
+          if (response.name === 'CancelError') {
+            req.log.error(`The request to ${req.url} was canceled by the requester`);
+            return null;
+          }
 
-        if (res.headersSent || res.finished) {
-          this.logger.error(
-            `id:${req.id},url:${req.url}`,
-            'Response has been sent to the requester, but the promise threw an error',
-            {
-              name: response.name,
-              code: response.code,
-              message: response.message
-            }
+          if (res.headersSent || res.finished) {
+            req.log.error(
+              {
+                error: {
+                  name: response.name,
+                  code: response.code,
+                  message: response.message
+                }
+              },
+              `Response has been sent to the requester, but the promise threw an error`
+            );
+            return null;
+          }
+
+          res.status(response.statusCode || 500);
+          const finalTime = new Date().getTime() - startTime.getTime();
+          req.log.info(
+            `The operation execution of ${url} took: ${
+              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unknown'
+            } ms`
           );
-          return null;
-        }
 
-        res.status(response.statusCode || 500);
-        const finalTime = new Date().getTime() - startTime.getTime();
-        this.logger.info(
-          `id:${req.id},url:${req.url}`,
-          `The operation execution of ${url} took: ${
-            typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unkown'
-          } ms`
-        );
+          return next(response);
+        };
 
-        return next(response);
-      };
+        const op = operation.run({ req, res });
+        req.on('abort', () => {
+          op.cancel('Request was aborted by the requester intentionally');
+        });
+        req.on('aborted', () => {
+          op.cancel('Request was aborted by the requester intentionally');
+        });
+        req.on('timeout', () => {
+          op.cancel('Request was aborted by the requester because of a timeout');
+        });
 
-      const op = operation.run({ req, res });
-      req.on('abort', () => {
-        op.cancel('Request was aborted by the requester intentionally');
-      });
-      req.on('aborted', () => {
-        op.cancel('Request was aborted by the requester intentionally');
-      });
-      req.on('timeout', () => {
-        op.cancel('Request was aborted by the requester because of a timeout');
-      });
-
-      op.then(resolverWrapper).catch(rejectWrapper);
-    });
+        op.then(resolverWrapper).catch(rejectWrapper);
+      }
+    );
 
     this.logger.info(
-      '[OK]',
-      chalk.yellowBright(
-        `[${method.toUpperCase()}] ${url} operation exposed on the API from ${operation.version}.${
-          operation.id
-        }`
-      )
+      `[OK] [${method.toUpperCase()}] ${route} operation exposed on the API from ${
+        operation.version
+      }.${operation.id}`
     );
   }
 
@@ -220,7 +215,7 @@ export class BautaJSExpress extends BautaJS {
       }
     }
   ) {
-    initReqIdGenerator(this.app);
+    initReqIdGenerator(this.app, this.logger);
     initMorgan(this.app, options.morgan);
     initHelmet(this.app, options.helmet);
     initCors(this.app, options.cors);

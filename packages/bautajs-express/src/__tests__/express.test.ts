@@ -29,6 +29,7 @@ describe('bautaJS express', () => {
     test('should trigger the aborted event when the client close the connection and log the error', async () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'error').mockImplementation();
+      logger.child = () => logger;
       const bautajs = new BautaJSExpress(apiDefinitions, {
         resolvers: [
           operations => {
@@ -49,14 +50,11 @@ describe('bautaJS express', () => {
       const request = supertest(bautajs.app)
         .get('/api/v1/test')
         .set({ 'request-id': '1' });
-      expect.assertions(2);
+      expect.assertions(1);
       try {
         await request;
       } catch (e) {
-        // eslint-disable-next-line jest/no-try-expect
-        expect(logger.error.mock.calls[0][0]).toStrictEqual('id:1,url:/api/v1/test');
-        // eslint-disable-next-line jest/no-try-expect
-        expect(logger.error.mock.calls[0][1]).toStrictEqual(
+        expect(logger.error).toHaveBeenCalledWith(
           'The request to /api/v1/test was canceled by the requester'
         );
       }

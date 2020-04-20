@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 import { BautaJSInstance, Context, OperatorFunction, Logger, defaultLogger } from '@bautajs/core';
-import fastSafeStringify from 'fast-safe-stringify';
 import moize from 'moize';
 
 const isTraceLogLevel = process.env.LOG_LEVEL?.toUpperCase() === 'TRACE';
@@ -76,7 +75,8 @@ const configureCache = <TIn, TOut>(
         logger.trace(
           `Cache added key ${normalizer(
             cache.keys[0] as [TIn, Context, BautaJSInstance]
-          )} value ${fastSafeStringify(await cache.values[0])} size ${cache.values.length}`
+          )} value %o size ${cache.values.length}`,
+          await cache.values[0]
         );
       }
     },
@@ -84,18 +84,16 @@ const configureCache = <TIn, TOut>(
       logger.info(`Cache hit in cache with keys ${getKeysFromCache(cache)}`);
       if (isTraceLogLevel) {
         logger.trace(
-          `Cache hit in cache with keys ${getKeysFromCache(cache)} values ${fastSafeStringify(
-            await getValuesFromCache(cache)
-          )}`
+          `Cache hit in cache with keys ${getKeysFromCache(cache)} values %o`,
+          await getValuesFromCache(cache)
         );
       }
     }
   };
 
   logger.debug(
-    `Cache configured with options ${fastSafeStringify(
-      cacheOptions
-    )} and normalizer ${normalizer.toString()}`
+    `Cache configured with options %o and normalizer ${normalizer.toString()}`,
+    cacheOptions
   );
 
   const cache = moize(fn, cacheOptions);

@@ -18,5 +18,4 @@ fastify.register(bautajsFastify, {
 // Fastify allows async await style. await fastify.listen(3000);
 fastify.listen(3000, err => {
   if (err) throw err;
-  fastify.log.info('Server listenting on localhost:', fastify.server.address().port);
 });

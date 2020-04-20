@@ -275,7 +275,6 @@ describe('bautaJS fastify tests', () => {
       });
 
       expect(logger.error).toHaveBeenCalledWith(
-        'id:1,url:/api/v1/test',
         'The request to /api/v1/test was canceled by the requester'
       );
     });
