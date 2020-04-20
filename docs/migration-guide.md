@@ -179,3 +179,5 @@ The same logic has to be applied to statusCode when if needed.
 ### Swagger validation
 
 Swagger validation engine has changed, before [openapi-validator](github.com/kogosoftwarellc/open-api) was used, now the open api specification is parsed with [swagger-parser](https://github.com/APIDevTools/swagger-parser) and is validated with [ajv](https://ajv.js.org). Check that the provided openAPI schema is compatible with AJV validator.
+
+One impact of this is that on query params errors instead of 422 error the API will return a 400 error.
