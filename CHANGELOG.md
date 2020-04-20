@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.0.1...v3.1.0) (2020-04-20)
+
+
+### Bug Fixes
+
+* pino 6 logs are not concatenated ([#163](http://github.axa.com/Digital/bauta-nodejs/issues/163)) ([d6c7a80](http://github.axa.com/Digital/bauta-nodejs/commit/d6c7a80))
+
+
+### Features
+
+* set default request header to x-request-id ([#164](http://github.axa.com/Digital/bauta-nodejs/issues/164)) ([8268f9c](http://github.axa.com/Digital/bauta-nodejs/commit/8268f9c))
+
+
+
+
+
 ## [3.0.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.0.0...v3.0.1) (2020-04-17)
 
 
