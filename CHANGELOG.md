@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.2](http://github.axa.com/Digital/bauta-nodejs/compare/v3.1.1...v3.1.2) (2020-04-22)
+
+##### Documentation Changes
+
+*  improve migration gide (1e675c76)
+
+##### Bug Fixes
+
+* **@bautajs/rest-datasource:**  log query params (#168) (39452f0c)
+
 ## [3.1.1](http://github.axa.com/Digital/bauta-nodejs/compare/v3.1.0...v3.1.1) (2020-04-20)
 
 
