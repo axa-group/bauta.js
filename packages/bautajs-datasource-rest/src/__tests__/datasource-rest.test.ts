@@ -323,6 +323,38 @@ describe('provider rest', () => {
     });
   });
 
+  describe('query params', () => {
+    beforeEach(() => {
+      jest.resetModules();
+    });
+
+    test('should sent the query params to the provider', async () => {
+      const { restProvider } = require('../index');
+
+      const Id = '123';
+      nock('https://google.com')
+        .get(`/${Id}`)
+        .query(q => q.testParam1 === '25')
+        .reply(200, [{ id: 3, name: 'pet3' }]);
+
+      const provider = restProvider((client, _, ctx) => {
+        return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json', searchParams: { testParam1: '25'} });
+      });
+
+      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
+        p.pipe((_, ctx) => {
+          ctx.data.myId = Id;
+        }, provider());
+      });
+
+      const response = await bautajs.operations.v1.operation1.run({
+        req: { id: 1 },
+        res: { statusCode: 200 }
+      });
+
+      expect(response).toStrictEqual([{ id: 3, name: 'pet3' }]);
+  });
+
   describe('logs when there is an error', () => {
     beforeEach(() => {
       jest.resetModules();

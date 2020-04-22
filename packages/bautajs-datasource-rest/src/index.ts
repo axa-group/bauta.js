@@ -65,10 +65,10 @@ const isDebugLogLevel = process.env.LOG_LEVEL?.toLowerCase() === 'debug';
 
 function logRequestHook(logger: Logger) {
   return (options: NormalizedOptions) => {
-    logger.info(`request-logger: Request to [${options.method}] ${options.url.href}`);
+    logger.info(`request-logger: Request to [${options.method}] ${options.url}`);
     if (isDebugLogLevel) {
       const requestData: RequestLog = {
-        url: options.url.href,
+        url: options.url.toString(),
         method: options.method,
         headers: utils.prepareToLog(options.headers)
       };

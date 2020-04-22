@@ -181,3 +181,30 @@ The same logic has to be applied to statusCode when if needed.
 Swagger validation engine has changed, before [openapi-validator](github.com/kogosoftwarellc/open-api) was used, now the open api specification is parsed with [swagger-parser](https://github.com/APIDevTools/swagger-parser) and is validated with [ajv](https://ajv.js.org). Check that the provided openAPI schema is compatible with AJV validator.
 
 One impact of this is that on query params errors instead of 422 error the API will return a 400 error.
+
+### Query params renamed to searchParams
+
+This is related to a breaking change in GOT in which the query parameters have been renamed to searchParams. This may affect existing tests as well the code. If you were using query params in your datasources, they will stop working unless you change the query element to the searchParams. As an example, imagine a provider that must sent a query param called ack:
+
+```js
+// Invalid in got v10/bautajs 3 
+const getMessages = restProvider((client, data, ctx, bautajs) => {
+  return client.get(`${bautajs.staticConfig.url}/api/service`, {
+    query: {
+      ack: data.ack || -1
+    }
+  });
+});
+```
+
+```js
+// Valid 
+const getMessages = restProvider((client, data, ctx, bautajs) => {
+  return client.get(`${bautajs.staticConfig.url}/api/service`, {
+    searchParams: {
+      ack: data.ack || -1
+    }
+  });
+});
+```
+
