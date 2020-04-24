@@ -109,6 +109,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * **@bautajs/core,@bautajs/express,@bautajs/datasource-rest:**  logger (#142) (acee5cc6)
 *  Change the validator architecture (#125) (319fb856)
 *  change validator from open-api module to directly AJV (0be35150)
+*  Response validation has been desactivated by default
 
 ## [2.5.5](http://github.axa.com/Digital/bauta-nodejs/compare/v2.5.4...v2.5.5) (2020-04-16)
 
