@@ -1,7 +1,7 @@
 # Migration Guide from 2.x.x to 3.x.x
 
 
-## Apply Middlewares
+## Apply Middlewares
 
 The apply middlewares step now is asynchronous since it returns a promise. 
 
@@ -43,7 +43,7 @@ await bautaJS.applyMiddlewares({
 
 ```
 
-## Operations in datasources
+## Operations in datasources
 
 This is one of the most important changes in this release because working with operations have been simplified significantly. 
 
@@ -88,7 +88,7 @@ const exampleRestProvider = restProvider((client, _prv, ctx) => {
 
 For details about how to configure a rest provider, check the documentation in the section [Datasources](./datasources.md).
 
-## Datasource-rest, changes in configuration due to got breaking changes
+## Datasource-rest, changes in configuration due to got breaking changes
 
 Internally BautaJS uses [GOT library](https://github.com/sindresorhus/got) to make its requests. Usually you configure the datasources
 without needing to know how GOT internally works and using his options. 
@@ -98,7 +98,7 @@ changes that require a change in the configuration of the datasources. For speci
 
 Following a list of old bauta scenarios that will no longer work with the new version of bauta and/or got:
 
-### Parsing in pipeline
+### Parsing in pipeline
 
 This is a tricky one because it may affect not only the operation datasources but possible pipelines code as well. 
 
@@ -115,7 +115,7 @@ What has to be done:
 Why?
 In new got version, as responseType is set to 'json', the response is returned as an already parsed json.
 
-### Usage of json option
+### Usage of json option
 
 In this scenario you had:
 - json option configured in your datasource to let know bauta that the response was a json (or not)
@@ -181,6 +181,8 @@ The same logic has to be applied to statusCode when if needed.
 Swagger validation engine has changed, before [openapi-validator](github.com/kogosoftwarellc/open-api) was used, now the open api specification is parsed with [swagger-parser](https://github.com/APIDevTools/swagger-parser) and is validated with [ajv](https://ajv.js.org). Check that the provided openAPI schema is compatible with AJV validator.
 
 One impact of this is that on query params errors instead of 422 error the API will return a 400 error.
+
+```Furthermore swagger validation of the response is disabled by default, in order to use it add it manually on every operation or on the BautaJS constructor.```
 
 ### Query params renamed to searchParams
 
