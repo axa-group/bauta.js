@@ -64,7 +64,7 @@ function validateParam(
     return new ValidationError(
       'The request was not valid',
       formatLocationErrors(validators.errors, paramName) || [],
-      400
+      422
     );
   }
 
