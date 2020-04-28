@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.3](https://github.axa.com/Digital/bauta-nodejs/compare/v3.1.2...v3.1.3) (2020-04-28)
+
+
+### Bug Fixes
+
+* **@bautajs/express,@bautajs/fastify:** fix path ([#169](https://github.axa.com/Digital/bauta-nodejs/issues/169)) ([c794ad3](https://github.axa.com/Digital/bauta-nodejs/commit/c794ad3))
+
+
+
+
+
 ## [3.1.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.1.0...v3.1.1) (2020-04-20)
 
 **Note:** Version bump only for package @bautajs/fastify

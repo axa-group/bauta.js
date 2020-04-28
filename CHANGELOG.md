@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.3](http://github.axa.com/Digital/bauta-nodejs/compare/v3.1.2...v3.1.3) (2020-04-28)
+
+
+### Bug Fixes
+
+* **@bautajs/core:** validation error should be 422 ([#170](http://github.axa.com/Digital/bauta-nodejs/issues/170)) ([32fc1d2](http://github.axa.com/Digital/bauta-nodejs/commit/32fc1d2))
+* **@bautajs/express,@bautajs/fastify:** fix path ([#169](http://github.axa.com/Digital/bauta-nodejs/issues/169)) ([c794ad3](http://github.axa.com/Digital/bauta-nodejs/commit/c794ad3))
+
+
+
+
+
 ## [3.1.2](http://github.axa.com/Digital/bauta-nodejs/compare/v3.1.1...v3.1.2) (2020-04-22)
 
 ##### Documentation Changes
