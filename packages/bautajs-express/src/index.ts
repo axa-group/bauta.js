@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import path from 'path';
 import compression from 'compression';
 import express, { Application, Request, Response } from 'express';
 import http from 'http';
@@ -63,7 +62,7 @@ export class BautaJSExpress extends BautaJS {
     const method = operation.route?.method.toLowerCase() as keyof express.Application;
     const responses = operation.route?.schema.response;
     const { url = '', basePath = '' } = operation.route || {};
-    const route = path.normalize(basePath + url);
+    const route = (basePath + url).replace(/\/\//, '/');
 
     this.app[method](
       route,

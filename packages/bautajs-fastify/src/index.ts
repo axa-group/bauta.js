@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import path from 'path';
 import fp from 'fastify-plugin';
 import helmet, { FastifyHelmetOptions } from 'fastify-helmet';
 import { FastifyInstance, FastifyReply, FastifyRequest, HTTPMethod } from 'fastify';
@@ -150,7 +149,7 @@ export async function bautajsFastify(
 
     fastify.register(
       async fastifyAPI => {
-        const route = path.resolve(basePath + url);
+        const route = (basePath + url).replace(/\/\//, '/');
         fastifyAPI.route({
           method,
           url,
