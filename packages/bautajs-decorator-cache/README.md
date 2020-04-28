@@ -40,7 +40,7 @@ Include it on your pipeline as follows:
 - Cache only accept executable pipeline (pipelineBuilder) as a first parameter
 - Normalize should use a synchronous function to improve performance and it should be quick (O(1)) to make sure that there are no performance penalties.
 
-## Normalize
+## Normalize
 
 Normalize functions must return an identifier key in the form of a primitive type that is used to determine if a new value requires cache or not. If you need to use more than one field to generate a key, concatenate or stringify those fields that you need.
 
@@ -48,7 +48,7 @@ There are two main use cases in normalize:
 - you want to use only fields from the context to generate the key
 - you want to use at least one field from a previously generated object
 
-### normalize with only context fields
+### Normalize with only context fields
 
 It is straigthforward and you can do the following:
 
@@ -56,7 +56,7 @@ It is straigthforward and you can do the following:
 const normalizer = ([, ctx]) => ctx.whatever_field;
 ```
 
-### normalize uses at least one field from a previuosly generated object
+### Normalize uses at least one field from a previuosly generated object
 
 This is trickier because you have to take into account that you will not have the result of the pipeline to be passed as the object to be used as the key. For example, this will not work:
 
@@ -118,13 +118,13 @@ In here you can see that we have an operator function that returns an object wit
 
 You can check all the options in the options of [moize](https://github.com/planttheidea/moize#configuration-options)
 
-### Modified defaults
+### Modified defaults
 
 List of values whose default value differs from those in the library:
 
 - maxSize: Library value is 1, @bautajs/decorator-cache has a default value of 25.
 
-## Limitations
+## Limitations
 
 There are some options that cannot be used because they are used internally by the cache implementation. Those are:
 
