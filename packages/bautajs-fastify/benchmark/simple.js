@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const http = require('http');
-const stringify = require('fast-safe-stringify');
-const { BautaJS, resolver } = require('../dist/index');
+const fastify = require('fastify')();
+const { resolver } = require('@bautajs/core');
+const { bautajsFastify } = require('../dist/index');
 
 const apiDefinitions = [
   {
@@ -25,11 +25,11 @@ const apiDefinitions = [
     },
     servers: [
       {
-        url: 'v1/api'
+        url: '/v1/api/'
       }
     ],
     paths: {
-      '/': {
+      '/op1': {
         get: {
           operationId: 'operation1',
           responses: {
@@ -55,7 +55,8 @@ const apiDefinitions = [
   }
 ];
 
-const bautajs = new BautaJS(apiDefinitions, {
+fastify.register(bautajsFastify, {
+  apiDefinitions,
   resolvers: [
     resolver(operations => {
       operations.v1.operation1.setup(p => p.pipe(() => ({ hello: 'world' })));
@@ -64,13 +65,8 @@ const bautajs = new BautaJS(apiDefinitions, {
 });
 
 (async () => {
-  await bautajs.bootstrap();
-  http
-    .createServer(async (req, res) => {
-      const response = await bautajs.operations.v1.operation1.run({ req, res });
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.write(stringify(response));
-      res.end();
-    })
-    .listen(8080);
+  fastify.listen(8080, err => {
+    if (err) throw err;
+    fastify.log.info('Server listening on localhost:', fastify.server.address().port);
+  });
 })();

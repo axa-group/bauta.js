@@ -82,7 +82,9 @@
   },
   "scripts": {
     "cm": "git-cz",
-    "benchmark": "npx concurrently -k -s first \"node ./packages/bautajs/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080/v1/api/\"",
+    "benchmark-core": "npx concurrently -k -s first \"node ./packages/bautajs-core/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080/v1/api/\"",
+    "benchmark-express": "npx concurrently -k -s first \"node ./packages/bautajs-express/benchmark/simple.js\" \"npx autocannon -c 20 -d 5 -p 10 localhost:8080/v1/api/\"",
+    "benchmark-fastify": "npx concurrently -k -s first \"node ./packages/bautajs-fastify/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080/v1/api/\"",
     "lint": "eslint '*/**/*.{ts,tsx}' ",
     "bootstrap": "npx lerna bootstrap --no-ci",
     "postinstall": "npx lerna bootstrap --no-ci && npm run compile",

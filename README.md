@@ -54,6 +54,10 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [OperatorFunction and Resolvers](./docs/operator-and-resolver.md)
 - [Validation](./docs/validation.md)
 
+## Benchmark
+
+See [Benchmark](./docs/benchmark.md)
+
 ## Contributing
 
 You can read the guide of how to contribute at [Contributing](./CONTRIBUTING.md).

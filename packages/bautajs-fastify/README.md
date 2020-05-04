@@ -12,7 +12,7 @@ A fastify framework implementation for `bautajs`.
 
 ```js
 const { bautajsFastify } = require('@bauta/fastify');
-const fastify = require('fastify');
+const fastify = require('fastify')();
 const apiDefinition = require('../../api-definition.json');
 
 fastify.register(bautajsFastify, {
