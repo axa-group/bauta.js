@@ -16,6 +16,7 @@ import { BautaJS, resolver } from '../index';
 import { Document } from '../types';
 import circularSchema from './fixtures/circular-schema.json';
 import formatSchema from './fixtures/schema-with-format.json';
+import nullableSchema from './fixtures/nullable-schema.json';
 
 describe('validation tests', () => {
   test('should allow the validation of circular schemas', async () => {
@@ -180,6 +181,54 @@ describe('validation tests', () => {
             path: '[0].id',
             location: 'response',
             message: 'should be integer',
+            errorCode: 'type'
+          }
+        ]
+      })
+    );
+  });
+
+  test('should validate nullable fields', async () => {
+    const config = {
+      endpoint: 'http://google.es'
+    };
+    const expected = [
+      {
+        id: ['123'],
+        name: 'pet',
+        pets: [
+          {
+            id: 1234,
+            name: 'pet child'
+          }
+        ]
+      }
+    ];
+    const bautaJS = new BautaJS(nullableSchema as Document[], {
+      resolvers: [
+        resolver(operations => {
+          operations.v1.operation1.setup(p =>
+            p.push(() => {
+              return expected;
+            })
+          );
+        })
+      ],
+      staticConfig: config
+    });
+    await bautaJS.bootstrap();
+    await expect(
+      bautaJS.operations.v1.operation1.run({
+        req: { query: {}, body: { some_field: null } },
+        res: {}
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        errors: [
+          {
+            path: '.some_field',
+            location: 'body',
+            message: 'should be string',
             errorCode: 'type'
           }
         ]
