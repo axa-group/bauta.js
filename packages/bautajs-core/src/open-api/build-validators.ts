@@ -25,7 +25,7 @@ const ajv = new AjvOai({
   // disable ajv logs until issue #165 can be released
   logger: false,
   unknownFormats: 'ignore',
-  coerceTypes: true,
+  coerceTypes: false,
   useDefaults: true,
   removeAdditional: true,
   allErrors: true,
