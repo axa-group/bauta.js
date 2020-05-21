@@ -1,31 +1,9 @@
 {
+  "extends": ["axa-digital-node-typescript"],
   "parser": "@typescript-eslint/parser",
-  "extends": [
-    "plugin:jest/all",
-    "airbnb-typescript/base",
-    "plugin:prettier/recommended",
-    "prettier/@typescript-eslint"
-  ],
-  "overrides": [
-    {
-      "files": "**/__tests__/*.js",
-      "rules": {
-        "example-internal/no-focused-tests": 2
-      }
-    }
-  ],
   "parserOptions": {
-    "project": "./tsconfig.test.json"
-  },
-  "plugins": ["import", "jest", "prettier"],
-  "rules": {
-    "no-useless-constructor": "off",
-    "import/no-extraneous-dependencies": "off",
-    "import/prefer-default-export": "off",
-    "comma-dangle": ["error", "never"],
-    "prettier/prettier": ["error"],
-    "jest/prefer-expect-assertions": 0,
-    "jest/consistent-test-it": 0,
-    "jest/no-hooks": 0
+    "ecmaVersion": 2020,
+    "project": "./tsconfig.base.json",
+    "sourceType": "module"
   }
 }
