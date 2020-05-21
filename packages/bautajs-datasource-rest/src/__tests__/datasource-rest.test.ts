@@ -30,6 +30,36 @@ describe('provider rest', () => {
     nock.cleanAll();
   });
 
+
+  describe('restProvider extend', () => {
+    test('should allow to create your own rest provider', async () => {
+      const { restProvider } = require('../index');
+
+      const Id = '123';
+      nock('https://google.com')
+        .get(`/${Id}`)
+        .reply(200, 'text');
+
+      const myTxtRestProvider = restProvider.extend({ responseType: 'text' });
+      const provider = myTxtRestProvider((client, _, ctx) => {
+        return client.get(`https://google.com/${ctx.data.myId}`);
+      });
+
+      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
+        p.pipe((_, ctx) => {
+          ctx.data.myId = Id;
+        }, provider());
+      });
+
+      const response = await bautajs.operations.v1.operation1.run({
+        req: { id: 1 },
+        res: { statusCode: 200 }
+      });
+
+      expect(response).toStrictEqual('text');
+    });
+  });
+
   describe('got extends defaults', () => {
     test('should allow do a requests with GOT options and the built in agent', async () => {
       const { restProvider } = require('../index');

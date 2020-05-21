@@ -49,6 +49,26 @@ module.exports = resolver((operations) => {
 });
 ```
 
+### Create your own restProvider
+
+```js
+  // my-datasource.js
+const { restProvider } = require('@bautajs/datasource-rest');
+
+const myTextProvider = restProvider.extend({ responseType: 'text' });
+
+module.exports.testProvider = myTextProvider((client, _, ctx, bautajs) => {
+  const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
+
+  return client.get(bautajs.staticConfig.config.url, {
+    headers: {
+      "Accept-Language": acceptLanguage,
+      "user-agent": ctx.req.headers['user-agent']
+    }s
+  })
+});
+```
+
 See more examples on [Datasources](../../docs/datasources.md)
 
 ## Contributing

@@ -18,15 +18,15 @@ import got, {
   NormalizedOptions,
   Response,
   Got,
-  GotReturn,
   CancelableRequest,
   ResponseStream,
   GeneralError,
   ParseError,
-  GotError
+  GotError,
+  GotReturn
 } from 'got';
 import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
-import { Context, BautaJSInstance, utils, Logger } from '@bautajs/core';
+import { Context, BautaJSInstance, utils, Logger, OperatorFunction } from '@bautajs/core';
 
 export interface RequestLog {
   url: string | undefined;
@@ -40,7 +40,12 @@ export type ProviderOperation<TOut> = (
   value: any,
   ctx: Context,
   bautajs: BautaJSInstance
-) => GotReturn<TOut>;
+) => TOut;
+export type Provider<TOut> = <TIn>(options: ExtendOptions) => OperatorFunction<TIn, TOut>;
+export interface RestProvider {
+  <TOut>(fn: ProviderOperation<GotReturn<TOut>>): Provider<TOut | ResponseStream<TOut>>;
+  extend: (options: ExtendOptions) => RestProvider;
+}
 
 const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
@@ -156,8 +161,8 @@ function addRequestId(ctx: Context) {
   };
 }
 
-function operatorFn(client: Got, fn: ProviderOperation<any>) {
-  return <TIn, TOut>(value: TIn, ctx: Context, bautajs: BautaJSInstance) => {
+function operatorFn<TOut>(client: Got, fn: ProviderOperation<GotReturn<TOut>>) {
+  return <TIn>(value: TIn, ctx: Context, bautajs: BautaJSInstance) => {
     const promiseOrStream = fn(
       client.extend({
         hooks: {
@@ -174,27 +179,37 @@ function operatorFn(client: Got, fn: ProviderOperation<any>) {
       ctx.logger.error(`Request was canceled`);
       if (typeof (promiseOrStream as CancelableRequest<TOut>).cancel === 'function') {
         (promiseOrStream as CancelableRequest<TOut>).cancel();
-      } else if (typeof (promiseOrStream as ResponseStream).destroy === 'function') {
-        (promiseOrStream as ResponseStream).destroy();
+      } else if (typeof (promiseOrStream as ResponseStream<TOut>).destroy === 'function') {
+        (promiseOrStream as ResponseStream<TOut>).destroy();
       }
     });
     return promiseOrStream;
   };
 }
 
-export function restProvider(fn: ProviderOperation<any>) {
-  return (options: ExtendOptions = {}) => {
-    const client = got.extend({
-      agent: {
-        http: httpAgent,
-        https: httpsAgent
-      },
-      responseType: 'json',
-      resolveBodyOnly: true,
-      ...options
-    });
-    return operatorFn(client, fn);
+function create(globalGotOptions: ExtendOptions) {
+  const defaultClient = got.extend({
+    agent: {
+      http: httpAgent,
+      https: httpsAgent
+    },
+    responseType: 'json',
+    resolveBodyOnly: true,
+    ...globalGotOptions
+  });
+
+  const restProvider: RestProvider = <TOut>(fn: ProviderOperation<GotReturn<TOut>>) => {
+    return (options?: ExtendOptions) => {
+      const client =
+        options && Object.keys(options).length > 0 ? defaultClient.extend(options) : defaultClient;
+      return operatorFn(client, fn);
+    };
   };
+
+  restProvider.extend = create;
+
+  return restProvider;
 }
 
+export const restProvider = create({});
 export default restProvider;

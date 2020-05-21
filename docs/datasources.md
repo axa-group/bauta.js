@@ -191,3 +191,26 @@ module.exports.someProvider = restProvider((client) =>{
      });
 });
 ```
+
+### Create your own restProvider
+
+This case can be useful if you need to maintain the same got client configuration for different providers.
+
+```js
+  // my-datasource.js
+const { restProvider } = require('@bautajs/datasource-rest');
+
+const myCache = new Map();
+const myTextProvider = restProvider.extend({ cache: myCache });
+
+module.exports.testProvider = myTextProvider((client, _, ctx, bautajs) => {
+  const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
+
+  return client.get(bautajs.staticConfig.config.url, {
+    headers: {
+      "Accept-Language": acceptLanguage,
+      "user-agent": ctx.req.headers['user-agent']
+    }s
+  })
+});
+```
