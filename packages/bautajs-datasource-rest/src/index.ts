@@ -28,23 +28,6 @@ import got, {
 import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
 import { Context, BautaJSInstance, utils, Logger } from '@bautajs/core';
 
-export enum EventTypes {
-  /**
-   * A provider was executed with the given options.
-   */
-  PROVIDER_EXECUTION = '3',
-  /**
-   * A provider execution finished with the given result.
-   */
-  PROVIDER_RESULT = '4'
-}
-
-export enum ResponseType {
-  JSON = 'json',
-  BUFFER = 'buffer',
-  TEXT = 'text'
-}
-
 export interface RequestLog {
   url: string | undefined;
   method: string | undefined;
