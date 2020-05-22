@@ -172,7 +172,7 @@ describe('provider rest', () => {
         .get('/v1/policies')
         .reply(200, {});
 
-      const myContext = createContext({ req: {}, res: {} }, bautajs.logger);
+      const myContext = createContext({ req: {}, res: {} }, bautajs.logger, '1');
       const provider = restProvider(client => {
         return client.get('http://pets.com/v1/policies', { responseType: 'json' });
       });
@@ -192,7 +192,7 @@ describe('provider rest', () => {
         .get('/v1/policies')
         .reply(200, {});
 
-      const myContext = createContext({ req: {}, res: {} }, bautajs.logger);
+      const myContext = createContext({ req: {}, res: {} }, bautajs.logger, '1');
       const provider = restProvider(client => {
         return client.stream('http://pets.com/v1/policies', { responseType: 'json' });
       });
@@ -230,7 +230,7 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger, '1');
 
       await provider()(null, ctx, bautajs);
 
@@ -283,7 +283,7 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger, '1');
 
       await provider()(null, ctx, bautajs);
 
@@ -322,7 +322,7 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger, '1');
 
       await provider()(null, ctx, bautajs);
 
@@ -408,7 +408,7 @@ describe('provider rest', () => {
         });
       });
 
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger, '1');
 
       try {
         await provider()(null, ctx, bautajs);
@@ -447,7 +447,7 @@ describe('provider rest', () => {
         });
       });
 
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger, '1');
 
       try {
         await provider()(null, ctx, bautajs);
@@ -489,7 +489,7 @@ describe('provider rest', () => {
         });
       });
 
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger, '1');
 
       async function providerThrowsAnError() {
         return provider()(null, ctx, bautajs);
@@ -524,7 +524,8 @@ describe('provider rest', () => {
 
       const ctx = createContext(
         { req: { headers: { 'x-request-id': 1 } }, res: {} },
-        bautajs.logger
+        bautajs.logger, 
+        '1'
       );
 
       async function providerThrowsAnError() {

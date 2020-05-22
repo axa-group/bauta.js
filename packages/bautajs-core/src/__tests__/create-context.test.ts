@@ -22,7 +22,7 @@ describe('create context tests', () => {
   });
   test('should return the request id and logger', () => {
     const req = { headers: {} };
-    const result = createContext({ req }, logger);
+    const result = createContext({ req }, logger, '1');
     expect(typeof result.id).toStrictEqual('string');
     expect(typeof result.logger.info).toStrictEqual('function');
   });
@@ -34,7 +34,7 @@ describe('create context tests', () => {
         'x-request-id': '1234'
       }
     };
-    const result = createContext({ req }, logger);
+    const result = createContext({ req }, logger, '1');
     expect(result.id).toStrictEqual('1234');
   });
 });

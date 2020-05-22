@@ -132,4 +132,56 @@ describe('core tests', () => {
       });
     });
   });
+
+  describe('logger child namespaces', () => {
+    test('should add the operationID, reqId and url as namespace on the request logger', async () => {
+      const configLogger = {
+        level: 'debug',
+        name: 'logger-custom-test',
+        prettyPrint: false,
+        customLevels: {
+          always: 110 // Even if log.levelVal = 100 is set, always still gets printed
+        }
+      };
+
+      const validLogger = pino(configLogger, pino.destination(1));
+      let namespaceExpect;
+      validLogger.child = (namespace: any) => {
+        namespaceExpect = namespace;
+        return validLogger;
+      };
+
+      const config = {
+        endpoint: 'http://google.es'
+      };
+
+      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
+        staticConfig: config,
+        logger: validLogger,
+        resolvers: [
+          op =>
+            op.v1.operation1.validateRequest(false).setup(p =>
+              p.pipe(() => {
+                return { ok: true };
+              })
+            )
+        ]
+      });
+      const url = '/test';
+      await bautaJS.bootstrap();
+      await bautaJS.operations.v1.operation1.run({
+        req: {
+          url,
+          id: '1'
+        },
+        res: {}
+      });
+
+      expect(namespaceExpect).toStrictEqual({
+        url,
+        reqId: '1',
+        operationId: 'operation1'
+      });
+    });
+  });
 });

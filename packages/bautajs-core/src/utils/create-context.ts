@@ -16,7 +16,7 @@ import { ContextData, Context, Logger } from '../types';
 import { CancelableTokenBuilder } from '../core/cancelable-token';
 import { genReqId } from './request-id-generator';
 
-export function createContext(ctx: ContextData, logger: Logger): Context {
+export function createContext(ctx: ContextData, logger: Logger, operationId: string): Context {
   if (!ctx.req) {
     ctx.req = {};
   }
@@ -33,7 +33,8 @@ export function createContext(ctx: ContextData, logger: Logger): Context {
     // Just create the context logger if there is no child logger already created by the framework used such fastify req.log
     ctxLogger = logger.child({
       url: ctx.req.url,
-      reqId
+      reqId,
+      operationId
     });
   } else {
     ctxLogger = ctx.req.log;

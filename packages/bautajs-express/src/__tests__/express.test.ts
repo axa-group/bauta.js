@@ -47,13 +47,12 @@ describe('bautaJS express', () => {
 
       await bautajs.applyMiddlewares();
 
-      const request = supertest(bautajs.app)
-        .get('/api/v1/test')
-        .set({ 'x-request-id': '1' });
+      const request = supertest(bautajs.app).get('/api/v1/test').set({ 'x-request-id': '1' });
       expect.assertions(1);
       try {
         await request;
       } catch (e) {
+        // eslint-disable-next-line jest/no-try-expect
         expect(logger.error).toHaveBeenCalledWith(
           'The request to /api/v1/test was canceled by the requester'
         );
@@ -165,9 +164,7 @@ describe('bautaJS express', () => {
 
       bautajs.applyMiddlewares();
 
-      await supertest(bautajs.app)
-        .get('/api/v1/test')
-        .expect(204, '');
+      await supertest(bautajs.app).get('/api/v1/test').expect(204, '');
     });
 
     // eslint-disable-next-line jest/expect-expect
@@ -231,9 +228,7 @@ describe('bautaJS express', () => {
 
       await bautajs.applyMiddlewares({ explorer: { enabled: false } });
 
-      const res = await supertest(bautajs.app)
-        .get('/v1/explorer')
-        .expect(404);
+      const res = await supertest(bautajs.app).get('/v1/explorer').expect(404);
 
       expect(res.status).toStrictEqual(404);
     });

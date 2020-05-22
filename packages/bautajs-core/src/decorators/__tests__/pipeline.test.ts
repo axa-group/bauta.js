@@ -30,7 +30,7 @@ describe('pipeline decorator', () => {
     expect(
       await myPipeline(
         null,
-        createContext({ req: { query: {}, id: 1 }, res: {} }, bautajs.logger),
+        createContext({ req: { query: {}, id: 1 }, res: {} }, bautajs.logger, '1'),
         bautajs
       )
     ).toStrictEqual([{ id: 1, name: 'pet' }]);
@@ -66,7 +66,7 @@ describe('pipeline decorator', () => {
 
     const result = await myPipeline(
       null,
-      createContext({ req: { id: 1, params: { id: 0 } }, res: {} }, bautajs.logger),
+      createContext({ req: { id: 1, params: { id: 0 } }, res: {} }, bautajs.logger, '1'),
       bautajs
     );
 
@@ -96,7 +96,7 @@ describe('pipeline decorator', () => {
 
     const result = await myPipeline(
       null,
-      createContext({ req: { id: 1, params: { id: 0 } }, res: {} }, bautajs.logger),
+      createContext({ req: { id: 1, params: { id: 0 } }, res: {} }, bautajs.logger, '1'),
       bautajs
     );
 

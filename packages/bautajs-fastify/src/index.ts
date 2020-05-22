@@ -159,6 +159,11 @@ export async function bautajsFastify(
             response: operation.route?.schema.response
           },
           logSerializers: {
+            req() {
+              return {
+                operationId: operation.id
+              };
+            },
             res(res: any) {
               return {
                 statusCode: res.statusCode,

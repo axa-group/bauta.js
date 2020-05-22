@@ -330,4 +330,44 @@ describe('bautaJS fastify tests', () => {
       );
     });
   });
+
+  describe('logger child namespaces', () => {
+    test('should add the operationID as namespace on the request logger', async () => {
+      // ReqId and Url is already added by fastify no need to test it.
+      const logger = defaultLogger();
+      const fs = fastify({ logger });
+      let namespaceExpect;
+
+      logger.child = (namespace: any) => {
+        namespaceExpect = namespace;
+        return logger;
+      };
+
+      fs.register(bautajsFastify, {
+        apiDefinitions,
+        resolvers: [
+          operations => {
+            operations.v1.operation1.setup(p =>
+              p.pipe(
+                (_, ctx) => {
+                  setTimeout(() => ctx.req.req.emit('aborted'), 200);
+                },
+                () => new Promise(resolve => setTimeout(() => resolve({ ok: 'ok' }), 200))
+              )
+            );
+          }
+        ]
+      });
+
+      await fs.inject({
+        method: 'GET',
+        url: '/api/v1/test'
+      });
+      expect(namespaceExpect.serializers.req({})).toStrictEqual(
+        expect.objectContaining({
+          operationId: 'operation1'
+        })
+      );
+    });
+  });
 });

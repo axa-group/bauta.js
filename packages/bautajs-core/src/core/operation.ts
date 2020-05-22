@@ -205,7 +205,7 @@ export class OperationBuilder implements Operation {
   }
 
   public run(ctx: ContextData = {}): PCancelable<any> {
-    const context: Context = createContext(ctx, this.bautajs.logger);
+    const context: Context = createContext(ctx, this.bautajs.logger, this.id);
 
     if (this.requestValidationEnabled) {
       Object.assign(context, {

@@ -19,6 +19,10 @@ const bautaJS = new BautaJS(apiDefinitionsJson as Document[], {
       });
 ```
 
+## Log serializer
+
+`bautajs` include reqId, url and OperationId log serializer for every requests by default.
+** OperationId is not available for morgan logs on @bautajs/express **
 
 # Debug
 
@@ -35,7 +39,7 @@ Log only one of the `butajs` submodules
 LOG_LEVEL=debug DEBUG=bautajs-datasource-rest*
 ```
 
-Furthemore, if you want to censor some words we strongly recomend use [pino redaction][https://github.com/pinojs/pino/blob/master/docs/redaction.md].
+Furthermore, if you want to censor some words we strongly recommend use [pino redaction][https://github.com/pinojs/pino/blob/master/docs/redaction.md].
 
 As `batuajs` is using [Debug module](https://github.com/visionmedia/debug) you can use [pino-debug](https://github.com/pinojs/pino-debug) to wrap the logs into pino logs.
 
