@@ -4,7 +4,7 @@
     "packages/*"
   ],
   "command": {
-    "boostrap": {
+    "bootstrap": {
       "npmClientArgs": ["--no-package-lock"]
     }
   },
