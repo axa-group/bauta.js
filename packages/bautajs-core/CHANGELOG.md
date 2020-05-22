@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.1.3...v3.2.0) (2020-05-22)
+
+
+### Bug Fixes
+
+* **@bautajs/core:** set coerceTypes to false by default ([6f198c1](http://github.axa.com/Digital/bauta-nodejs/commit/6f198c1fbecc7ece7406dda22aa5df2110f561c4)), closes [#172](http://github.axa.com/Digital/bauta-nodejs/issues/172)
+
+
+
+
+
 ## [3.1.3](http://github.axa.com/Digital/bauta-nodejs/compare/v3.1.2...v3.1.3) (2020-04-28)
 
 

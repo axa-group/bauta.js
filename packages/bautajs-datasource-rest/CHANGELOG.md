@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.1.3...v3.2.0) (2020-05-22)
+
+
+### Features
+
+* **@bautajs/datasource-rest:** extend the provider ([#175](https://github.axa.com/Digital/bauta-nodejs/issues/175)) ([8a82778](https://github.axa.com/Digital/bauta-nodejs/commit/8a82778387f61189ef6bc8b9c114c6ec75f4c146)), closes [#167](https://github.axa.com/Digital/bauta-nodejs/issues/167)
+
+
+
+
+
 ## [3.1.3](https://github.axa.com/Digital/bauta-nodejs/compare/v3.1.2...v3.1.3) (2020-04-28)
 
 **Note:** Version bump only for package @bautajs/datasource-rest
