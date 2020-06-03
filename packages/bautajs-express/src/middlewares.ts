@@ -122,7 +122,11 @@ export function initExplorer(
 ) {
   swaggerUiExpress.setup();
 
-  if (!opt || (opt && opt.enabled === true && !opt.options)) {
+  const swaggerEnabled: Boolean = !opt || opt.enabled === true;
+  const opts: ExplorerOptions | undefined = opt?.options;
+  const path: String = opts?.path || 'explorer';
+
+  if (swaggerEnabled) {
     apiDefinitions.forEach(apiDefinition => {
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
       const paths = buildOpenAPIPaths(apiDefinition, operations);
@@ -131,27 +135,10 @@ export function initExplorer(
         res.end();
       });
       app.use(
-        `/${apiDefinition.info.version}/explorer`,
+        `/${apiDefinition.info.version}/${path}`,
         swaggerUiExpress.serve,
         swaggerUiExpress.setup(undefined, {
-          swaggerUrl: openAPIPath
-        })
-      );
-    });
-  } else if (opt && opt.enabled === true && opt.options) {
-    const opts: ExplorerOptions = opt.options;
-    apiDefinitions.forEach(apiDefinition => {
-      const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
-      const paths = buildOpenAPIPaths(apiDefinition, operations);
-      app.get(openAPIPath, (_, res) => {
-        res.json(fastSafeStringify({ ...apiDefinition, paths }));
-        res.end();
-      });
-      app.use(
-        `/${apiDefinition.info.version}/${opts.path || 'explorer'}`,
-        swaggerUiExpress.serve,
-        swaggerUiExpress.setup(undefined, {
-          ...opt,
+          ...(opt || null),
           swaggerUrl: openAPIPath
         })
       );
