@@ -19,6 +19,8 @@ import { Application, json, urlencoded } from 'express';
 import helmet from 'helmet';
 import { Document, Operations, genReqId, Logger } from '@bautajs/core';
 import { OpenAPIV3, OpenAPIV2, OpenAPI } from '@bautajs/core/node_modules/openapi-types';
+import fastSafeStringify from 'fast-safe-stringify';
+
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
 
 const morganJson = require('morgan-json');
@@ -125,7 +127,7 @@ export function initExplorer(
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
       const paths = buildOpenAPIPaths(apiDefinition, operations);
       app.get(openAPIPath, (_, res) => {
-        res.json({ ...apiDefinition, paths });
+        res.json(fastSafeStringify({ ...apiDefinition, paths }));
         res.end();
       });
       app.use(
@@ -142,7 +144,7 @@ export function initExplorer(
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
       const paths = buildOpenAPIPaths(apiDefinition, operations);
       app.get(openAPIPath, (_, res) => {
-        res.json({ ...apiDefinition, paths });
+        res.json(fastSafeStringify({ ...apiDefinition, paths }));
         res.end();
       });
       app.use(

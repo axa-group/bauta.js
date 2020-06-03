@@ -23,6 +23,7 @@ import { BautaJSExpress } from '../index';
 
 const apiDefinitions = require('./fixtures/test-api-definitions.json');
 const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
+const apiDefinitionSwaggerCircularDeps = require('./fixtures/test-api-definitions-swagger-circular-deps.json');
 
 describe('bautaJS express', () => {
   describe('request cancelation', () => {
@@ -47,9 +48,7 @@ describe('bautaJS express', () => {
 
       await bautajs.applyMiddlewares();
 
-      const request = supertest(bautajs.app)
-        .get('/api/v1/test')
-        .set({ 'x-request-id': '1' });
+      const request = supertest(bautajs.app).get('/api/v1/test').set({ 'x-request-id': '1' });
       expect.assertions(1);
       try {
         await request;
@@ -165,9 +164,7 @@ describe('bautaJS express', () => {
 
       bautajs.applyMiddlewares();
 
-      await supertest(bautajs.app)
-        .get('/api/v1/test')
-        .expect(204, '');
+      await supertest(bautajs.app).get('/api/v1/test').expect(204, '');
     });
 
     // eslint-disable-next-line jest/expect-expect
@@ -224,6 +221,18 @@ describe('bautaJS express', () => {
       ]);
     });
 
+    test('should return the swagger even if the openAPI swagger json has circular dependenciesw', async () => {
+      const bautajs = new BautaJSExpress(apiDefinitionSwaggerCircularDeps, {
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+      });
+
+      await bautajs.applyMiddlewares({ explorer: { enabled: true } });
+
+      const res = await supertest(bautajs.app).get('/v1/openapi.json').expect(200);
+
+      expect(res.status).toStrictEqual(200);
+    });
+
     test('should not expose the swagger if explorer is set to false', async () => {
       const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
@@ -231,9 +240,7 @@ describe('bautaJS express', () => {
 
       await bautajs.applyMiddlewares({ explorer: { enabled: false } });
 
-      const res = await supertest(bautajs.app)
-        .get('/v1/explorer')
-        .expect(404);
+      const res = await supertest(bautajs.app).get('/v1/explorer').expect(404);
 
       expect(res.status).toStrictEqual(404);
     });
