@@ -131,7 +131,7 @@ export function initExplorer(
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
       const paths = buildOpenAPIPaths(apiDefinition, operations);
       app.get(openAPIPath, (_, res) => {
-        res.json(fastSafeStringify({ ...apiDefinition, paths }));
+        res.send(fastSafeStringify({ ...apiDefinition, paths }));
         res.end();
       });
       app.use(
