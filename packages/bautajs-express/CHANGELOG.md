@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.2.0...v3.2.1) (2020-06-04)
+
+
+### Bug Fixes
+
+* **bautajs-express:** avoid circular deps crash returning swagger json ([#177](https://github.axa.com/Digital/bauta-nodejs/issues/177)) ([b053429](https://github.axa.com/Digital/bauta-nodejs/commit/b0534299acc00e52be1c1f8f00b85055ee977291)), closes [#176](https://github.axa.com/Digital/bauta-nodejs/issues/176)
+
+
+
+
+
 # [3.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.1.3...v3.2.0) (2020-05-22)
 
 **Note:** Version bump only for package @bautajs/express
