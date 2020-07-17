@@ -184,6 +184,26 @@ export interface BautaJSOptions {
    * @memberof BautaJSOptions
    */
   logger?: Logger;
+
+  /**
+   * Size that defined after which moment we truncate the logs of requests in responses. This number is used as it is for
+   * objects and it is multiplied by 10 for non-objects.
+   *
+   * @type {number}
+   * @memberof BautaJSOptions
+   */
+  truncateLogSize?: number;
+
+  /**
+   * If set to true, it disables the truncate of logs for non-productive environments. This parameter is ignored in productive
+   * environments (that is: you may not disable truncate in production).
+   *
+   * If set to false or unset, the truncate of logs happens as usual
+   *
+   * @type {boolean}
+   * @memberof BautaJSOptions
+   */
+  disableTruncateLog?: boolean;
 }
 export interface BautaJSInstance {
   /**

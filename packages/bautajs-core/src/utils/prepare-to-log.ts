@@ -14,19 +14,24 @@
  */
 import fastSafeStringify from 'fast-safe-stringify';
 
-const truncate = (string: string, limit: number): string => {
-  if (string.length > limit) {
+const truncate = (string: string, limit: number, disableTruncateLog: boolean): string => {
+  const disabledMessage = disableTruncateLog ? '[full log truncate disabled]' : '';
+  if (string.length > limit && !disableTruncateLog) {
     return `${string.substring(0, limit)}...`;
   }
-  return string;
+  return `${disabledMessage}${string}`;
 };
 
-export function prepareToLog(object: any): string {
+export function prepareToLog(
+  object: any,
+  truncateLogSize = 3200,
+  disableTruncateLog = false
+): string {
   if (typeof object === 'object') {
-    return truncate(fastSafeStringify(object), 3200);
+    return truncate(fastSafeStringify(object), truncateLogSize, disableTruncateLog);
   }
 
-  return truncate(object, 32000);
+  return truncate(object, truncateLogSize * 10, disableTruncateLog);
 }
 
 export default prepareToLog;
