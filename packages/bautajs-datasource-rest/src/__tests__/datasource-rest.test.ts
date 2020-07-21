@@ -22,23 +22,22 @@ describe('provider rest', () => {
   let bautajs: BautaJS;
 
   beforeEach(async () => {
-    bautajs = new BautaJS(testApiDefinitionsJson as any[]);
+    bautajs = new BautaJS(testApiDefinitionsJson as any[], {
+      disableTruncateLog: false,
+      truncateLogSize: 30000
+    });
     await bautajs.bootstrap();
   });
 
   afterEach(() => {
     nock.cleanAll();
   });
-
-
   describe('restProvider extend', () => {
     test('should allow to create your own rest provider', async () => {
       const { restProvider } = require('../index');
 
       const Id = '123';
-      nock('https://google.com')
-        .get(`/${Id}`)
-        .reply(200, 'text');
+      nock('https://google.com').get(`/${Id}`).reply(200, 'text');
 
       const myTxtRestProvider = restProvider.extend({ responseType: 'text' });
       const provider = myTxtRestProvider((client, _, ctx) => {
@@ -91,9 +90,7 @@ describe('provider rest', () => {
       const { restProvider } = require('../index');
 
       const Id = '123';
-      nock('https://google.com')
-        .get(`/${Id}`)
-        .reply(404, { message: 'not found' });
+      nock('https://google.com').get(`/${Id}`).reply(404, { message: 'not found' });
 
       const provider = restProvider((client, _, ctx) => {
         return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
@@ -117,9 +114,7 @@ describe('provider rest', () => {
       const { restProvider } = require('../index');
 
       const Id = '123';
-      nock('https://google.com')
-        .get(`/${Id}`)
-        .reply(404, { Message: 'not found' });
+      nock('https://google.com').get(`/${Id}`).reply(404, { Message: 'not found' });
 
       const provider = restProvider((client, _, ctx) => {
         return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
@@ -168,9 +163,7 @@ describe('provider rest', () => {
   describe('request cancelation', () => {
     test('should cancel the request if the a cancel is executed', async () => {
       const { restProvider } = require('../index');
-      nock('http://pets.com')
-        .get('/v1/policies')
-        .reply(200, {});
+      nock('http://pets.com').get('/v1/policies').reply(200, {});
 
       const myContext = createContext({ req: {}, res: {} }, bautajs.logger);
       const provider = restProvider(client => {
@@ -188,9 +181,7 @@ describe('provider rest', () => {
 
     test('should cancel the request if the a cancel is executed and the request is an stream', async () => {
       const { restProvider } = require('../index');
-      nock('http://pets.com')
-        .get('/v1/policies')
-        .reply(200, {});
+      nock('http://pets.com').get('/v1/policies').reply(200, {});
 
       const myContext = createContext({ req: {}, res: {} }, bautajs.logger);
       const provider = restProvider(client => {
@@ -218,9 +209,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
 
-      nock('https://pets.com')
-        .post('/v1/policies', { test: '1234' })
-        .reply(200, { bender: 'ok' });
+      nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(200, { bender: 'ok' });
 
       const provider = restProvider(client => {
         return client.post('https://pets.com/v1/policies', {
@@ -309,9 +298,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const { restProvider } = require('../index');
 
-      nock('https://pets.com')
-        .post('/v1/policies', 'someString')
-        .reply(200, { bender: 'ok' });
+      nock('https://pets.com').post('/v1/policies', 'someString').reply(200, { bender: 'ok' });
 
       const provider = restProvider(client => {
         return client.post('https://pets.com/v1/policies', {
@@ -368,7 +355,10 @@ describe('provider rest', () => {
         .reply(200, [{ id: 3, name: 'pet3' }]);
 
       const provider = restProvider((client, _, ctx) => {
-        return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json', searchParams: { testParam1: '25'} });
+        return client.get(`https://google.com/${ctx.data.myId}`, {
+          responseType: 'json',
+          searchParams: { testParam1: '25' }
+        });
       });
 
       bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
@@ -383,157 +373,152 @@ describe('provider rest', () => {
       });
 
       expect(response).toStrictEqual([{ id: 3, name: 'pet3' }]);
-  });
-
-  describe('logs when there is an error', () => {
-    beforeEach(() => {
-      jest.resetModules();
     });
-    test('should log a network error', async () => {
-      const logger = defaultLogger();
-      jest.spyOn(logger, 'error').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
-      process.env.LOG_LEVEL = 'debug';
-      const { restProvider } = require('../index');
 
-      nock('https://pets.com/v1')
-        .get('/policies')
-        .replyWithError('something awful happened');
-
-      const provider = restProvider(client => {
-        return client.get('https://pets.com/v1/policies', {
-          responseType: 'json'
-        });
+    describe('logs when there is an error', () => {
+      beforeEach(() => {
+        jest.resetModules();
       });
+      test('should log a network error', async () => {
+        const logger = defaultLogger();
+        jest.spyOn(logger, 'error').mockImplementation();
+        logger.child = () => {
+          return logger;
+        };
+        process.env.LOG_LEVEL = 'debug';
+        const { restProvider } = require('../index');
 
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+        nock('https://pets.com/v1').get('/policies').replyWithError('something awful happened');
 
-      try {
-        await provider()(null, ctx, bautajs);
-      } catch (e) {
-        // Empty
-      }
+        const provider = restProvider(client => {
+          return client.get('https://pets.com/v1/policies', {
+            responseType: 'json'
+          });
+        });
 
-      expect(logger.error).toHaveBeenCalledWith(
-        {
-          error: {
-            code: undefined,
-            name: 'RequestError',
-            message: 'something awful happened'
+        const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+
+        try {
+          await provider()(null, ctx, bautajs);
+        } catch (e) {
+          // Empty
+        }
+
+        expect(logger.error).toHaveBeenCalledWith(
+          {
+            error: {
+              code: undefined,
+              name: 'RequestError',
+              message: 'something awful happened'
+            },
+            providerUrl: '[GET] https://pets.com/v1/policies'
           },
-          providerUrl: '[GET] https://pets.com/v1/policies'
-        },
-        'response-logger: Error for [GET] https://pets.com/v1/policies'
-      );
-    });
-
-    test('should log an error if the response body could not be parsed', async () => {
-      const logger = defaultLogger();
-      logger.child = () => logger;
-      jest.spyOn(logger, 'error').mockImplementation();
-
-      process.env.LOG_LEVEL = 'debug';
-      const { restProvider } = require('../index');
-
-      nock('https://pets.com/v1')
-        .get('/policies')
-        .reply(200, 'this is not a json and this will generate a parser error');
-
-      const provider = restProvider(client => {
-        return client.get('https://pets.com/v1/policies', {
-          responseType: 'json'
-        });
+          'response-logger: Error for [GET] https://pets.com/v1/policies'
+        );
       });
 
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      test('should log an error if the response body could not be parsed', async () => {
+        const logger = defaultLogger();
+        logger.child = () => logger;
+        jest.spyOn(logger, 'error').mockImplementation();
 
-      try {
-        await provider()(null, ctx, bautajs);
-      } catch (e) {
-        // Empty
-      }
+        process.env.LOG_LEVEL = 'debug';
+        const { restProvider } = require('../index');
 
-      expect(logger.error).toHaveBeenCalledWith(
-        {
-          error: {
-            code: undefined,
-            body: 'this is not a json and this will generate a parser error',
-            statusCode: 200,
-            message: 'Unexpected token h in JSON at position 1 in "https://pets.com/v1/policies"',
-            name: 'ParseError'
+        nock('https://pets.com/v1')
+          .get('/policies')
+          .reply(200, 'this is not a json and this will generate a parser error');
+
+        const provider = restProvider(client => {
+          return client.get('https://pets.com/v1/policies', {
+            responseType: 'json'
+          });
+        });
+
+        const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+
+        try {
+          await provider()(null, ctx, bautajs);
+        } catch (e) {
+          // Empty
+        }
+
+        expect(logger.error).toHaveBeenCalledWith(
+          {
+            error: {
+              code: undefined,
+              body: 'this is not a json and this will generate a parser error',
+              statusCode: 200,
+              message: 'Unexpected token h in JSON at position 1 in "https://pets.com/v1/policies"',
+              name: 'ParseError'
+            },
+            providerUrl: '[GET] https://pets.com/v1/policies'
           },
-          providerUrl: '[GET] https://pets.com/v1/policies'
-        },
-        'response-logger: Error for [GET] https://pets.com/v1/policies'
-      );
-    });
-
-    test('should not log the response time when there is an error', async () => {
-      const logger = defaultLogger();
-      // create context will create a logger child
-      logger.child = () => logger;
-      jest.spyOn(logger, 'error').mockImplementation();
-      jest.spyOn(logger, 'info').mockImplementation();
-      process.env.LOG_LEVEL = 'info';
-      const { restProvider } = require('../index');
-
-      nock('https://pets.com/v1')
-        .get('/policies')
-        .reply(200, 'we force with this a parserError');
-
-      const provider = restProvider(client => {
-        return client.get('https://pets.com/v1/policies', {
-          responseType: 'json'
-        });
+          'response-logger: Error for [GET] https://pets.com/v1/policies'
+        );
       });
 
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      test('should not log the response time when there is an error', async () => {
+        const logger = defaultLogger();
+        // create context will create a logger child
+        logger.child = () => logger;
+        jest.spyOn(logger, 'error').mockImplementation();
+        jest.spyOn(logger, 'info').mockImplementation();
+        process.env.LOG_LEVEL = 'info';
+        const { restProvider } = require('../index');
 
-      async function providerThrowsAnError() {
-        return provider()(null, ctx, bautajs);
-      }
+        nock('https://pets.com/v1').get('/policies').reply(200, 'we force with this a parserError');
 
-      await expect(providerThrowsAnError()).rejects.toThrow(
-        new Error('Unexpected token w in JSON at position 0 in "https://pets.com/v1/policies"')
-      );
+        const provider = restProvider(client => {
+          return client.get('https://pets.com/v1/policies', {
+            responseType: 'json'
+          });
+        });
 
-      expect(logger.error).toHaveBeenCalledTimes(1); // We check error logging in another test
+        const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
 
-      expect(logger.info).toHaveBeenCalledTimes(1); // If there was not an error, info is called twice
-      expect(logger.info).toHaveBeenCalledWith(
-        'request-logger: Request to [GET] https://pets.com/v1/policies'
-      );
-    });
+        async function providerThrowsAnError() {
+          return provider()(null, ctx, bautajs);
+        }
 
-    test('should generate a meaningful error if there is an issue', async () => {
-      const { restProvider } = require('../index');
+        await expect(providerThrowsAnError()).rejects.toThrow(
+          new Error('Unexpected token w in JSON at position 0 in "https://pets.com/v1/policies"')
+        );
 
-      nock('https://pets.com/v1')
-        .get('/policies')
-        .reply(200, '<html><div></div></html>', {
+        expect(logger.error).toHaveBeenCalledTimes(1); // We check error logging in another test
+
+        expect(logger.info).toHaveBeenCalledTimes(1); // If there was not an error, info is called twice
+        expect(logger.info).toHaveBeenCalledWith(
+          'request-logger: Request to [GET] https://pets.com/v1/policies'
+        );
+      });
+
+      test('should generate a meaningful error if there is an issue', async () => {
+        const { restProvider } = require('../index');
+
+        nock('https://pets.com/v1').get('/policies').reply(200, '<html><div></div></html>', {
           'content-type': 'text/html'
         });
 
-      const provider = restProvider(client => {
-        return client.get('https://pets.com/v1/policies', {
-          responseType: 'json'
+        const provider = restProvider(client => {
+          return client.get('https://pets.com/v1/policies', {
+            responseType: 'json'
+          });
         });
+
+        const ctx = createContext(
+          { req: { headers: { 'x-request-id': 1 } }, res: {} },
+          bautajs.logger
+        );
+
+        async function providerThrowsAnError() {
+          return provider()(null, ctx, bautajs);
+        }
+
+        await expect(providerThrowsAnError()).rejects.toThrow(
+          new Error('Unexpected token < in JSON at position 0 in "https://pets.com/v1/policies"')
+        );
       });
-
-      const ctx = createContext(
-        { req: { headers: { 'x-request-id': 1 } }, res: {} },
-        bautajs.logger
-      );
-
-      async function providerThrowsAnError() {
-        return provider()(null, ctx, bautajs);
-      }
-
-      await expect(providerThrowsAnError()).rejects.toThrow(
-        new Error('Unexpected token < in JSON at position 0 in "https://pets.com/v1/policies"')
-      );
     });
   });
 });

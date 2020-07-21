@@ -53,6 +53,7 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [Request cancelation](./docs/request-cancelation.md)
 - [OperatorFunction and Resolvers](./docs/operator-and-resolver.md)
 - [Validation](./docs/validation.md)
+- [Configuration Options](./docs/configuration-options.md)
 
 ## Benchmark
 

@@ -84,12 +84,15 @@ export class BautaJS implements BautaJSInstance {
 
   public readonly logger: Logger;
 
+  public readonly options: BautaJSOptions;
+
   constructor(public readonly apiDefinitions: Document[], options: BautaJSOptions = {}) {
     const apis: API[] = prebuildApi(apiDefinitions);
     let responseValidation = false;
     let requestValidation = true;
 
     this.staticConfig = options.staticConfig;
+    this.options = options;
 
     this.logger = options.logger || defaultLogger();
     if (!isLoggerValid(this.logger)) {
@@ -122,6 +125,12 @@ export class BautaJS implements BautaJSInstance {
     }
   }
 
+  private logBautaOptions(): void {
+    this.logger.debug(
+      `Bauta started with the options disableTruncateLog=${this.options.disableTruncateLog}, truncateLogSize=${this.options.truncateLogSize}`
+    );
+  }
+
   public async bootstrap(): Promise<void> {
     const asyncTasks = this.apiDefinitions.map(async apiDefinition => {
       const parser = new Parser(this.logger);
@@ -131,6 +140,8 @@ export class BautaJS implements BautaJSInstance {
         this.operations[version][route.operationId].addRoute(route);
       });
     });
+
+    this.logBautaOptions();
 
     await Promise.all(asyncTasks);
   }

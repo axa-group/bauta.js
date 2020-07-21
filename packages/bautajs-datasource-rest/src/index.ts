@@ -26,7 +26,14 @@ import got, {
   GotReturn
 } from 'got';
 import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
-import { Context, BautaJSInstance, utils, Logger, OperatorFunction } from '@bautajs/core';
+import {
+  Context,
+  BautaJSInstance,
+  utils,
+  Logger,
+  OperatorFunction,
+  BautaJSOptions
+} from '@bautajs/core';
 
 export interface RequestLog {
   url: string | undefined;
@@ -51,23 +58,31 @@ const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
 const isDebugLogLevel = process.env.LOG_LEVEL?.toLowerCase() === 'debug';
 
-function logRequestHook(logger: Logger) {
+function logRequestHook(logger: Logger, bautaOptions: BautaJSOptions) {
   return (options: NormalizedOptions) => {
     logger.info(`request-logger: Request to [${options.method}] ${options.url}`);
     if (isDebugLogLevel) {
       const requestData: RequestLog = {
         url: options.url.toString(),
         method: options.method,
-        headers: utils.prepareToLog(options.headers)
+        headers: utils.prepareToLog(
+          options.headers,
+          bautaOptions.truncateLogSize,
+          bautaOptions.disableTruncateLog
+        )
       };
       if (options.body || options.json) {
-        requestData.body = utils.prepareToLog(options.body || options.json);
+        requestData.body = utils.prepareToLog(
+          options.body || options.json,
+          bautaOptions.truncateLogSize,
+          bautaOptions.disableTruncateLog
+        );
       }
       logger.debug({ requestData }, 'request-logger: Request data');
     }
   };
 }
-function logErrorsHook(logger: Logger) {
+function logErrorsHook(logger: Logger, bautaOptions: BautaJSOptions) {
   return (error: GeneralError) => {
     const parseError = error as ParseError;
     const genericError = error as GotError;
@@ -77,7 +92,11 @@ function logErrorsHook(logger: Logger) {
           providerUrl: `[${parseError.options.method}] ${parseError.options.url}`,
           error: {
             statusCode: parseError.response.statusCode,
-            body: utils.prepareToLog(parseError.response.body),
+            body: utils.prepareToLog(
+              parseError.response.body,
+              bautaOptions.truncateLogSize,
+              bautaOptions.disableTruncateLog
+            ),
             name: parseError.name,
             message: parseError.message
           }
@@ -111,7 +130,7 @@ function logErrorsHook(logger: Logger) {
     return error;
   };
 }
-function logResponseHook(logger: Logger) {
+function logResponseHook(logger: Logger, bautaOptions: BautaJSOptions) {
   return (response: Response) => {
     if (response.isFromCache) {
       logger.info(`response-logger: Response for ${response.requestUrl} is cached.`);
@@ -121,9 +140,17 @@ function logResponseHook(logger: Logger) {
           {
             providerUrl: `[${response.request.options.method}] ${response.requestUrl}`,
             response: {
-              headers: utils.prepareToLog(response.headers),
+              headers: utils.prepareToLog(
+                response.headers,
+                bautaOptions.truncateLogSize,
+                bautaOptions.disableTruncateLog
+              ),
               statusCode: response.statusCode,
-              body: utils.prepareToLog(response.body)
+              body: utils.prepareToLog(
+                response.body,
+                bautaOptions.truncateLogSize,
+                bautaOptions.disableTruncateLog
+              )
             }
           },
           `response-logger: Response for [${response.request.options.method}] ${response.requestUrl}`
@@ -166,9 +193,9 @@ function operatorFn<TOut>(client: Got, fn: ProviderOperation<GotReturn<TOut>>) {
     const promiseOrStream = fn(
       client.extend({
         hooks: {
-          beforeRequest: [addRequestId(ctx), logRequestHook(ctx.logger)],
-          afterResponse: [logResponseHook(ctx.logger)],
-          beforeError: [logErrorsHook(ctx.logger), addErrorStatusCode]
+          beforeRequest: [addRequestId(ctx), logRequestHook(ctx.logger, bautajs.options)],
+          afterResponse: [logResponseHook(ctx.logger, bautajs.options)],
+          beforeError: [logErrorsHook(ctx.logger, bautajs.options), addErrorStatusCode]
         }
       }),
       value,
