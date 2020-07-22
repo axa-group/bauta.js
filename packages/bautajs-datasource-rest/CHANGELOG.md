@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.2.1...v3.3.0) (2020-07-22)
+
+
+### Features
+
+* **bautajs-core,bautajs-rest-datasource:** manage truncation on logs ([1483796](https://github.axa.com/Digital/bauta-nodejs/commit/14837964bcc677b75a29955448952c4d9594d1b1)), closes [#186](https://github.axa.com/Digital/bauta-nodejs/issues/186)
+
+
+
+
+
 # [3.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.1.3...v3.2.0) (2020-05-22)
 
 

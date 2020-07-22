@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.2.1...v3.3.0) (2020-07-22)
+
+**Note:** Version bump only for package @bautajs/express
+
+
+
+
+
 ## [3.2.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.2.0...v3.2.1) (2020-06-04)
 
 
