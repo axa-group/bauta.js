@@ -24,26 +24,32 @@ import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
 import { pipelineBuilder } from '../decorators/pipeline';
 import Parser from '../open-api/parser';
 import { asPromise } from '../decorators/as-promise';
+import { AjvValidator } from '../open-api/ajv-validator';
 
 describe('operation class tests', () => {
   let route: Route;
-  const bautaJS: BautaJSInstance = {
-    staticConfig: {},
-    operations: {},
-    logger: defaultLogger(),
-    apiDefinitions: [],
-    bootstrap() {
-      return Promise.resolve();
-    },
-    decorate() {
-      return this;
-    }
-  };
+  let bautaJS: BautaJSInstance = null;
+
   beforeEach(async () => {
+    bautaJS = {
+      staticConfig: {},
+      operations: {},
+      logger: defaultLogger(),
+      apiDefinitions: [],
+      validator: new AjvValidator(),
+      options: {},
+      bootstrap() {
+        return Promise.resolve();
+      },
+      decorate() {
+        return this;
+      }
+    };
     const parser = new Parser(bautaJS.logger);
     const document = await parser.asyncParse(testApiDefinitionsJson[0] as OpenAPIV3Document);
     [route] = document.routes;
   });
+
   describe('build operations cases', () => {
     test('should let you build an operation without schema', async () => {
       const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);

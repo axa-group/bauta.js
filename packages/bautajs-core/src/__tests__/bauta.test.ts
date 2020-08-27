@@ -130,6 +130,7 @@ describe('bauta core tests', () => {
         }
       ]);
     });
+
     test('should priorize the local operation toggle over the global one', async () => {
       const config = {
         endpoint: 'http://google.es'

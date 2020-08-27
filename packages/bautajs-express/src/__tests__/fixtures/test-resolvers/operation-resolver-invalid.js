@@ -12,22 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { prepareToLog } from './utils/prepare-to-log';
+const { resolver } = require('@bautajs/core');
 
-export * from './bauta';
-export * from './decorators/match';
-export * from './decorators/resolver';
-export * from './decorators/step';
-export * from './decorators/pipeline';
-export * from './decorators/as-promise';
-export * from './decorators/as-value';
-export * from './decorators/parallel';
-export * from './utils/create-context';
-export * from './default-logger';
-export * from './utils/request-id-generator';
-export * from './core/validation-error';
-export * from './types';
-
-export const utils = {
-  prepareToLog
-};
+module.exports = resolver(operations => {
+  operations.v1.operation1.validateResponse(true).setup(p =>
+    p.push(() => [
+      {
+        id: 'patata', // The schema defines id as a number but here we put a string to force an schema validation error
+        name: 'pet2'
+      }
+    ])
+  );
+});

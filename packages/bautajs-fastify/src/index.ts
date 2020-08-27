@@ -14,7 +14,13 @@
  */
 import fp from 'fastify-plugin';
 import helmet, { FastifyHelmetOptions } from 'fastify-helmet';
-import { FastifyInstance, FastifyReply, FastifyRequest, HTTPMethod } from 'fastify';
+import {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  HTTPMethod,
+  ValidationResult
+} from 'fastify';
 import responseXRequestId from 'fastify-x-request-id';
 import routeOrder from 'route-order';
 import {
@@ -23,12 +29,31 @@ import {
   Document,
   Operations,
   Operation,
-  utils,
-  Logger
+  Logger,
+  ValidationError,
+  LocationError,
+  BautaJSInstance
 } from '@bautajs/core';
 import { FastifyOASOptions } from 'fastify-oas';
 import sensible from 'fastify-sensible';
+
 import explorerPlugin from './explorer';
+
+export interface ValidationObject {
+  validation: ValidationResult[];
+  validationContext: string;
+}
+
+function formatLocationErrors(validation: ValidationObject): LocationError[] | undefined {
+  return Array.isArray(validation.validation)
+    ? validation.validation.map(error => ({
+        path: error.dataPath,
+        location: validation.validationContext || '',
+        message: error.message || '',
+        errorCode: error.keyword
+      }))
+    : undefined;
+}
 
 export interface BautaJSFastifyPluginOptions extends BautaJSOptions {
   apiDefinitions: Document[];
@@ -79,14 +104,27 @@ function processOperations(operations: Operations) {
 
 function createHandler(operation: Operation) {
   return async (request: FastifyRequest, reply: FastifyReply<any>) => {
+    // Convert the fastify validation error to the bautajs validation error format
+    // @ts-ignore
+    if (request.validationError) {
+      return reply.status(422).send(
+        new ValidationError(
+          'The request was not valid',
+          // @ts-ignore
+          formatLocationErrors(request.validationError) || [],
+          422
+        ).toJSON()
+      );
+    }
+
     const op = operation.run({ req: request, res: reply });
-    request.req.on('abort', () => {
+    request.raw.on('abort', () => {
       op.cancel('Request was aborted by the requester intentionally');
     });
-    request.req.on('aborted', () => {
+    request.raw.on('aborted', () => {
       op.cancel('Request was aborted by the requester intentionally');
     });
-    request.req.on('timeout', () => {
+    request.raw.on('timeout', () => {
       op.cancel('Request was aborted by the requester because of a timeout');
     });
 
@@ -105,7 +143,7 @@ function createHandler(operation: Operation) {
       return response;
     } catch (error) {
       if (error.name === 'CancelError') {
-        request.log.error(`The request to ${request.req.url} was canceled by the requester`);
+        request.log.error(`The request to ${request.raw.url} was canceled by the requester`);
         return {};
       }
 
@@ -144,20 +182,31 @@ export async function bautajsFastify(
         }
       : {};
 
+    // Response validation could be disabled. Take in account that if is disabled
+    // the performance improvement of fastify is not fullfilled at 100%
+    const responseSchema = operation.responseValidationEnabled
+      ? { response: operation.route?.schema.response }
+      : {};
+
     // Use fastify Request validation and serialization.
     operation.validateRequest(false);
+    // Use fastify Response validation and serialization.
+    operation.validateResponse(false);
 
     fastify.register(
       async fastifyAPI => {
         const route = (basePath + url).replace(/\/\//, '/');
         fastifyAPI.route({
+          attachValidation: true,
           method,
           url,
           handler: createHandler(operation),
           schema: {
             ...requestSchema,
-            response: operation.route?.schema.response
+            ...responseSchema
           },
+          // Missing logSerializers from types on fastify v3 https://github.com/fastify/fastify/issues/2511
+          // @ts-ignore
           logSerializers: {
             res(res: any) {
               return {
@@ -188,7 +237,9 @@ export async function bautajsFastify(
   await bautajs.bootstrap();
   // Include bautajs instance inside fastify instance
   fastify.decorate('bautajs', bautajs);
-  fastify.setSchemaCompiler(schema => utils.buildSchemaCompiler(schema));
+
+  fastify.setSchemaCompiler(schema => bautajs.validator.buildSchemaCompiler(schema));
+
   // Add x-request-id on the response
   fastify.register(responseXRequestId);
 
@@ -216,6 +267,7 @@ export async function bautajsFastify(
         methods.forEach(method => addRoute(routes[route][method]));
       });
   }
+
   // This will give access to some fastify features inside the pipelines
   bautajs.decorate('fastify', fastify);
 }

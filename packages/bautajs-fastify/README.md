@@ -45,6 +45,15 @@ By default the following plugins are included on the fastify instance
 In case the client closes the connection `@bautajs/fastify` will handle the request cancellation for you closing all datasources connections or triggering all the onClose event listeners. See more info on [request cancellation](../../docs/request-cancelation.md)
 
 
+### Validation and Serialization
+
+As fastify comes with a native request and response validations, `bautajs` validations are disabled here. Although the validation behavior will be the same as using the `bautajs` ones as the validation engine is configured equally.
+
+Notice that as in `bautajs`, here, the response validation is disabled by default but contrary to the from the express module, fastify uses the response schema to improve the API performance and speed, because of that is recommended to enable the response validation when using fastify plugin. 
+
+⚠️ **But take care with this feature since fastify will [coerce types on your resultant response](https://github.com/fastify/fast-json-stringify#nullable)**
+
+
 ## Contributing
 
 You can read the guide of how to contribute at [Contributing](../../CONTRIBUTING.md).

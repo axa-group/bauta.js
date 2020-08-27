@@ -23,11 +23,14 @@ import {
   Document,
   Logger,
   Operations,
-  BasicOperation
+  BasicOperation,
+  // CustomFormat,
+  Validator
 } from './types';
 import { isLoggerValid } from './utils/logger-validator';
 import Parser from './open-api/parser';
 import { decorate } from './utils/decorate';
+import { AjvValidator } from './open-api/ajv-validator';
 
 interface API {
   version: string;
@@ -86,6 +89,8 @@ export class BautaJS implements BautaJSInstance {
 
   public readonly options: BautaJSOptions;
 
+  public readonly validator: Validator<any>;
+
   constructor(public readonly apiDefinitions: Document[], options: BautaJSOptions = {}) {
     const apis: API[] = prebuildApi(apiDefinitions);
     let responseValidation = false;
@@ -108,6 +113,8 @@ export class BautaJS implements BautaJSInstance {
     if (typeof options.enableResponseValidation === 'boolean') {
       responseValidation = options.enableResponseValidation;
     }
+
+    this.validator = new AjvValidator(options.customValidationFormats);
 
     this.operations = this.registerOperations(apis, requestValidation, responseValidation);
 

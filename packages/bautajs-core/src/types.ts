@@ -15,6 +15,7 @@
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import PCancelable from 'p-cancelable';
 import { Bindings } from 'pino';
+import Ajv from 'ajv';
 
 export type JSONSchema = any;
 
@@ -53,6 +54,38 @@ export interface Route {
   isV2: boolean;
   basePath?: string;
   path: string;
+}
+
+export interface Validator<TypeValidateFunction> {
+  /**
+   * Validates a single schema. Note: mainly exposed as public for fastify.
+   *
+   * @memberof Validator
+   */
+  buildSchemaCompiler: (schema: JSONSchema) => TypeValidateFunction;
+
+  /**
+   * Generates the validators. Needed because you may not be able to generate them when creating the instance of Validator
+   *
+   * @memberof Validator
+   */
+  generate: (
+    operationSchema: RouteSchema
+  ) => Dictionary<Dictionary<TypeValidateFunction> | TypeValidateFunction>;
+
+  /**
+   * Validates the request according to the instance validators generated in generate method
+   *
+   * @memberof Validator
+   */
+  validateRequest: (request: any) => void;
+
+  /**
+   * Validates the response according to the instance validators generated in generate method
+   *
+   * @memberof Validator
+   */
+  validateResponse: (response: any, statusCode?: number | string) => void;
 }
 
 export type Generic = Omit<OpenAPI.Document, 'paths'> & { basePath?: string };
@@ -202,7 +235,16 @@ export interface BautaJSOptions {
    * @memberof BautaJSOptions
    */
   disableTruncateLog?: boolean;
+
+  /**
+   *
+   *
+   * @type {CustomValidationFormat[]}
+   * @memberof BautaJSOptions
+   */
+  readonly customValidationFormats?: CustomValidationFormat[];
 }
+
 export interface BautaJSInstance {
   /**
    * The list of operations defined on the given OpenAPI schemas split by version ID's.
@@ -254,7 +296,13 @@ export interface BautaJSInstance {
    */
   decorate(name: string | symbol, fn: any, dependencies?: string[]): BautaJSInstance;
   [key: string]: any;
+
+  readonly validator: Validator<Ajv.ValidateFunction>;
 }
+
+export type CustomValidationFormat = {
+  name: string;
+} & Ajv.FormatDefinition;
 
 // Service
 export type Operations = Dictionary<Version>;

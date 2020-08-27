@@ -17,7 +17,7 @@ import path from 'path';
 import FormData from 'form-data';
 import { Readable } from 'stream';
 import { resolver, defaultLogger } from '@bautajs/core';
-import fastify from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import { bautajsFastify } from '../index';
 
 const apiDefinitions = require('./fixtures/test-api-definitions.json');
@@ -25,7 +25,7 @@ const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-
 
 describe('bautaJS fastify tests', () => {
   describe('bautaJS fastify generic test', () => {
-    let fastifyInstance: fastify.FastifyInstance<any>;
+    let fastifyInstance: FastifyInstance<any>;
     beforeEach(() => {
       fastifyInstance = fastify();
     });
@@ -292,7 +292,9 @@ describe('bautaJS fastify tests', () => {
       fs.close();
 
       expect(res.statusCode).toStrictEqual(500);
-      expect(JSON.parse(res.payload)).toStrictEqual({ message: 'some error' });
+      expect(JSON.parse(res.payload)).toStrictEqual({
+        message: 'some error'
+      });
     });
   });
 

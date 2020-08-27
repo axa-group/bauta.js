@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { OpenAPI } from 'openapi-types';
-import Ajv from 'ajv';
+// import Ajv from 'ajv';
 import PCancelable from 'p-cancelable';
 import {
   BautaJSInstance,
@@ -23,25 +23,13 @@ import {
   OperatorFunction,
   PipelineSetup,
   Route,
-  RouteSchema,
-  Dictionary,
   TResponse
 } from '../types';
 import { buildDefaultPipeline } from '../utils/default-pipeline';
+import { getDefaultStatusCode } from '../open-api/validator-utils';
 
 import { createContext } from '../utils/create-context';
 import { pipelineBuilder } from '../decorators/pipeline';
-import {
-  bodySchema,
-  buildSchemaCompiler,
-  querystringSchema,
-  paramsSchema,
-  headersSchema,
-  responseSchema,
-  validateRequest,
-  validateResponse,
-  getDefaultStatusCode
-} from '../open-api/build-validators';
 
 export class OperationBuilder implements Operation {
   public static create(id: string, version: string, bautajs: BautaJSInstance): Operation {
@@ -65,8 +53,6 @@ export class OperationBuilder implements Operation {
   private operatorFunction: OperatorFunction<undefined, any>;
 
   private setupDone: boolean = false;
-
-  private validators: Dictionary<Dictionary<Ajv.ValidateFunction> | Ajv.ValidateFunction> = {};
 
   constructor(
     public readonly id: string,
@@ -97,30 +83,26 @@ export class OperationBuilder implements Operation {
   }
 
   public validateRequests(toggle: boolean): Operation {
-    if (this.validators) {
-      this.requestValidationEnabled = toggle;
-    }
+    this.requestValidationEnabled = toggle;
+
     return this;
   }
 
   public validateResponses(toggle: boolean): Operation {
-    if (this.validators) {
-      this.responseValidationEnabled = toggle;
-    }
+    this.responseValidationEnabled = toggle;
+
     return this;
   }
 
   public validateRequest(toggle: boolean): Operation {
-    if (this.validators) {
-      this.requestValidationEnabled = toggle;
-    }
+    this.requestValidationEnabled = toggle;
+
     return this;
   }
 
   public validateResponse(toggle: boolean): Operation {
-    if (this.validators) {
-      this.responseValidationEnabled = toggle;
-    }
+    this.responseValidationEnabled = toggle;
+
     return this;
   }
 
@@ -129,35 +111,7 @@ export class OperationBuilder implements Operation {
     this.route = route;
     // Generate validators on setup operations only
     if (this.setupDone === true) {
-      this.generateValidators(route.schema);
-    }
-  }
-
-  private generateValidators(operationSchema: RouteSchema): void {
-    if (operationSchema.body) {
-      this.validators[bodySchema.toString()] = buildSchemaCompiler(operationSchema.body);
-    }
-    if (operationSchema.querystring) {
-      this.validators[querystringSchema.toString()] = buildSchemaCompiler(
-        operationSchema.querystring
-      );
-    }
-    if (operationSchema.params) {
-      this.validators[paramsSchema.toString()] = buildSchemaCompiler(operationSchema.params);
-    }
-    if (operationSchema.headers) {
-      this.validators[headersSchema.toString()] = buildSchemaCompiler(operationSchema.headers);
-    }
-    if (operationSchema.response) {
-      this.validators[responseSchema.toString()] = Object.keys(operationSchema.response).reduce(
-        (acc: Dictionary<Ajv.ValidateFunction>, statusCode: string) => {
-          if (operationSchema.response && operationSchema.response[statusCode]) {
-            acc[statusCode] = buildSchemaCompiler(operationSchema.response[statusCode]);
-          }
-          return acc;
-        },
-        {}
-      );
+      this.bautajs.validator.generate(route.schema);
     }
   }
 
@@ -209,19 +163,14 @@ export class OperationBuilder implements Operation {
 
     if (this.requestValidationEnabled) {
       Object.assign(context, {
-        validateRequest: (request: any = ctx.req) =>
-          validateRequest(this.validators as Dictionary<Ajv.ValidateFunction>, request)
+        validateRequest: (request: any = ctx.req) => this.bautajs.validator.validateRequest(request)
       });
     }
 
     if (this.responseValidationEnabled) {
       Object.assign(context, {
         validateResponse: (response: any, statusCode?: number | string) =>
-          validateResponse(
-            this.validators as Dictionary<Dictionary<Ajv.ValidateFunction>>,
-            response,
-            statusCode
-          )
+          this.bautajs.validator.validateResponse(response, statusCode)
       });
     }
 

@@ -1,0 +1,223 @@
+[
+  {
+    "openapi": "3.0.0",
+    "info": {
+      "version": "v1",
+      "title": "Swagger Petstore",
+      "license": {
+        "name": "MIT"
+      }
+    },
+    "servers": [
+      {
+        "url": "/api/v1/"
+      }
+    ],
+    "paths": {
+      "/test": {
+        "get": {
+          "summary": "List all pets",
+          "operationId": "operation1",
+          "tags": [
+            "pets"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "How many items to return at one time (max 100)",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "test"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A paged array of pets",
+              "headers": {
+                "x-next": {
+                  "description": "A link to the next page of responses",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Pets"
+                  }
+                }
+              }
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/test204": {
+        "get": {
+          "summary": "List all pets",
+          "operationId": "operation204",
+          "tags": [
+            "pets"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "How many items to return at one time (max 100)",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "A paged array of pets",
+              "headers": {
+                "x-next": {
+                  "description": "A link to the next page of responses",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              },
+              "content": {}
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/test-stream": {
+        "get": {
+          "summary": "Stream pets",
+          "operationId": "operationStream",
+          "tags": [
+            "pets"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "How many items to return at one time (max 100)",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "An stream of pets",
+              "content": {
+                "application/octet-stream": {}
+              }
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Pet": {
+          "required": [
+            "id",
+            "name"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "name": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            }
+          }
+        },
+        "Pets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Pet"
+          }
+        },
+        "Error": {
+          "required": [
+            "code",
+            "message"
+          ],
+          "properties": {
+            "code": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "message": {
+              "type": "string"
+            },
+            "errors": {
+              "type": "array",
+              "nullable": true,
+              "items": {
+                "$ref": "#/components/schemas/ErrorDetail"
+              },
+              "description": "Details about the error. Usually, it's used on form errors."
+            }
+          }
+        },
+        "ErrorDetail": {
+          "required": [
+            "location",
+            "message"
+          ],
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": " The location of the error. for example, It can be the dynamicParameter.key when a validation error occurred.",
+              "example": "startDate"
+            },
+            "message": {
+              "type": "string",
+              "description": "A localized end-user friendly message which should be displayed to a user directly.",
+              "example": "The start date is mandatory."
+            }
+          }
+        }
+      }
+    }
+  }
+]

@@ -36,8 +36,11 @@ function buildOpenAPIPaths(apiDefinition: Document, operations: Operations) {
 
 async function explorerPlugin(
   fastify: FastifyInstance,
-  opts: { apiDefinitions: Document[]; operations: Operations },
-  oasOptions: FastifyOASOptions
+  opts: {
+    apiDefinitions: Document[];
+    operations: Operations;
+    oasOptions?: FastifyOASOptions;
+  }
 ) {
   opts.apiDefinitions.forEach(apiDefinition => {
     const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
@@ -58,7 +61,7 @@ async function explorerPlugin(
       swagger,
       openapi: openapiVersion,
       exposeRoute: true,
-      ...oasOptions
+      ...(opts.oasOptions || {})
     });
   });
 }

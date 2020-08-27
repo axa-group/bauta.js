@@ -112,3 +112,17 @@ For example, let's assume that we have the following responses definition:
 
 - if instead you force a 201 http status code when piping a response stream file, the default definition will be used, and thus you may an error because the validation will expect a json.
 
+## Custom format validation
+
+If the default format validation is not enough, you can extend it by passing to the `bautajsoptions.customFormatsValidation` an array of objects with the following format:
+
+- a name, which is the format string that will be checked against the swagger format value. (ex.: `"ISO 3166-1 alpha-2"`)
+- a type, optional, that corresponds to an integer or string.
+- a validator: either a string that corresponds to a regular expression or a function. If it is a function it must accept one value and then return a boolean indicating whether the given value passes or not the validation.
+
+There is a way to put custom format validations. This is passed to bautajsoptions in customFormatsValidation, which is an array of objects. Each object must have:
+
+- a name, which is the format string that will be checked against the swagger format value.
+- a type, optional, that corresponds to integer or string.
+- a validator: which must be an string corresponding to a regular expression or to a function. If it is a function it must accept one value and then return a boolean indicating whether the given value passes or not the validation
+
