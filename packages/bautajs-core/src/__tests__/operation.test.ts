@@ -295,6 +295,29 @@ describe('operation class tests', () => {
 
       expect(await operationTest.run(ctx)).toStrictEqual(expected);
     });
+
+    test('should allow pipelines change the status code and validate it', async () => {
+      const expected = 'this will be showed';
+      const pp = pipelineBuilder(p =>
+        p.pipe(
+          (_, ctx) => {
+            ctx.res.status(777);
+          },
+          () => expected
+        )
+      );
+
+      operationTest.setup(p => p.pipe(pp));
+
+      const req = httpMocks.createRequest({ headers: { 'content-type': 'application/json' } });
+      const res = httpMocks.createResponse();
+
+      const ctx = { req, res };
+      const result = await operationTest.run(ctx);
+
+      expect(result).toStrictEqual(expected);
+      expect(ctx.res.statusCode).toStrictEqual(777); // value changed by the pipeline, not defined by swagger (200)
+    });
   });
 
   describe('operation.run tests', () => {
