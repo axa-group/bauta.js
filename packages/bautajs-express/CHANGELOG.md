@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.3.0...v3.4.0) (2020-09-16)
+
+
+### Bug Fixes
+
+* do not expose in explorer non setup endpoints ([#198](https://github.axa.com/Digital/bauta-nodejs/issues/198)) ([56ffc64](https://github.axa.com/Digital/bauta-nodejs/commit/56ffc64758c6b12654dc64e1aeff72f0b986066f))
+
+
+### Features
+
+* **bautajs-core, bautajs-express, bautajs-fastify:** added customFormat ([bdffec1](https://github.axa.com/Digital/bauta-nodejs/commit/bdffec1d3ae728231e88bffe5dfa038264a0f3c4)), closes [#165](https://github.axa.com/Digital/bauta-nodejs/issues/165)
+
+
+
+
+
 # [3.3.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.2.1...v3.3.0) (2020-07-22)
 
 **Note:** Version bump only for package @bautajs/express
