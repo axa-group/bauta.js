@@ -31,8 +31,7 @@ import {
   Operation,
   Logger,
   ValidationError,
-  LocationError,
-  BautaJSInstance
+  LocationError
 } from '@bautajs/core';
 import { FastifyOASOptions } from 'fastify-oas';
 import sensible from 'fastify-sensible';

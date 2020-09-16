@@ -30,7 +30,7 @@ function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operatio
 
   Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
     const operation = operations[apiDefinition.info.version][key];
-    if (operation.route) {
+    if (operation.route && operation.isSetup()) {
       if (!paths[operation.route.path]) {
         paths[operation.route?.path] = {};
       }
