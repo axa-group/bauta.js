@@ -2,6 +2,12 @@ import fastJson from 'fast-safe-stringify';
 
 import { JSONSchema } from '../types';
 
+const bodySchema = Symbol('body-schema');
+const querystringSchema = Symbol('querystring-schema');
+const paramsSchema = Symbol('params-schema');
+const responseSchema = Symbol('response-schema');
+const headersSchema = Symbol('headers-schema');
+
 // We need to clean the ID's before compile the schema with ajv, otherwise ajv will throw an error because i$d is not
 // a valid key for the schema.
 function cleanId(schema: JSONSchema) {
@@ -31,4 +37,13 @@ function getDefaultStatusCode(responses: any = {}) {
   return responses.default ? 'default' : 200;
 }
 
-export { cleanId, removeCircularReferences, getDefaultStatusCode };
+export {
+  cleanId,
+  removeCircularReferences,
+  getDefaultStatusCode,
+  bodySchema,
+  querystringSchema,
+  paramsSchema,
+  responseSchema,
+  headersSchema
+};

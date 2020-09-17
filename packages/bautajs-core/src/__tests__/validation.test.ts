@@ -18,6 +18,7 @@ import circularSchema from './fixtures/circular-schema.json';
 import formatSchema from './fixtures/schema-with-format.json';
 import nullableSchema from './fixtures/nullable-schema.json';
 import customFormatSchema from './fixtures/schema-with-custom-format.json';
+import schemaTwoOperations from './fixtures/schema-two-operations.json';
 
 describe('validation tests', () => {
   test('should allow the validation of circular schemas', async () => {
@@ -206,6 +207,41 @@ describe('validation tests', () => {
         ]
       })
     );
+  });
+
+  test('should validate the schema of the correct operation', async () => {
+    const config = {
+      endpoint: 'http://google.es'
+    };
+    const expected = [
+      {
+        id: 123,
+        name: 'pet'
+      }
+    ];
+    const bautaJS = new BautaJS(schemaTwoOperations as Document[], {
+      resolvers: [
+        resolver(operations => {
+          operations.v1.operation1.validateResponse(true).setup(p =>
+            p.pipe(() => {
+              return expected;
+            })
+          );
+          operations.v1.operation2.validateResponse(true).setup(p =>
+            p.pipe(() => {
+              return expected;
+            })
+          );
+        })
+      ],
+      staticConfig: config
+    });
+    await bautaJS.bootstrap();
+
+    // Should not return an error since operation2 has no parameters
+    expect(
+      await bautaJS.operations.v1.operation2.run({ req: { query: {} }, res: {} })
+    ).toStrictEqual(expected);
   });
 });
 

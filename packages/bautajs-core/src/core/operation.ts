@@ -23,7 +23,8 @@ import {
   OperatorFunction,
   PipelineSetup,
   Route,
-  TResponse
+  TResponse,
+  OperationValidators
 } from '../types';
 import { buildDefaultPipeline } from '../utils/default-pipeline';
 import { getDefaultStatusCode } from '../open-api/validator-utils';
@@ -53,6 +54,8 @@ export class OperationBuilder implements Operation {
   private operatorFunction: OperatorFunction<undefined, any>;
 
   private setupDone: boolean = false;
+
+  private validator?: OperationValidators;
 
   constructor(
     public readonly id: string,
@@ -111,7 +114,7 @@ export class OperationBuilder implements Operation {
     this.route = route;
     // Generate validators on setup operations only
     if (this.setupDone === true) {
-      this.bautajs.validator.generate(route.schema);
+      this.validator = this.bautajs.validator.generate(route.schema);
     }
   }
 
@@ -151,7 +154,7 @@ export class OperationBuilder implements Operation {
     }
 
     const isValidationFunctionSet =
-      this.responseValidationEnabled === true && !!context.validateResponse;
+      this.responseValidationEnabled === true && !!context.validateResponseSchema;
 
     const isResponseFinished = context.res.headersSent || context.res.finished;
 
@@ -163,14 +166,18 @@ export class OperationBuilder implements Operation {
 
     if (this.requestValidationEnabled) {
       Object.assign(context, {
-        validateRequest: (request: any = ctx.req) => this.bautajs.validator.validateRequest(request)
+        validateRequest: (request: any = ctx.req) =>
+          this.validator && this.validator.validateRequest(request)
       });
     }
 
     if (this.responseValidationEnabled) {
       Object.assign(context, {
+        // Deprecated
         validateResponse: (response: any, statusCode?: number | string) =>
-          this.bautajs.validator.validateResponse(response, statusCode)
+          this.validator && this.validator.validateResponseSchema(response, statusCode),
+        validateResponseSchema: (response: any, statusCode?: number | string) =>
+          this.validator && this.validator.validateResponseSchema(response, statusCode)
       });
     }
 
@@ -200,7 +207,7 @@ export class OperationBuilder implements Operation {
           const statusCode = OperationBuilder.getStatusCode(context.res);
 
           if (this.mustValidate(context, statusCode)) {
-            context.validateResponse(finalResult, statusCode);
+            context.validateResponseSchema(finalResult, statusCode);
           }
 
           return finalResult;

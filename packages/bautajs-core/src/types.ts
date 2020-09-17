@@ -69,23 +69,12 @@ export interface Validator<TypeValidateFunction> {
    *
    * @memberof Validator
    */
-  generate: (
-    operationSchema: RouteSchema
-  ) => Dictionary<Dictionary<TypeValidateFunction> | TypeValidateFunction>;
+  generate: (operationSchema: RouteSchema) => OperationValidators;
+}
 
-  /**
-   * Validates the request according to the instance validators generated in generate method
-   *
-   * @memberof Validator
-   */
-  validateRequest: (request: any) => void;
-
-  /**
-   * Validates the response according to the instance validators generated in generate method
-   *
-   * @memberof Validator
-   */
-  validateResponse: (response: any, statusCode?: number | string) => void;
+export interface OperationValidators {
+  validateRequest(request: any): void;
+  validateResponseSchema(response: any, statusCode?: number | string): void;
 }
 
 export type Generic = Omit<OpenAPI.Document, 'paths'> & { basePath?: string };
