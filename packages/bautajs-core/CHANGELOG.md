@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](http://github.axa.com/Digital/bauta-nodejs/compare/v3.4.0...v3.4.1) (2020-09-17)
+
+
+### Bug Fixes
+
+* every operation have to has his own validator ([#199](http://github.axa.com/Digital/bauta-nodejs/issues/199)) ([52b5591](http://github.axa.com/Digital/bauta-nodejs/commit/52b559185d919b4c48cc8435e0156b948a7a14c6))
+
+
+
+
+
 # [3.4.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.3.0...v3.4.0) (2020-09-16)
 
 
