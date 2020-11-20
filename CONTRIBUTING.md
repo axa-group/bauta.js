@@ -30,3 +30,9 @@ Generally we like to see pull requests that
 - To run the linter use, use `npm run lint`.
 - To clean the packages node_modules, use `npm run clean`.
 - To bootstrap the packages node_modules, use `npm run bootstrap`.
+
+## Usage with VSCode remote containers
+
+- Install docker
+- Install VSCode
+- Open the bautajs cloned folder in VSCode as a remote container
