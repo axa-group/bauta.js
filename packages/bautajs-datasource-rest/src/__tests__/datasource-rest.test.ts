@@ -15,7 +15,7 @@
  */
 import nock from 'nock';
 import { createContext, BautaJS, defaultLogger } from '@bautajs/core';
-import { CancelableRequest, ResponseStream } from 'got';
+import { CancelableRequest } from 'got';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
 describe('provider rest', () => {
@@ -191,7 +191,7 @@ describe('provider rest', () => {
 
       myContext.token.cancel();
       await request1;
-      expect((request1 as ResponseStream<any>).destroyed).toStrictEqual(true);
+      expect((request1 as any).destroyed).toStrictEqual(true);
     });
   });
 
@@ -227,7 +227,8 @@ describe('provider rest', () => {
         {
           requestData: {
             body: '{"test":"1234"}',
-            headers: '{"user-agent":"got (https://github.com/sindresorhus/got)","x-request-id":1}',
+            headers:
+              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","content-type":"application/json","content-length":"15","accept-encoding":"gzip, deflate, br","x-request-id":1}',
             method: 'POST',
             url: 'https://pets.com/v1/policies'
           }
@@ -318,7 +319,7 @@ describe('provider rest', () => {
           requestData: {
             body: 'someString',
             headers:
-              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","x-request-id":1}',
+              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","content-length":"10","accept-encoding":"gzip, deflate, br","x-request-id":1}',
             method: 'POST',
             url: 'https://pets.com/v1/policies'
           }

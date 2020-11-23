@@ -8,7 +8,8 @@
     "dist/**/*"
   ],
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "example": "npx ts-node ./example/simple.ts"
   },
   "repository": {
     "type": "git",
@@ -43,7 +44,7 @@
   "license": "see LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "3.4.1",
-    "got": "^10.7.0",
+    "got": "^11.8.0",
     "native-proxy-agent": "^2.5.0"
   }
 }

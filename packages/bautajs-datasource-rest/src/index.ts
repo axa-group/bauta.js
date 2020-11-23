@@ -18,12 +18,8 @@ import got, {
   NormalizedOptions,
   Response,
   Got,
-  CancelableRequest,
-  ResponseStream,
-  GeneralError,
-  ParseError,
-  GotError,
-  GotReturn
+  RequestError,
+  CancelableRequest
 } from 'got';
 import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
 import {
@@ -47,11 +43,11 @@ export type ProviderOperation<TOut> = (
   value: any,
   ctx: Context,
   bautajs: BautaJSInstance
-) => TOut;
-export type Provider<TOut> = <TIn>(options: ExtendOptions) => OperatorFunction<TIn, TOut>;
+) => TOut | Promise<TOut>;
+export type Provider<TOut> = <TIn>(options?: ExtendOptions) => OperatorFunction<TIn, TOut>;
 export interface RestProvider {
-  <TOut>(fn: ProviderOperation<GotReturn<TOut>>): Provider<TOut | ResponseStream<TOut>>;
-  extend: (options: ExtendOptions) => RestProvider;
+  <TOut>(fn: ProviderOperation<TOut>): Provider<TOut>;
+  extend: (options?: ExtendOptions) => RestProvider;
 }
 
 const httpAgent = createHttpAgent();
@@ -83,39 +79,40 @@ function logRequestHook(logger: Logger, bautaOptions: BautaJSOptions) {
   };
 }
 function logErrorsHook(logger: Logger, bautaOptions: BautaJSOptions) {
-  return (error: GeneralError) => {
-    const parseError = error as ParseError;
-    const genericError = error as GotError;
-    if (parseError.response && parseError.response.body) {
+  return (error: RequestError) => {
+    if (error.response && error.response.body) {
+      // RequestError
       logger.error(
         {
-          providerUrl: `[${parseError.options.method}] ${parseError.options.url}`,
+          providerUrl: `[${error.options.method}] ${error.options.url}`,
           error: {
-            statusCode: parseError.response.statusCode,
+            statusCode: error.response.statusCode,
             body: utils.prepareToLog(
-              parseError.response.body,
+              error.response.body,
               bautaOptions.truncateLogSize,
               bautaOptions.disableTruncateLog
             ),
-            name: parseError.name,
-            message: parseError.message
+            name: error.name,
+            message: error.message
           }
         },
-        `response-logger: Error for [${parseError.options.method}] ${parseError.options.url}`
+        `response-logger: Error for [${error.options.method}] ${error.options.url}`
       );
-    } else if (genericError.options) {
+    } else if (error.options) {
+      // GenericError
       logger.error(
         {
-          providerUrl: `[${genericError.options.method}] ${genericError.options.url}`,
+          providerUrl: `[${error.options.method}] ${error.options.url}`,
           error: {
-            name: genericError.name,
-            code: genericError.code,
-            message: genericError.message
+            name: error.name,
+            code: error.code,
+            message: error.message
           }
         },
-        `response-logger: Error for [${genericError.options.method}] ${genericError.options.url}`
+        `response-logger: Error for [${error.options.method}] ${error.options.url}`
       );
     } else {
+      // Unexpected Error
       logger.error(
         {
           error: {
@@ -164,7 +161,7 @@ function logResponseHook(logger: Logger, bautaOptions: BautaJSOptions) {
   };
 }
 
-function addErrorStatusCode(error: GeneralError) {
+function addErrorStatusCode(error: RequestError) {
   if (error instanceof HTTPError) {
     Object.assign(error, {
       statusCode: error.response.statusCode,
@@ -188,7 +185,7 @@ function addRequestId(ctx: Context) {
   };
 }
 
-function operatorFn<TOut>(client: Got, fn: ProviderOperation<GotReturn<TOut>>) {
+function operatorFn<TOut>(client: Got, fn: ProviderOperation<TOut>) {
   return <TIn>(value: TIn, ctx: Context, bautajs: BautaJSInstance) => {
     const promiseOrStream = fn(
       client.extend({
@@ -204,17 +201,18 @@ function operatorFn<TOut>(client: Got, fn: ProviderOperation<GotReturn<TOut>>) {
     );
     ctx.token.onCancel(() => {
       ctx.logger.error(`Request was canceled`);
-      if (typeof (promiseOrStream as CancelableRequest<TOut>).cancel === 'function') {
-        (promiseOrStream as CancelableRequest<TOut>).cancel();
-      } else if (typeof (promiseOrStream as ResponseStream<TOut>).destroy === 'function') {
-        (promiseOrStream as ResponseStream<TOut>).destroy();
+      if (typeof (promiseOrStream as any).cancel === 'function') {
+        (promiseOrStream as CancelableRequest).cancel();
+      } else if (typeof ((promiseOrStream as unknown) as Response).destroy === 'function') {
+        // Cast as Response since is not posible to now the type of TOut without creating the fn function
+        ((promiseOrStream as unknown) as Response).destroy();
       }
     });
     return promiseOrStream;
   };
 }
 
-function create(globalGotOptions: ExtendOptions) {
+function create(globalGotOptions?: ExtendOptions) {
   const defaultClient = got.extend({
     agent: {
       http: httpAgent,
@@ -225,7 +223,7 @@ function create(globalGotOptions: ExtendOptions) {
     ...globalGotOptions
   });
 
-  const restProvider: RestProvider = <TOut>(fn: ProviderOperation<GotReturn<TOut>>) => {
+  const restProvider: RestProvider = <TOut>(fn: ProviderOperation<TOut>) => {
     return (options?: ExtendOptions) => {
       const client =
         options && Object.keys(options).length > 0 ? defaultClient.extend(options) : defaultClient;

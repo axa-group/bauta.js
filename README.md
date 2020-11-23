@@ -1,6 +1,6 @@
 # Bauta Node JS
 
-## Migrate from 2.x.x to 3.x.x
+## Migrate from 3.x.x to 4.x.x
 
 See [migration guide](./docs/migration-guide.md) or [changelog](./CHANGELOG.md)
 

@@ -15,7 +15,7 @@ It allows to do requests to third party APIs using [got](https://github.com/sind
 - Logs on response and requests via the `bautajs` context logger.
 - Proxy Agent with no_proxy and http_proxy env variables support [native-proxy-agent](https://github.axa.com/Digital/native-proxy-agent).
 - Add `x-request-id` on every request done coming from the `bautajs` context.id.
-- Request (promise and stream) cancellation perfectly integrated with `@bautajs/express` client cancellation events. 
+- Request (promise and stream) cancellation perfectly integrated with `@bautajs/*` client cancellation events. 
 
 ## Usage
 
