@@ -164,7 +164,7 @@ function logResponseHook(logger: Logger, bautaOptions: BautaJSOptions) {
   };
 }
 
-function addErrorStatusCode(error: GeneralError) {
+function addErrorStatusCodeHook(error: GeneralError) {
   if (error instanceof HTTPError) {
     Object.assign(error, {
       statusCode: error.response.statusCode,
@@ -175,15 +175,15 @@ function addErrorStatusCode(error: GeneralError) {
   return error;
 }
 
-function addRequestId(ctx: Context) {
+function addRequestIdHook(id: string) {
   return (options: NormalizedOptions) => {
     if (!options.headers) {
       // eslint-disable-next-line no-param-reassign
       options.headers = {};
     }
-    if (ctx.id) {
+    if (id) {
       // eslint-disable-next-line no-param-reassign
-      options.headers['x-request-id'] = ctx.id;
+      options.headers['x-request-id'] = id;
     }
   };
 }
@@ -193,9 +193,9 @@ function operatorFn<TOut>(client: Got, fn: ProviderOperation<GotReturn<TOut>>) {
     const promiseOrStream = fn(
       client.extend({
         hooks: {
-          beforeRequest: [addRequestId(ctx), logRequestHook(ctx.logger, bautajs.options)],
+          beforeRequest: [addRequestIdHook(ctx.id), logRequestHook(ctx.logger, bautajs.options)],
           afterResponse: [logResponseHook(ctx.logger, bautajs.options)],
-          beforeError: [logErrorsHook(ctx.logger, bautajs.options), addErrorStatusCode]
+          beforeError: [logErrorsHook(ctx.logger, bautajs.options), addErrorStatusCodeHook]
         }
       }),
       value,
@@ -238,5 +238,15 @@ function create(globalGotOptions: ExtendOptions) {
   return restProvider;
 }
 
-export const restProvider = create({});
+const restProvider = create({});
 export default restProvider;
+export {
+  restProvider,
+  logRequestHook,
+  httpAgent,
+  httpsAgent,
+  logResponseHook,
+  addRequestIdHook,
+  logErrorsHook,
+  addErrorStatusCodeHook
+};
