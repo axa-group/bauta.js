@@ -175,7 +175,7 @@ function addErrorStatusCodeHook(error: GeneralError) {
   return error;
 }
 
-function addRequestIdHook(id: string) {
+function addRequestIdHook(id?: string) {
   return (options: NormalizedOptions) => {
     if (!options.headers) {
       // eslint-disable-next-line no-param-reassign
