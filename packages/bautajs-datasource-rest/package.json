@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/datasource-rest",
-  "version": "3.4.1",
+  "version": "3.5.0",
   "description": "A bautaJS cache decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

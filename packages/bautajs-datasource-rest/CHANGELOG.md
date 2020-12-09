@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.4.1...v3.5.0) (2020-12-09)
+
+
+### Bug Fixes
+
+* **@bautajs/datasource-rest:** fix typescript typo ([3bbedf9](https://github.axa.com/Digital/bauta-nodejs/commit/3bbedf9172b6830f06cb23b27aacf33d37312148))
+
+
+### Features
+
+* **@bautajs/datasource-rest:** expose all datasource assets ([#208](https://github.axa.com/Digital/bauta-nodejs/issues/208)) ([a7a51d8](https://github.axa.com/Digital/bauta-nodejs/commit/a7a51d8312562b137d307ce3d5270dd0ec24e96a)), closes [#207](https://github.axa.com/Digital/bauta-nodejs/issues/207)
+
+
+
+
+
 ## [3.4.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.4.0...v3.4.1) (2020-09-17)
 
 **Note:** Version bump only for package @bautajs/datasource-rest
