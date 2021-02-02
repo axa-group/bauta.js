@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.axa.com/Digital/bauta-nodejs#readme",
   "publishConfig": {
-    "registry": "https://axags.jfrog.io/axags/api/npm/lib-amf-release"
+    "registry": "https://default.artifactory.pink.eu-central-1.aws.openpaas.axa-cloud.com/artifactory/api/npm/axa-services-es_go-digital-npm-release"
   },
   "repository": {
     "type": "git",
