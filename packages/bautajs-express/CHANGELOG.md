@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.5.0...v3.6.0) (2021-02-11)
+
+
+### Features
+
+* **@bautajs-express:** allow disable request generator ([65885ef](https://github.axa.com/Digital/bauta-nodejs/commit/65885efc29c4d161edde4334ef8e42a35c15947b))
+
+
+
+
+
 ## [3.4.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.4.0...v3.4.1) (2020-09-17)
 
 **Note:** Version bump only for package @bautajs/express
