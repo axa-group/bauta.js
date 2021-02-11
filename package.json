@@ -56,7 +56,7 @@
     "commitlint": "8.3.5",
     "cz-conventional-changelog": "3.2.0",
     "eslint": "6.8.0",
-    "eslint-config-axa-digital-node-typescript": "2.0.0",
+    "eslint-config-axa-digital-node-typescript": "3.0.3",
     "eslint-config-prettier": "6.11.0",
     "eslint-plugin-import": "2.20.2",
     "eslint-plugin-jest": "23.13.1",
