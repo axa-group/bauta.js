@@ -79,4 +79,5 @@ export interface MiddlewareOptions {
   helmet?: MiddlewareOption<helmet.IHelmetConfiguration>;
   morgan?: MiddlewareOption<MorganOptions>;
   explorer?: MiddlewareOption<ExplorerOptions>;
+  reqGenerator?: MiddlewareOption<null>;
 }

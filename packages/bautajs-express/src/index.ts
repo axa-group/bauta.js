@@ -211,10 +211,13 @@ export class BautaJSExpress extends BautaJS {
       },
       explorer: {
         enabled: true
+      },
+      reqGenerator: {
+        enabled: true
       }
     }
   ) {
-    initReqIdGenerator(this.app, this.logger);
+    initReqIdGenerator(this.app, this.logger, options.reqGenerator);
     initMorgan(this.app, options.morgan);
     initHelmet(this.app, options.helmet);
     initCors(this.app, options.cors);

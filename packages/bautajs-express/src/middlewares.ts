@@ -42,16 +42,18 @@ function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operatio
   return paths;
 }
 
-export function initReqIdGenerator(app: Application, logger: Logger) {
-  app.use((req: any, _, next) => {
-    const { headers } = req;
-    req.id = genReqId(headers);
-    req.log = logger.child({
-      url: req.url,
-      reqId: req.id
+export function initReqIdGenerator(app: Application, logger: Logger, opt?: MiddlewareOption<null>) {
+  if (!opt || (opt && opt.enabled === true)) {
+    app.use((req: any, _, next) => {
+      const { headers } = req;
+      req.id = genReqId(headers);
+      req.log = logger.child({
+        url: req.url,
+        reqId: req.id
+      });
+      next();
     });
-    next();
-  });
+  }
 }
 
 export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOptions>) {
