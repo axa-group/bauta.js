@@ -48,7 +48,7 @@ export type ProviderOperation<TOut> = (
   ctx: Context,
   bautajs: BautaJSInstance
 ) => TOut;
-export type Provider<TOut> = <TIn>(options: ExtendOptions) => OperatorFunction<TIn, TOut>;
+export type Provider<TOut> = <TIn>(options?: ExtendOptions) => OperatorFunction<TIn, TOut>;
 export interface RestProvider {
   <TOut>(fn: ProviderOperation<GotReturn<TOut>>): Provider<TOut | ResponseStream<TOut>>;
   extend: (options: ExtendOptions) => RestProvider;
