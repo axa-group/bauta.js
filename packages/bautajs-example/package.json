@@ -1,6 +1,6 @@
 {
   "name": "bautajs-example",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "A bautaJS example",
   "main": "./server.js",
   "scripts": {
@@ -37,7 +37,7 @@
   "license": "see LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "3.6.0",
-    "@bautajs/datasource-rest": "3.6.0",
+    "@bautajs/datasource-rest": "3.6.1",
     "@bautajs/decorator-cache": "3.6.0",
     "@bautajs/express": "3.6.0",
     "@hapi/boom": "^9.1.0"

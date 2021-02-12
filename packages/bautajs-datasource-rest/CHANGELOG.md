@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.6.0...v3.6.1) (2021-02-12)
+
+
+### Bug Fixes
+
+* **@batuajs/datasource-rest:** typo ([6ba91c6](https://github.axa.com/Digital/bauta-nodejs/commit/6ba91c635b79c590d5bfe6972bee5e99c300e419))
+
+
+
+
+
 # [3.6.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.5.0...v3.6.0) (2021-02-11)
 
 **Note:** Version bump only for package @bautajs/datasource-rest
