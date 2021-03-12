@@ -193,7 +193,7 @@ describe('bauta core tests', () => {
       try {
         await bautaJS.operations.v1.operation1.run({ req, res });
       } catch (e) {
-        // eslint-disable-next-line jest/no-try-expect
+        // eslint-disable-next-line jest/no-conditional-expect
         expect(e.stack).toStrictEqual(
           `${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`
         );
@@ -380,7 +380,7 @@ describe('bauta core tests', () => {
               p.push(async () => {
                 await new Promise(resolve =>
                   setTimeout(() => {
-                    resolve();
+                    resolve({});
                   }, 5000)
                 );
               })
@@ -404,7 +404,7 @@ describe('bauta core tests', () => {
       expect.assertions(1);
     });
 
-    // eslint-disable-next-line jest/no-test-callback
+    // eslint-disable-next-line jest/no-done-callback
     test('should set the token variable isCanceled to true if the chain is canceled', async done => {
       const config = {
         endpoint: 'http://google.es'
@@ -420,7 +420,7 @@ describe('bauta core tests', () => {
                 });
                 await new Promise(resolve =>
                   setTimeout(() => {
-                    resolve();
+                    resolve({});
                   }, 5000)
                 );
               })
@@ -452,7 +452,7 @@ describe('bauta core tests', () => {
               p.push(async () => {
                 await new Promise(resolve =>
                   setTimeout(() => {
-                    resolve();
+                    resolve({});
                   }, 5000)
                 );
               })
@@ -495,7 +495,7 @@ describe('bauta core tests', () => {
                 .push(async () => {
                   await new Promise(resolve =>
                     setTimeout(() => {
-                      resolve();
+                      resolve({});
                     }, 5000)
                   );
                 })
@@ -533,7 +533,7 @@ describe('bauta core tests', () => {
                 .push(async () => {
                   return new Promise(resolve =>
                     setTimeout(() => {
-                      resolve();
+                      resolve({});
                     }, 1000)
                   );
                 })

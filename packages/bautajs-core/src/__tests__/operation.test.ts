@@ -662,7 +662,7 @@ describe('operation class tests', () => {
       expect(result).toBeNull();
     });
 
-    // eslint-disable-next-line jest/no-test-callback
+    // eslint-disable-next-line jest/no-done-callback
     test('should not validate the response if the response is a stream', done => {
       const {
         input: inputStreamTest,

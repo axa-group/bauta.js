@@ -17,7 +17,7 @@ declare module 'stjs' {
     root: () => T;
   }
 
-  export interface Selection<T> {
+  export interface Selection {
     transformWith<T>(template: T): Root<T>;
     transform<T>(data: object): Root<T>;
     values(): string[];

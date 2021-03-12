@@ -65,7 +65,7 @@ export interface ExplorerOptions {
 
 export interface MorganOptions {
   format: morgan.FormatFn;
-  options?: morgan.Options;
+  options?: morgan.Options<any, any>;
 }
 
 export interface BodyParserOptions {
@@ -79,5 +79,5 @@ export interface MiddlewareOptions {
   helmet?: MiddlewareOption<helmet.IHelmetConfiguration>;
   morgan?: MiddlewareOption<MorganOptions>;
   explorer?: MiddlewareOption<ExplorerOptions>;
-  reqGenerator?: MiddlewareOption<null>
+  reqGenerator?: MiddlewareOption<null>;
 }

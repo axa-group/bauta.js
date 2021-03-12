@@ -1,9 +1,60 @@
 {
-  "extends": ["axa-digital-node-typescript"],
+  "extends": [
+    "airbnb-typescript/base",
+    "plugin:jest/all",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2020,
     "project": "./tsconfig.base.json",
     "sourceType": "module"
+  },
+  "overrides": [
+    {
+      "files": "**/__tests__/*.js",
+      "rules": {
+        "example-internal/no-focused-tests": 2
+      }
+    }
+  ],
+  "plugins": ["import", "prettier", "jest"],
+  "rules": {
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "semi",
+          "requireLast": true
+        }
+      }
+    ],
+    "@typescript-eslint/no-use-before-define": [
+      "error",
+      {
+        "functions": false
+      }
+    ],
+    "comma-dangle": ["error", "never"],
+    "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
+    "jest/consistent-test-it": 0,
+    "jest/no-hooks": 0,
+    "jest/prefer-expect-assertions": 0,
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1
+      }
+    ],
+    "no-useless-constructor": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "printWidth": 100
+      }
+    ]
   }
 }

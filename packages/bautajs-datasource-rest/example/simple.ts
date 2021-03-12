@@ -4,7 +4,7 @@ import { Provider, restProvider } from '../src';
 
 const apiDefinitions = require('./test-api-definitions.json');
 
-interface myServiceResponse {
+interface MyServiceResponse {
   done: String;
 }
 
@@ -12,7 +12,7 @@ nock('http://test.com').get('/someurl').reply(200, {
   done: 'ok'
 });
 
-const myProvider = <Provider<myServiceResponse>>restProvider(client => {
+const myProvider = <Provider<MyServiceResponse>>restProvider(client => {
   return client.get('http://test.com/someurl', {
     resolveBodyOnly: true,
     responseType: 'json'

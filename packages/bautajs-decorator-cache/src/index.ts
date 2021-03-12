@@ -116,7 +116,7 @@ const configureCache = <TIn, TOut>(
  *
  * operations.v1.op1.setup(p => p.push(cache([() => {...}], ([_,ctx] => ctx.data.token))))
  */
-// eslint-disable-next-line import/export
+// eslint-disable-next-line import/export, @typescript-eslint/no-shadow
 export const cache: CacheDecorator = <TIn, TOut>(
   fn: OperatorFunction<TIn, TOut>,
   normalizer: Normalizer<TIn>,
@@ -130,8 +130,8 @@ export const cache: CacheDecorator = <TIn, TOut>(
   }
   const cached = configureCache<TIn, TOut>(fn, normalizer, options, logger);
 
-  return async <TIn, TOut>(value: TIn, ctx: Context, bautajs: BautaJSInstance) =>
-    cached(value, ctx, bautajs) as TOut;
+  return async <TIn2, TOut2>(value: TIn2, ctx: Context, bautajs: BautaJSInstance) =>
+    cached(value, ctx, bautajs) as TOut2;
 };
 
 export default cache;
