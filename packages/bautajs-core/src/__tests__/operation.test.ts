@@ -28,7 +28,7 @@ import { AjvValidator } from '../open-api/ajv-validator';
 
 describe('operation class tests', () => {
   let route: Route;
-  let bautaJS: BautaJSInstance = null;
+  let bautaJS: BautaJSInstance;
 
   beforeEach(async () => {
     bautaJS = {
@@ -340,7 +340,8 @@ describe('operation class tests', () => {
   });
   describe('operation ctx.validateRequest tests', () => {
     let operationTest: Operation;
-    let document;
+    let document: any;
+
     beforeEach(async () => {
       const parser = new Parser(bautaJS.logger);
       document = await parser.asyncParse(testSchemaRareCasesJson as OpenAPIV3Document);
@@ -485,7 +486,7 @@ describe('operation class tests', () => {
     let operationTest: Operation;
     let streamOperationTest: Operation;
     let emptyResponseContentTest: Operation;
-    let document;
+    let document: any;
 
     beforeEach(async () => {
       const parser = new Parser(bautaJS.logger);

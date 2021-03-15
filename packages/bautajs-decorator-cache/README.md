@@ -15,26 +15,31 @@ A cache decorator using [moize](https://github.com/planttheidea/moize) for bauta
 Include it on your pipeline as follows:
 
 ```js
-  const { pipelineBuilder } = require('@bautajs/core');
-  const { cache } = require('@bautajs/decorator-cache');
-  const { someHeavyOperation } = require('./my-helper');
-  
-  const myPipeline = pipelineBuilder(p => 
-                    p.pipe( someHeavyOperation, (result) => ({...result, otherprop:1}))
-  );
-
-  module.exports = resolver((operations)=> {
-      const normalizer = ([value, ctx]) => ctx.id;
-      operations.v1.op1.setup(p => 
-        p.push(
-            cache(
-                myPipeline, 
-                normalizer,
-                { maxAge:3500 }
-            )
-        )
-    );
-  })
+  import { pipelineBuilder, createContext } from '@bautajs/core';
+  import { cache } from '@bautajs/decorator-cache';
+ 
+  function createAKey(prev, ctx, bautajs) {
+   ctx.data.myKey = 'mykey';
+  }
+ 
+  function doSomethingHeavy(prev, ctx, bautajs) {
+   let acc = 0;
+   for(let i=0; i < 1000000000; i++) {
+     acc += i;
+   }
+ 
+   return acc;
+  }
+ 
+  const myPipeline = pipelineBuilder(p => p.pipe(
+   createAKey,
+   doSomethingHeavy
+  ));
+ 
+  const cacheMyPipeline = cache(myPipeline, (prev, ctx) => ctx.data.myKey, { maxSize:3 });
+ 
+  const result = await cacheMyPipeline(null, createContext({req:{}}), {});
+  console.log(result);
 ```
 
 - Cache only accept executable pipeline (pipelineBuilder) as a first parameter
@@ -50,13 +55,13 @@ There are two main use cases in normalize:
 
 ### Normalize with only context fields
 
-It is straigthforward and you can do the following:
+It is straightforward and you can do the following:
 
 ```js
-const normalizer = ([, ctx]) => ctx.whatever_field;
+const normalizer = (_, ctx) => ctx.whatever_field;
 ```
 
-### Normalize uses at least one field from a previuosly generated object
+### Normalize uses at least one field from a previously generated object
 
 This is trickier because you have to take into account that you will not have the result of the pipeline to be passed as the object to be used as the key. For example, this will not work:
 
@@ -71,13 +76,13 @@ This is trickier because you have to take into account that you will not have th
   );
 
   module.exports = resolver((operations)=> {
-      const normalizer = ([value]) => value.iWantToUseAsKeyThis;
+      const normalizer = (value) => value.iWantToUseAsKeyThis;
       operations.v1.op1.setup(p => 
-        p.push(
+        p.pipe(
             cache(
                 myPipeline, 
                 normalizer, // When normalizer is called, result from pipeline is not yet there
-                { maxAge:3500 }
+                { maxSize:5 }
             )
         )
     );
@@ -89,25 +94,26 @@ This will not work because iWantToUseAsKeyThis is the result of the pipeline tha
 To use the object as a key in the cache normalizer, this object needs to be set in the previous pipeline of the cache, like in the following example:
 
 ```js
-        const normalizer = ([prev]) => {
+        const normalizer = (prev) => {
           return prev.iAmTheKey;  // prev may be a primitive
         };
 
         const pp = pipelineBuilder(p =>
           p
-            .push((_, ctx) => {
+            .pipe((_, ctx) => {
               return ctx.req.params.value;
-            })
-            .push(value => ({ a: '123', b: value }))
-            .push(result => ({ ...result, new: 1 }))
+            },
+            value => ({ a: '123', b: value }),
+            result => ({ ...result, new: 1 })
+          )
         );
 
         bautaJS.operations.v1.operation2.setup(p =>
           p
-            .push((_, ctx) => {
+            .pipe((_, ctx) => {
               return { iAmTheKey: ctx.req.params.value };
-            })
-            .push(cache(pp, <any>normalizer))
+            },
+            cache(pp, normalizer, { maxSize: 5 })
         );
 ```
 
@@ -116,25 +122,7 @@ In here you can see that we have an operator function that returns an object wit
 
 ## Options
 
-You can check all the options in the options of [moize](https://github.com/planttheidea/moize#configuration-options)
-
-### Modified defaults
-
-List of values whose default value differs from those in the library:
-
-- maxSize: Library value is 1, @bautajs/decorator-cache has a default value of 25.
-
-## Limitations
-
-There are some options that cannot be used because they are used internally by the cache implementation. Those are:
-
-- matchesKey
-- onCacheHit
-- onCacheAdd
-
-If you need for your requirements to overwrite this values, it is better than you just use your own implementation of cache decorator.
-
-Another obvious limitation is that you cannot cache depending on the result of the operation being cached, but only depending on an input. This is not a big issue because usually you can get away with caching depending on an input value.
+You can check all the options in the options of [quick-lru-cjs](https://github.com/javi11/quick-lru-cjs)
 
 ## Contributing
 

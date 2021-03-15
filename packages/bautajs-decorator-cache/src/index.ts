@@ -12,126 +12,84 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJSInstance, Context, OperatorFunction, Logger, defaultLogger } from '@bautajs/core';
-import moize from 'moize';
 
-const isTraceLogLevel = process.env.LOG_LEVEL?.toUpperCase() === 'TRACE';
+import { BautaJSInstance, Context, OperatorFunction } from '@bautajs/core';
+import QuickLRU, { Options } from 'quick-lru-cjs';
+import nodeObjectHash from 'node-object-hash';
+import { Normalizer, CacheOperatorFunction } from './types';
 
-export type Normalizer<TIn> = (value: [TIn, Context, BautaJSInstance]) => any;
-
+const { hash } = nodeObjectHash({
+  // We don't care about the order of an object properties this could add some overhead over the performance.
+  sort: false,
+  // Set and array will generate same hashes and different symbol will generate different hashes in order to improve performance.
+  coerce: { set: true, symbol: false }
+});
 /**
-@export
- * @template TIn
- * @param {OperatorFunction<TIn, TOut>} fn lalala25
- * @param {Normalizer<TIn>} normalizer
- * @param {memoizee.Options} [options={}]
- * @returns {OperatorFunction<TIn, any>}
- * @example
- */
-export interface CacheDecorator {
-  <TIn, TOut>(
-    fn: OperatorFunction<TIn, TOut>,
-    normalizer: Normalizer<TIn>,
-    options?: moize.Options,
-    logger?: Logger
-  ): OperatorFunction<TIn, TOut>;
-}
-
-const generateMatchingKeyFunction = <TIn>(normalizer: Normalizer<TIn>): any => {
-  return (
-    [object1, context1, bautajs1]: [TIn, Context, BautaJSInstance],
-    [object2, context2, bautajs2]: [TIn, Context, BautaJSInstance]
-  ) => {
-    return normalizer([object1, context1, bautajs1]) === normalizer([object2, context2, bautajs2]);
-  };
-};
-
-const configureCache = <TIn, TOut>(
-  fn: OperatorFunction<TIn, TOut>,
-  normalizer: Normalizer<TIn>,
-  options?: moize.Options,
-  inputLogger?: Logger
-): any => {
-  const logger = inputLogger || defaultLogger('bautajs-decorator-cache');
-  const matchesKey = generateMatchingKeyFunction(normalizer);
-  const getKeysFromCache = (cache: moize.Cache) => {
-    return cache.keys.map(key => normalizer(key as [TIn, Context, BautaJSInstance]));
-  };
-  // Utility function to manage the fact that cache.values is an array of promises that store the value
-  const getValuesFromCache = async (cache: moize.Cache) =>
-    Promise.all(cache.values.map(async value => value));
-
-  const cacheOptions = {
-    maxSize: 25, // defaults to 1, which is small for most use cases
-    ...options,
-    matchesKey,
-    async onCacheAdd(cache: moize.Cache) {
-      logger.debug(
-        `Cache added key ${normalizer(cache.keys[0] as [TIn, Context, BautaJSInstance])} size ${
-          cache.values.length
-        }`
-      );
-      if (isTraceLogLevel) {
-        logger.trace(
-          `Cache added key ${normalizer(
-            cache.keys[0] as [TIn, Context, BautaJSInstance]
-          )} value %o size ${cache.values.length}`,
-          await cache.values[0]
-        );
-      }
-    },
-    async onCacheHit(cache: moize.Cache) {
-      logger.info(`Cache hit in cache with keys ${getKeysFromCache(cache)}`);
-      if (isTraceLogLevel) {
-        logger.trace(
-          `Cache hit in cache with keys ${getKeysFromCache(cache)} values %o`,
-          await getValuesFromCache(cache)
-        );
-      }
-    }
-  };
-
-  logger.debug(
-    `Cache configured with options %o and normalizer ${normalizer.toString()}`,
-    cacheOptions
-  );
-
-  const cache = moize(fn, cacheOptions);
-
-  return cache;
-};
-
-/**
- * Cache the given OperatorFunctions with [memoizee](https://www.npmjs.com/package/memoizee)
+ * Cache the given OperationFunction or pipeline.
+ * If maxAge is provided the module tinyLRU will be used to allow the items to expired.
+ * If only maxSize or non option is provided the module hashlru will be used to improve the speed.
  * @export
  * @template TIn
- * @param {OperatorFunction<TIn, TOut>} fn The operatorFunction whose result will be cached
- * @param {Normalizer<TIn>} normalizer normalizer function whose result is used as key to determine if the value will be cached or not. This function must be synchronous.
- * @param {MicroMemoize.Options} [options={}] options. onCacheAdd,onCacheHit and isMatchingKey options are used internally by bauta cache
- * @param {Logger} logger optional logger to be used to log cache statistics
- * and will be ignored
- * @returns {OperatorFunction<TIn, any>}
+ * @template TOut
+ * @template CacheKey
+ * @param {OperatorFunction<TIn, TOut>} pipeline
+ * @param {Normalizer<TIn, CacheKey>} [normalizer=(prev: TIn) => hash(prev)]
+ * @param {Options} options
+ * @param {Number} [options.maxAge=0] Milliseconds an item will remain in cache; lazy expiration upon next get() of an item. With 0 items never expires.
+ * @param {Number} options.maxSize=500 Max number of items on cache.
+ * @return {CacheOperatorFunction<TIn, TOut>} An operation function that you can plug in on a `bautajs` pipeline.
  * @example
- * const { cache } = require('@batuajs/cache-decorator');
+ * import { pipelineBuilder, createContext } from '@bautajs/core';
+ * import { cache } from '@bautajs/decorator-cache';
  *
- * operations.v1.op1.setup(p => p.push(cache([() => {...}], ([_,ctx] => ctx.data.token))))
+ * function createAKey(prev, ctx, bautajs) {
+ *  ctx.data.myKey = 'mykey';
+ * }
+ *
+ * function doSomethingHeavy(prev, ctx, bautajs) {
+ *  let acc = 0;
+ *  for(let i=0; i < 1000000000; i++) {
+ *    acc += i;
+ *  }
+ *
+ *  return acc;
+ * }
+ *
+ * const myPipeline = pipelineBuilder(p => p.pipe(
+ *  createAKey,
+ *  doSomethingHeavy
+ * ));
+ *
+ * const cacheMyPipeline = cache(myPipeline, (prev, ctx) => ctx.data.myKey, { maxSize:3 });
+ *
+ * const result = await cacheMyPipeline(null, createContext({req:{}}), {});
+ * console.log(result);
  */
-// eslint-disable-next-line import/export, @typescript-eslint/no-shadow
-export const cache: CacheDecorator = <TIn, TOut>(
+export function cache<TIn, TOut, CacheKey extends string>(
   fn: OperatorFunction<TIn, TOut>,
-  normalizer: Normalizer<TIn>,
-  options?: moize.Options,
-  logger?: Logger
-): OperatorFunction<TIn, TOut> => {
-  if (!normalizer) {
-    throw new Error(
-      'normalizer: ([prev, ctx, bautajs])=>{ //return key;} function is a mandatory parameter to calculate the cache key'
-    );
-  }
-  const cached = configureCache<TIn, TOut>(fn, normalizer, options, logger);
+  normalizer: Normalizer<TIn, CacheKey> = (prev: TIn): CacheKey => hash(prev) as CacheKey,
+  options: Options<CacheKey, TOut>
+): CacheOperatorFunction<TIn, TOut, CacheKey> {
+  const store = new QuickLRU<CacheKey, TOut>(options);
 
-  return async <TIn2, TOut2>(value: TIn2, ctx: Context, bautajs: BautaJSInstance) =>
-    cached(value, ctx, bautajs) as TOut2;
-};
+  const operatorFunction: OperatorFunction<TIn, TOut> = async (
+    prev: TIn,
+    ctx: Context,
+    bautajs: BautaJSInstance
+  ): Promise<TOut> => {
+    const key = normalizer(prev, ctx, bautajs);
+    if (store.has(key)) {
+      ctx.logger.debug(`Cache hit in cache with key ${key}.`);
+      return store.get(key) as TOut;
+    }
+    const value = await fn(prev, ctx, bautajs);
+    store.set(key, value);
+    ctx.logger.debug(`Cache added key ${key}.`);
+    return value;
+  };
+
+  return Object.assign(operatorFunction, { store });
+}
 
 export default cache;
+export * from './types';
