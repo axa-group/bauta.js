@@ -35,3 +35,60 @@ const got = require('got');
     }
 })();
 
+### decorator-cache
+
+Cache decorator internal library has been change from [moize]() to [quick-lru-cjs]() in order to improve the performance.
+
+Initialization:
+
+Before: 
+
+```js
+        const normalizer = (prev) => {
+          return prev.iAmTheKey;  // prev may be a primitive
+        };
+
+        const pp = pipelineBuilder(p =>
+          p
+            .pipe((_, ctx) => {
+              return ctx.req.params.value;
+            },
+            value => ({ a: '123', b: value }),
+            result => ({ ...result, new: 1 })
+          )
+        );
+
+        bautaJS.operations.v1.operation2.setup(p =>
+          p
+            .pipe((_, ctx) => {
+              return { iAmTheKey: ctx.req.params.value };
+            },
+            cache(pp, normalizer)
+        );
+```
+
+After, maxSize is a mandatory parameter:
+
+```js
+        const normalizer = (prev) => {
+          return prev.iAmTheKey;  // prev may be a primitive
+        };
+
+        const pp = pipelineBuilder(p =>
+          p
+            .pipe((_, ctx) => {
+              return ctx.req.params.value;
+            },
+            value => ({ a: '123', b: value }),
+            result => ({ ...result, new: 1 })
+          )
+        );
+
+        bautaJS.operations.v1.operation2.setup(p =>
+          p
+            .pipe((_, ctx) => {
+              return { iAmTheKey: ctx.req.params.value };
+            },
+            cache(pp, normalizer, { maxSize: 5 })
+        );
+```
