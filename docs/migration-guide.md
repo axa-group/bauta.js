@@ -35,9 +35,13 @@ const got = require('got');
     }
 })();
 
+### bautajs-fastify
+
+Fastify has been updated to his version V3. Even tough there is no change on this library API you might referrer to to [Fastify V3 migration guide](https://github.com/fastify/fastify/releases/tag/v3.0.0) to see what changes are impacting your current implementation.
+
 ### decorator-cache
 
-Cache decorator internal library has been change from [moize]() to [quick-lru-cjs]() in order to improve the performance.
+Cache decorator internal library has been change from [moize](https://github.com/planttheidea/moize) to [quick-lru-cjs](https://github.com/javi11/quick-lru-cjs) in order to improve the performance.
 
 Initialization:
 

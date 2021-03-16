@@ -13,14 +13,15 @@
  * limitations under the License.
  */
 import fp from 'fastify-plugin';
-import helmet, { FastifyHelmetOptions } from 'fastify-helmet';
+import fastifyHelmet from 'fastify-helmet';
 import {
   FastifyInstance,
   FastifyReply,
   FastifyRequest,
-  HTTPMethod,
+  HTTPMethods,
   ValidationResult
 } from 'fastify';
+import helmet from 'helmet';
 import responseXRequestId from 'fastify-x-request-id';
 import routeOrder from 'route-order';
 import {
@@ -35,13 +36,13 @@ import {
 } from '@bautajs/core';
 import { FastifyOASOptions } from 'fastify-oas';
 import sensible from 'fastify-sensible';
-
 import explorerPlugin from './explorer';
 
 export interface ValidationObject {
   validation: ValidationResult[];
   validationContext: string;
 }
+type FastifyHelmetOptions = Parameters<typeof helmet>[0] & { enableCSPNonces?: boolean };
 
 function formatLocationErrors(validation: ValidationObject): LocationError[] | undefined {
   return Array.isArray(validation.validation)
@@ -170,7 +171,7 @@ export async function bautajsFastify(
   { apiDefinitions, ...opts }: BautaJSFastifyPluginOptions
 ) {
   function addRoute(operation: Operation) {
-    const method: HTTPMethod = (operation.route?.method.toUpperCase() || 'GET') as HTTPMethod;
+    const method: HTTPMethods = (operation.route?.method.toUpperCase() || 'GET') as HTTPMethods;
     const { url = '', basePath = '' } = operation.route || {};
     const requestSchema = operation.requestValidationEnabled
       ? {
@@ -207,9 +208,9 @@ export async function bautajsFastify(
           // Missing logSerializers from types on fastify v3 https://github.com/fastify/fastify/issues/2511
           // @ts-ignore
           logSerializers: {
-            res(res: any) {
+            res(reply: FastifyReply) {
               return {
-                statusCode: res.statusCode,
+                statusCode: reply.statusCode,
                 url: route
               };
             }
@@ -237,13 +238,13 @@ export async function bautajsFastify(
   // Include bautajs instance inside fastify instance
   fastify.decorate('bautajs', bautajs);
 
-  fastify.setSchemaCompiler(schema => bautajs.validator.buildSchemaCompiler(schema));
+  fastify.setValidatorCompiler(({ schema }) => bautajs.validator.buildSchemaCompiler(schema));
 
   // Add x-request-id on the response
   fastify.register(responseXRequestId);
 
   if (!opts.helmet || opts.helmet.enabled) {
-    fastify.register(helmet, opts.helmet?.options);
+    fastify.register(fastifyHelmet, opts.helmet?.options);
   }
 
   if (!opts.explorer || opts.explorer.enabled) {
@@ -272,6 +273,6 @@ export async function bautajsFastify(
 }
 
 export default fp(bautajsFastify, {
-  fastify: '2.x',
+  fastify: '3.x',
   name: 'bautajs'
 });
