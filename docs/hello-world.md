@@ -30,7 +30,7 @@ At this point, if you try to start the server, it will not work because api defi
 
 ## Step 3 Configure api-definitions
 
-The information about api definitions is [Here](./docs/api-definition.md).
+The information about api definitions is [Here](./api-definition.md).
 
 Let's assume that we have the minimal empty with zero functionality api definitions (do not worry, it will grow to some usefulness later on). It could be in a separate file api-definitions.json with the following content:
 
