@@ -1,13 +1,11 @@
-import { RawContext } from '@bautajs/core';
+import { Context, RawContext } from '@bautajs/core';
 import { Response } from 'express';
 import { ExpressRequest } from './types';
 
-export function getRequest(
-  ctx: RawContext<{ req: ExpressRequest; res: Response }>
-): ExpressRequest {
-  return ctx.raw.req;
+export function getRequest(ctx: Context): ExpressRequest {
+  return (ctx as RawContext<{ req: ExpressRequest; res: Response }>).raw.req;
 }
 
-export function getResponse(ctx: RawContext<{ req: ExpressRequest; res: Response }>): Response {
-  return ctx.raw.res;
+export function getResponse(ctx: Context): Response {
+  return (ctx as RawContext<{ req: ExpressRequest; res: Response }>).raw.res;
 }
