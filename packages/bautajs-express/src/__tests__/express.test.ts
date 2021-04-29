@@ -20,6 +20,7 @@ import { Readable } from 'stream';
 import { Response } from 'express';
 import { resolver, asPromise, defaultLogger } from '@bautajs/core';
 import { BautaJSExpress } from '../index';
+import { getRequest, getResponse } from '../operators';
 
 const apiDefinitions = require('./fixtures/test-api-definitions.json');
 const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
@@ -34,13 +35,12 @@ describe('bautaJS express', () => {
       const bautajs = new BautaJSExpress(apiDefinitions, {
         resolvers: [
           operations => {
-            operations.v1.operation1.setup(p =>
-              p.pipe((_, ctx) => {
-                ctx.req.socket.destroy();
+            operations.v1.operation1.setup((_, ctx) => {
+              const req = getRequest(ctx);
+              req.socket.destroy();
 
-                return new Promise(resolve => setTimeout(() => resolve({ result: 'ok' }), 500));
-              })
-            );
+              return new Promise(resolve => setTimeout(() => resolve({ result: 'ok' }), 500));
+            });
           }
         ],
         logger
@@ -119,22 +119,21 @@ describe('bautaJS express', () => {
       const bautajs = new BautaJSExpress(apiDefinitions, {
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(p =>
-              p.push(
-                asPromise((_, ctx, _bautajs, callback) => {
-                  const s = new Readable();
-                  const expressResponse: Response = ctx.res as Response;
-                  s.pipe(expressResponse);
-                  ctx.res.set('Content-disposition', 'attachment; filename="file.pdf');
+            operations.v1.operation1.setup(
+              asPromise((_, ctx, _bautajs, callback) => {
+                const res = getResponse(ctx);
+                const s = new Readable();
+                const expressResponse: Response = res;
+                s.pipe(expressResponse);
+                res.set('Content-disposition', 'attachment; filename="file.pdf');
 
-                  s.push('1');
-                  s.push('2');
-                  s.push('3');
-                  s.push(null);
+                s.push('1');
+                s.push('2');
+                s.push('3');
+                s.push(null);
 
-                  return s.on('end', callback);
-                })
-              )
+                return s.on('end', callback);
+              })
             );
           })
         ]
@@ -154,11 +153,10 @@ describe('bautaJS express', () => {
       const bautajs = new BautaJSExpress(apiDefinitions, {
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(p =>
-              p.push((_, ctx) => {
-                ctx.res.status(204);
-              })
-            );
+            operations.v1.operation1.setup((_, ctx) => {
+              const res = getResponse(ctx);
+              res.status(204);
+            });
           })
         ]
       });
@@ -174,21 +172,16 @@ describe('bautaJS express', () => {
       const bautajs = new BautaJSExpress(apiDefinitions, {
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(p =>
-              p.push(
-                asPromise((_, ctx, _bautajs, callback) => {
-                  const expressResponse: Response = ctx.res as Response;
-                  form.append('part1', 'part 1 data');
-                  form.append('part2', 'part 2 data');
-                  ctx.res.set(
-                    'Content-type',
-                    `multipart/form-data; boundary=${form.getBoundary()}`
-                  );
-                  form.pipe(expressResponse);
+            operations.v1.operation1.setup(
+              asPromise((_, ctx, _bautajs, callback) => {
+                const res = getResponse(ctx);
+                form.append('part1', 'part 1 data');
+                form.append('part2', 'part 2 data');
+                res.set('Content-type', `multipart/form-data; boundary=${form.getBoundary()}`);
+                form.pipe(res);
 
-                  return form.on('end', callback);
-                })
-              )
+                return form.on('end', callback);
+              })
             );
           })
         ]

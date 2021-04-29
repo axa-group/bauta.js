@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 const { resolver } = require('@bautajs/core');
+const { getResponse } = require('../../../../dist/index');
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setup(p =>
-    p.push((_, ctx) => {
-      ctx.res.json({ ok: 'finished early' });
-    })
-  );
+  operations.v1.operation1.setup((_, ctx) => {
+    const res = getResponse(ctx);
+    res.json({ ok: 'finished early' });
+  });
 });

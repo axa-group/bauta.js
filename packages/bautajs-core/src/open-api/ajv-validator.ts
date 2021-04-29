@@ -1,8 +1,6 @@
 import Ajv from 'ajv';
 import AjvOai from 'ajv-oai';
-
 import crypto from 'crypto';
-
 import { Validator, RouteSchema, Dictionary, CustomValidationFormat, JSONSchema } from '../types';
 import {
   cleanId,

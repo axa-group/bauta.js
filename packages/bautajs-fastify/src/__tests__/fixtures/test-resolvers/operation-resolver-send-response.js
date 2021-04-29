@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 const { resolver } = require('@bautajs/core');
+const { getResponse } = require('../../../../dist/index');
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setup(p =>
-    p.pipe((_, ctx) => {
-      ctx.res.send([
-        {
-          id: 134,
-          name: 'pet2'
-        }
-      ]);
-    })
-  );
+  operations.v1.operation1.setup((_, ctx) => {
+    const res = getResponse(ctx);
+    res.send([
+      {
+        id: 134,
+        name: 'pet2'
+      }
+    ]);
+  });
 });

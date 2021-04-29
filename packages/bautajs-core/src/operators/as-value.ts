@@ -12,19 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PipelineBuilder, OperatorFunction } from '../types';
-import { pipelineBuilder } from '../decorators/pipeline';
-import { NotFoundError } from '../core/not-found-error';
+import { Pipeline } from '../types';
 
-export function buildDefaultPipeline(): OperatorFunction<any, any> {
-  return pipelineBuilder(
-    (p: PipelineBuilder<any>) =>
-      p.push(() => {
-        const error = new NotFoundError('Not found');
-        return Promise.reject(error);
-      }),
-    () => {}
-  );
+/**
+ *
+ * Allow to pass directly a value to the resolver
+ * @export
+ * @template TIn
+ * @template TOut
+ * @param {TOut} someValue
+ * @returns {Pipeline.StepFunction<TIn, TOut>}
+ * @example
+ * const { asValue, pipe } = require('@batuajs/core');
+ *
+ * operations.v1.op1.setup(asValue(5))
+ */
+export function asValue<TIn, TOut>(someValue: TOut): Pipeline.StepFunction<TIn, TOut> {
+  return (): TOut => someValue;
 }
 
-export default buildDefaultPipeline;
+export default asValue;

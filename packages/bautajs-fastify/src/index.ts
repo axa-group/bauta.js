@@ -24,16 +24,7 @@ import {
 import helmet from 'helmet';
 import responseXRequestId from 'fastify-x-request-id';
 import routeOrder from 'route-order';
-import {
-  BautaJS,
-  BautaJSOptions,
-  Document,
-  Operations,
-  Operation,
-  Logger,
-  ValidationError,
-  LocationError
-} from '@bautajs/core';
+import * as bautaJS from '@bautajs/core';
 import { FastifyOASOptions } from 'fastify-oas';
 import sensible from 'fastify-sensible';
 import explorerPlugin from './explorer';
@@ -44,7 +35,7 @@ export interface ValidationObject {
 }
 type FastifyHelmetOptions = Parameters<typeof helmet>[0] & { enableCSPNonces?: boolean };
 
-function formatLocationErrors(validation: ValidationObject): LocationError[] | undefined {
+function formatLocationErrors(validation: ValidationObject): bautaJS.LocationError[] | undefined {
   return Array.isArray(validation.validation)
     ? validation.validation.map(error => ({
         path: error.dataPath,
@@ -55,8 +46,9 @@ function formatLocationErrors(validation: ValidationObject): LocationError[] | u
     : undefined;
 }
 
-export interface BautaJSFastifyPluginOptions extends BautaJSOptions {
-  apiDefinitions: Document[];
+export interface BautaJSFastifyPluginOptions
+  extends Omit<bautaJS.BautaJSOptions, 'getRequest' | 'getResponse'> {
+  apiDefinitions: bautaJS.Document[];
   /**
    * Automatically expose the buatajs operations as an endpoint.
    * @default true
@@ -84,7 +76,7 @@ export interface BautaJSFastifyPluginOptions extends BautaJSOptions {
   };
 }
 
-function processOperations(operations: Operations) {
+function processOperations(operations: bautaJS.Operations) {
   const routes: any = {};
   Object.values(operations).forEach(versions => {
     Object.values(versions).forEach(operation => {
@@ -102,13 +94,14 @@ function processOperations(operations: Operations) {
   return routes;
 }
 
-function createHandler(operation: Operation) {
-  return async (request: FastifyRequest, reply: FastifyReply<any>) => {
+function createHandler(operation: bautaJS.Operation) {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
+    let response;
     // Convert the fastify validation error to the bautajs validation error format
     // @ts-ignore
     if (request.validationError) {
       return reply.status(422).send(
-        new ValidationError(
+        new bautaJS.ValidationError(
           'The request was not valid',
           // @ts-ignore
           formatLocationErrors(request.validationError) || [],
@@ -117,19 +110,29 @@ function createHandler(operation: Operation) {
       );
     }
 
-    const op = operation.run({ req: request, res: reply });
-    request.raw.on('abort', () => {
-      op.cancel('Request was aborted by the requester intentionally');
-    });
-    request.raw.on('aborted', () => {
-      op.cancel('Request was aborted by the requester intentionally');
-    });
-    request.raw.on('timeout', () => {
-      op.cancel('Request was aborted by the requester because of a timeout');
-    });
-
     try {
-      const response = await op;
+      const op = operation.run<{ req: FastifyRequest; res: FastifyReply }, any>({
+        req: request,
+        res: reply,
+        id: request.id || request.headers['x-request-id'],
+        url: request.url,
+        log: request.log
+      });
+      if (bautaJS.isPromise(op)) {
+        request.raw.on('abort', () => {
+          op.cancel('Request was aborted by the requester intentionally');
+        });
+        request.raw.on('aborted', () => {
+          op.cancel('Request was aborted by the requester intentionally');
+        });
+        request.raw.on('timeout', () => {
+          op.cancel('Request was aborted by the requester because of a timeout');
+        });
+        response = await op;
+      } else {
+        response = op;
+      }
+
       // In case the response is already sent to the user don't send it again.
       if (reply.sent) {
         return {};
@@ -170,7 +173,7 @@ export async function bautajsFastify(
   fastify: FastifyInstance,
   { apiDefinitions, ...opts }: BautaJSFastifyPluginOptions
 ) {
-  function addRoute(operation: Operation) {
+  function addRoute(operation: bautaJS.Operation) {
     const method: HTTPMethods = (operation.route?.method.toUpperCase() || 'GET') as HTTPMethods;
     const { url = '', basePath = '' } = operation.route || {};
     const requestSchema = operation.requestValidationEnabled
@@ -229,10 +232,19 @@ export async function bautajsFastify(
     );
   }
 
-  const bautajs = new BautaJS(apiDefinitions, {
-    ...opts,
+  const bautajs = new bautaJS.BautaJS(apiDefinitions, {
     // Cast should be done because interface of fastify is wrong https://github.com/fastify/fastify/issues/1715
-    logger: fastify.log as Logger
+    logger: fastify.log as bautaJS.Logger,
+    ...opts,
+    getRequest(raw) {
+      return raw.req;
+    },
+    getResponse(raw) {
+      return {
+        statusCode: raw.res.statusCode,
+        isResponseFinished: raw.res.sent
+      };
+    }
   });
   await bautajs.bootstrap();
   // Include bautajs instance inside fastify instance
@@ -272,6 +284,7 @@ export async function bautajsFastify(
   bautajs.decorate('fastify', fastify);
 }
 
+export * from './operators';
 export default fp(bautajsFastify, {
   fastify: '3.x',
   name: 'bautajs'

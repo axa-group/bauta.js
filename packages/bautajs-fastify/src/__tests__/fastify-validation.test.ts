@@ -80,14 +80,12 @@ describe('bautaJS fastify tests', () => {
       apiDefinitions: apiDefinitionsCustomValidation,
       resolvers: [
         operations => {
-          operations.v1.operation1.setup(p =>
-            p.push(() => [
-              {
-                id: 'patata', // The schema defines id as a number but here we put a string to force an schema validation error
-                name: 'pet2'
-              }
-            ])
-          );
+          operations.v1.operation1.setup(() => [
+            {
+              id: 'patata', // The schema defines id as a number but here we put a string to force an schema validation error
+              name: 'pet2'
+            }
+          ]);
         }
       ]
     });

@@ -12,10 +12,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OperatorFunction, BautaJSInstance, Match, Context } from '../types';
+import { BautaJSInstance, Context, Pipeline } from '../types';
+
+/**
+ * Resolve the given predicate an execute the pipeline for that condition
+ *
+ * @export
+ * @interface Match
+ * @template TIn
+ * @template TOut
+ * @template TRequest
+ * @template TResponse
+ */
+export interface Match<TIn, TOut> {
+  pipeline?: Pipeline.StepFunction<TIn, TOut>;
+  /**
+   * Set a predicate function that have to return true or false. Depending on that resolution the
+   * given pipeline will be executed.
+   *
+   * @param {(prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean} pred
+   * @param {Pipeline.StepFunction<TIn, TOut>} pipeline
+   * @returns {Match<TIn, TOut>}
+   * @memberof Match
+   */
+  on(
+    pred: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
+    pipeline: Pipeline.StepFunction<TIn, TOut>
+  ): Match<TIn, TOut>;
+  /**
+   * Set the pipeline that will be executed by default if any of the given predicates succed.
+   *
+   * @param {Pipeline.StepFunction<TIn, TOut>} pipeline
+   * @memberof Match
+   */
+  otherwise(pipeline: Pipeline.StepFunction<TIn, TOut>): void;
+}
 
 class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
-  public pipeline?: OperatorFunction<TIn, TOut>;
+  public pipeline?: Pipeline.StepFunction<TIn, TOut>;
 
   private matched: boolean = false;
 
@@ -24,8 +58,8 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
   }
 
   on(
-    pred: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
-    pipeline: OperatorFunction<TIn, TOut>
+    pred: Pipeline.StepFunction<TIn, Boolean>,
+    pipeline: Pipeline.StepFunction<TIn, TOut>
   ): Match<TIn, TOut> {
     if (typeof pred !== 'function') {
       throw new Error('Match.on predicate must be a function.');
@@ -43,7 +77,7 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
     return this;
   }
 
-  otherwise(pipeline: OperatorFunction<TIn, TOut>) {
+  otherwise(pipeline: Pipeline.StepFunction<TIn, TOut>) {
     if (typeof pipeline !== 'function') {
       throw new Error('Match.otherwise pipeline must be a built with `pipeline` builder.');
     }
@@ -60,27 +94,24 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
  * @template TIn
  * @template TOut
  * @param {(m: Match<TIn, TOut>) => any} matchFn
- * @returns {OperatorFunction<TIn, TOut>}
+ * @returns {Pipeline.StepFunction<TIn, TOut>}
  * @example
- * const { match, pipeline } = require('@batuajs/core');
+ * const { match, pipe } = require('@batuajs/core');
  *
- * const findCatsPipeline = pipeline(...);
- * const logResultPipeline = pipeline(...);
+ * const findCatsPipeline = pipe(...);
+ * const logResultPipeline = pipe(...);
  *
- * bautajsInstance.operations.v1.findcats.setup(
- *  p =>
- *    p.push(() => 1)
- *    .push(
- *      match(m =>
+ * bautajsInstance.operations.v1.findcats.setup(pipe(
+ *    () => 1,
+ *    match(m =>
  *        m.on((prev) => prev === 1, findCatsPipeline)
  *        .otherwise(logResultPipeline)
- *     )
  *   )
 )
  */
 export function match<TIn, TOut>(
   matchFn: (m: Match<TIn, TOut>) => any
-): OperatorFunction<TIn, TOut> {
+): Pipeline.StepFunction<TIn, TOut> {
   return async (val: TIn, ctx: Context, bautajs: BautaJSInstance): Promise<TOut> => {
     const builder = new MatchBuilder<TIn, TOut>(val, ctx, bautajs);
 

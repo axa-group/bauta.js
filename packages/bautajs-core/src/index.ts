@@ -15,16 +15,17 @@
 import { prepareToLog } from './utils/prepare-to-log';
 
 export * from './bauta';
-export * from './decorators/match';
-export * from './decorators/resolver';
-export * from './decorators/step';
-export * from './decorators/pipeline';
-export * from './decorators/as-promise';
-export * from './decorators/as-value';
-export * from './decorators/parallel';
+export * from './operators/match';
+export * from './operators/resolver';
+export * from './operators/step';
+export * from './operators/pipeline';
+export * from './operators/as-promise';
+export * from './operators/as-value';
+export * from './operators/parallel';
 export * from './utils/create-context';
 export * from './default-logger';
 export * from './utils/request-id-generator';
+export * from './utils/is-promise';
 export * from './core/validation-error';
 export * from './types';
 

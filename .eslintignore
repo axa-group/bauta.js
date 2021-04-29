@@ -13,3 +13,4 @@ target/
 *.swo
 *.swp
 *.tgz
+packages/bautajs-core/benchmark/legacy/*.js

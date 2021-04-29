@@ -12,17 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { resolver } = require('@bautajs/core');
+const { resolver, step } = require('@bautajs/core');
 const { exampleRestProviderYear, exampleRestProvider } = require('./numbers-datasource');
 const { catsRestProviderWithHttps } = require('./cats-datasource');
 
-const transformResponse = response => {
+const transformResponse = step(response => {
   const result = {
     message: response
   };
 
   return result;
-};
+});
 
 module.exports = resolver(operations => {
   operations.v1.randomYear.setup(p => p.pipe(exampleRestProviderYear(), transformResponse));

@@ -15,7 +15,7 @@ A cache decorator using [moize](https://github.com/planttheidea/moize) for bauta
 Include it on your pipeline as follows:
 
 ```js
-  import { pipelineBuilder, createContext } from '@bautajs/core';
+  import { pipe, createContext } from '@bautajs/core';
   import { cache } from '@bautajs/decorator-cache';
  
   function createAKey(prev, ctx, bautajs) {
@@ -31,10 +31,10 @@ Include it on your pipeline as follows:
    return acc;
   }
  
-  const myPipeline = pipelineBuilder(p => p.pipe(
+  const myPipeline = pipe(
    createAKey,
    doSomethingHeavy
-  ));
+  );
  
   const cacheMyPipeline = cache(myPipeline, (prev, ctx) => ctx.data.myKey, { maxSize:3 });
  
@@ -42,7 +42,7 @@ Include it on your pipeline as follows:
   console.log(result);
 ```
 
-- Cache only accept executable pipeline (pipelineBuilder) as a first parameter
+- Cache only accept executable pipeline (pipe) as a first parameter
 - Normalize should use a synchronous function to improve performance and it should be quick (O(1)) to make sure that there are no performance penalties.
 
 ## Normalize
@@ -67,13 +67,11 @@ This is trickier because you have to take into account that you will not have th
 
 
 ```js
-  const { pipelineBuilder } = require('@bautajs/core');
+  const { pipe } = require('@bautajs/core');
   const { cache } = require('@bautajs/decorator-cache');
   const { someHeavyOperation } = require('./my-helper');
   
-  const myPipeline = pipelineBuilder(p => 
-                    p.pipe( someHeavyOperation, (result) => ({...result, iWantToUseAsKeyThis:1}))
-  );
+  const myPipeline = pipe( someHeavyOperation, (result) => ({...result, iWantToUseAsKeyThis:1}))
 
   module.exports = resolver((operations)=> {
       const normalizer = (value) => value.iWantToUseAsKeyThis;
@@ -98,20 +96,17 @@ To use the object as a key in the cache normalizer, this object needs to be set 
           return prev.iAmTheKey;  // prev may be a primitive
         };
 
-        const pp = pipelineBuilder(p =>
-          p
-            .pipe((_, ctx) => {
-              return ctx.req.params.value;
+        const pp = pipe((_, ctx) => {
+              return 'test';
             },
             value => ({ a: '123', b: value }),
             result => ({ ...result, new: 1 })
           )
-        );
 
         bautaJS.operations.v1.operation2.setup(p =>
           p
             .pipe((_, ctx) => {
-              return { iAmTheKey: ctx.req.params.value };
+              return { iAmTheKey: 'test' };
             },
             cache(pp, normalizer, { maxSize: 5 })
         );

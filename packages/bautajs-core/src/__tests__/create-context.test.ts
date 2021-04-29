@@ -12,29 +12,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createContext } from '../utils/create-context';
 import { defaultLogger } from '../default-logger';
+import { createContext } from '../utils/create-context';
 
 describe('create context tests', () => {
-  let logger;
-  beforeAll(() => {
-    logger = defaultLogger('test-logger');
-  });
-  test('should return the request id and logger', () => {
-    const req = { headers: {} };
-    const result = createContext({ req }, logger);
+  test('should generate a request id', () => {
+    const result = createContext({});
     expect(typeof result.id).toStrictEqual('string');
-    expect(typeof result.logger.info).toStrictEqual('function');
   });
 
-  test('should use the request-id header in case that exists as req.id', () => {
+  test('should propagate the request id', () => {
     const req = {
-      headers: {
-        authorization: 'Bearer aaabbbccc',
-        'x-request-id': '1234'
-      }
+      id: '1234'
     };
-    const result = createContext({ req }, logger);
+    const result = createContext({ req, id: req.id });
     expect(result.id).toStrictEqual('1234');
+  });
+
+  test('should generate a logger', () => {
+    const result = createContext({});
+    expect(typeof result.log.info).toStrictEqual('function');
+  });
+
+  test('should use the logger passed by parameter', () => {
+    const logger = defaultLogger('test-logger');
+    logger.levels = { labels: { 1: 'test' }, values: { test: 1 } };
+    const req = {
+      id: '1234'
+    };
+    const result = createContext({ req, id: req.id, log: logger });
+    expect(result.raw.log.levels).toStrictEqual(logger.levels);
+  });
+
+  test('should propagate custom properties', () => {
+    const req = { test: 1 };
+    const result = createContext({ req });
+    expect(result.raw.req.test).toStrictEqual(1);
+  });
+
+  test('should propagate the data object', () => {
+    const data = { test: 1 };
+    const result = createContext({ data });
+    expect(result.data.test).toStrictEqual(1);
   });
 });

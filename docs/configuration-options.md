@@ -1,6 +1,6 @@
 # Bauta options
 
-Bauta has some options that may be set up at instantation of the micro service time. 
+Bauta has some options that may be set up at instantiation of the micro service time. 
 
 
 ##### truncateLogSize

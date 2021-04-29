@@ -23,16 +23,18 @@ Create the datasource
 
 ```js
   // my-datasource.js
+const { getRequest } = require('@bautajs/express');
 const { restProvider } = require('@bautajs/datasource-rest');
 
 module.exports.testProvider = restProvider((client, _, ctx, bautajs) => {
-  const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
+  const req = getRequest(ctx);
+  const acceptLanguage = !req.headers.accept-language? 'my default lang' : req.headers['accept-language'];
 
   return client.get(bautajs.staticConfig.config.url, {
     headers: {
       "Accept-Language": acceptLanguage,
-      "user-agent": ctx.req.headers['user-agent']
-    }s
+      "user-agent": req.headers['user-agent']
+    }
   })
 });
 ```
@@ -53,17 +55,19 @@ module.exports = resolver((operations) => {
 
 ```js
   // my-datasource.js
+const { getRequest } = require('@bautajs/express');
 const { restProvider } = require('@bautajs/datasource-rest');
 
 const myTextProvider = restProvider.extend({ responseType: 'text' });
 
 module.exports.testProvider = myTextProvider((client, _, ctx, bautajs) => {
-  const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
+  const req = getRequest(ctx);
+  const acceptLanguage = !req.headers.accept-language? 'my default lang' : req.headers['accept-language'];
 
   return client.get(bautajs.staticConfig.config.url, {
     headers: {
       "Accept-Language": acceptLanguage,
-      "user-agent": ctx.req.headers['user-agent']
+      "user-agent": req.headers['user-agent']
     }s
   })
 });

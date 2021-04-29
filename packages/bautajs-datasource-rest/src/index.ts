@@ -16,20 +16,13 @@ import got, {
   HTTPError,
   ExtendOptions,
   NormalizedOptions,
-  Response,
   Got,
   RequestError,
-  CancelableRequest
+  CancelableRequest,
+  Response as GOTResponse
 } from 'got';
 import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
-import {
-  Context,
-  BautaJSInstance,
-  utils,
-  Logger,
-  OperatorFunction,
-  BautaJSOptions
-} from '@bautajs/core';
+import { Context, BautaJSInstance, utils, Logger, Pipeline, BautaJSOptions } from '@bautajs/core';
 
 export interface RequestLog {
   url: string | undefined;
@@ -44,7 +37,7 @@ export type ProviderOperation<TOut> = (
   ctx: Context,
   bautajs: BautaJSInstance
 ) => TOut | Promise<TOut>;
-export type Provider<TOut> = <TIn>(options?: ExtendOptions) => OperatorFunction<TIn, TOut>;
+export type Provider<TOut> = <TIn>(options?: ExtendOptions) => Pipeline.StepFunction<TIn, TOut>;
 export interface RestProvider {
   <TOut>(fn: ProviderOperation<TOut>): Provider<TOut>;
   extend: (options?: ExtendOptions) => RestProvider;
@@ -128,7 +121,7 @@ function logErrorsHook(logger: Logger, bautaOptions: BautaJSOptions) {
   };
 }
 function logResponseHook(logger: Logger, bautaOptions: BautaJSOptions) {
-  return (response: Response) => {
+  return (response: GOTResponse) => {
     if (response.isFromCache) {
       logger.info(`response-logger: Response for ${response.requestUrl} is cached.`);
     } else {
@@ -172,7 +165,7 @@ function addErrorStatusCodeHook(error: RequestError) {
   return error;
 }
 
-function addRequestIdHook(id?: string) {
+function addRequestIdHook(id?: string | number) {
   return (options: NormalizedOptions) => {
     if (!options.headers) {
       // eslint-disable-next-line no-param-reassign
@@ -180,7 +173,7 @@ function addRequestIdHook(id?: string) {
     }
     if (id) {
       // eslint-disable-next-line no-param-reassign
-      options.headers['x-request-id'] = id;
+      options.headers['x-request-id'] = `${id}`;
     }
   };
 }
@@ -190,9 +183,9 @@ function operatorFn<TOut>(client: Got, fn: ProviderOperation<TOut>) {
     const promiseOrStream = fn(
       client.extend({
         hooks: {
-          beforeRequest: [addRequestIdHook(ctx.id), logRequestHook(ctx.logger, bautajs.options)],
-          afterResponse: [logResponseHook(ctx.logger, bautajs.options)],
-          beforeError: [logErrorsHook(ctx.logger, bautajs.options), addErrorStatusCodeHook]
+          beforeRequest: [addRequestIdHook(ctx.id), logRequestHook(ctx.log, bautajs.options)],
+          afterResponse: [logResponseHook(ctx.log, bautajs.options)],
+          beforeError: [logErrorsHook(ctx.log, bautajs.options), addErrorStatusCodeHook]
         }
       }),
       value,
@@ -200,12 +193,12 @@ function operatorFn<TOut>(client: Got, fn: ProviderOperation<TOut>) {
       bautajs
     );
     ctx.token.onCancel(() => {
-      ctx.logger.error(`Request was canceled`);
+      ctx.log.error(`Request was canceled`);
       if (typeof (promiseOrStream as any).cancel === 'function') {
         (promiseOrStream as CancelableRequest).cancel();
-      } else if (typeof ((promiseOrStream as unknown) as Response).destroy === 'function') {
+      } else if (typeof (promiseOrStream as any).destroy === 'function') {
         // Cast as Response since is not posible to now the type of TOut without creating the fn function
-        ((promiseOrStream as unknown) as Response).destroy();
+        (promiseOrStream as any).destroy();
       }
     });
     return promiseOrStream;
@@ -223,6 +216,13 @@ function create(globalGotOptions?: ExtendOptions) {
     ...globalGotOptions
   });
 
+  /**
+   * Create a rest provider function.
+   *
+   * @template TOut
+   * @param {ProviderOperation<TOut>} fn
+   * @returns {Provider<TOut>}
+   */
   const restProvider: RestProvider = <TOut>(fn: ProviderOperation<TOut>) => {
     return (options?: ExtendOptions) => {
       const client =
@@ -237,6 +237,7 @@ function create(globalGotOptions?: ExtendOptions) {
 }
 
 const restProvider = create({});
+
 export default restProvider;
 export {
   restProvider,

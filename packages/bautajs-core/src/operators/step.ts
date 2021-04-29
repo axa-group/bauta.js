@@ -12,23 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OperatorFunction } from '../types';
+import { Pipeline } from '../types';
 
-/**
- *
- * Allow to pass directly a value to the resolver
- * @export
- * @template TIn
- * @template TOut
- * @param {TOut} someValue
- * @returns {OperatorFunction<TIn, TOut>}
- * @example
- * const { asValue } = require('@batuajs/core');
- *
- * operations.v1.op1.setup(p => p.push(asValue(5)))
- */
-export function asValue<TIn, TOut>(someValue: TOut): OperatorFunction<TIn, TOut> {
-  return (): TOut => someValue;
+export function step<TIn, TOut>(fn: Pipeline.StepFunction<TIn, TOut>) {
+  return fn;
 }
 
-export default asValue;
+export default step;

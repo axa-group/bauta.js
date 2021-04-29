@@ -13,24 +13,21 @@
  * limitations under the License.
  */
 import { OpenAPI } from 'openapi-types';
-// import Ajv from 'ajv';
 import PCancelable from 'p-cancelable';
 import {
   BautaJSInstance,
   Context,
-  ContextData,
   Operation,
-  OperatorFunction,
-  PipelineSetup,
   Route,
-  TResponse,
-  OperationValidators
+  OperationValidators,
+  Pipeline,
+  Request,
+  RawData
 } from '../types';
-import { buildDefaultPipeline } from '../utils/default-pipeline';
+import { buildDefaultStep } from '../utils/default-step';
 import { getDefaultStatusCode } from '../open-api/validator-utils';
-
 import { createContext } from '../utils/create-context';
-import { pipelineBuilder } from '../decorators/pipeline';
+import { isPromise } from '../utils/is-promise';
 
 export class OperationBuilder implements Operation {
   public static create(id: string, version: string, bautajs: BautaJSInstance): Operation {
@@ -51,18 +48,30 @@ export class OperationBuilder implements Operation {
 
   private private?: boolean;
 
-  private operatorFunction: OperatorFunction<undefined, any>;
+  private operationHandler: Pipeline.StepFunction<any, any>;
 
   private setupDone: boolean = false;
 
   private validator?: OperationValidators;
+
+  private getRequest?: Function;
+
+  private getResponse?: Function;
 
   constructor(
     public readonly id: string,
     public version: string,
     private readonly bautajs: BautaJSInstance
   ) {
-    this.operatorFunction = buildDefaultPipeline();
+    this.operationHandler = buildDefaultStep();
+    this.getRequest =
+      typeof this.bautajs.options.getRequest === 'function'
+        ? this.bautajs.options.getRequest
+        : undefined;
+    this.getResponse =
+      typeof this.bautajs.options.getResponse === 'function'
+        ? this.bautajs.options.getResponse
+        : undefined;
   }
 
   public isSetup() {
@@ -138,15 +147,11 @@ export class OperationBuilder implements Operation {
     return false;
   }
 
-  private static getStatusCode(res: TResponse): number | undefined {
-    return res.statusCode !== null &&
-      res.statusCode !== undefined &&
-      Number.isInteger(res.statusCode)
-      ? res.statusCode
-      : undefined;
-  }
-
-  private mustValidate(context: Context, statusCode?: number): boolean {
+  private shouldValidateResponse(
+    ctx: Context,
+    isResponseFinished: boolean,
+    statusCode?: number
+  ): boolean {
     // If we have a stream, the headers and finished flags are true as soon as the response
     // is piped and thus we cannot use those flags to determine if validation is required
     if (!this.isResponseJson(statusCode)) {
@@ -154,81 +159,91 @@ export class OperationBuilder implements Operation {
     }
 
     const isValidationFunctionSet =
-      this.responseValidationEnabled === true && !!context.validateResponseSchema;
-
-    const isResponseFinished = context.res.headersSent || context.res.finished;
+      this.responseValidationEnabled === true && !!ctx.validateResponseSchema;
 
     return isValidationFunctionSet && !isResponseFinished;
   }
 
-  public run(ctx: ContextData = {}): PCancelable<any> {
-    const context: Context = createContext(ctx, this.bautajs.logger);
+  public run<TRaw, TOut>(raw: RawData<TRaw>): PCancelable<TOut> | TOut {
+    const context: Context = createContext({
+      ...raw,
+      log: raw.log || this.bautajs.logger
+    });
 
     if (this.requestValidationEnabled) {
       Object.assign(context, {
-        validateRequest: (request: any = ctx.req) =>
+        validateRequestSchema: (request: Request) =>
           this.validator && this.validator.validateRequest(request)
       });
     }
 
     if (this.responseValidationEnabled) {
       Object.assign(context, {
-        // Deprecated
-        validateResponse: (response: any, statusCode?: number | string) =>
-          this.validator && this.validator.validateResponseSchema(response, statusCode),
         validateResponseSchema: (response: any, statusCode?: number | string) =>
           this.validator && this.validator.validateResponseSchema(response, statusCode)
       });
     }
-
-    // Validate the request
-    if (context.validateRequest && this.requestValidationEnabled === true) {
-      try {
-        context.validateRequest(ctx.req);
-      } catch (e) {
-        return new PCancelable((_, reject) => {
-          reject(e);
-        });
-      }
+    if (
+      this.getRequest &&
+      context.validateRequestSchema &&
+      this.requestValidationEnabled === true
+    ) {
+      context.validateRequestSchema(this.getRequest(raw));
     }
 
-    return PCancelable.fn((_: any, onCancel: PCancelable.OnCancelFunction) => {
-      onCancel(() => {
-        context.token.isCanceled = true;
-        context.token.cancel();
-      });
-      try {
-        let result = this.operatorFunction(undefined, context, this.bautajs);
-        if (!(result instanceof Promise)) {
-          result = Promise.resolve(result);
-        }
+    const result = this.operationHandler(undefined, context, this.bautajs);
+    // In case that is a promise convert it into a Cancelable promise
+    if (isPromise(result)) {
+      return PCancelable.fn<any, TOut>((_: any, onCancel: PCancelable.OnCancelFunction) => {
+        onCancel(() => {
+          context.token.isCanceled = true;
+          context.token.cancel();
+        });
+        return result.then((finalResult: TOut) => {
+          if (this.getResponse) {
+            const responseStatus = this.getResponse(raw);
 
-        return result.then((finalResult: any) => {
-          const statusCode = OperationBuilder.getStatusCode(context.res);
-
-          if (this.mustValidate(context, statusCode)) {
-            context.validateResponseSchema(finalResult, statusCode);
+            if (
+              this.shouldValidateResponse(
+                context,
+                responseStatus.isResponseFinished,
+                responseStatus.statusCode
+              )
+            ) {
+              context.validateResponseSchema(finalResult, responseStatus.statusCode);
+            }
           }
 
           return finalResult;
         });
-      } catch (e) {
-        return Promise.reject(e);
+      })(null);
+    }
+
+    if (this.getResponse) {
+      const responseStatus = this.getResponse(raw);
+      if (
+        this.shouldValidateResponse(
+          context,
+          responseStatus.isResponseFinished,
+          responseStatus.statusCode
+        )
+      ) {
+        context.validateResponseSchema(result, responseStatus.statusCode);
       }
-    })(null);
+    }
+
+    return result;
   }
 
-  public setup(pipelineSetup: PipelineSetup<undefined>): void {
-    this.operatorFunction = pipelineBuilder<undefined, any>(pipelineSetup, param => {
-      this.bautajs.logger.debug(
-        `[OK] ${param.name || 'anonymous function or pipeline'} pushed to .${this.version}.${
-          this.id
-        }`
-      );
-    });
+  public setup(step: Pipeline.StepFunction<undefined, any>): void {
+    if (typeof step !== 'function') {
+      throw new Error('"step" must be a Pipeline.StepFunction.');
+    }
+
+    this.operationHandler = step;
 
     if (!this.deprecated && this.nextVersionOperation && !this.nextVersionOperation.isSetup()) {
-      this.nextVersionOperation.setup(pipelineSetup);
+      this.nextVersionOperation.setup(step);
     }
 
     this.setupDone = true;

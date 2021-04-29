@@ -15,5 +15,5 @@
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setup(p => p.push(() => Promise.reject(new Error('some error'))));
+  operations.v1.operation1.setup(() => Promise.reject(new Error('some error')));
 });

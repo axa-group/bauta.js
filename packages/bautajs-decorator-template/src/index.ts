@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import stjs from 'stjs';
-import { Context, OperatorFunction } from '@bautajs/core';
+import { Context, Pipeline } from '@bautajs/core';
 
 /**
  * Compile the json {@link https://www.npmjs.com/package/stjs|stjs} template with the given ctx, env, and previous value.
@@ -25,19 +25,19 @@ import { Context, OperatorFunction } from '@bautajs/core';
  * @template TIn
  * @template TOut
  * @param {TOut} currentTemplate
- * @returns {OperatorFunction<TIn, TOut>}
+ * @returns {Pipeline.StepFunction<TIn, TOut>}
  * @example
  * const { template } = require('@batuajs/decorators');
  *
  * const myTemplate = {
- *    "acceptHeader": "{{ctx.req.headers.accept}}",
+ *    "acceptHeader": "{{ctx.data.headers.accept}}",
  *    "id": "{{previousValue.id}}",
  *    "myEnv": "{{env.myEnv}}"
  * }
  *
- * operations.v1.op1.push(template(myTemplate));
+ * operations.v1.op1.setup(template(myTemplate));
  */
-export function template<TIn, TOut>(currentTemplate: TOut): OperatorFunction<TIn, TOut> {
+export function template<TIn, TOut>(currentTemplate: TOut): Pipeline.StepFunction<TIn, TOut> {
   return (value: TIn, ctx: Context): TOut =>
     stjs
       .select({

@@ -12,29 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document, PipelineBuilder } from '../../index';
-import { asPromise } from '../as-promise';
+import { BautaJS, Document } from '../../index';
+import { asValue } from '../as-value';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
-describe('callback decorator', () => {
+describe('as value decorator', () => {
   let bautajs: BautaJS;
   beforeEach(async () => {
     bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
     await bautajs.bootstrap();
   });
 
-  test('should execute as a callaback', async () => {
-    bautajs.operations.v1.operation1.setup((p: PipelineBuilder<any>) => {
-      p.push(
-        asPromise((_: any, ctx: any, _bautajs: any, done: any) =>
-          done(null, [{ id: ctx.req.id, name: 'pet' }])
-        )
-      );
-    });
+  test('should allow send a simple value', async () => {
+    bautajs.operations.v1.operation1.setup(asValue([{ id: 1, name: 'pet' }]));
 
     expect(
-      await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+      bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
     ).toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 });

@@ -31,11 +31,13 @@ This function will give a got client *with* [resolvebodyonly](https://github.com
 This is a setup for a given provider based in the [numbers-datasource.js](../packages/bautajs-example/server/resolvers/v1/source/numbers-datasource.js) example file:
 
 ```js
+const { getRequest } = require('@bautajs/express');
 const { restProvider } = require('@bautajs/datasource-rest');
 
 module.exports.exampleRestProvider = restProvider((client, prv, ctx) => {
-      return client.get(`http://numbersapi.com/${ctx.req.params.number}/math`,{
-        headers: ctx.req.headers
+      const req = getRequest(ctx);
+      return client.get(`http://numbersapi.com/${req.params.number}/math`,{
+        headers: req.headers
       });
     }
 );
@@ -44,12 +46,14 @@ module.exports.exampleRestProvider = restProvider((client, prv, ctx) => {
 You can always override the options with one of the [got options](https://github.com/sindresorhus/got).
 
 ```js
+const { getRequest } = require('@bautajs/express');
 const { restProvider } = require('@bautajs/datasource-rest');
 
 module.exports.exampleRestProviderAsTxt = restProvider((client, prv, ctx) => {
-      return client.get(`http://numbersapi.com/${ctx.req.params.number}/math`,{
+      const req = getRequest(ctx);
+      return client.get(`http://numbersapi.com/${req.params.number}/math`,{
         responseType: 'text',
-        headers: ctx.req.headers
+        headers: req.headers
       });
     }
 );
@@ -72,11 +76,13 @@ Bauta uses a default agent and you only need to pass the certificates to impleme
 ```js
 // my-datasource.js
 
+const { getRequest } = require('@bautajs/express');
 const { restProvider } = require('@bautajs/datasource-rest');
 
 module.exports.someProvider = restProvider((client, prv, ctx, bautajs) =>  {
+        const req = getRequest(ctx);
         return client.get('http://myhost.com', {
-          headers: ctx.req.headers,
+          headers: req.headers,
           cert: bautajs.staticConfig.certs.cert,
           key: bautajs.staticConfig.certs.key
         });
@@ -198,18 +204,20 @@ This case can be useful if you need to maintain the same got client configuratio
 
 ```js
   // my-datasource.js
+const { getRequest } = require('@bautajs/express');
 const { restProvider } = require('@bautajs/datasource-rest');
 
 const myCache = new Map();
 const myTextProvider = restProvider.extend({ cache: myCache });
 
 module.exports.testProvider = myTextProvider((client, _, ctx, bautajs) => {
-  const acceptLanguage = !ctx.req.headers.accept-language? 'my default lang' : ctx.req.headers['accept-language'];
+  const req = getRequest(ctx);
+  const acceptLanguage = !req.headers.accept-language? 'my default lang' : req.headers['accept-language'];
 
   return client.get(bautajs.staticConfig.config.url, {
     headers: {
       "Accept-Language": acceptLanguage,
-      "user-agent": ctx.req.headers['user-agent']
+      "user-agent": req.headers['user-agent']
     }s
   })
 });

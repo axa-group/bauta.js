@@ -12,15 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, OpenAPIV3Document, pipelineBuilder, BautaJSInstance } from '@bautajs/core';
-import { cache, CacheOperatorFunction } from '../index';
+import { BautaJS, OpenAPIV3Document, pipe, BautaJSInstance } from '@bautajs/core';
+import { cache, CacheStepFunction } from '../index';
 import { Normalizer } from '../types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import { sleep } from './utils';
 
 describe('cache decorator usage', () => {
   let bautaJS: BautaJSInstance;
-  let myCachePipeline: CacheOperatorFunction<any, any, any>;
+  let myCachePipeline: CacheStepFunction<any, any, any>;
 
   beforeAll(() => {
     process.env.LOG_LEVEL = 'debug';
@@ -32,76 +32,68 @@ describe('cache decorator usage', () => {
       bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
       await bautaJS.bootstrap();
 
-      const normalizer: Normalizer<any, any> = (_, ctx) => ctx.req.params.value;
+      const normalizer: Normalizer<any, any> = (_, ctx) => ctx.data.value;
 
-      const pp = pipelineBuilder(p =>
-        p.pipe(
-          (_, ctx) => {
-            return ctx.req.params.value;
-          },
-          value => ({ a: '123', b: value }),
-          result => ({ ...result, new: 1 })
-        )
+      const pp = pipe(
+        (_, ctx) => {
+          return ctx.data.value;
+        },
+        value => ({ a: '123', b: value }),
+        result => ({ ...result, new: 1 })
       );
       myCachePipeline = cache(pp, normalizer, { maxSize: 5 });
 
-      bautaJS.operations.v1.operation2.setup(p => p.pipe(myCachePipeline));
+      bautaJS.operations.v1.operation2.setup(myCachePipeline);
     });
 
     afterEach(() => {
       myCachePipeline.store.clear();
     });
 
-    test('should be called with one add cache hit for first value', async () => {
+    test('should be called with one add cache hit for first value', () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
 
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
 
-      expect(myCachePipeline.store.get(144)).toStrictEqual({ a: '123', b: 144, new: 1 });
+      expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    test('should save more than one cache item if the key (req.param) is different', async () => {
+    test('should save more than one cache item if the key (req.param) is different', () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
 
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 200 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '200' }
       });
 
-      expect(myCachePipeline.store.get(144)).toStrictEqual({ a: '123', b: 144, new: 1 });
-      expect(myCachePipeline.store.get(200)).toStrictEqual({ a: '123', b: 200, new: 1 });
+      expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
+      expect(myCachePipeline.store.get('200')).toStrictEqual({ a: '123', b: '200', new: 1 });
       expect(spy).toHaveBeenCalledTimes(2);
     });
 
-    test('user should be able to clear the cache', async () => {
+    test('user should be able to clear the cache', () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
 
       myCachePipeline.store.clear();
 
       expect(myCachePipeline.store.size).toStrictEqual(0);
 
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
 
-      expect(myCachePipeline.store.get(144)).toStrictEqual({ a: '123', b: 144, new: 1 });
+      expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(spy).toHaveBeenCalledTimes(2);
     });
   });
@@ -111,20 +103,18 @@ describe('cache decorator usage', () => {
       bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
       await bautaJS.bootstrap();
 
-      const normalizer: Normalizer<any, any> = (_, ctx) => ctx.req.params.value;
+      const normalizer: Normalizer<any, any> = (_, ctx) => ctx.data.value;
 
-      const pp = pipelineBuilder(p =>
-        p.pipe(
-          (_, ctx) => {
-            return ctx.req.params.value;
-          },
-          value => ({ a: '123', b: value }),
-          result => ({ ...result, new: 1 })
-        )
+      const pp = pipe(
+        (_, ctx) => {
+          return ctx.data.value;
+        },
+        value => ({ a: '123', b: value }),
+        result => ({ ...result, new: 1 })
       );
       myCachePipeline = cache(pp, <any>normalizer, { maxSize: 5, maxAge: 10 });
 
-      bautaJS.operations.v1.operation2.setup(p => p.pipe(myCachePipeline));
+      bautaJS.operations.v1.operation2.setup(myCachePipeline);
     });
 
     afterEach(() => {
@@ -133,17 +123,15 @@ describe('cache decorator usage', () => {
 
     test('as the expiration time is 10 millisecond, the second call should not be cached', async () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
       await sleep(100);
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
 
-      expect(myCachePipeline.store.get(144)).toStrictEqual({ a: '123', b: 144, new: 1 });
+      expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(spy).toHaveBeenCalledTimes(2);
     });
   });
@@ -153,44 +141,39 @@ describe('cache decorator usage', () => {
       bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
       await bautaJS.bootstrap();
 
-      const normalizer: Normalizer<any, any> = (_, ctx) => ctx.req.params.value;
+      const normalizer: Normalizer<any, any> = (_, ctx) => ctx.data.value;
 
-      const pp = pipelineBuilder(p =>
-        p.pipe(
-          (_, ctx) => {
-            return ctx.req.params.value;
-          },
-          value => ({ a: '123', b: value }),
-          result => ({ ...result, new: 1 })
-        )
+      const pp = pipe(
+        (_, ctx) => {
+          return ctx.data.value;
+        },
+        value => ({ a: '123', b: value }),
+        result => ({ ...result, new: 1 })
       );
       myCachePipeline = cache(pp, <any>normalizer, { maxSize: 1 });
 
-      bautaJS.operations.v1.operation2.setup(p => p.pipe(myCachePipeline));
+      bautaJS.operations.v1.operation2.setup(myCachePipeline);
     });
 
     afterEach(() => {
       myCachePipeline.store.clear();
     });
 
-    test('cache max size should be respected', async () => {
+    test('cache max size should be respected', () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
 
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 244 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '244' }
       });
 
-      await bautaJS.operations.v1.operation2.run({
-        req: { params: { value: 144 } },
-        res: {}
+      bautaJS.operations.v1.operation2.run({
+        data: { value: '144' }
       });
 
-      expect(myCachePipeline.store.get(144)).toStrictEqual({ a: '123', b: 144, new: 1 });
+      expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(spy).toHaveBeenCalledTimes(3);
     });
   });

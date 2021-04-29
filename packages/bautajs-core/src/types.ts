@@ -19,13 +19,11 @@ import Ajv from 'ajv';
 
 export type JSONSchema = any;
 
-export type GenericError =
-  | (Error & {
-      [key: string]: any;
-    })
-  | null;
+export interface GenericError extends Error {
+  [key: string]: any;
+}
 
-export interface Response {
+export interface RouteResponse {
   [code: number]: JSONSchema;
   [code: string]: JSONSchema;
 }
@@ -41,7 +39,7 @@ export interface RouteSchema {
   querystring?: JSONSchema;
   params?: JSONSchema;
   headers?: JSONSchema;
-  response?: Response;
+  response?: RouteResponse;
 }
 
 export interface Route {
@@ -55,7 +53,18 @@ export interface Route {
   basePath?: string;
   path: string;
 }
-
+export interface Request {
+  params?: any;
+  body?: any;
+  query?: any;
+  headers?: any;
+}
+export interface Response {
+  [key: string]: any;
+  statusCode?: any;
+  headersSent?: boolean;
+  finished?: boolean;
+}
 export interface Validator<TypeValidateFunction> {
   /**
    * Validates a single schema. Note: mainly exposed as public for fastify.
@@ -73,7 +82,7 @@ export interface Validator<TypeValidateFunction> {
 }
 
 export interface OperationValidators {
-  validateRequest(request: any): void;
+  validateRequest(request: Request): void;
   validateResponseSchema(response: any, statusCode?: number | string): void;
 }
 
@@ -86,12 +95,6 @@ export interface DocumentParsed {
 
 export interface Dictionary<T> {
   [key: string]: T;
-}
-export interface TRequest {
-  [key: string]: any;
-}
-export interface TResponse {
-  [key: string]: any;
 }
 
 // OpenAPI document
@@ -160,7 +163,27 @@ export interface Logger {
 }
 
 // BautaJS
-export interface BautaJSOptions {
+export interface BautaJSOptions<TRaw = any> {
+  /**
+   * Get the request object from the passed data on the Operation.run method.
+   * It's used to get the data for the request validation.
+   *
+   * @template TRaw object send on operation.run method
+   * @param {RawData<TRaw>} data
+   * @return {Request}
+   * @memberof BautaJSOptions
+   */
+  getRequest?(raw: RawData<TRaw>): Request;
+  /**
+   * Get the response object from the passed data on the Operation.run method.
+   * It's used to get the request status and statusCode to determine the response validation.
+   *
+   * @template TRaw object send on operation.run method
+   * @param {RawData<TRaw>} data
+   * @return { isResponseFinished: boolean; statusCode: number }
+   * @memberof BautaJSOptions
+   */
+  getResponse?(raw: RawData<TRaw>): { isResponseFinished: boolean; statusCode: number };
   /**
    *
    * An array of resolvers to include into the bautajs core.
@@ -257,7 +280,7 @@ export interface BautaJSInstance {
    */
   readonly apiDefinitions: Document[];
   /**
-   * An static set of configurations available on each OperatorFunction.
+   * An static set of configurations available on each Pipeline.StepFunction.
    *
    * @type {*}
    * @memberof BautaJSInstance
@@ -301,7 +324,6 @@ export type Resolver = (operations: Operations) => void;
 export type Version = Dictionary<Operation>;
 
 // Operation
-export type ErrorHandler = (err: GenericError, ctx: Context, bautajs: BautaJSInstance) => any;
 export interface Operation extends BasicOperation {
   route?: Route;
   schema?: OpenAPI.Operation;
@@ -324,18 +346,6 @@ export interface Operation extends BasicOperation {
   isSetup(): boolean;
   /**
    * Set request validation to true. This will validate all req.body, req.query and req.params.
-   * @deprecated use validateRequest instead
-   * @memberof Operation
-   */
-  validateRequests(toggle: boolean): Operation;
-  /**
-   * Set the response validation to true. This will validate the operation result againts the operation responses schemas.
-   * @deprecated use validateResponse instead
-   * @memberof Operation
-   */
-  validateResponses(toggle: boolean): Operation;
-  /**
-   * Set request validation to true. This will validate all req.body, req.query and req.params.
    * @memberof Operation
    */
   validateRequest(toggle: boolean): Operation;
@@ -345,20 +355,23 @@ export interface Operation extends BasicOperation {
    */
   validateResponse(toggle: boolean): Operation;
   /**
-   * Setup a new pipeline for the operation.
-   * Each time you setup a pipeline if there is already a pipeline setup it will be overrided.
-   * @param {(pipeline: Pipeline<undefined>) => void} fn
+   * Setup a new handler for the operation.
+   * Each time you setup a new handler if there was already an handler setup, it will be override.
+   * @param {pipelineOrStep: Pipeline.StepFunction<undefined, any>} pipelineOrStep
    * @returns {Operation}
    * @memberof Operation
    */
-  setup(pipelineSetup: PipelineSetup<undefined>): void;
+  setup(step: Pipeline.StepFunction<undefined, any>): void;
   /**
-   * Run the operation pipeline chain with the given context
-   * @param {ContextData} [ctx]
-   * @returns {PCancelable<any>}
+   * Run the operation handler with the given context. It can return a promise or a value, it depends
+   * on the handler you execute.
+   *
+   * @param {RawData} [ctx]
+   * @template TOut
+   * @returns {PCancelable<TOut> | TOut} A cancelable promise or a value
    * @memberof Operation
    */
-  run(ctx?: ContextData): PCancelable<any>;
+  run<TRaw, TOut>(raw?: RawData<TRaw>): TOut | PCancelable<TOut>;
   /**
    * Set the operation as private. This will means that this operation will be
    * removed from the output swagger definition.
@@ -374,31 +387,10 @@ export interface Operation extends BasicOperation {
    */
   isPrivate(): boolean;
 }
-export type ValidationReqBuilder = (req?: TRequest) => null;
+export type ValidationReqBuilder = (req?: Request) => void;
 export type ValidationResBuilder = (res: any, statusCode?: number | string) => null;
 
-export interface ContextData {
-  /**
-   * The request object of the used framework
-   *
-   * @type {TRequest}
-   * @memberof ContextData
-   */
-  req?: TRequest;
-  /**
-   * The response object of the used framework.
-   *
-   * @type {TResponse}
-   * @memberof ContextData
-   */
-  res?: TResponse;
-  /**
-   *  A dictionary to add custom data to pass between OperatorFunctions
-   * @type {Dictionary<any>}
-   * @memberof Context
-   */
-  data?: Dictionary<any>;
-}
+export type RawData<T> = T & { log?: Logger; id?: string; url?: string; data?: Dictionary<any> };
 export interface Context extends Session {
   /**
    * A cancelable token instance of the current pipeline. Use it to check if the pipeline
@@ -409,34 +401,12 @@ export interface Context extends Session {
    */
   token: CancelableToken;
   /**
-   * The request object of the used framework
-   *
-   * @type {TRequest}
-   * @memberof Context
-   */
-  req: TRequest;
-  /**
-   * The response object of the used framework.
-   *
-   * @type {TResponse}
-   * @memberof Context
-   */
-  res: TResponse;
-  /**
    * Validate the given req.body, req.params and req.query with the given OpenAPI request schema for that operation ID.
    *
    * @type {ValidationReqBuilder}
    * @memberof Context
    */
-  validateRequest: ValidationReqBuilder;
-  /**
-   * Validate the given response against the specified OpenAPI response schema for that operation ID.
-   *
-   * @type {ValidationResBuilder}
-   * @memberof Context
-   * @deprecated use validateResponseSchema
-   */
-  validateResponse: ValidationResBuilder;
+  validateRequestSchema: ValidationReqBuilder;
   /**
    * Validate the given object against the specified OpenAPI response schema for current operation and the given status code.
    * If status code is not defined 'default' will be used.
@@ -446,11 +416,18 @@ export interface Context extends Session {
    */
   validateResponseSchema: ValidationResBuilder;
   /**
-   *  A dictionary to add custom data to pass between OperatorFunctions
+   *  A dictionary to add custom data to pass between Pipeline.StepFunctions
    * @type {Dictionary<any>}
    * @memberof Context
    */
   data: Dictionary<any>;
+}
+
+export interface RawContext<TRaw = any> extends Context {
+  /**
+   *  Data passed through the method operation.run(). Normally used for frameworks plugin to add the req and res objects
+   */
+  raw: TRaw;
 }
 
 export interface Session {
@@ -460,191 +437,37 @@ export interface Session {
    * @type {string}
    * @memberof Session
    */
-  id?: string;
+  id?: string | number;
   /**
    * An instance of the logger available to the session
    *
    * @type {Logger}
    * @memberof Session
    */
-  logger: Logger;
+  log: Logger;
   /**
    * The url that is being requested.
    *
    * @type {(string | undefined)}
    * @memberof Session
    */
-  url: string | undefined;
+  url?: string;
 }
 
-// @deprecated "use OperatorFunction instead"
-export type StepFn<TIn, TOut> = (
-  /**
-   * The previous value returned by the previous operator executed.
-   */
-  prev: TIn,
-  /**
-   * The request context.
-   */
-  ctx: Context,
-  /**
-   * The bautajs instance.
-   */
-  bautajs: BautaJSInstance
-) => TOut | Promise<TOut>;
-
-export type OperatorFunction<TIn, TOut> = StepFn<TIn, TOut>;
-
-export interface PipelineBuilder<TIn> {
-  /**
-   * Create a pipeline of OperatorFunction. It allows merge pipelines.
-   *
-   * @param {...OperatorFunction<TIn, TOut>} ...fns
-   * @returns {PipelineBuilder<TOut>}
-   * @memberof PipelineBuilder
-   * @example
-   * const { pipeline } = require('@bautajs/core');
-   *
-   * const pipelineOne = pipeline(p => p.pipe(() => 'result'));
-   * pipeline(p => p.pipe(() => 'some convertion', pipelineOne));
-   */
-  pipe<A>(op1: OperatorFunction<TIn, A>): PipelineBuilder<A>;
-  pipe<A, B>(op1: OperatorFunction<TIn, A>, op2: OperatorFunction<A, B>): PipelineBuilder<B>;
-  pipe<A, B, C>(
-    op1: OperatorFunction<TIn, A>,
-    op2: OperatorFunction<A, B>,
-    op3: OperatorFunction<B, C>
-  ): PipelineBuilder<C>;
-  pipe<A, B, C, D>(
-    op1: OperatorFunction<TIn, A>,
-    op2: OperatorFunction<A, B>,
-    op3: OperatorFunction<B, C>,
-    op4: OperatorFunction<C, D>
-  ): PipelineBuilder<D>;
-  pipe<A, B, C, D, E>(
-    op1: OperatorFunction<TIn, A>,
-    op2: OperatorFunction<A, B>,
-    op3: OperatorFunction<B, C>,
-    op4: OperatorFunction<C, D>,
-    op5: OperatorFunction<D, E>
-  ): PipelineBuilder<E>;
-  pipe<A, B, C, D, E, F>(
-    op1: OperatorFunction<TIn, A>,
-    op2: OperatorFunction<A, B>,
-    op3: OperatorFunction<B, C>,
-    op4: OperatorFunction<C, D>,
-    op5: OperatorFunction<D, E>,
-    op6: OperatorFunction<E, F>
-  ): PipelineBuilder<F>;
-  pipe<A, B, C, D, E, F, G>(
-    op1: OperatorFunction<TIn, A>,
-    op2: OperatorFunction<A, B>,
-    op3: OperatorFunction<B, C>,
-    op4: OperatorFunction<C, D>,
-    op5: OperatorFunction<D, E>,
-    op6: OperatorFunction<E, F>,
-    op7: OperatorFunction<F, G>
-  ): PipelineBuilder<G>;
-  pipe<A, B, C, D, E, F, G, H>(
-    op1: OperatorFunction<TIn, A>,
-    op2: OperatorFunction<A, B>,
-    op3: OperatorFunction<B, C>,
-    op4: OperatorFunction<C, D>,
-    op5: OperatorFunction<D, E>,
-    op6: OperatorFunction<E, F>,
-    op7: OperatorFunction<F, G>,
-    op8: OperatorFunction<G, H>
-  ): PipelineBuilder<H>;
-  pipe<A, B, C, D, E, F, G, H, I>(
-    op1: OperatorFunction<TIn, A>,
-    op2: OperatorFunction<A, B>,
-    op3: OperatorFunction<B, C>,
-    op4: OperatorFunction<C, D>,
-    op5: OperatorFunction<D, E>,
-    op6: OperatorFunction<E, F>,
-    op7: OperatorFunction<F, G>,
-    op8: OperatorFunction<G, H>,
-    op9: OperatorFunction<H, I>
-  ): PipelineBuilder<I>;
-  pipe<A, B, C, D, E, F, G, H, I>(
-    op1: OperatorFunction<TIn, A>,
-    op2: OperatorFunction<A, B>,
-    op3: OperatorFunction<B, C>,
-    op4: OperatorFunction<C, D>,
-    op5: OperatorFunction<D, E>,
-    op6: OperatorFunction<E, F>,
-    op7: OperatorFunction<F, G>,
-    op8: OperatorFunction<G, H>,
-    op9: OperatorFunction<H, I>,
-    ...operations: OperatorFunction<any, any>[]
-  ): PipelineBuilder<any>;
-  /**
-   * Push an OperatorFunction to the pipeline.
-   *
-   * @template TOut
-   * @deprecated Use .pipe instead
-   * @param {OperatorFunction<TIn, TOut>} fn
-   * @returns {PipelineBuilder<TOut>}
-   * @memberof PipelineBuilder
-   */
-  push<TOut>(fn: OperatorFunction<TIn, TOut>): PipelineBuilder<TOut>;
-  /**
-   * Merge the given pipeline with the current pipeline.
-   *
-   * @template TOut
-   * @deprecated Use .pipe instead
-   * @param {(pipeline: Pipeline<TIn, TOut>) => void} fn
-   * @returns {PipelineBuilder<TOut>}
-   * @memberof PipelineBuilder
-   */
-  pushPipeline<TOut>(fn: OperatorFunction<TIn, TOut>): PipelineBuilder<TOut>;
-
-  /**
-   * Set a behaviour in case that some of the pipeline steps throws an error or rejects a promise.
-   *
-   * @param {ErrorHandler} fn
-   * @memberof PipelineBuilder
-   */
-  onError(fn: ErrorHandler): void;
-}
-
-export type PipelineSetup<TIn> = (pipeline: PipelineBuilder<TIn>) => void;
-
-/**
- * Resolve the given predicate an execute the pipeline for that condition
- *
- * @export
- * @interface Match
- * @template TIn
- * @template TOut
- */
-export interface Match<TIn, TOut> {
-  pipeline?: OperatorFunction<TIn, TOut>;
-  /**
-   * Set a predicate function that have to return true or false. Depending on that resolution the
-   * given pipeline will be executed.
-   *
-   * @param {(prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean} pred
-   * @param {OperatorFunction<TIn, TOut>} pipeline
-   * @returns {Match<TIn, TOut>}
-   * @memberof Match
-   */
-  on(
-    pred: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
-    pipeline: OperatorFunction<TIn, TOut>
-  ): Match<TIn, TOut>;
-  /**
-   * Set the pipeline that will be executed by default if any of the given predicates succed.
-   *
-   * @param {OperatorFunction<TIn, TOut>} pipeline
-   * @memberof Match
-   */
-  otherwise(pipeline: OperatorFunction<TIn, TOut>): void;
-}
-
-export interface HandlerAccesor {
-  handler: OperatorFunction<any, any>;
-  errorHandler: ErrorHandler;
+export declare namespace Pipeline {
+  interface CatchError<ErrorType> {
+    (error: GenericError, ctx: Context, batuajs: BautaJSInstance): ErrorType;
+  }
+  interface StepFunction<ValueType, ReturnType> {
+    (value: ValueType, ctx: Context, batuaJS: BautaJSInstance):
+      | PromiseLike<ReturnType>
+      | ReturnType;
+  }
+  interface PipelineFunction<ValueType, ReturnType> extends StepFunction<ValueType, ReturnType> {
+    catchError: <ErrorType>(
+      fn: CatchError<ErrorType>
+    ) => StepFunction<ValueType, ReturnType | ErrorType>;
+  }
 }
 
 export type OnCancel = () => void;
@@ -666,3 +489,5 @@ export interface CancelableToken {
    */
   onCancel: (fn: OnCancel) => void;
 }
+
+export interface CancelablePromise<T> extends PCancelable<T> {}

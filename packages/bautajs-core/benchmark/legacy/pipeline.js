@@ -12,23 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PipelineSetup, OperatorFunction, GenericError } from '../types';
-import { Builder } from '../core/pipeline-builder';
-import { Accesor } from '../core/accesor';
+/**
+ * File with legacy pipeline builder. It's only needed for benchmark propose.
+ */
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.pipelineBuilder = void 0;
+const pipeline_builder_1 = require('./pipeline-builder');
+const accessor_1 = require('./accessor');
 
 function defaultOnPush() {}
-
-/**
- * A decorator to give itellicense to a pipeline.
- * @export
- * @template TIn
- * @param {PipelineSetup<TIn>} pipelineSetup
- * @returns PipelineSetup<TIn>
- */
-export function pipeline<TIn>(pipelineSetup: PipelineSetup<TIn>): PipelineSetup<TIn> {
-  return pipelineSetup;
-}
-
 /**
  * A decorator to create a pipeline that can be executed.
  * @export
@@ -36,30 +28,24 @@ export function pipeline<TIn>(pipelineSetup: PipelineSetup<TIn>): PipelineSetup<
  * @template TOut
  * @param {PipelineSetup<TIn>} pipelineSetup
  * @param {(param: any) => void} onPush
- * @returns OperatorFunction<TIn, TOut>
+ * @returns Pipeline.StepFunction<TIn, TOut>
  */
-export function pipelineBuilder<TIn, TOut>(
-  pipelineSetup: PipelineSetup<TIn>,
-  onPush?: (param: any) => void
-): OperatorFunction<TIn, TOut> {
-  const pp = new Builder<TIn>(new Accesor(), onPush || defaultOnPush);
+function pipelineBuilder(pipelineSetup, onPush) {
+  const pp = new pipeline_builder_1.Builder(new accessor_1.Accessor(), onPush || defaultOnPush);
   pipelineSetup(pp);
   return (prev, ctx, bautajs) => {
     let result;
-
     // if not a promise but throw, manage the error
     try {
-      result = pp.accesor.handler(prev, ctx, bautajs);
+      result = pp.accessor.handler(prev, ctx, bautajs);
     } catch (e) {
-      return pp.accesor.errorHandler(e, ctx, bautajs);
+      return pp.accessor.errorHandler(e, ctx, bautajs);
     }
-
     if (result instanceof Promise) {
-      result = result.catch(async (e: GenericError) => pp.accesor.errorHandler(e, ctx, bautajs));
+      result = result.catch(async e => pp.accessor.errorHandler(e, ctx, bautajs));
     }
-
     return result;
   };
 }
-
-export default pipeline;
+exports.pipelineBuilder = pipelineBuilder;
+// # sourceMappingURL=pipeline.js.map

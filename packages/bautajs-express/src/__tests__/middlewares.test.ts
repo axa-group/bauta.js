@@ -27,22 +27,18 @@ describe('express explorer', () => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(p =>
-            p.push(() => [
-              {
-                id: 134,
-                name: 'pet2'
-              }
-            ])
-          );
-          operations.v1.unused.setup(p =>
-            p.push(() => [
-              {
-                id: 134,
-                name: 'pet2'
-              }
-            ])
-          );
+          operations.v1.operation1.setup(() => [
+            {
+              id: 134,
+              name: 'pet2'
+            }
+          ]);
+          operations.v1.unused.setup(() => [
+            {
+              id: 134,
+              name: 'pet2'
+            }
+          ]);
         })
       ]
     });
@@ -61,14 +57,12 @@ describe('express explorer', () => {
     const bautajs = new BautaJSExpress(apiDefinitions, {
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(p =>
-            p.push(() => [
-              {
-                id: 134,
-                name: 'pet2'
-              }
-            ])
-          );
+          operations.v1.operation1.setup(() => [
+            {
+              id: 134,
+              name: 'pet2'
+            }
+          ]);
         })
       ]
     });

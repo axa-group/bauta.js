@@ -1,5 +1,4 @@
 import fastJson from 'fast-safe-stringify';
-
 import { JSONSchema } from '../types';
 
 const bodySchema = Symbol('body-schema');

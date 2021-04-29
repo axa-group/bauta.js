@@ -13,18 +13,20 @@
  * limitations under the License.
  */
 const { restProvider } = require('@bautajs/datasource-rest');
+const { getRequest } = require('../../../../../dist/index');
 
 const exampleRestProviderYear = restProvider((client, _prv, ctx) => {
   return client.get('http://numbersapi.com/random/year?json', {
-    headers: ctx.req.headers
+    headers: getRequest(ctx).headers
   });
 });
 
 const exampleRestProvider = restProvider((client, _prv, ctx) => {
-  return client.get(`http://numbersapi.com/${ctx.req.params.number}/math`, {
+  const req = getRequest(ctx);
+  return client.get(`http://numbersapi.com/${req.params.number}/math`, {
     responseType: 'text',
     resolveBodyOnly: true,
-    headers: ctx.req.headers
+    headers: req.headers
   });
 });
 

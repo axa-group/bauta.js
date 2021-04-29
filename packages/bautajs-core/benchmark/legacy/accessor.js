@@ -1,3 +1,4 @@
+'use strict';
 /*
  * Copyright (c) AXA Group Operations Spain S.A.
  *
@@ -12,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { HandlerAccesor, OperatorFunction, ErrorHandler, GenericError } from '../types';
-
-export class Accesor implements HandlerAccesor {
-  private accesor: OperatorFunction<any, any> = val => val;
-
-  private errorAccesor: ErrorHandler = (err: GenericError) => Promise.reject(err);
-
-  get handler(): OperatorFunction<any, any> {
-    return this.accesor;
+/**
+ * File with legacy pipeline builder. It's only needed for benchmark propose.
+ */
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.Accessor = void 0;
+class Accessor {
+  constructor() {
+    this.accessor = val => val;
+    this.errorAccessor = err => Promise.reject(err);
   }
-
-  set handler(fn: OperatorFunction<any, any>) {
-    this.accesor = fn;
+  get handler() {
+    return this.accessor;
   }
-
-  get errorHandler(): ErrorHandler {
-    return this.errorAccesor;
+  set handler(fn) {
+    this.accessor = fn;
   }
-
-  set errorHandler(fn: ErrorHandler) {
-    this.errorAccesor = fn;
+  get errorHandler() {
+    return this.errorAccessor;
+  }
+  set errorHandler(fn) {
+    this.errorAccessor = fn;
   }
 }
-
-export default Accesor;
+exports.Accessor = Accessor;
+exports.default = Accessor;
+//# sourceMappingURL=accessor.js.map

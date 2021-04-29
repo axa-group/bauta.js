@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document } from '@bautajs/core';
+import { BautaJS, Document, pipe } from '@bautajs/core';
 import { queryFilters } from '../index';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
@@ -25,12 +25,15 @@ describe('query filter decorator', () => {
   });
 
   test('should filter the given array with the given loobpack filters', async () => {
-    bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-      p.push((_, ctx) => [
-        { id: ctx.req.id, name: 'pet' },
-        { id: ctx.req.id, name: 'pet2' }
-      ]).push(queryFilters());
-    });
+    bautajs.operations.v1.operation1.validateResponse(false).setup(
+      pipe(
+        (_, ctx) => [
+          { id: ctx.raw.req.id, name: 'pet' },
+          { id: ctx.raw.req.id, name: 'pet2' }
+        ],
+        queryFilters(ctx => ctx.raw.req.query.filter)
+      )
+    );
 
     expect(
       await bautajs.operations.v1.operation1.run({

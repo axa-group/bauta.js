@@ -1,6 +1,6 @@
 ## BautaJS template decorator
 
-A decorator to include an compilable template json OperatorFunction on the pipeline.
+A decorator to include an compilable template json Pipeline.StepFunction on the pipeline.
 The decorator will use [stjs](https://www.npmjs.com/package/stjs|stjs) package to compile the given json template.
 Inside the json the following variables will be injected:
   - ctx: the current context (req, res...)
@@ -16,21 +16,21 @@ Inside the json the following variables will be injected:
 
 ## Usage
 
-Include it on the OperatorFunction you need to apply the filters, the decorator will automatically filter the previous OperatorFunction result using
-the loopback filters comming from `ctx.req.query.filter`
+Include it on the Pipeline.StepFunction you need to apply the filters, the decorator will automatically filter the previous Pipeline.StepFunction result using
+the loopback filters coming from the returned value on the selector.
 
 ```js
   const { resolver } = require('@bautajs/core');
   const { template } = require('@batuajs/decorators');
  
   const myTemplate = {
-     "acceptHeader": "{{ctx.req.headers.accept}}",
+     "acceptHeader": "{{ctx.data.headers.accept}}",
      "id": "{{previousValue.id}}",
      "myEnv": "{{env.myEnv}}"
   }
  
 module.exports = resolver((operations)=> {
-      operations.v1.op1.push(template(myTemplate));
+      operations.v1.op1.setup(template(myTemplate));
 });  
 ```
 

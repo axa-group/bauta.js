@@ -1,6 +1,6 @@
 ## bautajs/core
 
-A library to build easy versionable and self organized middlewares.
+A library to build easily versionable and self organized middleware's.
 
 
 ## How to install

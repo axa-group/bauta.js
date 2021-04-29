@@ -12,17 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { resolver } = require('../../../../dist/decorators/resolver');
+const { resolver } = require('../../../../dist/operators/resolver');
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setup(p =>
-    p.push(() => {
-      return [
-        {
-          id: 134,
-          name: 'pet2'
-        }
-      ];
-    })
-  );
+  operations.v1.operation1.setup(() => {
+    return [
+      {
+        id: 134,
+        name: 'pet2'
+      }
+    ];
+  });
 });

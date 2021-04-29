@@ -15,12 +15,11 @@ As `bautajs` is loading all files under ./resolvers file by default, it's recomm
 // v1/cats-resolver.js
 const { resolver } = require('@bautajs/core');
 module.exports = resolver((operations) => {
-  operations.v1.findCat.setup(p => p.pipe((_, ctx) => {
+  operations.v1.findCat.setup((_, ctx) => {
     return {
       name: 'toto'
     }
-  })
-  );
+  });
 })
 ```
 
@@ -28,12 +27,11 @@ module.exports = resolver((operations) => {
 // v2/cats-resolver.js
 const { resolver } = require('@bautajs/core');
 module.exports = resolver((operations) => {
-  operations.v2.findCat.setup(p => p.pipe((_, ctx) => {
+  operations.v2.findCat.setup((_, ctx) => {
     return {
       id: 'toto'
     }
-  })
-  );
+  });
 })
 ```
 
@@ -91,7 +89,7 @@ This is an example of API definitions for two API versions:
 ]
 ```
 
-API versions are now accesible by code:
+API versions are now accessible by code:
 **See that the operations structure is the following bautajs.operations[OPEN_API.info.version][OPEN_API.paths[x][METHOD].operationId]**
 
 ```js
@@ -126,7 +124,7 @@ There are two ways for deprecate an operation; by code or by the OpenAPI definit
 const { resolver } = require('@bautajs/core');
 // my-resolver.js
 module.exports = resolver(operations) => {
-  operations.v1.findCats.setAsDeprecated().setup((p) => p.pipe(() => 'result'));
+  operations.v1.findCats.setAsDeprecated().setup(() => 'result');
 }
 ```
 

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document } from '@bautajs/core';
+import { BautaJS, Document, pipe } from '@bautajs/core';
 import { template } from '../index';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
@@ -21,12 +21,12 @@ describe('template decorator', () => {
   test('should allow put a template', async () => {
     const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
     await bautajs.bootstrap();
-    bautajs.operations.v1.operation1.setup(p => {
-      p.push(() => '1').push(template([{ id: '{{ctx.req.id}}', name: '{{previousValue}}' }]));
-    });
+    bautajs.operations.v1.operation1.setup(
+      pipe(() => '1', template([{ id: '{{ctx.raw.req.id}}', name: '{{previousValue}}' }]))
+    );
 
     expect(
-      await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+      bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
     ).toStrictEqual([{ id: 1, name: '1' }]);
   });
 
@@ -34,12 +34,12 @@ describe('template decorator', () => {
     const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
     await bautajs.bootstrap();
 
-    bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-      p.push(() => '1').push(template(undefined));
-    });
+    bautajs.operations.v1.operation1
+      .validateResponse(false)
+      .setup(pipe(() => '1', template(undefined)));
 
     expect(
-      await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+      bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
     ).toBeUndefined();
   });
 });

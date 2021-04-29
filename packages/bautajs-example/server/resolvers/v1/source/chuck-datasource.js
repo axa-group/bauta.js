@@ -12,11 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const { getRequest } = require('@bautajs/express');
 const { restProvider } = require('@bautajs/datasource-rest');
 
 // Used to test that an https works
-const chuckProvider = restProvider((client, _prev, ctx) => {
-  return client.get(`https://api.chucknorris.io/jokes/search?query=${ctx.req.params.string}`, {
+const chuckProvider = restProvider((client, _, ctx) => {
+  const req = getRequest(ctx);
+  return client.get(`https://api.chucknorris.io/jokes/search?query=${req.params.string}`, {
     rejectUnauthorized: false
   });
 });

@@ -15,12 +15,10 @@
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setup(p =>
-    p.push(() => [
-      {
-        id: 134,
-        name: 'pet2'
-      }
-    ])
-  );
+  operations.v1.operation1.setup(() => [
+    {
+      id: 134,
+      name: 'pet2'
+    }
+  ]);
 });

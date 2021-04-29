@@ -12,19 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { getRequest } = require('@bautajs/express');
 const { restProvider } = require('@bautajs/datasource-rest');
 
 const exampleRestProviderYear = restProvider((client, _prv, ctx) => {
+  const req = getRequest(ctx);
   return client.get('http://numbersapi.com/random/year?json', {
-    headers: ctx.req.headers
+    headers: req.headers
   });
 });
 
 const exampleRestProvider = restProvider((client, _prv, ctx) => {
-  return client.get(`http://numbersapi.com/${ctx.req.params.number}/math`, {
+  const req = getRequest(ctx);
+  return client.get(`http://numbersapi.com/${req.params.number}/math`, {
     responseType: 'text',
     resolveBodyOnly: true,
-    headers: ctx.req.headers
+    headers: req.headers
   });
 });
 

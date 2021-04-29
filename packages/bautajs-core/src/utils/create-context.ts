@@ -12,45 +12,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ContextData, Context, Logger } from '../types';
+import { RawData, Logger, RawContext } from '../types';
 import { CancelableTokenBuilder } from '../core/cancelable-token';
-import { genReqId } from './request-id-generator';
+import { idGenerator } from './request-id-generator';
+import { defaultLogger } from '../default-logger';
 
-export function createContext(ctx: ContextData, logger: Logger): Context {
-  if (!ctx.req) {
-    ctx.req = {};
-  }
-
-  if (!ctx.res) {
-    ctx.res = {};
-  }
-
+/**
+ * Create a BautaJS context object. Useful for doing testing.
+ *
+ * @export
+ * @template TRequest
+ * @template TResponse
+ * @template TRaw
+ * @param {RawData<TRaw>} ctx
+ * @param {Logger} [logger=defaultLogger('@bautajs/core')]
+ * @returns {Context}
+ */
+export function createContext<TRaw>(raw: RawData<TRaw>): RawContext<TRaw> {
   const token = new CancelableTokenBuilder();
-  const { headers } = ctx.req;
-  const reqId = !ctx.req.id ? genReqId(headers) : ctx.req.id;
+  const id = !raw.id ? idGenerator() : raw.id;
   let ctxLogger: Logger;
-  if (!ctx.req.log) {
-    // Just create the context logger if there is no child logger already created by the framework used such fastify req.log
-    ctxLogger = logger.child({
-      url: ctx.req.url,
-      reqId
+  if (!raw.log) {
+    ctxLogger = defaultLogger('@bautajs/core').child({
+      url: raw.url,
+      reqId: raw.id
     });
   } else {
-    ctxLogger = ctx.req.log;
+    ctxLogger = raw.log;
   }
 
-  return {
-    validateResponse: () => null,
-    validateRequest: () => null,
-    validateResponseSchema: () => null,
-    data: ctx.data || {},
-    req: ctx.req,
-    res: ctx.res,
-    token,
-    id: reqId,
-    logger: ctxLogger,
-    url: ctx.req.url
-  };
+  return Object.defineProperty(
+    {
+      id,
+      validateRequestSchema: () => null,
+      validateResponseSchema: () => null,
+      data: raw.data || {},
+      token,
+      log: ctxLogger
+    },
+    'raw',
+    {
+      value: raw,
+      enumerable: false,
+      configurable: false,
+      writable: false
+    }
+  );
 }
 
 export default createContext;

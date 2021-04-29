@@ -63,8 +63,9 @@ function prebuildApi(apiDefinitions: Document[]): API[] {
  * @export
  * @class BautaJS
  * @implements {BautaJSBuilder}
+ * @template TRaw Initial data sent to the operation.run method
  * @param {Document[]} apiDefinitions
- * @param {BautaJSOptions} [options={}]
+ * @param {BautaJSOptions<TRaw>} [options={}]
  * @example
  * const BautaJS = require('@bautajs/core');
  * const apiDefinitions = require('./open-api-definition.json');
@@ -80,18 +81,18 @@ function prebuildApi(apiDefinitions: Document[]): API[] {
  * // Assuming we have an api definition with version equals to 'v1' and have an operationId called 'find' we can run the following code:
  * await bautaJS.operations.v1.find.run({});
  */
-export class BautaJS implements BautaJSInstance {
+export class BautaJS<TRaw = any> implements BautaJSInstance {
   public readonly operations: Operations = {};
 
   public readonly staticConfig: any;
 
   public readonly logger: Logger;
 
-  public readonly options: BautaJSOptions;
+  public readonly options: BautaJSOptions<TRaw>;
 
   public readonly validator: Validator<any>;
 
-  constructor(public readonly apiDefinitions: Document[], options: BautaJSOptions = {}) {
+  constructor(public readonly apiDefinitions: Document[], options: BautaJSOptions<TRaw> = {}) {
     const apis: API[] = prebuildApi(apiDefinitions);
     let responseValidation = false;
     let requestValidation = true;

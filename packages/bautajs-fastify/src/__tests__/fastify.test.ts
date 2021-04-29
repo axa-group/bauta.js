@@ -16,9 +16,10 @@
 import path from 'path';
 import FormData from 'form-data';
 import { Readable } from 'stream';
-import { resolver, defaultLogger } from '@bautajs/core';
+import { resolver, defaultLogger, pipe } from '@bautajs/core';
 import fastify, { FastifyInstance } from 'fastify';
 import { bautajsFastify } from '../index';
+import { getRequest, getResponse } from '../operators';
 
 const apiDefinitions = require('./fixtures/test-api-definitions.json');
 const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
@@ -97,25 +98,24 @@ describe('bautaJS fastify tests', () => {
         apiDefinitions,
         resolvers: [
           resolver(operations => {
-            operations.v1.operationStream.setup(p =>
-              p.push((_, ctx) => {
-                // Create a buffer to hold the response chunks
-                const s = new Readable();
-                // eslint-disable-next-line no-underscore-dangle
-                s._read = () => {};
+            operations.v1.operationStream.setup((_, ctx) => {
+              const res = getResponse(ctx);
+              // Create a buffer to hold the response chunks
+              const s = new Readable();
+              // eslint-disable-next-line no-underscore-dangle
+              s._read = () => {};
 
-                ctx.res.header('Content-disposition', 'attachment; filename="file.pdf');
-                ctx.res.header('Content-type', 'application/octet-stream');
-                s.push('1');
-                setTimeout(() => {
-                  s.push('2');
-                  s.push(null);
-                }, 500);
-                s.push('3');
+              res.header('Content-disposition', 'attachment; filename="file.pdf');
+              res.header('Content-type', 'application/octet-stream');
+              s.push('1');
+              setTimeout(() => {
+                s.push('2');
+                s.push(null);
+              }, 500);
+              s.push('3');
 
-                return s;
-              })
-            );
+              return s;
+            });
           })
         ]
       });
@@ -136,18 +136,14 @@ describe('bautaJS fastify tests', () => {
         apiDefinitions,
         resolvers: [
           resolver(operations => {
-            operations.v1.operationStream.setup(p =>
-              p.pipe((_, ctx) => {
-                form.append('part1', 'part 1 data');
-                form.append('part2', 'part 2 data');
-                ctx.res.header(
-                  'Content-type',
-                  `multipart/form-data; boundary=${form.getBoundary()}`
-                );
+            operations.v1.operationStream.setup((_, ctx) => {
+              const res = getResponse(ctx);
+              form.append('part1', 'part 1 data');
+              form.append('part2', 'part 2 data');
+              res.header('Content-type', `multipart/form-data; boundary=${form.getBoundary()}`);
 
-                return form;
-              })
-            );
+              return form;
+            });
           })
         ]
       });
@@ -218,7 +214,7 @@ describe('bautaJS fastify tests', () => {
         apiDefinitions,
         resolvers: [
           op => {
-            op.v1.operation204.setup(p => p.pipe(() => {}));
+            op.v1.operation204.setup(() => {});
           }
         ]
       });
@@ -245,11 +241,9 @@ describe('bautaJS fastify tests', () => {
         apiDefinitions,
         resolvers: [
           op => {
-            op.v1.operation1.setup(p =>
-              p.pipe(() => {
-                return {};
-              })
-            );
+            op.v1.operation1.setup(() => {
+              return {};
+            });
           }
         ]
       });
@@ -281,7 +275,7 @@ describe('bautaJS fastify tests', () => {
           }
         }
       });
-      fs.setErrorHandler((error, request, reply) => {
+      fs.setErrorHandler((error, _request, reply) => {
         reply.send({ message: error.message, status: error.statusCode });
       });
 
@@ -310,10 +304,11 @@ describe('bautaJS fastify tests', () => {
         apiDefinitions,
         resolvers: [
           operations => {
-            operations.v1.operation1.setup(p =>
-              p.pipe(
+            operations.v1.operation1.setup(
+              pipe(
                 (_, ctx) => {
-                  setTimeout(() => ctx.req.req.emit('aborted'), 200);
+                  const req = getRequest(ctx);
+                  setTimeout(() => req.raw.emit('aborted'), 200);
                 },
                 () => new Promise(resolve => setTimeout(() => resolve({ ok: 'ok' }), 200))
               )

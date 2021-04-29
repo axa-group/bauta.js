@@ -12,15 +12,16 @@ A loopback filters decorator using [loopback-filters](https://github.com/strongl
 
 ## Usage
 
-Include it on the OperatorFunction you need to apply the filters, the decorator will automatically filter the previous OperatorFunction result using
-the loopback filters comming from `ctx.req.query.filter`
+Include it on the Pipeline.StepFunction you need to apply the filters, the decorator will automatically filter the previous Pipeline.StepFunction result using
+the loopback filters coming from the value returned on the selector;
 
 ```js
+  const { getRequest } = require('@bautajs/express');
   const { resolver } = require('@bautajs/core');
   const { queryFilter } = require('@bautajs/decorator-filter');
 
   module.exports = resolver((operations)=> {
-      operations.v1.get.setup(p => p.push(() => [{a:'foo'}, {a:'foo2'}]).push(queryFilter))
+      operations.v1.get.setup(pipe(() => [{a:'foo'}, {a:'foo2'}],queryFilter((ctx) => getRequest(ctx).query.filter))
   })
 ```
 

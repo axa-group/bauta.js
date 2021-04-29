@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 import compression from 'compression';
-import express, { Application, Request, Response } from 'express';
+import express, { Application, Response } from 'express';
 import http from 'http';
 import https from 'https';
 import routeOrder from 'route-order';
-import { BautaJS, BautaJSOptions, Document, Operation, Logger } from '@bautajs/core';
-import { MiddlewareOptions, ICallback } from './types';
+import * as bautajs from '@bautajs/core';
+import { MiddlewareOptions, ICallback, ExpressRequest } from './types';
 import {
   initReqIdGenerator,
   initMorgan,
@@ -27,9 +27,7 @@ import {
   initCors,
   initExplorer
 } from './middlewares';
-import { getContentType, getServerAddress } from './utils';
-
-export * from './types';
+import { getContentType, getServerAddress, hrTimeToMilliseconds } from './utils';
 
 /**
  * Create an Express server using the BautaJS library with almost 0 configuration
@@ -46,106 +44,125 @@ export * from './types';
  * bautJSExpress.applyMiddlewares();
  * bautaJS.listen();
  */
-export class BautaJSExpress extends BautaJS {
+export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: Response }> {
   /**
    * @type {Application}
    * @memberof BautaJSExpress
    */
   public app: Application;
 
-  constructor(apiDefinitions: Document[], options: BautaJSOptions) {
-    super(apiDefinitions, options);
+  constructor(
+    apiDefinitions: bautajs.Document[],
+    options: Omit<bautajs.BautaJSOptions, 'getRequest' | 'getResponse'>
+  ) {
+    super(apiDefinitions, {
+      ...options,
+      getRequest(raw) {
+        return raw.req;
+      },
+      getResponse(raw) {
+        return {
+          statusCode: raw.res.statusCode,
+          isResponseFinished: raw.res.headersSent || raw.res.finished
+        };
+      }
+    });
     this.app = express();
   }
 
-  private addRoute(operation: Operation) {
+  private addRoute(operation: bautajs.Operation) {
     const method = operation.route?.method.toLowerCase() as keyof express.Application;
     const responses = operation.route?.schema.response;
     const { url = '', basePath = '' } = operation.route || {};
     const route = (basePath + url).replace(/\/\//, '/');
 
-    this.app[method](
-      route,
-      (req: Request & { id: string; log: Logger }, res: Response, next: ICallback) => {
-        const startTime = new Date();
-        const resolverWrapper = (response: any) => {
-          if (res.headersSent || res.finished) {
-            return null;
-          }
+    this.app[method](route, (req: ExpressRequest, res: Response, next: ICallback) => {
+      const startTime = process.hrtime();
+      const resolverWrapper = (response: any) => {
+        if (res.headersSent || res.finished) {
+          return null;
+        }
 
-          if (!res.statusCode) {
-            res.status(200);
-          }
+        if (!res.statusCode) {
+          res.status(200);
+        }
 
-          if (responses && responses[res.statusCode]) {
-            const contentType = operation.route && getContentType(operation.route, res.statusCode);
-            res.set({
-              ...(contentType ? { 'Content-type': contentType } : {}),
-              ...responses[res.statusCode].headers,
-              ...res.getHeaders()
-            });
-          }
+        if (responses && responses[res.statusCode]) {
+          const contentType = operation.route && getContentType(operation.route, res.statusCode);
+          res.set({
+            ...(contentType ? { 'Content-type': contentType } : {}),
+            ...responses[res.statusCode].headers,
+            ...res.getHeaders()
+          });
+        }
 
-          if (res.statusCode === 204) {
-            res.send();
-          } else {
-            res.json(response || {});
-          }
-          const finalTime = new Date().getTime() - startTime.getTime();
+        if (res.statusCode === 204) {
+          res.send();
+        } else {
+          res.json(response || {});
+        }
+        const finalTime = process.hrtime(startTime);
 
-          req.log.info(
-            `The operation execution of ${url} took: ${
-              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unknown'
-            } ms`
+        req.log.info(
+          `The operation execution of ${url} took: ${hrTimeToMilliseconds(finalTime)} ms`
+        );
+        return res.end();
+      };
+      const rejectWrapper = (response: any) => {
+        // In case the request was canceled by the user there is no need to send any message to the user.
+        if (response.name === 'CancelError') {
+          req.log.error(`The request to ${req.url} was canceled by the requester`);
+          return null;
+        }
+
+        if (res.headersSent || res.finished) {
+          req.log.error(
+            {
+              error: {
+                name: response.name,
+                code: response.code,
+                message: response.message
+              }
+            },
+            `Response has been sent to the requester, but the promise threw an error`
           );
-          return res.end();
-        };
-        const rejectWrapper = (response: any) => {
-          // In case the request was canceled by the user there is no need to send any message to the user.
-          if (response.name === 'CancelError') {
-            req.log.error(`The request to ${req.url} was canceled by the requester`);
-            return null;
-          }
+          return null;
+        }
 
-          if (res.headersSent || res.finished) {
-            req.log.error(
-              {
-                error: {
-                  name: response.name,
-                  code: response.code,
-                  message: response.message
-                }
-              },
-              `Response has been sent to the requester, but the promise threw an error`
-            );
-            return null;
-          }
+        res.status(response.statusCode || 500);
+        const finalTime = process.hrtime(startTime);
+        req.log.info(
+          `The operation execution of ${url} took: ${hrTimeToMilliseconds(finalTime)} ms`
+        );
 
-          res.status(response.statusCode || 500);
-          const finalTime = new Date().getTime() - startTime.getTime();
-          req.log.info(
-            `The operation execution of ${url} took: ${
-              typeof finalTime === 'number' ? finalTime.toFixed(2) : 'unknown'
-            } ms`
-          );
-
-          return next(response);
-        };
-
-        const op = operation.run({ req, res });
-        req.on('abort', () => {
-          op.cancel('Request was aborted by the requester intentionally');
+        return next(response);
+      };
+      try {
+        const op = operation.run<{ req: ExpressRequest; res: Response }, any>({
+          req,
+          res,
+          id: req.id || req.header('x-request-id'),
+          url: req.url,
+          log: req.log
         });
-        req.on('aborted', () => {
-          op.cancel('Request was aborted by the requester intentionally');
-        });
-        req.on('timeout', () => {
-          op.cancel('Request was aborted by the requester because of a timeout');
-        });
-
-        op.then(resolverWrapper).catch(rejectWrapper);
+        if (bautajs.isPromise(op)) {
+          req.on('abort', () => {
+            (op as any).cancel('Request was aborted by the requester intentionally');
+          });
+          req.on('aborted', () => {
+            (op as any).cancel('Request was aborted by the requester intentionally');
+          });
+          req.on('timeout', () => {
+            (op as any).cancel('Request was aborted by the requester because of a timeout');
+          });
+          op.then(resolverWrapper).catch(rejectWrapper);
+        } else {
+          resolverWrapper(op);
+        }
+      } catch (e) {
+        rejectWrapper(e);
       }
-    );
+    });
 
     this.logger.info(
       `[OK] [${method.toUpperCase()}] ${route} operation exposed on the API from ${
@@ -280,4 +297,6 @@ export class BautaJSExpress extends BautaJS {
   }
 }
 
+export * from './operators';
+export * from './types';
 export default BautaJSExpress;

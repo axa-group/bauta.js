@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { BautaJS, Document } from '../../index';
-import { pipelineBuilder } from '../pipeline';
+import { pipe } from '../pipeline';
 import { match } from '../match';
 
 const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
@@ -26,13 +26,14 @@ describe('match decorator', () => {
   });
 
   test('should select the pipeline execution depending on the condition', async () => {
-    const myPipeline1 = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
-    const myPipeline2 = pipelineBuilder(p => p.push(() => [{ id: 3, name: 'pet' }]));
-    bautajs.operations.v1.operation1.setup(p => {
-      p.push(() => 1).push(
+    const myPipeline1 = pipe(() => [{ id: 1, name: 'pet' }]);
+    const myPipeline2 = pipe(() => [{ id: 3, name: 'pet' }]);
+    bautajs.operations.v1.operation1.setup(
+      pipe(
+        () => 1,
         match(m => m.on(prev => prev === 1, myPipeline1).otherwise(myPipeline2))
-      );
-    });
+      )
+    );
 
     expect(
       await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
@@ -40,18 +41,19 @@ describe('match decorator', () => {
   });
 
   test('should use the default option if non of the options match', async () => {
-    const myPipeline1 = pipelineBuilder(p => p.push(() => [{ id: 1, name: 'pet' }]));
-    const myPipeline2 = pipelineBuilder(p => p.push(() => [{ id: 3, name: 'pet' }]));
-    bautajs.operations.v1.operation1.setup(p => {
-      p.push(() => 5).push(
+    const myPipeline1 = pipe(() => [{ id: 1, name: 'pet' }]);
+    const myPipeline2 = pipe(() => [{ id: 3, name: 'pet' }]);
+    bautajs.operations.v1.operation1.setup(
+      pipe(
+        () => 5,
         match(m =>
           m
             .on(prev => prev === 1, myPipeline1)
             .on(prev => prev === 2, myPipeline1)
             .otherwise(myPipeline2)
         )
-      );
-    });
+      )
+    );
 
     expect(
       await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 3 }, res: {} })

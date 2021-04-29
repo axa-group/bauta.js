@@ -24,14 +24,12 @@ describe('parallel decorator', () => {
     await bautajs.bootstrap();
   });
   test('should execute the promises in parallel', async () => {
-    bautajs.operations.v1.operation1.setup(p => {
-      p.push(
-        parallel(
-          () => Promise.resolve({ id: 3, name: 'pet3' }),
-          () => Promise.resolve({ id: 1, name: 'pet' })
-        )
-      );
-    });
+    bautajs.operations.v1.operation1.setup(
+      parallel(
+        () => Promise.resolve({ id: 3, name: 'pet3' }),
+        () => Promise.resolve({ id: 1, name: 'pet' })
+      )
+    );
 
     expect(
       await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })

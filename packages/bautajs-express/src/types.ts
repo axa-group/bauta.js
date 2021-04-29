@@ -12,12 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Request } from 'express';
 import bodyParser from 'body-parser';
 import { CorsOptions } from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-import { Operation, GenericError } from '@bautajs/core';
+import { Operation, GenericError, Logger } from '@bautajs/core';
 
 export enum EventTypes {
   /**
@@ -81,3 +82,5 @@ export interface MiddlewareOptions {
   explorer?: MiddlewareOption<ExplorerOptions>;
   reqGenerator?: MiddlewareOption<null>;
 }
+
+export type ExpressRequest = Request & { id: string; log: Logger };

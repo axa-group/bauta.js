@@ -12,10 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { StepFn } from '../types';
+import { Pipeline } from '../types';
+import { NotFoundError } from '../core/not-found-error';
 
-export function step<TIn, TOut>(fn: StepFn<TIn, TOut>) {
-  return fn;
+export function buildDefaultStep(): Pipeline.StepFunction<any, any> {
+  return () => {
+    throw new NotFoundError('Not found');
+  };
 }
 
-export default step;
+export default buildDefaultStep;

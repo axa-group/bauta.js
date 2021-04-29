@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import nock from 'nock';
-import { createContext, BautaJS, defaultLogger } from '@bautajs/core';
+import { createContext, BautaJS, defaultLogger, pipe } from '@bautajs/core';
 import { CancelableRequest } from 'got';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
@@ -34,7 +34,7 @@ describe('provider rest', () => {
   });
   describe('restProvider extend', () => {
     test('should allow to create your own rest provider', async () => {
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
 
       const Id = '123';
       nock('https://google.com').get(`/${Id}`).reply(200, 'text');
@@ -44,11 +44,11 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`);
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe((_, ctx) => {
+      bautajs.operations.v1.operation1.validateResponse(false).setup(
+        pipe((_, ctx) => {
           ctx.data.myId = Id;
-        }, provider());
-      });
+        }, provider())
+      );
 
       const response = await bautajs.operations.v1.operation1.run({
         req: { id: 1 },
@@ -61,7 +61,7 @@ describe('provider rest', () => {
 
   describe('got extends defaults', () => {
     test('should allow do a requests with GOT options and the built in agent', async () => {
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
 
       const Id = '123';
       nock('https://google.com')
@@ -72,11 +72,11 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe((_, ctx) => {
+      bautajs.operations.v1.operation1.validateResponse(false).setup(
+        pipe((_, ctx) => {
           ctx.data.myId = Id;
-        }, provider());
-      });
+        }, provider())
+      );
 
       const response = await bautajs.operations.v1.operation1.run({
         req: { id: 1 },
@@ -87,7 +87,7 @@ describe('provider rest', () => {
     });
 
     test('should add the response status code if an http error ocurres', async () => {
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
 
       const Id = '123';
       nock('https://google.com').get(`/${Id}`).reply(404, { message: 'not found' });
@@ -96,11 +96,11 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe((_, ctx) => {
+      bautajs.operations.v1.operation1.validateResponse(false).setup(
+        pipe((_, ctx) => {
           ctx.data.myId = Id;
-        }, provider());
-      });
+        }, provider())
+      );
 
       await expect(
         bautajs.operations.v1.operation1.run({
@@ -111,7 +111,7 @@ describe('provider rest', () => {
     });
 
     test('should add the response status code if an http error ocurres and message should be case insensitive', async () => {
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
 
       const Id = '123';
       nock('https://google.com').get(`/${Id}`).reply(404, { Message: 'not found' });
@@ -120,11 +120,11 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe((_, ctx) => {
+      bautajs.operations.v1.operation1.validateResponse(false).setup(
+        pipe((_, ctx) => {
           ctx.data.myId = Id;
-        }, provider());
-      });
+        }, provider())
+      );
 
       await expect(
         bautajs.operations.v1.operation1.run({
@@ -135,7 +135,7 @@ describe('provider rest', () => {
     });
 
     test('should allow do a requests with GOT options and the built in agent with de default set up', async () => {
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
       const Id = '123';
       nock('https://google.com')
         .get(`/${Id}`)
@@ -145,11 +145,11 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`);
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe((_, ctx) => {
+      bautajs.operations.v1.operation1.validateResponse(false).setup(
+        pipe((_, ctx) => {
           ctx.data.myId = Id;
-        }, provider());
-      });
+        }, provider())
+      );
 
       const response = await bautajs.operations.v1.operation1.run({
         req: { id: 1 },
@@ -162,10 +162,10 @@ describe('provider rest', () => {
 
   describe('request cancelation', () => {
     test('should cancel the request if the a cancel is executed', async () => {
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
       nock('http://pets.com').get('/v1/policies').reply(200, {});
 
-      const myContext = createContext({ req: {}, res: {} }, bautajs.logger);
+      const myContext = createContext({ req: {}, res: {}, log: bautajs.logger });
       const provider = restProvider(client => {
         return client.get('http://pets.com/v1/policies', { responseType: 'json' });
       });
@@ -180,10 +180,10 @@ describe('provider rest', () => {
     });
 
     test('should cancel the request if the a cancel is executed and the request is an stream', async () => {
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
       nock('http://pets.com').get('/v1/policies').reply(200, {});
 
-      const myContext = createContext({ req: {}, res: {} }, bautajs.logger);
+      const myContext = createContext({ req: {}, res: {}, log: bautajs.logger });
       const provider = restProvider(client => {
         return client.stream('http://pets.com/v1/policies', { responseType: 'json' });
       });
@@ -207,7 +207,7 @@ describe('provider rest', () => {
         return logger;
       };
       process.env.LOG_LEVEL = 'debug';
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
 
       nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(200, { bender: 'ok' });
 
@@ -219,7 +219,12 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
 
       await provider()(null, ctx, bautajs);
 
@@ -228,7 +233,7 @@ describe('provider rest', () => {
           requestData: {
             body: '{"test":"1234"}',
             headers:
-              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","content-type":"application/json","content-length":"15","accept-encoding":"gzip, deflate, br","x-request-id":1}',
+              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","content-type":"application/json","content-length":"15","accept-encoding":"gzip, deflate, br","x-request-id":"1"}',
             method: 'POST',
             url: 'https://pets.com/v1/policies'
           }
@@ -257,7 +262,7 @@ describe('provider rest', () => {
         return logger;
       };
       process.env.LOG_LEVEL = 'info';
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
 
       nock('https://pets.com')
         .post('/v1/policies', {
@@ -273,7 +278,7 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {}, log: logger });
 
       await provider()(null, ctx, bautajs);
 
@@ -297,7 +302,7 @@ describe('provider rest', () => {
         return logger;
       };
       process.env.LOG_LEVEL = 'debug';
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
 
       nock('https://pets.com').post('/v1/policies', 'someString').reply(200, { bender: 'ok' });
 
@@ -310,7 +315,12 @@ describe('provider rest', () => {
           responseType: 'json'
         });
       });
-      const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
 
       await provider()(null, ctx, bautajs);
 
@@ -319,7 +329,7 @@ describe('provider rest', () => {
           requestData: {
             body: 'someString',
             headers:
-              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","content-length":"10","accept-encoding":"gzip, deflate, br","x-request-id":1}',
+              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","content-length":"10","accept-encoding":"gzip, deflate, br","x-request-id":"1"}',
             method: 'POST',
             url: 'https://pets.com/v1/policies'
           }
@@ -347,7 +357,7 @@ describe('provider rest', () => {
     });
 
     test('should sent the query params to the provider', async () => {
-      const { restProvider } = require('../index');
+      const { restProvider } = await import('../index');
 
       const Id = '123';
       nock('https://google.com')
@@ -362,11 +372,11 @@ describe('provider rest', () => {
         });
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(p => {
-        p.pipe((_, ctx) => {
+      bautajs.operations.v1.operation1.validateResponse(false).setup(
+        pipe((_, ctx) => {
           ctx.data.myId = Id;
-        }, provider());
-      });
+        }, provider())
+      );
 
       const response = await bautajs.operations.v1.operation1.run({
         req: { id: 1 },
@@ -387,7 +397,7 @@ describe('provider rest', () => {
           return logger;
         };
         process.env.LOG_LEVEL = 'debug';
-        const { restProvider } = require('../index');
+        const { restProvider } = await import('../index');
 
         nock('https://pets.com/v1').get('/policies').replyWithError('something awful happened');
 
@@ -397,7 +407,11 @@ describe('provider rest', () => {
           });
         });
 
-        const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+        const ctx = createContext({
+          req: { headers: { 'x-request-id': 1 } },
+          res: {},
+          log: logger
+        });
 
         try {
           await provider()(null, ctx, bautajs);
@@ -424,7 +438,7 @@ describe('provider rest', () => {
         jest.spyOn(logger, 'error').mockImplementation();
 
         process.env.LOG_LEVEL = 'debug';
-        const { restProvider } = require('../index');
+        const { restProvider } = await import('../index');
 
         nock('https://pets.com/v1')
           .get('/policies')
@@ -436,7 +450,11 @@ describe('provider rest', () => {
           });
         });
 
-        const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+        const ctx = createContext({
+          req: { headers: { 'x-request-id': 1 } },
+          res: {},
+          log: logger
+        });
 
         try {
           await provider()(null, ctx, bautajs);
@@ -466,7 +484,7 @@ describe('provider rest', () => {
         jest.spyOn(logger, 'error').mockImplementation();
         jest.spyOn(logger, 'info').mockImplementation();
         process.env.LOG_LEVEL = 'info';
-        const { restProvider } = require('../index');
+        const { restProvider } = await import('../index');
 
         nock('https://pets.com/v1').get('/policies').reply(200, 'we force with this a parserError');
 
@@ -476,7 +494,11 @@ describe('provider rest', () => {
           });
         });
 
-        const ctx = createContext({ req: { headers: { 'x-request-id': 1 } }, res: {} }, logger);
+        const ctx = createContext({
+          req: { headers: { 'x-request-id': 1 } },
+          res: {},
+          log: logger
+        });
 
         async function providerThrowsAnError() {
           return provider()(null, ctx, bautajs);
@@ -495,7 +517,7 @@ describe('provider rest', () => {
       });
 
       test('should generate a meaningful error if there is an issue', async () => {
-        const { restProvider } = require('../index');
+        const { restProvider } = await import('../index');
 
         nock('https://pets.com/v1').get('/policies').reply(200, '<html><div></div></html>', {
           'content-type': 'text/html'
@@ -507,10 +529,11 @@ describe('provider rest', () => {
           });
         });
 
-        const ctx = createContext(
-          { req: { headers: { 'x-request-id': 1 } }, res: {} },
-          bautajs.logger
-        );
+        const ctx = createContext({
+          req: { headers: { 'x-request-id': 1 } },
+          res: {},
+          log: bautajs.logger
+        });
 
         async function providerThrowsAnError() {
           return provider()(null, ctx, bautajs);

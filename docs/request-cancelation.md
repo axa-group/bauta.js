@@ -1,7 +1,7 @@
 # Cancelable request
 
-All the pipelines are cancelable promises that are attached to the `req.on('abort')` and to the `req.on('timeout')` [Node.js request events](https://nodejs.org/api/http.html#http_class_http_clientrequest).
-When the client cancel the request the pipeline is canceled and the `onCancel` method is called for each pushed OperatorFunction.
+All the pipelines that contains some "async" operation in one of the steps are cancelable promises that are normally, attached to the `req.on('abort')` and to the `req.on('timeout')` [Node.js request events](https://nodejs.org/api/http.html#http_class_http_clientrequest) on [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) plugins.
+When a cancel event is triggered outside the pipeline scope, the pipeline is canceled and the `onCancel` method is called for each Pipeline.StepFunction that was already executed.
 
 - Example:
 ```js
@@ -9,8 +9,7 @@ When the client cancel the request the pipeline is canceled and the `onCancel` m
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver((operations) => {
-  operations.v1.findCats.setup((p) => {
-    p.pipe((val, ctx) => {
+  operations.v1.findCats.setup(pipe(async (val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled');
         })
@@ -18,7 +17,7 @@ module.exports = resolver((operations) => {
         id: '1'
       }
     },
-    (val, ctx) => {
+    async (val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled fired on cancel 2');
         })
@@ -26,18 +25,19 @@ module.exports = resolver((operations) => {
         id: '1'
       }
     },
-    (val, ctx) => {
+    async (val, ctx) => {
       return {
         id: '1'
       }
     })
-  });
+  );
 })
 ```
 
-In the example of above if the request is canceled before complete all OperatorFunctions, an error will be thrown and the pending OperatorFunctions won't be executed.
+In the example of above if the request is canceled before complete all Pipeline.StepFunctions, an error will be thrown and the pending Pipeline.StepFunctions won't be executed.
 
 - In case of a request to a provider, if a request is canceled, the request to the third party API will be discarded.
+- Notice that cancel a pipeline is not possible for pipelines that do not contain an async operation.
 
 ## Cancel the pipeline manually
 
@@ -46,8 +46,8 @@ In the example of above if the request is canceled before complete all OperatorF
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver((operations) => {
-  operations.v1.findCats.setup((p) => {
-    p.pipe((val, ctx) => {
+  operations.v1.findCats.setup(pipe(
+    async (val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled');
         })
@@ -55,7 +55,7 @@ module.exports = resolver((operations) => {
         id: '1'
       }
     },
-    (val, ctx) => {
+    async (val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled fired on cancel 2');
         })
@@ -63,12 +63,12 @@ module.exports = resolver((operations) => {
         id: '1'
       }
     },
-    (val, ctx) => {
+    async (val, ctx) => {
       return {
         id: '1'
       }
     })
-  });
+  );
 })
 ```
 

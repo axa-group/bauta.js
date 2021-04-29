@@ -14,9 +14,10 @@
  */
 import http from 'http';
 import https from 'https';
-import { Route } from '@bautajs/core';
+import { Route, idGenerator } from '@bautajs/core';
 import { OpenAPIV2 } from '@bautajs/core/node_modules/openapi-types';
 import { AddressInfo } from 'net';
+import { IncomingHttpHeaders } from 'node:http';
 
 function getContentType(route: Route, statusCode: number) {
   if (route.isV2) {
@@ -42,4 +43,12 @@ function getServerAddress(server: https.Server | http.Server, isHttps: boolean):
   return address;
 }
 
-export { getContentType, getServerAddress };
+function genReqId(headers: IncomingHttpHeaders) {
+  return headers?.['x-request-id'] || idGenerator();
+}
+
+function hrTimeToMilliseconds(hrTime: number[]) {
+  return hrTime[0] * 1000000 + hrTime[1] / 1000;
+}
+
+export { getContentType, getServerAddress, genReqId, hrTimeToMilliseconds };

@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { BautaJSInstance, Context, OperatorFunction } from '@bautajs/core';
+import { BautaJSInstance, Context, Pipeline } from '@bautajs/core';
 import QuickLRU, { Options } from 'quick-lru-cjs';
 import nodeObjectHash from 'node-object-hash';
-import { Normalizer, CacheOperatorFunction } from './types';
+import { Normalizer, CacheStepFunction } from './types';
 
 const { hash } = nodeObjectHash({
   // We don't care about the order of an object properties this could add some overhead over the performance.
@@ -32,14 +32,14 @@ const { hash } = nodeObjectHash({
  * @template TIn
  * @template TOut
  * @template CacheKey
- * @param {OperatorFunction<TIn, TOut>} pipeline
+ * @param {Pipeline.StepFunction<TIn, TOut>} pipeline
  * @param {Normalizer<TIn, CacheKey>} [normalizer=(prev: TIn) => hash(prev)]
  * @param {Options} options
  * @param {Number} [options.maxAge=0] Milliseconds an item will remain in cache; lazy expiration upon next get() of an item. With 0 items never expires.
  * @param {Number} options.maxSize=500 Max number of items on cache.
  * @return {CacheOperatorFunction<TIn, TOut>} An operation function that you can plug in on a `bautajs` pipeline.
  * @example
- * import { pipelineBuilder, createContext } from '@bautajs/core';
+ * import { pipe, createContext } from '@bautajs/core';
  * import { cache } from '@bautajs/decorator-cache';
  *
  * function createAKey(prev, ctx, bautajs) {
@@ -55,40 +55,53 @@ const { hash } = nodeObjectHash({
  *  return acc;
  * }
  *
- * const myPipeline = pipelineBuilder(p => p.pipe(
+ * const myPipeline = pipe(
  *  createAKey,
  *  doSomethingHeavy
- * ));
+ * );
  *
  * const cacheMyPipeline = cache(myPipeline, (prev, ctx) => ctx.data.myKey, { maxSize:3 });
  *
- * const result = await cacheMyPipeline(null, createContext({req:{}}), {});
+ * const result = await cacheMyPipeline(null, createContext({}));
  * console.log(result);
  */
-export function cache<TIn, TOut, CacheKey extends string>(
-  fn: OperatorFunction<TIn, TOut>,
-  normalizer: Normalizer<TIn, CacheKey> = (prev: TIn): CacheKey => hash(prev) as CacheKey,
+export function cache<TIn, TOut, CacheKey = string>(
+  fn: Pipeline.StepFunction<TIn, TOut>,
+  normalizer: Normalizer<TIn, CacheKey> = (prev: TIn): CacheKey => hash(prev) as any,
   options: Options<CacheKey, TOut>
-): CacheOperatorFunction<TIn, TOut, CacheKey> {
+): CacheStepFunction<TIn, TOut, CacheKey> {
   const store = new QuickLRU<CacheKey, TOut>(options);
 
-  const operatorFunction: OperatorFunction<TIn, TOut> = async (
+  const operatorFunction: Pipeline.StepFunction<TIn, TOut> = (
     prev: TIn,
     ctx: Context,
     bautajs: BautaJSInstance
-  ): Promise<TOut> => {
+  ): TOut | Promise<TOut> => {
     const key = normalizer(prev, ctx, bautajs);
     if (store.has(key)) {
-      ctx.logger.debug(`Cache hit in cache with key ${key}.`);
+      ctx.log.debug(`Cache hit in cache with key ${key}.`);
       return store.get(key) as TOut;
     }
-    const value = await fn(prev, ctx, bautajs);
-    store.set(key, value);
-    ctx.logger.debug(`Cache added key ${key}.`);
-    return value;
+    const value = fn(prev, ctx, bautajs);
+    if (value instanceof Promise) {
+      return value.then(val => {
+        store.set(key, val);
+        ctx.log.debug(`Cache added key ${key}.`);
+        return val;
+      });
+    }
+
+    store.set(key, value as TOut);
+    ctx.log.debug(`Cache added key ${key}.`);
+    return value as TOut;
   };
 
-  return Object.assign(operatorFunction, { store });
+  return Object.defineProperty(operatorFunction, 'store', {
+    value: store,
+    enumerable: false,
+    configurable: false,
+    writable: false
+  });
 }
 
 export default cache;

@@ -1,10 +1,10 @@
-import { BautaJSInstance, Context, OperatorFunction } from '@bautajs/core';
+import { BautaJSInstance, Context, Pipeline } from '@bautajs/core';
 import QuickLRU from 'quick-lru';
 
 export interface Normalizer<TIn, CacheKey> {
   (prev: TIn, ctx: Context, bautajs: BautaJSInstance): CacheKey;
 }
 
-export interface CacheOperatorFunction<TIn, TOut, CacheKey> extends OperatorFunction<TIn, TOut> {
+export interface CacheStepFunction<TIn, TOut, CacheKey> extends Pipeline.StepFunction<TIn, TOut> {
   store: QuickLRU<CacheKey, TOut>;
 }

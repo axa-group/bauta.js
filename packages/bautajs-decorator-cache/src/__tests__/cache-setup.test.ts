@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, pipelineBuilder, BautaJSInstance, OpenAPIV3Document } from '@bautajs/core';
+import { BautaJS, pipe, BautaJSInstance, OpenAPIV3Document } from '@bautajs/core';
 import { cache } from '../index';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import { sleep } from './utils';
@@ -27,30 +27,26 @@ describe('cache setup', () => {
   });
 
   test('should create a default cache without ttl', async () => {
-    const pp = pipelineBuilder(p =>
-      p.pipe(
-        () => [{ a: '123' }],
-        (result: any) => ({ ...result[0], new: 1 })
-      )
+    const pp = pipe(
+      () => [{ a: '123' }],
+      (result: any) => ({ ...result[0], new: 1 })
     );
     const myCachePipeline = cache(pp, (_, ctx) => ctx.id || 'someId', { maxSize: 4 });
-    bautajs.operations.v1.operation1.setup(p => p.pipe(myCachePipeline));
+    bautajs.operations.v1.operation1.setup(myCachePipeline);
     await bautajs.operations.v1.operation1.run({ req: {}, res: {} });
 
     expect(myCachePipeline.store.size).toStrictEqual(1);
   });
 
   test('should create a cache with ttl if maxAge is passed', async () => {
-    const pp = pipelineBuilder(p =>
-      p.pipe(
-        () => [{ a: '123' }],
-        (result: any) => ({ ...result[0], new: 1 })
-      )
+    const pp = pipe(
+      () => [{ a: '123' }],
+      (result: any) => ({ ...result[0], new: 1 })
     );
     const myCachePipeline = cache(pp, (_, ctx) => ctx.id || 'someId', { maxSize: 10, maxAge: 200 });
-    bautajs.operations.v1.operation1.setup(p => p.pipe(myCachePipeline));
+    bautajs.operations.v1.operation1.setup(myCachePipeline);
 
-    await bautajs.operations.v1.operation1.run({ req: { id: 'test' }, res: {} });
+    await bautajs.operations.v1.operation1.run({ id: 'test', req: { id: 'test' }, res: {} });
     expect(myCachePipeline.store.get('test')).toStrictEqual({
       a: '123',
       new: 1

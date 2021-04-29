@@ -14,15 +14,4 @@
  */
 import hyperid from 'hyperid';
 
-const idGenerator = hyperid();
-const requestIdHeader = 'x-request-id';
-
-export function genReqId(headers: any): string {
-  if (headers && headers[requestIdHeader]) {
-    return headers[requestIdHeader];
-  }
-
-  return idGenerator();
-}
-
-export default genReqId;
+export const idGenerator = hyperid();

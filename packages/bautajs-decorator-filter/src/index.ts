@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import loopbackFilters, { Filter } from 'loopback-filters';
-import { Context, OperatorFunction } from '@bautajs/core';
+import { Context, Pipeline } from '@bautajs/core';
 
 export interface LoopbackQuery {
   filter: Filter;
@@ -27,18 +27,24 @@ export interface LoopbackRequest {
  * This decorator will filter the previous pushed value using the req.query.filter parameter of the request
  * @export
  * @template TIn
- * @returns {OperatorFunction<
+ * @returns {Pipeline.StepFunction<
  *   TIn[],
  *   TIn[]
  * >}
  * @example
- * const { queryFilter } = require('@bautajs/filters-decorator');
+ *   const { getRequest } = require('@bautajs/express');
+ *   const { resolver } = require('@bautajs/core');
+ *   const { queryFilter } = require('@bautajs/decorator-filter');
  *
- * operations.v1.op1.setup(p => p.push(queryFilter()))
+ *    module.exports = resolver((operations)=> {
+ *        operations.v1.get.setup(pipe(() => [{a:'foo'}, {a:'foo2'}],queryFilter((ctx) => getRequest(ctx).query.filter))
+ *    })
  */
-export function queryFilters<TIn>(): OperatorFunction<TIn[], TIn[]> {
+export function queryFilters<TIn>(
+  resolveFilter: (ctx: Context) => Filter
+): Pipeline.StepFunction<TIn[], TIn[]> {
   return (value: TIn[], ctx: Context): TIn[] => {
-    const queryFilter = ctx.req.query && ctx.req.query.filter;
+    const queryFilter = resolveFilter(ctx);
 
     return queryFilter && Array.isArray(value) ? loopbackFilters<TIn[]>(value, queryFilter) : value;
   };

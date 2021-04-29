@@ -17,11 +17,12 @@ import morgan from 'morgan';
 import cors, { CorsOptions } from 'cors';
 import { Application, json, urlencoded } from 'express';
 import helmet from 'helmet';
-import { Document, Operations, genReqId, Logger } from '@bautajs/core';
+import { Document, Operations, Logger } from '@bautajs/core';
 import { OpenAPIV3, OpenAPIV2, OpenAPI } from '@bautajs/core/node_modules/openapi-types';
 import fastSafeStringify from 'fast-safe-stringify';
 
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
+import { genReqId } from './utils';
 
 const morganJson = require('morgan-json');
 

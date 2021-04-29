@@ -12,27 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { resolver, pipelineBuilder, match } = require('@bautajs/core');
+const { resolver, pipe, match } = require('@bautajs/core');
 const { provider1 } = require('./source-datasource');
 
-const myPipelinetwo = pipelineBuilder(p =>
-  p.pipe(response => {
-    console.log('pipeline 2');
+const myPipelinetwo = pipe(response => {
+  console.log('pipeline 2');
 
-    return response;
-  })
-);
+  return response;
+});
 
-const myPipeline = pipelineBuilder(p =>
-  p.pipe(response => {
-    console.log('pipeline 1');
-    return response;
-  })
-);
+const myPipeline = pipe(response => {
+  console.log('pipeline 1');
+  return response;
+});
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setup(p =>
-    p.pipe(
+  operations.v1.operation1.setup(
+    pipe(
       provider1(),
       match(m =>
         m

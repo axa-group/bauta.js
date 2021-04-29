@@ -6,7 +6,7 @@ See [migration guide](./docs/migration-guide.md) or [changelog](./CHANGELOG.md)
 
 ## What is bautaJS
 
-BautaJS is mainly a library for build NodeJS middlewares in 'seconds'.
+BautaJS is mainly a library for build NodeJS middleware's in 'seconds'.
 
 Some of the features of this library are:
 
@@ -51,7 +51,7 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [Datasources](./docs/datasources.md)
 - [Debug](./docs/debug.md)
 - [Request cancelation](./docs/request-cancelation.md)
-- [OperatorFunction and Resolvers](./docs/operator-and-resolver.md)
+- [Pipeline.StepFunction and Resolvers](./docs/operator-and-resolver.md)
 - [Validation](./docs/validation.md)
 - [Configuration Options](./docs/configuration-options.md)
 

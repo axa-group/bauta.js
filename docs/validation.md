@@ -1,7 +1,7 @@
 # Request Validation
 
 `bautajs` comes with a default request validation using the [openAPI schema v2 or v3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). **_BY DEFAULT IT'S SET TO TRUE_**.
-This feature is always enabled while you have a valid openAPI schema inputs. 
+This feature is always enabled while you have a valid openAPI schema inputs and getRequest is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided.
 You can disable it locally for every operation using `operations.v1.operation1.validateRequest(false);`
 
 **_It's recomended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors), you are free to convert them to a 400 or 422 errors_**
@@ -15,12 +15,14 @@ The request validation can be globally enabled by set it on the `bautajs` initia
  const bautajs = new BautaJS(apiDefinitions, { enableRequestValidation: true });
 ```
 
-Alternative you can also validate inside every resolver by accessing to the context `ctx.validateRequest()`.
+Alternative you can also validate inside every resolver by accessing to the context `ctx.validateRequestSchema()`.
 
 ```js
+  const { getRequest } = require('@bautajs/express');
+
   operations.v1.findCats.setup(p => 
       p.pipe(function pFn(_, ctx) {
-      ctx.validateRequest();
+      ctx.validateRequestSchema(getRequest(ctx));
       // if the request is not valid this will throw an [AJV](https://www.npmjs.com/package/ajv#validation-errors) error
     })
   );
@@ -30,7 +32,7 @@ Alternative you can also validate inside every resolver by accessing to the cont
 # Response Validation
 
 `bautajs` comes with a default response validation using the [openAPI schema v2 or v3][15]. **_BY DEFAULT IT'S SET TO FALSE_**.
-This feature is always disabled by default, but if you have a valid openAPI schema response schema you will be able to enable this feature manually. You can enable it locally for every operation
+This feature is always enabled while you have a valid openAPI schema response and getResponse is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided.
 using `operations.v1.operation1.validateResponse(true);`
 s
 **_It's recomended to have an error handler since this will throw a [ValidationError](../packages/bautajs/src/core/validation-error.ts), you are free to convert them to a 400 or 422 errors_**
@@ -68,12 +70,12 @@ Alternative you can also set what is the valid response status that you want to 
 ## Response validation is dependant on the schema response definition and the statusCode
 Knowledge of node's behavior around http status codes is required for understanding this section. Check [this](https://nodejs.org/es/docs/guides/anatomy-of-an-http-transaction/#http-status-code) in order to get a better understanding.
 
-At the moment of validation, we check the statusCode, that may be:
+At the moment of validation, the statusCode is checked that is:
 - set specifically by you using ```res.writeHead(statusCode, ...)``` or similar
 - set by default as 200 if calling ```res.end()```
 - special case: in special situations when bauta is used alone without a server library, statusCode could be undefined, and in this case bauta will use 200 anyways as default
 
-After getting the right statusCode, bauta searches in the schema definition for the response content defined for that statusCode to decide if a validation must be used applying always the same logic: bauta only validates response content if it is json. We do it in the following order:
+After getting the right statusCode, bauta searches in the schema definition for the response content defined for that statusCode to decide if a validation must be used applying always the same logic: bauta only validates response content if it is json. It's done in the following order:
 - If ```responses[statusCode]``` is defined, it is used and validation is done if the defined content is a json.
 - If not, if ```responses.default``` is defined, that is used to determine the content, applying the same logic.
 - If not, if ```responses['200']``` is defined, we use it and we do the validation if its content is a json as well.

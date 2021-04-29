@@ -52,6 +52,7 @@
     "@types/swagger-ui-express": "4.1.2",
     "@typescript-eslint/eslint-plugin": "4.17.0",
     "@typescript-eslint/parser": "4.17.0",
+    "bench": "^0.3.6",
     "commitizen": "4.2.3",
     "commitlint": "12.0.1",
     "cz-conventional-changelog": "3.3.0",
@@ -82,6 +83,7 @@
   },
   "scripts": {
     "cm": "git-cz",
+    "benchmark-pipeline": "node ./packages/bautajs-core/benchmark/pipeline-builder.js",
     "benchmark-core": "npx concurrently -k -s first \"node ./packages/bautajs-core/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080/v1/api/\"",
     "benchmark-express": "npx concurrently -k -s first \"node ./packages/bautajs-express/benchmark/simple.js\" \"npx autocannon -c 20 -d 5 -p 10 localhost:8080/v1/api/\"",
     "benchmark-fastify": "npx concurrently -k -s first \"node ./packages/bautajs-fastify/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080/v1/api/\"",

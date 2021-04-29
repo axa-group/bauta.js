@@ -2,7 +2,7 @@
 
 - Machine: macOS Catalina | 2,2 GHz Quad-Core Intel Core i7 | 16GB.
 - Run: 2020-05-04T07:41:48.590Z
-- Node: v12.3.1
+- Node: v14.15.0
 
 ## bautajs/express
 
@@ -27,3 +27,9 @@ A benchmark test with the bautajs implementation using only the core with NodeJS
 ```npm run benchmark-core```
 
 ![](./assets/bauta-core-benchmark.png)
+
+## Legacy pipeline with new pipeline
+
+A benchmark test with the legacy pipeline builder against new pipe concept.
+
+```npm run benchmark-pipeline```

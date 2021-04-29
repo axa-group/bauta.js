@@ -12,27 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { resolver, pipeline: pipelineResolver, pipelineBuilder } = require('@bautajs/core');
+const { getRequest } = require('@bautajs/express');
+const { pipe, resolver, step } = require('@bautajs/core');
 const { cache } = require('@bautajs/decorator-cache');
 const { chuckProvider } = require('./chuck-datasource');
 
-const transformResponse = response => {
+const transformResponse = step(response => {
   const result = {
     message: response
   };
 
   return result;
+});
+
+const normalizer = (_, ctx) => {
+  const req = getRequest(ctx);
+  return req.params.string;
 };
 
-const normalizer = ([, ctx]) => ctx.req.params.string;
+const chuckFactsPipeline = pipe(chuckProvider(), transformResponse);
 
-const chuckFactsPipeline = pipelineBuilder(pipeline =>
-  pipeline.pipe(chuckProvider(), transformResponse)
-);
-
-const cachedChuckFactsPipeline = pipelineResolver(pipeline =>
-  pipeline.push(cache(chuckFactsPipeline, normalizer))
-);
+const cachedChuckFactsPipeline = pipe(cache(chuckFactsPipeline, normalizer, { maxSize: 2 }));
 
 module.exports = resolver(operations => {
   operations.v1.chuckFacts.setup(cachedChuckFactsPipeline);
