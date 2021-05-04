@@ -13,12 +13,10 @@
  * limitations under the License.
  */
 import compression from 'compression';
-import express, { Application, Response } from 'express';
-import http from 'http';
-import https from 'https';
+import express, { Response, IRoute } from 'express';
 import routeOrder from 'route-order';
 import * as bautajs from '@bautajs/core';
-import { MiddlewareOptions, ICallback, ExpressRequest } from './types';
+import { MiddlewareOptions, ExpressRequest } from './types';
 import {
   initReqIdGenerator,
   initMorgan,
@@ -27,7 +25,7 @@ import {
   initCors,
   initExplorer
 } from './middlewares';
-import { getContentType, getServerAddress, hrTimeToMilliseconds } from './utils';
+import { getContentType, hrTimeToMilliseconds } from './utils';
 
 /**
  * Create an Express server using the BautaJS library with almost 0 configuration
@@ -37,20 +35,22 @@ import { getContentType, getServerAddress, hrTimeToMilliseconds } from './utils'
  * @param {BautaJSOptions} options
  * @extends {BautaJS}
  * @example
+ * const express = require('express');
  * const { BautaJSExpress } = require('@bauta/express');
- * const apiDefinition from'../../api-definition.json');
+ * const apiDefinition = require('../../api-definition.json');
  *
- * const bautJSExpress = new BautaJSExpress(apiDefinition, {});
- * bautJSExpress.applyMiddlewares();
- * bautaJS.listen();
+ * const app = express();
+ * const bautaJSExpress = new BautaJSExpress(apiDefinition, {});
+ * const router = await bautaJSExpress.buildRouter();
+ *
+ * app.router(router);
+ *
+ * app.listen(3000, err => {
+ *   if (err) throw err;
+ *   console.info('Server listening on localhost: 3000');
+ * });
  */
 export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: Response }> {
-  /**
-   * @type {Application}
-   * @memberof BautaJSExpress
-   */
-  public app: Application;
-
   constructor(
     apiDefinitions: bautajs.Document[],
     options: Omit<bautajs.BautaJSOptions, 'getRequest' | 'getResponse'>
@@ -67,16 +67,15 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
         };
       }
     });
-    this.app = express();
   }
 
-  private addRoute(operation: bautajs.Operation) {
-    const method = operation.route?.method.toLowerCase() as keyof express.Application;
+  private addRoute(operation: bautajs.Operation, router: express.Router) {
+    const method = operation.route?.method.toLowerCase() as keyof Omit<IRoute, 'path' | 'stack'>;
     const responses = operation.route?.schema.response;
     const { url = '', basePath = '' } = operation.route || {};
     const route = (basePath + url).replace(/\/\//, '/');
 
-    this.app[method](route, (req: ExpressRequest, res: Response, next: ICallback) => {
+    router[method](route, (req, res, next) => {
       const startTime = process.hrtime();
       const resolverWrapper = (response: any) => {
         if (res.headersSent || res.finished) {
@@ -103,7 +102,7 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
         }
         const finalTime = process.hrtime(startTime);
 
-        req.log.info(
+        (req as ExpressRequest).log.info(
           `The operation execution of ${url} took: ${hrTimeToMilliseconds(finalTime)} ms`
         );
         return res.end();
@@ -111,12 +110,14 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
       const rejectWrapper = (response: any) => {
         // In case the request was canceled by the user there is no need to send any message to the user.
         if (response.name === 'CancelError') {
-          req.log.error(`The request to ${req.url} was canceled by the requester`);
+          (req as ExpressRequest).log.error(
+            `The request to ${req.url} was canceled by the requester`
+          );
           return null;
         }
 
         if (res.headersSent || res.finished) {
-          req.log.error(
+          (req as ExpressRequest).log.error(
             {
               error: {
                 name: response.name,
@@ -131,7 +132,7 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
 
         res.status(response.statusCode || 500);
         const finalTime = process.hrtime(startTime);
-        req.log.info(
+        (req as ExpressRequest).log.info(
           `The operation execution of ${url} took: ${hrTimeToMilliseconds(finalTime)} ms`
         );
 
@@ -139,11 +140,11 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
       };
       try {
         const op = operation.run<{ req: ExpressRequest; res: Response }, any>({
-          req,
+          req: req as ExpressRequest,
           res,
-          id: req.id || req.header('x-request-id'),
-          url: req.url,
-          log: req.log
+          id: (req as ExpressRequest).id || req.header('x-request-id'),
+          url: (req as ExpressRequest).url,
+          log: (req as ExpressRequest).log
         });
         if (bautajs.isPromise(op)) {
           req.on('abort', () => {
@@ -189,8 +190,8 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
   }
 
   /**
-   *
-   * Add the standard express middlewares, bootstrap the bautajs instance and expose the operations routes using the given OpenAPI definition.
+   * Create a new express router with the standard express middleware's,
+   * and the routes set up on the OpenAPI specification.
    * @async
    * @param {MiddlewareOptions} [options={
    *       cors: {
@@ -207,12 +208,13 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
    *       },
    *       explorer: {
    *         enabled: true
-   *       }
+   *       },
+   *       routerOptions: {}
    *     }]
    * @returns
    * @memberof BautaJSExpress
    */
-  public async applyMiddlewares(
+  public async buildRouter(
     options: MiddlewareOptions = {
       cors: {
         enabled: true
@@ -231,15 +233,18 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
       },
       reqGenerator: {
         enabled: true
-      }
+      },
+      routerOptions: {}
     }
-  ) {
-    initReqIdGenerator(this.app, this.logger, options.reqGenerator);
-    initMorgan(this.app, options.morgan);
-    initHelmet(this.app, options.helmet);
-    initCors(this.app, options.cors);
-    this.app.use(compression());
-    initBodyParser(this.app, options.bodyParser);
+  ): Promise<express.Router> {
+    const router = express.Router(options.routerOptions);
+
+    initReqIdGenerator(router, this.logger, options.reqGenerator);
+    initMorgan(router, options.morgan);
+    initHelmet(router, options.helmet);
+    initCors(router, options.cors);
+    router.use(compression());
+    initBodyParser(router, options.bodyParser);
 
     await this.bootstrap();
 
@@ -249,51 +254,12 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
       .sort(routeOrder())
       .forEach(route => {
         const methods = Object.keys(routes[route]);
-        methods.forEach(method => this.addRoute(routes[route][method]));
+        methods.forEach(method => this.addRoute(routes[route][method], router));
       });
 
-    initExplorer(this.app, this.apiDefinitions, this.operations, options.explorer);
+    initExplorer(router, this.apiDefinitions, this.operations, options.explorer);
 
-    return this;
-  }
-
-  /**
-   * Start the express server as http/https listener. In case you need to pass custom parameters to listen as backlog or a custom listen callback,
-   * create a custom listen function and use bautajs.app.
-   * @param {number} [port=3000] - The port to listener
-   * @param {string} [host='localhost'] - The api host
-   * @param {boolean} [httpsEnabled=false] - True to start the server as https server
-   * @param {Object} [httpsOptions] - True to start the server as https server
-   * @param {string} [httpsOptions.cert] - The server cert
-   * @param {string} [httpsOptions.key] - The server key
-   * @param {string} [httpsOptions.passphrase] - The key's passphrase
-   * @returns {http|https} - nodejs http/https server
-   * @memberof BautaJSExpress#
-   */
-  listen(
-    port = 3000,
-    hostname = undefined,
-    httpsEnabled = false,
-    httpsOptions = {}
-  ): https.Server | http.Server {
-    let server: https.Server | http.Server;
-
-    if (httpsEnabled) {
-      server = https.createServer(httpsOptions, this.app);
-    } else {
-      server = http.createServer(this.app);
-    }
-    server.listen(port, hostname, () => {
-      const address = getServerAddress(server, httpsEnabled);
-      if (process.env.DEBUG) {
-        this.logger.info(`Server listening at ${address}`);
-      } else {
-        // eslint-disable-next-line no-console
-        console.info(`Server listening at ${address}`);
-      }
-    });
-
-    return server;
+    return router;
   }
 }
 

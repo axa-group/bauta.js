@@ -15,7 +15,7 @@
 import swaggerUiExpress from 'swagger-ui-express';
 import morgan from 'morgan';
 import cors, { CorsOptions } from 'cors';
-import { Application, json, urlencoded } from 'express';
+import { json, Router, urlencoded } from 'express';
 import helmet from 'helmet';
 import { Document, Operations, Logger } from '@bautajs/core';
 import { OpenAPIV3, OpenAPIV2, OpenAPI } from '@bautajs/core/node_modules/openapi-types';
@@ -43,9 +43,9 @@ function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operatio
   return paths;
 }
 
-export function initReqIdGenerator(app: Application, logger: Logger, opt?: MiddlewareOption<null>) {
+export function initReqIdGenerator(router: Router, logger: Logger, opt?: MiddlewareOption<null>) {
   if (!opt || (opt && opt.enabled === true)) {
-    app.use((req: any, _, next) => {
+    router.use((req: any, _, next) => {
       const { headers } = req;
       req.id = genReqId(headers);
       req.log = logger.child({
@@ -57,7 +57,7 @@ export function initReqIdGenerator(app: Application, logger: Logger, opt?: Middl
   }
 }
 
-export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOptions>) {
+export function initMorgan(router: Router, opt?: MiddlewareOption<MorganOptions>) {
   morgan.token('reqId', (req: any) => req.id);
 
   const tinyWithTimestampAndreqId = morganJson({
@@ -71,19 +71,19 @@ export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOption
   });
 
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
-    app.use(
+    router.use(
       morgan(tinyWithTimestampAndreqId, {
         immediate: true
       })
     );
-    app.use(
+    router.use(
       morgan(tinyWithTimestampAndreqId, {
         immediate: false
       })
     );
   } else if (opt && opt.enabled === true && opt.options) {
-    app.use(morgan(opt.options.format, opt.options.options));
-    app.use(
+    router.use(morgan(opt.options.format, opt.options.options));
+    router.use(
       morgan(tinyWithTimestampAndreqId, {
         immediate: false
       })
@@ -91,34 +91,34 @@ export function initMorgan(app: Application, opt?: MiddlewareOption<MorganOption
   }
 }
 
-export function initHelmet(app: Application, opt?: MiddlewareOption<helmet.IHelmetConfiguration>) {
+export function initHelmet(router: Router, opt?: MiddlewareOption<helmet.IHelmetConfiguration>) {
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
-    app.use(helmet());
+    router.use(helmet());
   } else if (opt && opt.enabled === true && opt.options) {
-    app.use(helmet(opt.options));
+    router.use(helmet(opt.options));
   }
 }
 
-export function initCors(app: Application, opt?: MiddlewareOption<CorsOptions>) {
+export function initCors(router: Router, opt?: MiddlewareOption<CorsOptions>) {
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
-    app.use(cors());
+    router.use(cors());
   } else if (opt && opt.enabled === true && opt.options) {
-    app.use(cors(opt.options));
+    router.use(cors(opt.options));
   }
 }
 
-export function initBodyParser(app: Application, opt?: MiddlewareOption<BodyParserOptions>) {
+export function initBodyParser(router: Router, opt?: MiddlewareOption<BodyParserOptions>) {
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
-    app.use(json({ limit: '50mb' }));
-    app.use(urlencoded({ extended: true, limit: '50mb' }));
+    router.use(json({ limit: '50mb' }));
+    router.use(urlencoded({ extended: true, limit: '50mb' }));
   } else if (opt && opt.enabled === true && opt.options) {
-    app.use(json(opt.options.json));
-    app.use(urlencoded(opt.options.urlEncoded));
+    router.use(json(opt.options.json));
+    router.use(urlencoded(opt.options.urlEncoded));
   }
 }
 
 export function initExplorer(
-  app: Application,
+  router: Router,
   apiDefinitions: Document[],
   operations: Operations,
   opt?: MiddlewareOption<ExplorerOptions>
@@ -133,11 +133,11 @@ export function initExplorer(
     apiDefinitions.forEach(apiDefinition => {
       const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
       const paths = buildOpenAPIPaths(apiDefinition, operations);
-      app.get(openAPIPath, (_, res) => {
+      router.get(openAPIPath, (_, res) => {
         res.send(fastSafeStringify({ ...apiDefinition, paths }));
         res.end();
       });
-      app.use(
+      router.use(
         `/${apiDefinition.info.version}/${path}`,
         swaggerUiExpress.serve,
         swaggerUiExpress.setup(undefined, {

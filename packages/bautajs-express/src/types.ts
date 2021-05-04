@@ -12,20 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Request } from 'express';
+import { Request, RouterOptions } from 'express';
 import bodyParser from 'body-parser';
 import { CorsOptions } from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { Operation, GenericError, Logger } from '@bautajs/core';
-
-export enum EventTypes {
-  /**
-   * An operation was exposed throught express framework.
-   */
-  EXPOSE_OPERATION = '5'
-}
 
 export interface ICallback {
   (error?: GenericError, result?: any): void;
@@ -81,6 +74,7 @@ export interface MiddlewareOptions {
   morgan?: MiddlewareOption<MorganOptions>;
   explorer?: MiddlewareOption<ExplorerOptions>;
   reqGenerator?: MiddlewareOption<null>;
+  routerOptions?: RouterOptions;
 }
 
 export type ExpressRequest = Request & { id: string; log: Logger };

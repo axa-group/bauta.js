@@ -16,6 +16,7 @@
 
 import supertest from 'supertest';
 import { resolver } from '@bautajs/core';
+import express from 'express';
 import { BautaJSExpress } from '../index';
 
 const apiDefinitions = require('./fixtures/test-api-unused-definitions.json');
@@ -43,9 +44,12 @@ describe('express explorer', () => {
       ]
     });
 
-    await bautajs.applyMiddlewares();
+    const router = await bautajs.buildRouter();
 
-    const res = await supertest(bautajs.app)
+    const app = express();
+    app.use(router);
+
+    const res = await supertest(app)
       .get('/v1/openapi.json')
       .expect('Content-Type', 'text/html; charset=utf-8')
       .expect(200);
@@ -67,9 +71,12 @@ describe('express explorer', () => {
       ]
     });
 
-    await bautajs.applyMiddlewares();
+    const router = await bautajs.buildRouter();
 
-    const res = await supertest(bautajs.app)
+    const app = express();
+    app.use(router);
+
+    const res = await supertest(app)
       .get('/v1/openapi.json')
       .expect('Content-Type', 'text/html; charset=utf-8')
       .expect(200);

@@ -13,21 +13,22 @@
  * limitations under the License.
  */
 // eslint-disable-next-line no-unused-vars
+import express, { Response } from 'express';
 import path from 'path';
 import FormData from 'form-data';
 import supertest from 'supertest';
 import { Readable } from 'stream';
-import { Response } from 'express';
 import { resolver, asPromise, defaultLogger } from '@bautajs/core';
 import { BautaJSExpress } from '../index';
 import { getRequest, getResponse } from '../operators';
 
 const apiDefinitions = require('./fixtures/test-api-definitions.json');
+const apiDefinitionsV2 = require('./fixtures/test-api-definitions-v2.json');
 const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
 const apiDefinitionSwaggerCircularDeps = require('./fixtures/test-api-definitions-swagger-circular-deps.json');
 
 describe('bautaJS express', () => {
-  describe('request cancelation', () => {
+  describe('request cancellation', () => {
     test('should trigger the aborted event when the client close the connection and log the error', async () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'error').mockImplementation();
@@ -45,10 +46,12 @@ describe('bautaJS express', () => {
         ],
         logger
       });
+      const router = await bautajs.buildRouter();
 
-      await bautajs.applyMiddlewares();
+      const app = express();
+      app.use(router);
 
-      const request = supertest(bautajs.app).get('/api/v1/test').set({ 'x-request-id': '1' });
+      const request = supertest(app).get('/api/v1/test').set({ 'x-request-id': '1' });
       expect.assertions(1);
       try {
         await request;
@@ -66,9 +69,12 @@ describe('bautaJS express', () => {
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
-      await bautajs.applyMiddlewares();
+      const router = await bautajs.buildRouter();
 
-      const res = await supertest(bautajs.app)
+      const app = express();
+      app.use(router);
+
+      const res = await supertest(app)
         .get('/api/v1/test')
         .expect('Content-Type', /json/)
         .expect(200);
@@ -89,9 +95,12 @@ describe('bautaJS express', () => {
         )
       });
 
-      await bautajs.applyMiddlewares();
+      const router = await bautajs.buildRouter();
 
-      const res = await supertest(bautajs.app).get('/api/v1/test');
+      const app = express();
+      app.use(router);
+
+      const res = await supertest(app).get('/api/v1/test');
 
       expect(res.status).toStrictEqual(404);
     });
@@ -103,10 +112,12 @@ describe('bautaJS express', () => {
           './fixtures/test-resolvers/operation-resolver-send-response.js'
         )
       });
+      const router = await bautajs.buildRouter();
 
-      await bautajs.applyMiddlewares();
+      const app = express();
+      app.use(router);
 
-      const res = await supertest(bautajs.app)
+      const res = await supertest(app)
         .get('/api/v1/test')
         .expect('Content-Type', /json/)
         .expect(200);
@@ -138,10 +149,12 @@ describe('bautaJS express', () => {
           })
         ]
       });
+      const router = await bautajs.buildRouter();
 
-      await bautajs.applyMiddlewares();
+      const app = express();
+      app.use(router);
 
-      await supertest(bautajs.app)
+      await supertest(app)
         .get('/api/v1/test')
         .expect('Content-disposition', 'attachment; filename="file.pdf')
         .expect(200)
@@ -161,9 +174,12 @@ describe('bautaJS express', () => {
         ]
       });
 
-      bautajs.applyMiddlewares();
+      const router = await bautajs.buildRouter();
 
-      await supertest(bautajs.app).get('/api/v1/test').expect(204, '');
+      const app = express();
+      app.use(router);
+
+      await supertest(app).get('/api/v1/test').expect(204, '');
     });
 
     // eslint-disable-next-line jest/expect-expect
@@ -186,10 +202,12 @@ describe('bautaJS express', () => {
           })
         ]
       });
+      const router = await bautajs.buildRouter();
 
-      await bautajs.applyMiddlewares();
+      const app = express();
+      app.use(router);
 
-      await supertest(bautajs.app)
+      await supertest(app)
         .get('/api/v1/test')
         .expect('Content-type', `multipart/form-data; boundary=${form.getBoundary()}`)
         .expect(200);
@@ -199,10 +217,12 @@ describe('bautaJS express', () => {
       const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
+      const router = await bautajs.buildRouter();
 
-      await bautajs.applyMiddlewares();
+      const app = express();
+      app.use(router);
 
-      const res = await supertest(bautajs.app)
+      const res = await supertest(app)
         .get('/api/v1/test')
         .expect('Content-Type', /json/)
         .expect(200);
@@ -220,9 +240,12 @@ describe('bautaJS express', () => {
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
-      await bautajs.applyMiddlewares({ explorer: { enabled: true } });
+      const router = await bautajs.buildRouter({ explorer: { enabled: true } });
 
-      const res = await supertest(bautajs.app).get('/v1/openapi.json').expect(200);
+      const app = express();
+      app.use(router);
+
+      const res = await supertest(app).get('/v1/openapi.json').expect(200);
 
       expect(res.status).toStrictEqual(200);
     });
@@ -232,9 +255,12 @@ describe('bautaJS express', () => {
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
-      await bautajs.applyMiddlewares({ explorer: { enabled: false } });
+      const router = await bautajs.buildRouter({ explorer: { enabled: false } });
 
-      const res = await supertest(bautajs.app).get('/v1/explorer').expect(404);
+      const app = express();
+      app.use(router);
+
+      const res = await supertest(app).get('/v1/explorer').expect(404);
 
       expect(res.status).toStrictEqual(404);
     });
@@ -246,20 +272,64 @@ describe('bautaJS express', () => {
           './fixtures/test-resolvers/operation-resolver-error.js'
         )
       });
+      const router = await bautajs.buildRouter();
 
-      await bautajs.applyMiddlewares();
+      const app = express();
+      app.use(router);
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      bautajs.app.use((err: any, _: any, res: any, _next: any) => {
+      app.use((err: any, _: any, res: any, _next: any) => {
         res.json({ message: err.message, status: res.statusCode }).end();
       });
 
-      const res = await supertest(bautajs.app)
+      const res = await supertest(app)
         .get('/api/v1/test')
         .expect('Content-Type', /json/)
         .expect(500);
 
       expect(res.body).toStrictEqual({ message: 'some error', status: 500 });
+    });
+  });
+
+  describe('two express instances', () => {
+    test('should be possible to create two bautajs express instances and expose it in different paths', async () => {
+      const bautajs = new BautaJSExpress(apiDefinitions, {
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+      });
+      const bautajsV2 = new BautaJSExpress(apiDefinitionsV2, {
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+      });
+
+      const router = await bautajs.buildRouter();
+      const routerV2 = await bautajsV2.buildRouter();
+
+      const app = express();
+      app.use(router);
+      app.use(routerV2);
+
+      const res = await supertest(app)
+        .get('/api/v1/test')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(res.body).toStrictEqual([
+        {
+          id: 134,
+          name: 'pet2'
+        }
+      ]);
+
+      const resV2 = await supertest(app)
+        .get('/api/v2/test')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(resV2.body).toStrictEqual([
+        {
+          id: 134,
+          name: 'pet2'
+        }
+      ]);
     });
   });
 });

@@ -12,18 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const express = require('express');
 const { notFound } = require('@hapi/boom');
 const bautaJS = require('./server/instances/bauta');
 
 (async () => {
-  await bautaJS.applyMiddlewares();
+  const app = express();
+
+  const router = await bautaJS.buildRouter();
+
+  app.use(router);
 
   /* Error handler */
   // 404 error
-  bautaJS.app.use((req, res, next) => next(notFound()));
+  app.use((req, res, next) => next(notFound()));
   // Error handler
   /* eslint-disable-next-line */
-  bautaJS.app.use((err, req, res, next) => {
+  app.use((err, req, res, next) => {
     // eslint-disable-next-line no-console
     console.error(err);
     res
@@ -31,7 +36,10 @@ const bautaJS = require('./server/instances/bauta');
       .json(err.errors || { message: err.message });
   });
 
-  bautaJS.listen();
+  app.listen(3000, err => {
+    if (err) throw err;
+    bautaJS.logger.info('Server listening on localhost: 3000');
+  });
 })();
 
 process.on('unhandledRejection', () => {

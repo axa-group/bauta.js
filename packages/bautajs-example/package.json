@@ -40,6 +40,7 @@
     "@bautajs/datasource-rest": "3.4.1",
     "@bautajs/decorator-cache": "3.4.1",
     "@bautajs/express": "3.4.1",
-    "@hapi/boom": "^9.1.0"
+    "@hapi/boom": "^9.1.0",
+    "express": "4.x"
   }
 }

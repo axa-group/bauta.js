@@ -16,13 +16,20 @@ The goal of this section is to describe the Pipeline.StepFunctions required to h
 ## Step 2 Create a server file that uses bautajs/express
 
 ```js
+const express = require('express');
 const { BautaJSExpress } = require('@bautajs/express');
 const apiDefinitions = {};
 const apiOptions = {};
 (async () => {
-const bautJSExpress = new BautaJSExpress(apiDefinitions, apiOptions);
-await bautJSExpress.applyMiddlewares();
-bautJSExpress.listen();
+ const bautJSExpress = new BautaJSExpress(apiDefinitions, apiOptions);
+ const app = express();
+ const router = await bautaJS.buildRouter();
+
+ app.use(router);
+ app.listen(3000, err => {
+    if (err) throw err;
+    bautaJS.logger.info('Server listening on localhost: 3000');
+  });
 })();
 ```
 
@@ -77,12 +84,21 @@ There is a lot of information here, but let's focus only on two fields:
 Now let's modify slightly the server.js file:
 
 ```js
+const express = require('express');
 const { BautaJSExpress } = require('@bautajs/express');
 const apiDefinitions = require('./api-definitions');
 const apiOptions = {};
-const bautJSExpress = new BautaJSExpress(apiDefinitions, apiOptions);
-bautJSExpress.applyMiddlewares();
-bautJSExpress.listen();
+(async () => {
+ const bautJSExpress = new BautaJSExpress(apiDefinitions, apiOptions);
+ const app = express();
+ const router = await bautaJS.buildRouter();
+
+ app.use(router);
+ app.listen(3000, err => {
+    if (err) throw err;
+    bautaJS.logger.info('Server listening on localhost: 3000');
+  });
+})();
 ```
 
 Finally, let's try again running the server with npm run start, and now it should work.

@@ -13,12 +13,21 @@ A express framework implementation for `bautajs`.
 ## Usage
 
 ```js
+const express = require('express');
 const { BautaJSExpress } = require('@bauta/express');
 const apiDefinition = require('../../api-definition.json');
 
-const bautJSExpress = new BautaJSExpress(apiDefinition, {});
-bautJSExpress.applyMiddlewares();
-bautaJS.listen();
+const app = express();
+const bautaJSExpress = new BautaJSExpress(apiDefinition, {});
+const router = await bautaJSExpress.buildRouter();
+
+app.router(router);
+
+app.listen(3000, err => {
+  if (err) throw err;
+  console.info('Server listening on localhost: 3000');
+}); 
+
 ```
 
 See full example on [Example of a project from scratch](../../docs/hello-world.md).

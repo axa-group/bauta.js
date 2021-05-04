@@ -239,3 +239,37 @@ After, maxSize is a mandatory parameter:
             cache(pp, normalizer, { maxSize: 5 })
         );
 ```
+
+### bautajs-express
+
+The module has been refactor to convert it into a more "plugin" base. With the new solution the developer has more control over the express instance.
+
+Before:
+
+```js
+const { BautaJSExpress } = require('@bauta/express');
+const apiDefinition = require('../../api-definition.json');
+
+const bautaJSExpress = new BautaJSExpress(apiDefinition, {});
+await bautaJSExpress.applyMiddlewares();
+bautaJSExpress.listen();
+```
+
+After:
+
+```js
+ const express = require('express');
+ const { BautaJSExpress } = require('@bauta/express');
+ const apiDefinition = require('../../api-definition.json');
+ 
+ const app = express();
+ const bautaJSExpress = new BautaJSExpress(apiDefinition, {});
+ const router = await bautaJSExpress.buildRouter();
+ 
+app.router(router);
+ 
+ app.listen(3000, err => {
+ if (err) throw err;
+    console.info('Server listening on localhost: 3000');
+ });
+```

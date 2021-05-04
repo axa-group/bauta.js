@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 // eslint-disable-next-line no-unused-vars
+import express from 'express';
 import path from 'path';
 import supertest from 'supertest';
 import { BautaJSExpress } from '../index';
@@ -26,14 +27,17 @@ describe('bautaJS express validation tests', () => {
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
-    await bautajs.applyMiddlewares();
+    const router = await bautajs.buildRouter();
+
+    const app = express();
+    app.use(router);
     // Set default error handler
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    bautajs.app.use((err: any, _: any, res: any, _next: any) => {
+    app.use((err: any, _: any, res: any, _next: any) => {
       res.json({ message: err.message, status: res.statusCode, errors: err.errors }).end();
     });
 
-    const res = await supertest(bautajs.app)
+    const res = await supertest(app)
       .get('/api/v1/test')
       .query({ limit: 123 })
       .expect('Content-Type', /json/)
@@ -57,17 +61,17 @@ describe('bautaJS express validation tests', () => {
       )
     });
 
-    await bautajs.applyMiddlewares();
+    const router = await bautajs.buildRouter();
+
+    const app = express();
+    app.use(router);
     // Set default error handler
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    bautajs.app.use((err: any, _: any, res: any, _next: any) => {
+    app.use((err: any, _: any, res: any, _next: any) => {
       res.json({ message: err.message, status: res.statusCode, errors: err.errors }).end();
     });
 
-    const res = await supertest(bautajs.app)
-      .get('/api/v1/test')
-      .expect('Content-Type', /json/)
-      .expect(500);
+    const res = await supertest(app).get('/api/v1/test').expect('Content-Type', /json/).expect(500);
 
     expect(res.body.message).toStrictEqual(`Internal error`);
   });
