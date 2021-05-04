@@ -1,0 +1,4 @@
+#!/usr/bin/groovy
+
+pipeline_pull_requests {
+}
