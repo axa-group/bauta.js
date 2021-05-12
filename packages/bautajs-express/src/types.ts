@@ -65,7 +65,7 @@ export interface ExplorerOptions {
 
 export interface MorganOptions {
   format: morgan.FormatFn;
-  options?: morgan.Options;
+  options?: morgan.Options<any, any>;
 }
 
 export interface BodyParserOptions {
