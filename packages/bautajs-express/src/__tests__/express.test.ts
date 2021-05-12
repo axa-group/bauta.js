@@ -53,6 +53,7 @@ describe('bautaJS express', () => {
       try {
         await request;
       } catch (e) {
+        // eslint-disable-next-line jest/no-conditional-expect
         expect(logger.error).toHaveBeenCalledWith(
           'The request to /api/v1/test was canceled by the requester'
         );

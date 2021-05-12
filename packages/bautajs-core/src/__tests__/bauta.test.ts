@@ -189,15 +189,38 @@ describe('bauta core tests', () => {
 
       await bautaJS.bootstrap();
 
-      expect.assertions(1);
-      try {
-        await bautaJS.operations.v1.operation1.run({ req, res });
-      } catch (e) {
-        // eslint-disable-next-line jest/no-try-expect
-        expect(e.stack).toStrictEqual(
-          `${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`
-        );
-      }
+      await expect(bautaJS.operations.v1.operation1.run({ req, res })).rejects.toThrow(
+        expect.objectContaining({
+          stack: `Validation Error: Internal error \n ${fastSafeStringify(
+            {
+              name: 'Validation Error',
+              errors: [
+                {
+                  path: '[0].id',
+                  location: 'response',
+                  message: 'should be integer',
+                  errorCode: 'type'
+                },
+                {
+                  path: '[0]',
+                  location: 'response',
+                  message: "should have required property 'name'",
+                  errorCode: 'required'
+                }
+              ],
+              statusCode: 500,
+              response: [
+                {
+                  id: '22'
+                }
+              ],
+              message: 'Internal error'
+            },
+            undefined,
+            2
+          )}`
+        })
+      );
     });
 
     test('should not validate the response by default', async () => {
@@ -380,7 +403,7 @@ describe('bauta core tests', () => {
               p.push(async () => {
                 await new Promise(resolve =>
                   setTimeout(() => {
-                    resolve();
+                    resolve({});
                   }, 5000)
                 );
               })
@@ -404,7 +427,7 @@ describe('bauta core tests', () => {
       expect.assertions(1);
     });
 
-    // eslint-disable-next-line jest/no-test-callback
+    // eslint-disable-next-line jest/no-done-callback
     test('should set the token variable isCanceled to true if the chain is canceled', async done => {
       const config = {
         endpoint: 'http://google.es'
@@ -420,7 +443,7 @@ describe('bauta core tests', () => {
                 });
                 await new Promise(resolve =>
                   setTimeout(() => {
-                    resolve();
+                    resolve({});
                   }, 5000)
                 );
               })
@@ -452,7 +475,7 @@ describe('bauta core tests', () => {
               p.push(async () => {
                 await new Promise(resolve =>
                   setTimeout(() => {
-                    resolve();
+                    resolve({});
                   }, 5000)
                 );
               })
@@ -495,7 +518,7 @@ describe('bauta core tests', () => {
                 .push(async () => {
                   await new Promise(resolve =>
                     setTimeout(() => {
-                      resolve();
+                      resolve({});
                     }, 5000)
                   );
                 })
@@ -533,7 +556,7 @@ describe('bauta core tests', () => {
                 .push(async () => {
                   return new Promise(resolve =>
                     setTimeout(() => {
-                      resolve();
+                      resolve({});
                     }, 1000)
                   );
                 })

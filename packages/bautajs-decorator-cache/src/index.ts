@@ -130,8 +130,8 @@ export const cache: CacheDecorator = <TIn, TOut>(
   }
   const cached = configureCache<TIn, TOut>(fn, normalizer, options, logger);
 
-  return async <TIn, TOut>(value: TIn, ctx: Context, bautajs: BautaJSInstance) =>
-    cached(value, ctx, bautajs) as TOut;
+  return async <In, Out>(value: In, ctx: Context, bautajs: BautaJSInstance) =>
+    cached(value, ctx, bautajs) as Out;
 };
 
 export default cache;
