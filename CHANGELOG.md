@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.2](http://github.axa.com/Digital/bauta-nodejs/compare/v3.6.1...v3.6.2) (2021-05-12)
+
+
+### Bug Fixes
+
+* **@bautajs/express:** wrong morgan type ([102907a](http://github.axa.com/Digital/bauta-nodejs/commit/102907a5ae4b74ecf226c2a07ebe21ec470e9a19))
+* **security:** update dependencies to prevent npm audit ([#222](http://github.axa.com/Digital/bauta-nodejs/issues/222)) ([d5c1aed](http://github.axa.com/Digital/bauta-nodejs/commit/d5c1aed18f343e5ec79ceb3f784339b559e95982))
+
+
+
+
+
 ## [3.6.1](http://github.axa.com/Digital/bauta-nodejs/compare/v3.6.0...v3.6.1) (2021-02-12)
 
 

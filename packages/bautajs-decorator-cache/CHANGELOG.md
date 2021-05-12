@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.2](https://github.axa.com/Digital/bauta-nodejs/compare/v3.6.1...v3.6.2) (2021-05-12)
+
+
+### Bug Fixes
+
+* **security:** update dependencies to prevent npm audit ([#222](https://github.axa.com/Digital/bauta-nodejs/issues/222)) ([d5c1aed](https://github.axa.com/Digital/bauta-nodejs/commit/d5c1aed18f343e5ec79ceb3f784339b559e95982))
+
+
+
+
+
 # [3.6.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.5.0...v3.6.0) (2021-02-11)
 
 **Note:** Version bump only for package @bautajs/decorator-cache
