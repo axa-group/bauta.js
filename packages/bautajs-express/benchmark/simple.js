@@ -13,35 +13,34 @@
  * limitations under the License.
  */
 const { resolver } = require('@bautajs/core');
+const express = require('express');
 const { BautaJSExpress } = require('../dist/index');
 
-const apiDefinitions = [
-  {
-    openapi: '3.0.0',
-    info: {
-      version: 'v1',
-      title: 'test'
-    },
-    servers: [
-      {
-        url: '/v1/api/'
-      }
-    ],
-    paths: {
-      '/op1': {
-        get: {
-          operationId: 'operation1',
-          responses: {
-            '200': {
-              description: 'ok',
-              content: {
-                'application/json': {
-                  schema: {
-                    type: 'object',
-                    properties: {
-                      hello: {
-                        type: 'string'
-                      }
+const apiDefinition = {
+  openapi: '3.0.0',
+  info: {
+    version: 'v1',
+    title: 'test'
+  },
+  servers: [
+    {
+      url: '/v1/api/'
+    }
+  ],
+  paths: {
+    '/op1': {
+      get: {
+        operationId: 'operation1',
+        responses: {
+          200: {
+            description: 'ok',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    hello: {
+                      type: 'string'
                     }
                   }
                 }
@@ -52,9 +51,11 @@ const apiDefinitions = [
       }
     }
   }
-];
+};
 
-const bautajs = new BautaJSExpress(apiDefinitions, {
+const app = express();
+const bautaJSExpress = new BautaJSExpress({
+  apiDefinition,
   resolvers: [
     resolver(operations => {
       operations.v1.operation1.setup(p => p.pipe(() => ({ hello: 'world' })));
@@ -63,6 +64,12 @@ const bautajs = new BautaJSExpress(apiDefinitions, {
 });
 
 (async () => {
-  await bautajs.applyMiddlewares({ morgan: { enabled: false } });
-  bautajs.listen(8080);
+  const router = await bautaJSExpress.buildRouter();
+
+  app.router('/v1', router);
+
+  app.listen(8080, err => {
+    if (err) throw err;
+    bautaJSExpress.logger.info('Server listening on localhost: 8080');
+  });
 })();

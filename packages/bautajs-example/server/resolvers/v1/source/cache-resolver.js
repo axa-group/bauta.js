@@ -35,5 +35,5 @@ const chuckFactsPipeline = pipe(chuckProvider(), transformResponse);
 const cachedChuckFactsPipeline = pipe(cache(chuckFactsPipeline, normalizer, { maxSize: 2 }));
 
 module.exports = resolver(operations => {
-  operations.v1.chuckFacts.setup(cachedChuckFactsPipeline);
+  operations.chuckFacts.setup(cachedChuckFactsPipeline);
 });

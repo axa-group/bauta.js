@@ -18,7 +18,7 @@ import cors, { CorsOptions } from 'cors';
 import { json, Router, urlencoded } from 'express';
 import helmet from 'helmet';
 import { Document, Operations, Logger } from '@bautajs/core';
-import { OpenAPIV3, OpenAPIV2, OpenAPI } from '@bautajs/core/node_modules/openapi-types';
+import { OpenAPIV3, OpenAPIV2 } from '@bautajs/core/node_modules/openapi-types';
 import fastSafeStringify from 'fast-safe-stringify';
 
 import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
@@ -26,11 +26,11 @@ import { genReqId } from './utils';
 
 const morganJson = require('morgan-json');
 
-function buildOpenAPIPaths(apiDefinition: OpenAPI.Document, operations: Operations) {
+function buildOpenAPIPaths(operations: Operations) {
   const paths: OpenAPIV3.PathsObject | OpenAPIV2.PathsObject = {};
 
-  Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
-    const operation = operations[apiDefinition.info.version][key];
+  Object.keys(operations).forEach((key: string) => {
+    const operation = operations[key];
     if (operation.route && operation.isSetup()) {
       if (!paths[operation.route.path]) {
         paths[operation.route?.path] = {};
@@ -119,7 +119,7 @@ export function initBodyParser(router: Router, opt?: MiddlewareOption<BodyParser
 
 export function initExplorer(
   router: Router,
-  apiDefinitions: Document[],
+  apiDefinition: Document,
   operations: Operations,
   opt?: MiddlewareOption<ExplorerOptions>
 ) {
@@ -130,21 +130,19 @@ export function initExplorer(
   const path: String = opts?.path || 'explorer';
 
   if (swaggerEnabled) {
-    apiDefinitions.forEach(apiDefinition => {
-      const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
-      const paths = buildOpenAPIPaths(apiDefinition, operations);
-      router.get(openAPIPath, (_, res) => {
-        res.send(fastSafeStringify({ ...apiDefinition, paths }));
-        res.end();
-      });
-      router.use(
-        `/${apiDefinition.info.version}/${path}`,
-        swaggerUiExpress.serve,
-        swaggerUiExpress.setup(undefined, {
-          ...(opt || null),
-          swaggerUrl: openAPIPath
-        })
-      );
+    const openAPIPath = `/openapi.json`;
+    const paths = buildOpenAPIPaths(operations);
+    router.get(openAPIPath, (_, res) => {
+      res.send(fastSafeStringify({ ...apiDefinition, paths }));
+      res.end();
     });
+    router.use(
+      `/${path}`,
+      swaggerUiExpress.serve,
+      swaggerUiExpress.setup(undefined, {
+        ...(opt || null),
+        swaggerUrl: openAPIPath
+      })
+    );
   }
 }

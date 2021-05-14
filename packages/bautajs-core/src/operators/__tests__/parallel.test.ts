@@ -12,28 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document } from '../../index';
+import { BautaJSInstance, createContext, pipe } from '../../index';
 import { parallel } from '../parallel';
 
-const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
-
 describe('parallel decorator', () => {
-  let bautajs: BautaJS;
-  beforeEach(async () => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
-    await bautajs.bootstrap();
-  });
   test('should execute the promises in parallel', async () => {
-    bautajs.operations.v1.operation1.setup(
+    const pipeline = pipe(
       parallel(
         () => Promise.resolve({ id: 3, name: 'pet3' }),
         () => Promise.resolve({ id: 1, name: 'pet' })
       )
     );
 
-    expect(
-      await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
-    ).toStrictEqual([
+    expect(await pipeline({}, createContext({}), {} as BautaJSInstance)).toStrictEqual([
       { id: 3, name: 'pet3' },
       { id: 1, name: 'pet' }
     ]);

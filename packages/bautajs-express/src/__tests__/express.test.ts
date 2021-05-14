@@ -22,9 +22,9 @@ import { resolver, asPromise, defaultLogger } from '@bautajs/core';
 import { BautaJSExpress } from '../index';
 import { getRequest, getResponse } from '../operators';
 
-const apiDefinitions = require('./fixtures/test-api-definitions.json');
-const apiDefinitionsV2 = require('./fixtures/test-api-definitions-v2.json');
-const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
+const apiDefinition = require('./fixtures/test-api-definitions.json');
+const apiDefinitionV2 = require('./fixtures/test-api-definitions-v2.json');
+const apiDefinitionSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
 const apiDefinitionSwaggerCircularDeps = require('./fixtures/test-api-definitions-swagger-circular-deps.json');
 
 describe('bautaJS express', () => {
@@ -33,10 +33,11 @@ describe('bautaJS express', () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'error').mockImplementation();
       logger.child = () => logger;
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolvers: [
           operations => {
-            operations.v1.operation1.setup((_, ctx) => {
+            operations.operation1.setup((_, ctx) => {
               const req = getRequest(ctx);
               req.socket.destroy();
 
@@ -49,33 +50,34 @@ describe('bautaJS express', () => {
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1/', router);
 
-      const request = supertest(app).get('/api/v1/test').set({ 'x-request-id': '1' });
+      const request = supertest(app).get('/v1/api/test').set({ 'x-request-id': '1' });
       expect.assertions(1);
       try {
         await request;
       } catch (e) {
         // eslint-disable-next-line jest/no-conditional-expect
         expect(logger.error).toHaveBeenCalledWith(
-          'The request to /api/v1/test was canceled by the requester'
+          'The request to /v1/api/test was canceled by the requester'
         );
       }
     });
   });
   describe('express initialization', () => {
     test('should expose the given swagger with an express API', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1/', router);
 
       const res = await supertest(app)
-        .get('/api/v1/test')
+        .get('/v1/api/test')
         .expect('Content-Type', /json/)
         .expect(200);
 
@@ -88,7 +90,8 @@ describe('bautaJS express', () => {
     });
 
     test('should not expose the endpoints that have been configured as private', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolversPath: path.resolve(
           __dirname,
           './fixtures/test-resolvers/private-operation-resolver.js'
@@ -98,15 +101,16 @@ describe('bautaJS express', () => {
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
-      const res = await supertest(app).get('/api/v1/test');
+      const res = await supertest(app).get('/v1/api/test');
 
       expect(res.status).toStrictEqual(404);
     });
 
     test('should not send the response again if already has been sent', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolversPath: path.resolve(
           __dirname,
           './fixtures/test-resolvers/operation-resolver-send-response.js'
@@ -115,10 +119,10 @@ describe('bautaJS express', () => {
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
       const res = await supertest(app)
-        .get('/api/v1/test')
+        .get('/v1/api/test')
         .expect('Content-Type', /json/)
         .expect(200);
 
@@ -127,10 +131,11 @@ describe('bautaJS express', () => {
 
     // eslint-disable-next-line jest/expect-expect
     test('should not send the response again if already has been sent on a readable pipe', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(
+            operations.operation1.setup(
               asPromise((_, ctx, _bautajs, callback) => {
                 const res = getResponse(ctx);
                 const s = new Readable();
@@ -152,10 +157,10 @@ describe('bautaJS express', () => {
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
       await supertest(app)
-        .get('/api/v1/test')
+        .get('/v1/api/test')
         .expect('Content-disposition', 'attachment; filename="file.pdf')
         .expect(200)
         .expect('123');
@@ -163,10 +168,11 @@ describe('bautaJS express', () => {
 
     // eslint-disable-next-line jest/expect-expect
     test('should not force empty object if the status code is 204', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup((_, ctx) => {
+            operations.operation1.setup((_, ctx) => {
               const res = getResponse(ctx);
               res.status(204);
             });
@@ -177,18 +183,19 @@ describe('bautaJS express', () => {
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
-      await supertest(app).get('/api/v1/test').expect(204, '');
+      await supertest(app).get('/v1/api/test').expect(204, '');
     });
 
     // eslint-disable-next-line jest/expect-expect
     test('should not override the headers set on the pipeline by the swagger ones', async () => {
       const form = new FormData();
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(
+            operations.operation1.setup(
               asPromise((_, ctx, _bautajs, callback) => {
                 const res = getResponse(ctx);
                 form.append('part1', 'part 1 data');
@@ -205,25 +212,26 @@ describe('bautaJS express', () => {
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
       await supertest(app)
-        .get('/api/v1/test')
+        .get('/v1/api/test')
         .expect('Content-type', `multipart/form-data; boundary=${form.getBoundary()}`)
         .expect(200);
     });
 
     test('should allow swagger 2.0', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition: apiDefinitionSwagger2,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
       const res = await supertest(app)
-        .get('/api/v1/test')
+        .get('/v1/api/test')
         .expect('Content-Type', /json/)
         .expect(200);
 
@@ -236,14 +244,15 @@ describe('bautaJS express', () => {
     });
 
     test('should return the swagger even if the openAPI swagger json has circular dependenciesw', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitionSwaggerCircularDeps, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition: apiDefinitionSwaggerCircularDeps,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const router = await bautajs.buildRouter({ explorer: { enabled: true } });
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
       const res = await supertest(app).get('/v1/openapi.json').expect(200);
 
@@ -251,14 +260,15 @@ describe('bautaJS express', () => {
     });
 
     test('should not expose the swagger if explorer is set to false', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitionsSwagger2, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition: apiDefinitionSwagger2,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const router = await bautajs.buildRouter({ explorer: { enabled: false } });
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
       const res = await supertest(app).get('/v1/explorer').expect(404);
 
@@ -266,7 +276,8 @@ describe('bautaJS express', () => {
     });
 
     test('should left error handling to express error handler', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolversPath: path.resolve(
           __dirname,
           './fixtures/test-resolvers/operation-resolver-error.js'
@@ -275,7 +286,7 @@ describe('bautaJS express', () => {
       const router = await bautajs.buildRouter();
 
       const app = express();
-      app.use(router);
+      app.use('/v1', router);
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       app.use((err: any, _: any, res: any, _next: any) => {
@@ -283,7 +294,7 @@ describe('bautaJS express', () => {
       });
 
       const res = await supertest(app)
-        .get('/api/v1/test')
+        .get('/v1/api/test')
         .expect('Content-Type', /json/)
         .expect(500);
 
@@ -293,10 +304,12 @@ describe('bautaJS express', () => {
 
   describe('two express instances', () => {
     test('should be possible to create two bautajs express instances and expose it in different paths', async () => {
-      const bautajs = new BautaJSExpress(apiDefinitions, {
+      const bautajs = new BautaJSExpress({
+        apiDefinition,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
-      const bautajsV2 = new BautaJSExpress(apiDefinitionsV2, {
+      const bautajsV2 = new BautaJSExpress({
+        apiDefinition: apiDefinitionV2,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
@@ -304,11 +317,11 @@ describe('bautaJS express', () => {
       const routerV2 = await bautajsV2.buildRouter();
 
       const app = express();
-      app.use(router);
-      app.use(routerV2);
+      app.use('/v1', router);
+      app.use('/v2', routerV2);
 
       const res = await supertest(app)
-        .get('/api/v1/test')
+        .get('/v1/api/test')
         .expect('Content-Type', /json/)
         .expect(200);
 
@@ -320,7 +333,7 @@ describe('bautaJS express', () => {
       ]);
 
       const resV2 = await supertest(app)
-        .get('/api/v2/test')
+        .get('/v2/api/test')
         .expect('Content-Type', /json/)
         .expect(200);
 

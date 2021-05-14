@@ -37,10 +37,11 @@ describe('validation tests', () => {
         ]
       }
     ];
-    const bautaJS = new BautaJS(circularSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: circularSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -57,7 +58,7 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
+    expect(bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
       expected
     );
   });
@@ -78,10 +79,11 @@ describe('validation tests', () => {
         ]
       }
     ];
-    const bautaJS = new BautaJS(circularSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: circularSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -98,7 +100,7 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(() => bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })).toThrow(
+    expect(() => bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toThrow(
       expect.objectContaining({
         errors: [
           {
@@ -122,10 +124,11 @@ describe('validation tests', () => {
         name: 'pet'
       }
     ];
-    const bautaJS = new BautaJS(formatSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: formatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -142,7 +145,7 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
+    expect(bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
       expected
     );
   });
@@ -157,10 +160,11 @@ describe('validation tests', () => {
         name: 'pet'
       }
     ];
-    const bautaJS = new BautaJS(formatSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: formatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -177,7 +181,7 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(() => bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })).toThrow(
+    expect(() => bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toThrow(
       expect.objectContaining({
         errors: [
           {
@@ -201,10 +205,11 @@ describe('validation tests', () => {
         name: 'pet'
       }
     ];
-    const bautaJS = new BautaJS(nullableSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: nullableSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(() => {
+          operations.operation1.setup(() => {
             return anyResponse;
           });
         })
@@ -222,7 +227,7 @@ describe('validation tests', () => {
     });
     await bautaJS.bootstrap();
     expect(() =>
-      bautaJS.operations.v1.operation1.run({
+      bautaJS.operations.operation1.run({
         req: { query: {}, body: { some_field: null } },
         res: {}
       })
@@ -250,13 +255,14 @@ describe('validation tests', () => {
         name: 'pet'
       }
     ];
-    const bautaJS = new BautaJS(schemaTwoOperations as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: schemaTwoOperations as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
-          operations.v1.operation2.validateResponse(true).setup(() => {
+          operations.operation2.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -275,7 +281,7 @@ describe('validation tests', () => {
     await bautaJS.bootstrap();
 
     // Should not return an error since operation2 has no parameters
-    expect(bautaJS.operations.v1.operation2.run({ req: { query: {} }, res: {} })).toStrictEqual(
+    expect(bautaJS.operations.operation2.run({ req: { query: {} }, res: {} })).toStrictEqual(
       expected
     );
   });
@@ -293,10 +299,11 @@ describe('custom formats', () => {
         name: 'pet'
       }
     ];
-    const bautaJS = new BautaJS(customFormatSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: customFormatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -313,7 +320,7 @@ describe('custom formats', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
+    expect(bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
       expected
     );
   });
@@ -330,10 +337,11 @@ describe('custom formats', () => {
       }
     ];
 
-    const bautaJS = new BautaJS(customFormatSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: customFormatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -359,7 +367,7 @@ describe('custom formats', () => {
 
     await bautaJS.bootstrap();
     expect(() =>
-      bautaJS.operations.v1.operation1.run({
+      bautaJS.operations.operation1.run({
         req: { query: {}, body: {} },
         res: {}
       })
@@ -390,10 +398,11 @@ describe('custom formats', () => {
       }
     ];
 
-    const bautaJS = new BautaJS(customFormatSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: customFormatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -419,7 +428,7 @@ describe('custom formats', () => {
 
     await bautaJS.bootstrap();
     expect(() =>
-      bautaJS.operations.v1.operation1.run({
+      bautaJS.operations.operation1.run({
         req: { query: {}, body: {} },
         res: {}
       })
@@ -450,10 +459,11 @@ describe('custom formats', () => {
       }
     ];
 
-    const bautaJS = new BautaJS(customFormatSchema as Document[], {
+    const bautaJS = new BautaJS({
+      apiDefinition: customFormatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup(() => {
             return expected;
           });
         })
@@ -481,7 +491,7 @@ describe('custom formats', () => {
 
     await bautaJS.bootstrap();
     expect(() =>
-      bautaJS.operations.v1.operation1.run({
+      bautaJS.operations.operation1.run({
         req: { query: {}, body: {} },
         res: {}
       })

@@ -22,7 +22,8 @@ const apiDefinitionsCustomValidation = require('./fixtures/test-api-definitions-
 
 describe('bautaJS express validation tests', () => {
   test('should validate the request with the bautajs validator adding a custom format', async () => {
-    const bautajs = new BautaJSExpress(apiDefinitionsCustomValidation, {
+    const bautajs = new BautaJSExpress({
+      apiDefinition: apiDefinitionsCustomValidation,
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
@@ -30,7 +31,7 @@ describe('bautaJS express validation tests', () => {
     const router = await bautajs.buildRouter();
 
     const app = express();
-    app.use(router);
+    app.use('/v1', router);
     // Set default error handler
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     app.use((err: any, _: any, res: any, _next: any) => {
@@ -38,7 +39,7 @@ describe('bautaJS express validation tests', () => {
     });
 
     const res = await supertest(app)
-      .get('/api/v1/test')
+      .get('/v1/api/test')
       .query({ limit: 123 })
       .expect('Content-Type', /json/)
       .expect(422);
@@ -53,7 +54,8 @@ describe('bautaJS express validation tests', () => {
   });
 
   test('should validate the response with the bautajs validator adding a custom format', async () => {
-    const bautajs = new BautaJSExpress(apiDefinitionsCustomValidation, {
+    const bautajs = new BautaJSExpress({
+      apiDefinition: apiDefinitionsCustomValidation,
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
       resolversPath: path.resolve(
         __dirname,
@@ -64,14 +66,14 @@ describe('bautaJS express validation tests', () => {
     const router = await bautajs.buildRouter();
 
     const app = express();
-    app.use(router);
+    app.use('/v1', router);
     // Set default error handler
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     app.use((err: any, _: any, res: any, _next: any) => {
       res.json({ message: err.message, status: res.statusCode, errors: err.errors }).end();
     });
 
-    const res = await supertest(app).get('/api/v1/test').expect('Content-Type', /json/).expect(500);
+    const res = await supertest(app).get('/v1/api/test').expect('Content-Type', /json/).expect(500);
 
     expect(res.body.message).toStrictEqual(`Internal error`);
   });

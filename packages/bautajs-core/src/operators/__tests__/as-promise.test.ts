@@ -12,27 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document } from '../../index';
+import { BautaJSInstance, createContext, pipe } from '../../index';
 import { asPromise } from '../as-promise';
 
-const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
-
 describe('callback decorator', () => {
-  let bautajs: BautaJS;
-  beforeEach(async () => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
-    await bautajs.bootstrap();
-  });
-
   test('should execute as a callback', async () => {
-    bautajs.operations.v1.operation1.setup(
+    const pipeline = pipe(
       asPromise((_: any, ctx: any, _bautajs: any, done: any) =>
-        done(null, [{ id: ctx.raw.req.id, name: 'pet' }])
+        done(null, [{ id: ctx.data.id, name: 'pet' }])
       )
     );
 
     expect(
-      await bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+      await pipeline({}, createContext({ data: { id: 1 } }), {} as BautaJSInstance)
     ).toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 });

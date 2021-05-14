@@ -19,22 +19,23 @@ import { resolver } from '@bautajs/core';
 import express from 'express';
 import { BautaJSExpress } from '../index';
 
-const apiDefinitions = require('./fixtures/test-api-unused-definitions.json');
+const apiDefinition = require('./fixtures/test-api-unused-definitions.json');
 const expectedFullSwagger = require('./fixtures/expected-api-full-unused-swagger.json');
 const expectedUnusedSwagger = require('./fixtures/expected-api-unused-swagger.json');
 
 describe('express explorer', () => {
   test('should exposes all endpoints that has a resolver', async () => {
-    const bautajs = new BautaJSExpress(apiDefinitions, {
+    const bautajs = new BautaJSExpress({
+      apiDefinition,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(() => [
+          operations.operation1.setup(() => [
             {
               id: 134,
               name: 'pet2'
             }
           ]);
-          operations.v1.unused.setup(() => [
+          operations.unused.setup(() => [
             {
               id: 134,
               name: 'pet2'
@@ -47,7 +48,7 @@ describe('express explorer', () => {
     const router = await bautajs.buildRouter();
 
     const app = express();
-    app.use(router);
+    app.use('/v1', router);
 
     const res = await supertest(app)
       .get('/v1/openapi.json')
@@ -58,10 +59,11 @@ describe('express explorer', () => {
   });
 
   test('should not expose the endpoint if there is no resolver for it', async () => {
-    const bautajs = new BautaJSExpress(apiDefinitions, {
+    const bautajs = new BautaJSExpress({
+      apiDefinition,
       resolvers: [
         resolver(operations => {
-          operations.v1.operation1.setup(() => [
+          operations.operation1.setup(() => [
             {
               id: 134,
               name: 'pet2'
@@ -74,7 +76,7 @@ describe('express explorer', () => {
     const router = await bautajs.buildRouter();
 
     const app = express();
-    app.use(router);
+    app.use('/v1', router);
 
     const res = await supertest(app)
       .get('/v1/openapi.json')

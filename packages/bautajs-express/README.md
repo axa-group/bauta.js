@@ -18,10 +18,10 @@ const { BautaJSExpress } = require('@bauta/express');
 const apiDefinition = require('../../api-definition.json');
 
 const app = express();
-const bautaJSExpress = new BautaJSExpress(apiDefinition, {});
+const bautaJSExpress = new BautaJSExpress({ apiDefinition });
 const router = await bautaJSExpress.buildRouter();
 
-app.router(router);
+app.router('/v1', router);
 
 app.listen(3000, err => {
   if (err) throw err;

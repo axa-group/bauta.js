@@ -15,7 +15,7 @@ As `bautajs` is loading all files under ./resolvers file by default, it's recomm
 // v1/cats-resolver.js
 const { resolver } = require('@bautajs/core');
 module.exports = resolver((operations) => {
-  operations.v1.findCat.setup((_, ctx) => {
+  operations.findCat.setup((_, ctx) => {
     return {
       name: 'toto'
     }
@@ -27,9 +27,9 @@ module.exports = resolver((operations) => {
 // v2/cats-resolver.js
 const { resolver } = require('@bautajs/core');
 module.exports = resolver((operations) => {
-  operations.v2.findCat.setup((_, ctx) => {
+  operations.findCatV2.setup((_, ctx) => {
     return {
-      id: 'toto'
+      idV2: 'toto'
     }
   });
 })
@@ -43,7 +43,6 @@ This is an example of API definitions for two API versions:
 
 ```json
 // api-definitions.json
-[
   {
     "openapi": "3.0.0",
     "apiVersion": "1.0",
@@ -75,49 +74,57 @@ This is an example of API definitions for two API versions:
     },
     "servers": [
       {
-        "url":"/v1/api/"
+        "url":"/v2/api/"
      }
     ],
     "paths": {
       "/cats": {
         "get":{
-          "operationId":"findCat"
+          "operationId":"findCatV2"
         }
       }
     }
   }
-]
 ```
 
-API versions are now accessible by code:
-**See that the operations structure is the following bautajs.operations[OPEN_API.info.version][OPEN_API.paths[x][METHOD].operationId]**
+Now we need to specify a `bautaJS` instance peer api version.
 
 ```js
-// server.js
+// instances.js
 const { BautaJS } = require('@bautajs/core');
 const apiDefinition = require('./api-definitions.json');
 
 
-const bautajs = new BautaJS(apiDefinition);
+const bautajsV1 = new BautaJS({ apiDefinition: apiDefinitions[0] });
+const bautajsV2 = new BautaJS({ apiDefinition: apiDefinitions[1] });
 
-await bautajs.bootstrap();
 
-const res1 = await bautajs.operations.v1.findCat.run();
+(async () => {
 
-const res2 = await bautajs.operations.v2.findCat.run();
+await bautajsV1.bootstrap();
+// Inherit v1 operations
+bautajsV2.inheritOperationsFrom(bautajsV1);
+await bautajsV2.bootstrap();
+
+const res1 = await bautajsV2.operations.findCat.run();
+// result:  name: 'toto'
+const res2 = await bautajsV2.operations.findCatV2.run();
+// result:  idV2: 'toto'
 
 console.log(res1, res2);
+})()
 
 ```
 
-In this example the `cats.v2` is inheriting automatically the behaviour of `cats.v1`.
+In this example the `findCat` from v1 instance will be inherited to the v2 instance because of the usage of `inheritOperationsFrom` that will inherit the schema, the properties and the handler from v1.
 
-**Calling setup method from v2 will override the v2 pipeline inherited from v1**
+**Calling setup method of any operation will override the current handler**
+
+Calling `inheritOperationsFrom` after bootstrap the instance is not possible and will always throw an error. This behaviour is intended since api schema is resolved on bootstrap time so if the instance is already bootstrapped and `inheritOperationsFrom` is called after this could lead to unexpected behaviour of your API.
 
 ### Deprecate an operation
 
-A deprecated operation means that his behaviour or (pipeline) won't be inherited by the next API versions.
-There are two ways for deprecate an operation; by code or by the OpenAPI definition.
+A deprecated operation means that on call `inheritOperationsFrom` method that operation won't be `cloned` to the new instance.
 
 - Deprecation by code:
 ```js
@@ -178,4 +185,3 @@ module.exports = resolver(operations) => {
   }
 ]
 ```
-

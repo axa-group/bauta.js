@@ -22,12 +22,6 @@ class ParserV3 {
 
   constructor({ paths, ...spec }: OpenAPIV3.Document) {
     this.document = { generic: spec, routes: [] };
-
-    // Retrocompatibility with Bautajs 2.x
-    if (!this.document.generic.basePath) {
-      const basePath = spec.servers && spec.servers[0].url ? spec.servers[0].url : undefined;
-      this.document.generic.basePath = basePath;
-    }
     this.processPaths(paths);
   }
 

@@ -12,51 +12,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document } from '../../index';
 import { pipe } from '../pipeline';
 import { match } from '../match';
-
-const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
+import { createContext } from '../../utils/create-context';
+import { BautaJSInstance } from '../..';
 
 describe('match decorator', () => {
-  let bautajs: BautaJS;
-  beforeEach(async () => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
-    await bautajs.bootstrap();
-  });
-
   test('should select the pipeline execution depending on the condition', async () => {
     const myPipeline1 = pipe(() => [{ id: 1, name: 'pet' }]);
     const myPipeline2 = pipe(() => [{ id: 3, name: 'pet' }]);
-    bautajs.operations.v1.operation1.setup(
-      pipe(
-        () => 1,
-        match(m => m.on(prev => prev === 1, myPipeline1).otherwise(myPipeline2))
-      )
+    const pipeline = pipe(
+      () => 1,
+      match(m => m.on(prev => prev === 1, myPipeline1).otherwise(myPipeline2))
     );
 
-    expect(
-      await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
-    ).toStrictEqual([{ id: 1, name: 'pet' }]);
+    expect(pipeline(null, createContext({}), {} as BautaJSInstance)).toStrictEqual([
+      { id: 1, name: 'pet' }
+    ]);
   });
 
   test('should use the default option if non of the options match', async () => {
     const myPipeline1 = pipe(() => [{ id: 1, name: 'pet' }]);
     const myPipeline2 = pipe(() => [{ id: 3, name: 'pet' }]);
-    bautajs.operations.v1.operation1.setup(
-      pipe(
-        () => 5,
-        match(m =>
-          m
-            .on(prev => prev === 1, myPipeline1)
-            .on(prev => prev === 2, myPipeline1)
-            .otherwise(myPipeline2)
-        )
+    const pipeline = pipe(
+      () => 5,
+      match(m =>
+        m
+          .on(prev => prev === 1, myPipeline1)
+          .on(prev => prev === 2, myPipeline1)
+          .otherwise(myPipeline2)
       )
     );
 
-    expect(
-      await bautajs.operations.v1.operation1.run({ req: { query: {}, id: 3 }, res: {} })
-    ).toStrictEqual([{ id: 3, name: 'pet' }]);
+    expect(pipeline(null, createContext({}), {} as BautaJSInstance)).toStrictEqual([
+      { id: 3, name: 'pet' }
+    ]);
   });
 });

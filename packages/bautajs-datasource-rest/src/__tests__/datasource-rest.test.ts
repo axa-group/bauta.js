@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 import nock from 'nock';
-import { createContext, BautaJS, defaultLogger, pipe } from '@bautajs/core';
+import { BautaJS, BautaJSInstance, createContext, defaultLogger, pipe } from '@bautajs/core';
 import { CancelableRequest } from 'got';
-import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
 describe('provider rest', () => {
-  let bautajs: BautaJS;
+  afterEach(() => {
+    nock.cleanAll();
+  });
+  let bautajs: BautaJSInstance;
 
   beforeEach(async () => {
-    bautajs = new BautaJS(testApiDefinitionsJson as any[], {
+    bautajs = new BautaJS({
       disableTruncateLog: false,
       truncateLogSize: 30000
     });
     await bautajs.bootstrap();
-  });
-
-  afterEach(() => {
-    nock.cleanAll();
   });
   describe('restProvider extend', () => {
     test('should allow to create your own rest provider', async () => {
@@ -44,16 +42,17 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`);
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(
-        pipe((_, ctx) => {
-          ctx.data.myId = Id;
-        }, provider())
+      const pipeline = pipe((_, ctx) => {
+        ctx.data.myId = Id;
+      }, provider());
+      const response = await pipeline(
+        null,
+        createContext({
+          req: { id: 1 },
+          res: { statusCode: 200 }
+        }),
+        bautajs
       );
-
-      const response = await bautajs.operations.v1.operation1.run({
-        req: { id: 1 },
-        res: { statusCode: 200 }
-      });
 
       expect(response).toStrictEqual('text');
     });
@@ -72,17 +71,18 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(
-        pipe((_, ctx) => {
-          ctx.data.myId = Id;
-        }, provider())
+      const pipeline = pipe((_, ctx) => {
+        ctx.data.myId = Id;
+      }, provider());
+
+      const response = await pipeline(
+        null,
+        createContext({
+          req: { id: 1 },
+          res: { statusCode: 200 }
+        }),
+        bautajs
       );
-
-      const response = await bautajs.operations.v1.operation1.run({
-        req: { id: 1 },
-        res: { statusCode: 200 }
-      });
-
       expect(response).toStrictEqual([{ id: 3, name: 'pet3' }]);
     });
 
@@ -96,17 +96,19 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(
-        pipe((_, ctx) => {
-          ctx.data.myId = Id;
-        }, provider())
-      );
+      const pipeline = pipe((_, ctx) => {
+        ctx.data.myId = Id;
+      }, provider());
 
       await expect(
-        bautajs.operations.v1.operation1.run({
-          req: { id: 1 },
-          res: { statusCode: 200 }
-        })
+        pipeline(
+          null,
+          createContext({
+            req: { id: 1 },
+            res: { statusCode: 200 }
+          }),
+          bautajs
+        )
       ).rejects.toThrow(expect.objectContaining({ statusCode: 404, message: 'not found' }));
     });
 
@@ -120,17 +122,19 @@ describe('provider rest', () => {
         return client.get(`https://google.com/${ctx.data.myId}`, { responseType: 'json' });
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(
-        pipe((_, ctx) => {
-          ctx.data.myId = Id;
-        }, provider())
-      );
+      const pipeline = pipe((_, ctx) => {
+        ctx.data.myId = Id;
+      }, provider());
 
       await expect(
-        bautajs.operations.v1.operation1.run({
-          req: { id: 1 },
-          res: { statusCode: 200 }
-        })
+        pipeline(
+          null,
+          createContext({
+            req: { id: 1 },
+            res: { statusCode: 200 }
+          }),
+          bautajs
+        )
       ).rejects.toThrow(expect.objectContaining({ statusCode: 404, message: 'not found' }));
     });
 
@@ -144,23 +148,23 @@ describe('provider rest', () => {
       const provider = restProvider((client, _, ctx) => {
         return client.get(`https://google.com/${ctx.data.myId}`);
       });
-
-      bautajs.operations.v1.operation1.validateResponse(false).setup(
-        pipe((_, ctx) => {
-          ctx.data.myId = Id;
-        }, provider())
+      const pipeline = pipe((_, ctx) => {
+        ctx.data.myId = Id;
+      }, provider());
+      const response = await pipeline(
+        null,
+        createContext({
+          req: { id: 1 },
+          res: { statusCode: 200 }
+        }),
+        bautajs
       );
-
-      const response = await bautajs.operations.v1.operation1.run({
-        req: { id: 1 },
-        res: { statusCode: 200 }
-      });
 
       expect(response).toStrictEqual([{ id: 3, name: 'pet3' }]);
     });
   });
 
-  describe('request cancelation', () => {
+  describe('request cancellation', () => {
     test('should cancel the request if the a cancel is executed', async () => {
       const { restProvider } = await import('../index');
       nock('http://pets.com').get('/v1/policies').reply(200, {});
@@ -372,16 +376,18 @@ describe('provider rest', () => {
         });
       });
 
-      bautajs.operations.v1.operation1.validateResponse(false).setup(
-        pipe((_, ctx) => {
-          ctx.data.myId = Id;
-        }, provider())
-      );
+      const pipeline = pipe((_, ctx) => {
+        ctx.data.myId = Id;
+      }, provider());
 
-      const response = await bautajs.operations.v1.operation1.run({
-        req: { id: 1 },
-        res: { statusCode: 200 }
-      });
+      const response = await pipeline(
+        null,
+        createContext({
+          req: { id: 1 },
+          res: { statusCode: 200 }
+        }),
+        bautajs
+      );
 
       expect(response).toStrictEqual([{ id: 3, name: 'pet3' }]);
     });

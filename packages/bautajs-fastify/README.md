@@ -16,7 +16,7 @@ const fastify = require('fastify')();
 const apiDefinition = require('../../api-definition.json');
 
 fastify.register(bautajsFastify, {
-  apiDefinitions,
+  apiDefinition,
   resolversPath: './glob-path-to-your-resolvers/*.js',
   staticConfig: {
     someVar: 2
@@ -36,9 +36,7 @@ Bauta in fastify is added as a [plugin](https://github.com/fastify/fastify/blob/
 
 By default the following plugins are included on the fastify instance
 
-- [fastify-helmet](https://github.com/fastify/fastify-helmet) - security plugin for your API
-- [fastify-oas](https://github.com/SkeLLLa/fastify-oas) - Automatic swagger documentation exposed through the `/explorer` path
-- [fastify-sensible](https://github.com/fastify/fastify-sensible) - Utils such error creation, assertions among others.
+- [fastify-openapi-docs](https://github.com/ShogunPanda/fastify-openapi-docs) - Automatic swagger documentation exposed through the `/explorer` path
 
 ### Request cancelation
 

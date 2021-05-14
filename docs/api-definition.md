@@ -1,14 +1,12 @@
 # API definition
 
-`bautajs` uses [OpenAPI definition v2 or v3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md) to create the operations structure, to validate requests, to validate responses, to expose a Swagger UI and to expose your API paths.
-
-**By default the base path of the exposed endpoints will be the first url on "servers" for OpenAPI V3 or the "basePath" for Swagger 2.0**
+`bautajs` uses [OpenAPI definition v2 or v3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md)  to validate requests, to validate responses, to expose a Swagger UI and to expose your API paths.
 
 ### Example of OpenAPI v3
 
 ```json
-// api-definitions.json
-[
+// api-definition.json
+
   {
     "openapi": "3.0.0",
     "apiVersion": "1.0",
@@ -30,15 +28,18 @@
       }
     }
   }
-]
 ```
 
-The following operations structure will be generated with the given OpenAPI file:
+Having this swagger the following operation association will be done:
 
-`bautajs.operations[OPEN_API.info.version][OPEN_API.paths[x][METHOD].operationId]`
+`bautajs.operations[OPEN_API.paths[x][METHOD].operationId]`
 
 Accessing to the operations via:
 
 ```js
- bautajs.operations.v1.findCat
+ bautajs.operations.findCat
 ```
+
+That way operationId findCat schema will be associated with the operation 'key' findCat.
+
+**Providing a API definition is not mandatory on create a Bautajs instance**

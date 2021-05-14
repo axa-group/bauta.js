@@ -12,23 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document } from '../../index';
+import { BautaJSInstance, createContext, pipe } from '../../index';
 import { asValue } from '../as-value';
 
-const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
-
 describe('as value decorator', () => {
-  let bautajs: BautaJS;
-  beforeEach(async () => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
-    await bautajs.bootstrap();
-  });
-
   test('should allow send a simple value', async () => {
-    bautajs.operations.v1.operation1.setup(asValue([{ id: 1, name: 'pet' }]));
+    const pipeline = pipe(asValue([{ id: 1, name: 'pet' }]));
 
-    expect(
-      bautajs.operations.v1.operation1.run({ req: { query: {}, id: 1 }, res: {} })
-    ).toStrictEqual([{ id: 1, name: 'pet' }]);
+    expect(pipeline({}, createContext({}), {} as BautaJSInstance)).toStrictEqual([
+      { id: 1, name: 'pet' }
+    ]);
   });
 });

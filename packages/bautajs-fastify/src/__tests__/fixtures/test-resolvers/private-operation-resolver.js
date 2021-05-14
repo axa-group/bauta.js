@@ -15,7 +15,7 @@
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setAsPrivate(true).setup(() => [
+  operations.operation1.setAsPrivate(true).setup(() => [
     {
       id: 134,
       name: 'pet2'

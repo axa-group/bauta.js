@@ -31,7 +31,6 @@ export interface RouteResponse {
 export interface BasicOperation {
   readonly id: string;
   readonly deprecated: boolean;
-  readonly version: string;
 }
 
 export interface RouteSchema {
@@ -50,7 +49,6 @@ export interface Route {
   openapiSource: OpenAPI.Operation;
   operation?: Operation;
   isV2: boolean;
-  basePath?: string;
   path: string;
 }
 export interface Request {
@@ -162,8 +160,53 @@ export interface Logger {
   child: (bindings: Bindings) => Logger;
 }
 
+export interface Options<TRaw = any> {
+  /**
+   * Get the request object from the passed data on the Operation.run method.
+   * It's used to get the data for the request validation.
+   *
+   * @template TRaw object send on operation.run method
+   * @param {RawData<TRaw>} data
+   * @return {Request}
+   * @memberof Options
+   */
+  getRequest?(raw: RawData<TRaw>): Request;
+  /**
+   * Get the response object from the passed data on the Operation.run method.
+   * It's used to get the request status and statusCode to determine the response validation.
+   *
+   * @template TRaw object send on operation.run method
+   * @param {RawData<TRaw>} data
+   * @return { isResponseFinished: boolean; statusCode: number }
+   * @memberof Options
+   */
+  getResponse?(raw: RawData<TRaw>): { isResponseFinished: boolean; statusCode: number };
+  /**
+   * Indicates the size after which bauta truncates the logs.
+   *
+   * @type {number}
+   * @memberof Options
+   */
+  truncateLogSize?: number;
+
+  /**
+   * Indicates if the truncation of the logs is disabled. Avoid setting this to true in production, this is a utility though for troubleshooting development issues.
+   *
+   * @type {boolean}
+   * @memberof BautaJSOptions
+   */
+  disableTruncateLog?: boolean;
+}
+
 // BautaJS
 export interface BautaJSOptions<TRaw = any> {
+  /**
+   * An API OpenAPI 2.x or 3.x specification
+   *
+   * @type {Document}
+   * @memberof BautaJSOptions
+   */
+  apiDefinition?: Document;
   /**
    * Get the request object from the passed data on the Operation.run method.
    * It's used to get the data for the request validation.
@@ -259,6 +302,13 @@ export interface BautaJSOptions<TRaw = any> {
 
 export interface BautaJSInstance {
   /**
+   * An API OpenAPI 2.x or 3.x specification
+   *
+   * @type {Document}
+   * @memberof BautaJSInstance
+   */
+  readonly apiDefinition?: Document;
+  /**
    * The list of operations defined on the given OpenAPI schemas split by version ID's.
    *
    * @type {Operations}
@@ -272,13 +322,6 @@ export interface BautaJSInstance {
    * @memberof BautaJSInstance
    */
   readonly logger: Logger;
-  /**
-   * The given OpenAPI definitions schemas.
-   *
-   * @type {Document[]}
-   * @memberof BautaJSInstance
-   */
-  readonly apiDefinitions: Document[];
   /**
    * An static set of configurations available on each Pipeline.StepFunction.
    *
@@ -310,6 +353,12 @@ export interface BautaJSInstance {
   [key: string]: any;
 
   readonly validator: Validator<Ajv.ValidateFunction>;
+  /**
+   * Inherit the given bautajs operations handlers.
+   * - If the inherit operation is set as deprecated, his behaviour won't be inherited.
+   * @memberof BautaJSInstance
+   */
+  inheritOperationsFrom(bautajs: BautaJSInstance): BautaJSInstance;
 }
 
 export type CustomValidationFormat = {
@@ -317,17 +366,14 @@ export type CustomValidationFormat = {
 } & Ajv.FormatDefinition;
 
 // Service
-export type Operations = Dictionary<Version>;
+export type Operations = Dictionary<Operation>;
 export type Resolver = (operations: Operations) => void;
-
-// Version
-export type Version = Dictionary<Operation>;
 
 // Operation
 export interface Operation extends BasicOperation {
+  handler: Pipeline.StepFunction<any, any>;
   route?: Route;
   schema?: OpenAPI.Operation;
-  nextVersionOperation?: Operation;
   requestValidationEnabled: Boolean;
   responseValidationEnabled: Boolean;
   addRoute(route: Route): void;

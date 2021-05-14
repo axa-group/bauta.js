@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 import fp from 'fastify-plugin';
-import fastifyHelmet from 'fastify-helmet';
 import {
   FastifyInstance,
   FastifyReply,
@@ -21,19 +20,18 @@ import {
   HTTPMethods,
   ValidationResult
 } from 'fastify';
-import helmet from 'helmet';
 import responseXRequestId from 'fastify-x-request-id';
 import routeOrder from 'route-order';
 import * as bautaJS from '@bautajs/core';
-import { FastifyOASOptions } from 'fastify-oas';
-import sensible from 'fastify-sensible';
+import fastJson from 'fast-json-stringify';
 import explorerPlugin from './explorer';
+
+const stringify = fastJson({});
 
 export interface ValidationObject {
   validation: ValidationResult[];
   validationContext: string;
 }
-type FastifyHelmetOptions = Parameters<typeof helmet>[0] & { enableCSPNonces?: boolean };
 
 function formatLocationErrors(validation: ValidationObject): bautaJS.LocationError[] | undefined {
   return Array.isArray(validation.validation)
@@ -48,50 +46,51 @@ function formatLocationErrors(validation: ValidationObject): bautaJS.LocationErr
 
 export interface BautaJSFastifyPluginOptions
   extends Omit<bautaJS.BautaJSOptions, 'getRequest' | 'getResponse'> {
-  apiDefinitions: bautaJS.Document[];
   /**
-   * Automatically expose the buatajs operations as an endpoint.
+   * In case an openAPI schema or an schema is provided to the routes, enable this flag will use it to serialize and validate the response.
+   * - If this is enabled and response is not complaint with the schema, an error will be returned. Enable it will "IMPROVE THE PERFORMANCE".
+   * - If this is disabled responses will be serialized with a normal stringify method.
+   * @default false
+   * @type {boolean}
+   */
+  enableResponseValidation?: boolean;
+  /**
+   * Automatically expose the bautajs operations as an endpoint.
    * @default true
    * @type {boolean}
    */
   exposeOperations?: boolean;
-  helmet?: {
-    enabled: boolean;
-    options?: FastifyHelmetOptions;
-  };
   explorer?: {
     enabled: boolean;
-    options?: FastifyOASOptions;
   };
-  sensible?: {
-    enabled: boolean;
-    options?: {
-      /**
-       * Set a default error handler that will manage sensible plugin errors for you.
-       * @default true
-       * @type {boolean}
-       */
-      errorHandler: boolean;
-    };
-  };
+  /**
+   * Referees to the API base path
+   * @default "/api/"
+   * @type string
+   */
+  apiBasePath?: string;
+  /**
+   * Referees to the root path of your Application. It can be used to split the api in different versions such 'v1', 'v2'...
+   * @default ""
+   * @type string
+   */
+  prefix?: string;
 }
 
 function processOperations(operations: bautaJS.Operations) {
-  const routes: any = {};
-  Object.values(operations).forEach(versions => {
-    Object.values(versions).forEach(operation => {
-      if (!operation.isPrivate() && operation.route) {
-        if (!routes[operation.route.url]) {
-          // eslint-disable-next-line no-param-reassign
-          routes[operation.route.url] = {};
-        }
+  return Object.keys(operations).reduce((routes: any, operationId) => {
+    const operation = operations[operationId];
+    if (!operation.isPrivate() && operation.route) {
+      if (!routes[operation.route.url]) {
         // eslint-disable-next-line no-param-reassign
-        routes[operation.route.url][operation.route.method] = operation;
+        routes[operation.route.url] = {};
       }
-    });
-  });
+      // eslint-disable-next-line no-param-reassign
+      routes[operation.route.url][operation.route.method] = operation;
+    }
 
-  return routes;
+    return routes;
+  }, {});
 }
 
 function createHandler(operation: bautaJS.Operation) {
@@ -169,27 +168,28 @@ function createHandler(operation: bautaJS.Operation) {
   };
 }
 
-export async function bautajsFastify(
-  fastify: FastifyInstance,
-  { apiDefinitions, ...opts }: BautaJSFastifyPluginOptions
-) {
-  function addRoute(operation: bautaJS.Operation) {
+export async function bautajsFastify(fastify: FastifyInstance, opts: BautaJSFastifyPluginOptions) {
+  const prefix = opts.prefix || '';
+  function addRoute(operation: bautaJS.Operation, validator: bautaJS.Validator<any>) {
     const method: HTTPMethods = (operation.route?.method.toUpperCase() || 'GET') as HTTPMethods;
-    const { url = '', basePath = '' } = operation.route || {};
-    const requestSchema = operation.requestValidationEnabled
-      ? {
-          body: operation.route?.schema.body,
-          params: operation.route?.schema.params,
-          headers: operation.route?.schema.headers,
-          querystring: operation.route?.schema.querystring
-        }
-      : {};
+    const { url = '' } = operation.route || {};
+    const basePath = `${prefix}${opts.apiBasePath || '/api/'}`.replace(/\/\//, '/');
+    const requestSchema =
+      operation.route?.schema && operation.requestValidationEnabled
+        ? {
+            body: operation.route?.schema.body,
+            params: operation.route?.schema.params,
+            headers: operation.route?.schema.headers,
+            querystring: operation.route?.schema.querystring
+          }
+        : {};
 
     // Response validation could be disabled. Take in account that if is disabled
-    // the performance improvement of fastify is not fullfilled at 100%
-    const responseSchema = operation.responseValidationEnabled
-      ? { response: operation.route?.schema.response }
-      : {};
+    // the performance improvement of fastify is not fulfilled at 100%
+    const responseSchema =
+      operation.route?.schema && operation.responseValidationEnabled
+        ? { response: operation.route?.schema.response }
+        : {};
 
     // Use fastify Request validation and serialization.
     operation.validateRequest(false);
@@ -200,6 +200,13 @@ export async function bautajsFastify(
       async fastifyAPI => {
         const route = (basePath + url).replace(/\/\//, '/');
         fastifyAPI.route({
+          serializerCompiler:
+            opts.enableResponseValidation === true
+              ? undefined
+              : () => {
+                  return data => stringify(data);
+                },
+          validatorCompiler: ({ schema }) => validator.buildSchemaCompiler(schema),
           attachValidation: true,
           method,
           url,
@@ -222,8 +229,8 @@ export async function bautajsFastify(
 
         fastify.log.info(
           `[OK] [${method.toUpperCase()}] ${route} operation exposed on the API from ${
-            operation.version
-          }.${operation.id}`
+            operation.id
+          }`
         );
       },
       {
@@ -232,7 +239,7 @@ export async function bautajsFastify(
     );
   }
 
-  const bautajs = new bautaJS.BautaJS(apiDefinitions, {
+  const bautajs = new bautaJS.BautaJS({
     // Cast should be done because interface of fastify is wrong https://github.com/fastify/fastify/issues/1715
     logger: fastify.log as bautaJS.Logger,
     ...opts,
@@ -247,27 +254,16 @@ export async function bautajsFastify(
     }
   });
   await bautajs.bootstrap();
-  // Include bautajs instance inside fastify instance
-  fastify.decorate('bautajs', bautajs);
-
-  fastify.setValidatorCompiler(({ schema }) => bautajs.validator.buildSchemaCompiler(schema));
 
   // Add x-request-id on the response
-  fastify.register(responseXRequestId);
+  fastify.register(responseXRequestId, { prefix });
 
-  if (!opts.helmet || opts.helmet.enabled) {
-    fastify.register(fastifyHelmet, opts.helmet?.options);
-  }
-
-  if (!opts.explorer || opts.explorer.enabled) {
+  if (opts.apiDefinition && (!opts.explorer || opts.explorer.enabled)) {
     fastify.register(explorerPlugin, {
-      apiDefinitions,
-      operations: bautajs.operations,
-      oasOptions: opts.explorer?.options
+      prefix,
+      apiDefinition: opts.apiDefinition,
+      operations: bautajs.operations
     });
-  }
-  if (!opts.sensible || opts.sensible.enabled) {
-    fastify.register(sensible, opts.sensible?.options);
   }
 
   if (opts.exposeOperations !== false) {
@@ -276,7 +272,7 @@ export async function bautajsFastify(
       .sort(routeOrder())
       .forEach(route => {
         const methods = Object.keys(routes[route]);
-        methods.forEach(method => addRoute(routes[route][method]));
+        methods.forEach(method => addRoute(routes[route][method], bautajs.validator));
       });
   }
 

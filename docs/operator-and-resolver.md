@@ -8,7 +8,7 @@ A resolver is a Node.js module where you define your operations Pipeline.StepFun
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver((operations) => {
-  operations.v1.findCats.setup(() => {
+  operations.findCats.setup(() => {
       return {
         id: '1'
       }
@@ -16,7 +16,7 @@ module.exports = resolver((operations) => {
 })
 ```
 
-Remember you only can access to the operation you have defined on the your OpenAPI file.
+You can also specify resolvers directly on the bautajs.operations instance **before bootstrap the instance**.
 
 `You can define the resolver without wrap it into the resolver function, resolver function only gives you intellisense`
 
@@ -157,7 +157,7 @@ const findCatsPipeline = pipe(
     }
   });
 
-bautajsInstance.operations.v1.findcats.setup(
+bautajsInstance.operations.findcats.setup(
   p =>
     p.pipe(
       () => 1,

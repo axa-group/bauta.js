@@ -27,7 +27,7 @@ const myPipeline = pipe((response, ctx) => {
 });
 
 module.exports = resolver(operations => {
-  operations.v1.operation1
+  operations.operation1
     .validateRequest(false)
     .validateResponse(false)
     .setup(

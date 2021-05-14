@@ -16,33 +16,31 @@ const http = require('http');
 const stringify = require('fast-safe-stringify');
 const { BautaJS, resolver } = require('../dist/index');
 
-const apiDefinitions = [
-  {
-    openapi: '3.0.0',
-    info: {
-      version: 'v1',
-      title: 'test'
-    },
-    servers: [
-      {
-        url: 'v1/api'
-      }
-    ],
-    paths: {
-      '/': {
-        get: {
-          operationId: 'operation1',
-          responses: {
-            '200': {
-              description: 'ok',
-              content: {
-                'application/json': {
-                  schema: {
-                    type: 'object',
-                    properties: {
-                      hello: {
-                        type: 'string'
-                      }
+const apiDefinition = {
+  openapi: '3.0.0',
+  info: {
+    version: 'v1',
+    title: 'test'
+  },
+  servers: [
+    {
+      url: 'v1/api'
+    }
+  ],
+  paths: {
+    '/': {
+      get: {
+        operationId: 'operation1',
+        responses: {
+          200: {
+            description: 'ok',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    hello: {
+                      type: 'string'
                     }
                   }
                 }
@@ -53,9 +51,10 @@ const apiDefinitions = [
       }
     }
   }
-];
+};
 
-const bautajs = new BautaJS(apiDefinitions, {
+const bautajs = new BautaJS({
+  apiDefinition,
   resolvers: [
     resolver(operations => {
       operations.v1.operation1.setup(p => p.pipe(() => ({ hello: 'world' })));

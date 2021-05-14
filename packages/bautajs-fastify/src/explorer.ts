@@ -13,56 +13,22 @@
  * limitations under the License.
  */
 import fp from 'fastify-plugin';
-import oas, { FastifyOASOptions } from 'fastify-oas';
+import fOpenAPIDocs from 'fastify-openapi-docs';
 import { FastifyInstance } from 'fastify';
-import { Operations, Document, OpenAPIV3Document, OpenAPIV2Document } from '@bautajs/core';
-
-function buildOpenAPIPaths(apiDefinition: Document, operations: Operations) {
-  const paths: any = {};
-
-  Object.keys(operations[apiDefinition.info.version]).forEach((key: string) => {
-    const operation = operations[apiDefinition.info.version][key];
-    if (operation.route && operation.isSetup()) {
-      if (!paths[operation.route.path]) {
-        paths[operation.route?.path] = {};
-      }
-      paths[operation.route?.path][operation.route?.method.toLowerCase()] =
-        operation.route?.openapiSource;
-    }
-  });
-
-  return paths;
-}
+import { Operations, Document } from '@bautajs/core';
 
 async function explorerPlugin(
   fastify: FastifyInstance,
   opts: {
-    apiDefinitions: Document[];
+    apiDefinition: Document;
     operations: Operations;
-    oasOptions?: FastifyOASOptions;
+    prefix?: string;
   }
 ) {
-  opts.apiDefinitions.forEach(apiDefinition => {
-    const openAPIPath = `/${apiDefinition.info.version}/openapi.json`;
-    const paths = buildOpenAPIPaths(apiDefinition, opts.operations);
-    fastify.get(openAPIPath, (_, reply) => {
-      reply.send({
-        ...apiDefinition,
-        paths,
-        components: { ...(apiDefinition as OpenAPIV3Document).components, schemas: {} },
-        definitions: {}
-      });
-    });
-    const openapiVersion =
-      (apiDefinition as OpenAPIV3Document).openapi || (apiDefinition as OpenAPIV2Document).swagger;
-    const { paths: unusedPath, ...swagger } = apiDefinition;
-    fastify.register(oas, {
-      routePrefix: `/${apiDefinition.info.version}/explorer`,
-      swagger,
-      openapi: openapiVersion,
-      exposeRoute: true,
-      ...(opts.oasOptions || {})
-    });
+  const { paths: unusedPath, ...openapi } = opts.apiDefinition;
+  fastify.register(fOpenAPIDocs, {
+    prefix: opts.prefix?.replace(/\/$/, ''),
+    openapi: JSON.parse(JSON.stringify(openapi).replace(/#\/components\/schemas\//, '#'))
   });
 }
 

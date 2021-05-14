@@ -12,14 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, OpenAPIV3Document, pipe, BautaJSInstance } from '@bautajs/core';
+import { pipe, BautaJSInstance, createContext } from '@bautajs/core';
 import { cache, CacheStepFunction } from '../index';
 import { Normalizer } from '../types';
-import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import { sleep } from './utils';
 
 describe('cache decorator usage', () => {
-  let bautaJS: BautaJSInstance;
   let myCachePipeline: CacheStepFunction<any, any, any>;
 
   beforeAll(() => {
@@ -29,9 +27,6 @@ describe('cache decorator usage', () => {
 
   describe('normalizer using context req param', () => {
     beforeEach(async () => {
-      bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
-      await bautaJS.bootstrap();
-
       const normalizer: Normalizer<any, any> = (_, ctx) => ctx.data.value;
 
       const pp = pipe(
@@ -42,8 +37,6 @@ describe('cache decorator usage', () => {
         result => ({ ...result, new: 1 })
       );
       myCachePipeline = cache(pp, normalizer, { maxSize: 5 });
-
-      bautaJS.operations.v1.operation2.setup(myCachePipeline);
     });
 
     afterEach(() => {
@@ -52,13 +45,21 @@ describe('cache decorator usage', () => {
 
     test('should be called with one add cache hit for first value', () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
 
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
 
       expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(spy).toHaveBeenCalledTimes(1);
@@ -66,13 +67,21 @@ describe('cache decorator usage', () => {
 
     test('should save more than one cache item if the key (req.param) is different', () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
 
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '200' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '200' }
+        }),
+        {} as BautaJSInstance
+      );
 
       expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(myCachePipeline.store.get('200')).toStrictEqual({ a: '123', b: '200', new: 1 });
@@ -81,17 +90,25 @@ describe('cache decorator usage', () => {
 
     test('user should be able to clear the cache', () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
 
       myCachePipeline.store.clear();
 
       expect(myCachePipeline.store.size).toStrictEqual(0);
 
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
 
       expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(spy).toHaveBeenCalledTimes(2);
@@ -100,9 +117,6 @@ describe('cache decorator usage', () => {
 
   describe('cache with expiration time of 10 millisecond', () => {
     beforeEach(async () => {
-      bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
-      await bautaJS.bootstrap();
-
       const normalizer: Normalizer<any, any> = (_, ctx) => ctx.data.value;
 
       const pp = pipe(
@@ -113,8 +127,6 @@ describe('cache decorator usage', () => {
         result => ({ ...result, new: 1 })
       );
       myCachePipeline = cache(pp, <any>normalizer, { maxSize: 5, maxAge: 10 });
-
-      bautaJS.operations.v1.operation2.setup(myCachePipeline);
     });
 
     afterEach(() => {
@@ -123,13 +135,21 @@ describe('cache decorator usage', () => {
 
     test('as the expiration time is 10 millisecond, the second call should not be cached', async () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
       await sleep(100);
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
 
       expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(spy).toHaveBeenCalledTimes(2);
@@ -138,9 +158,6 @@ describe('cache decorator usage', () => {
 
   describe('cache with only 1 slot', () => {
     beforeEach(async () => {
-      bautaJS = new BautaJS(testApiDefinitionsJson as OpenAPIV3Document[]);
-      await bautaJS.bootstrap();
-
       const normalizer: Normalizer<any, any> = (_, ctx) => ctx.data.value;
 
       const pp = pipe(
@@ -151,8 +168,6 @@ describe('cache decorator usage', () => {
         result => ({ ...result, new: 1 })
       );
       myCachePipeline = cache(pp, <any>normalizer, { maxSize: 1 });
-
-      bautaJS.operations.v1.operation2.setup(myCachePipeline);
     });
 
     afterEach(() => {
@@ -161,17 +176,29 @@ describe('cache decorator usage', () => {
 
     test('cache max size should be respected', () => {
       const spy = jest.spyOn(myCachePipeline.store, 'set');
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
 
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '244' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '244' }
+        }),
+        {} as BautaJSInstance
+      );
 
-      bautaJS.operations.v1.operation2.run({
-        data: { value: '144' }
-      });
+      myCachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
 
       expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
       expect(spy).toHaveBeenCalledTimes(3);

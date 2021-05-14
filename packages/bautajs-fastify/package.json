@@ -43,12 +43,11 @@
   ],
   "license": "see LICENSE.txt",
   "dependencies": {
+    "fast-json-stringify": "^2.7.3",
     "@bautajs/core": "3.4.1",
     "fastify": "^3.14.0",
-    "fastify-helmet": "^5.3.0",
-    "fastify-oas": "^3.0.8",
+    "fastify-openapi-docs": "^0.4.0",
     "fastify-plugin": "^3.0.0",
-    "fastify-sensible": "^3.1.0",
     "fastify-x-request-id": "^1.2.0",
     "route-order": "^0.1.0"
   },

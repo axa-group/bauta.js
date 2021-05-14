@@ -17,59 +17,44 @@ import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'events';
 import { ObjectWritableMock } from 'stream-mock';
 import { OperationBuilder } from '../core/operation';
-import { defaultLogger } from '../default-logger';
 import { Operation, Route, BautaJSInstance, OpenAPIV3Document, RawContext } from '../types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
-import { pipe } from '../index';
+import { pipe, BautaJS } from '../index';
 import Parser from '../open-api/parser';
 import { asPromise } from '../operators/as-promise';
-import { AjvValidator } from '../open-api/ajv-validator';
 
 describe('operation class tests', () => {
   let route: Route;
   let bautaJS: BautaJSInstance;
 
   beforeEach(async () => {
-    bautaJS = {
-      staticConfig: {},
-      operations: {},
-      logger: defaultLogger(),
-      apiDefinitions: [],
-      validator: new AjvValidator(),
-      options: {
-        getRequest(raw: any): any {
-          return raw.req;
-        },
-        getResponse(raw: any) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+    bautaJS = new BautaJS({
+      getRequest(raw: any): any {
+        return raw.req;
       },
-      bootstrap() {
-        return Promise.resolve();
-      },
-      decorate() {
-        return this;
+      getResponse(raw: any) {
+        return {
+          statusCode: raw.res.statusCode,
+          isResponseFinished: raw.res.headersSent || raw.res.finished
+        };
       }
-    };
+    });
     const parser = new Parser(bautaJS.logger);
-    const document = await parser.asyncParse(testApiDefinitionsJson[0] as OpenAPIV3Document);
+    const document = await parser.asyncParse(testApiDefinitionsJson as OpenAPIV3Document);
     [route] = document.routes;
   });
 
   describe('build operations cases', () => {
     test('should let you build an operation without schema', async () => {
-      const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      const operationTest = OperationBuilder.create(route.operationId, bautaJS);
       operationTest.addRoute(route);
 
       expect(operationTest).toBeInstanceOf(OperationBuilder);
     });
 
     test('should build the request validator from the schema parameters', async () => {
-      const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      const operationTest = OperationBuilder.create(route.operationId, bautaJS);
       const req = {
         query: {
           limit: 'string'
@@ -91,7 +76,7 @@ describe('operation class tests', () => {
     });
 
     test('should build the response validator from the schema response', async () => {
-      const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      const operationTest = OperationBuilder.create(route.operationId, bautaJS);
       const req = {
         prop: 1,
         query: {}
@@ -112,7 +97,7 @@ describe('operation class tests', () => {
     });
 
     test('the default error handler should be a promise reject of the given error', async () => {
-      const operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      const operationTest = OperationBuilder.create(route.operationId, bautaJS);
       const error = new Error('someError');
       const ctx = { req: {}, res: {} };
       operationTest.validateRequest(false).setup(() => {
@@ -127,7 +112,7 @@ describe('operation class tests', () => {
     let operationTest: Operation;
 
     beforeEach(async () => {
-      operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      operationTest = OperationBuilder.create(route.operationId, bautaJS);
       operationTest.addRoute(route);
     });
 
@@ -176,11 +161,11 @@ describe('operation class tests', () => {
   describe('operation.run tests', () => {
     let operationTest: Operation;
     beforeEach(async () => {
-      operationTest = OperationBuilder.create(route.operationId, 'v1', bautaJS);
+      operationTest = OperationBuilder.create(route.operationId, bautaJS);
     });
 
     test('should allow to run without getRequest', async () => {
-      const op = OperationBuilder.create(route.operationId, 'v1', {
+      const op = OperationBuilder.create(route.operationId, {
         ...bautaJS,
         options: {
           getResponse(raw: any) {
@@ -197,7 +182,7 @@ describe('operation class tests', () => {
     });
 
     test('should allow to run without getResponse', async () => {
-      const op = OperationBuilder.create(route.operationId, 'v1', {
+      const op = OperationBuilder.create(route.operationId, {
         ...bautaJS,
         options: {
           getRequest(raw: any): any {
@@ -247,7 +232,7 @@ describe('operation class tests', () => {
     beforeEach(async () => {
       const parser = new Parser(bautaJS.logger);
       document = await parser.asyncParse(testSchemaRareCasesJson as OpenAPIV3Document);
-      operationTest = OperationBuilder.create(document.routes[0].operationId, 'v1', bautaJS);
+      operationTest = OperationBuilder.create(document.routes[0].operationId, bautaJS);
     });
 
     test('should validate the request by default', async () => {
@@ -388,17 +373,13 @@ describe('operation class tests', () => {
       const parser = new Parser(bautaJS.logger);
       document = await parser.asyncParse(testSchemaRareCasesJson as OpenAPIV3Document);
 
-      operationTest = OperationBuilder.create(document.routes[0].operationId, 'v1', bautaJS);
+      operationTest = OperationBuilder.create(document.routes[0].operationId, bautaJS);
       operationTest.addRoute(document.routes[0]);
 
-      streamOperationTest = OperationBuilder.create(document.routes[1].operationId, 'v1', bautaJS);
+      streamOperationTest = OperationBuilder.create(document.routes[1].operationId, bautaJS);
       await streamOperationTest.addRoute(document.routes[1]);
 
-      emptyResponseContentTest = OperationBuilder.create(
-        document.routes[2].operationId,
-        'v1',
-        bautaJS
-      );
+      emptyResponseContentTest = OperationBuilder.create(document.routes[2].operationId, bautaJS);
 
       await emptyResponseContentTest.addRoute(document.routes[2]);
     });

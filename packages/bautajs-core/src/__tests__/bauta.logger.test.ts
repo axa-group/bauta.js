@@ -14,9 +14,8 @@
  */
 import pino from 'pino';
 import { BautaJS } from '../index';
-import { Document, Logger } from '../types';
+import { Logger } from '../types';
 import { defaultLogger } from '../default-logger';
-import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 
 const validLevels = ['trace', 'info', 'error', 'debug', 'fatal', 'warn'];
 const message = 'This is a general message';
@@ -28,7 +27,7 @@ describe('core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
+      const bautaJS = new BautaJS({
         staticConfig: config
       });
       await bautaJS.bootstrap();
@@ -53,7 +52,7 @@ describe('core tests', () => {
       };
       expect(
         () =>
-          new BautaJS(testApiDefinitionsJson as Document[], {
+          new BautaJS({
             staticConfig: config,
             logger: invalidLogger
           })
@@ -78,7 +77,7 @@ describe('core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
+      const bautaJS = new BautaJS({
         staticConfig: config,
         logger: validLogger
       });
@@ -112,7 +111,7 @@ describe('core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS(testApiDefinitionsJson as Document[], {
+      const bautaJS = new BautaJS({
         staticConfig: config,
         logger: validLogger
       });

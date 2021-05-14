@@ -27,7 +27,7 @@ const myPipeline = pipe(response => {
 });
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setup(
+  operations.operation1.setup(
     pipe(
       provider1(),
       match(m =>

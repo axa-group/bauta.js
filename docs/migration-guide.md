@@ -2,6 +2,79 @@
 
 ### bautajs-core
 
+#### Api versioning
+
+Api versioning has been refactored to a different pattern.
+
+Before:
+
+Where `api-definitions.json` has an array of OpenAPI definitions. In this case every operation resolver is inherit automatically on each API version.
+Api version order is decided by the `api-definitions.json` array order.
+
+```js
+const { BautaJS } = require('@bautajs/core');
+const apiDefinitions = require('../../api-definitions.json');
+
+const bautajsInstance = new BautaJS(apiDefinition, {});
+await bautajsInstance.bootstrap();
+```
+
+After:
+
+Now only one apiDefinition is allowed peer `BautaJS` instance and inheritance is done through the method `inheritOperationsFrom`.
+
+```js
+const { BautaJS } = require('@bautajs/core');
+const apiDefinitionV1 = require('../../api-definition-v1.json');
+const apiDefinitionV2 = require('../../api-definition-v2.json');
+
+const bautajsInstanceV1 = new BautaJS({ apiDefinition:apiDefinitionV1 });
+const bautajsInstanceV2 = new BautaJS({ apiDefinition:apiDefinitionV2 });
+await bautajsInstanceV1.bootstrap();
+
+bautajsInstanceV2.inheritOperationsFrom(bautajsInstanceV1);
+
+await bautajsInstanceV2.bootstrap();
+
+```
+
+All the other features are inherit the same way it was before.
+
+#### Api definition is not mandatory anymore
+
+Providing an OpenAPI definition to a `Bautajs` instance is not mandatory anymore. But, you must have present that without api definition
+the request and response validation and serialization feature is **loosed** since there is no schema to validate against.
+
+Now operations are only available once you `setup` them.
+
+Before:
+
+```js
+const { BautaJS } = require('@bautajs/core');
+const apiDefinitions = require('../../api-definitions.json');
+
+const bautajsInstance = new BautaJS(apiDefinition, {
+  resolvers: [(operations)=> {
+    operations.v1.someOperationOnTheDefinition.setup(...)
+  }]
+});
+await bautajsInstance.bootstrap();
+```
+
+After
+
+```js
+const { BautaJS } = require('@bautajs/core');
+
+const bautajsInstance = new BautaJS({
+  resolvers: [(operations)=> {
+    operations.someCustomOperationWithoutSchema.setup(...)
+  }]
+});
+await bautajsInstance.bootstrap();
+```
+
+
 #### Pipelines
 
 All pipeline system has been refactored into a more optimal and readable way.
@@ -231,7 +304,7 @@ After, maxSize is a mandatory parameter:
             result => ({ ...result, new: 1 })
           );
 
-        bautaJS.operations.v1.operation2.setup(p =>
+        bautaJS.operations.operation2.setup(p =>
           p
             .pipe((_, ctx) => {
               return { iAmTheKey: ctx.data.value };
@@ -263,10 +336,10 @@ After:
  const apiDefinition = require('../../api-definition.json');
  
  const app = express();
- const bautaJSExpress = new BautaJSExpress(apiDefinition, {});
+ const bautaJSExpress = new BautaJSExpress({ apiDefinition });
  const router = await bautaJSExpress.buildRouter();
  
-app.router(router);
+app.router('/v1', router);
  
  app.listen(3000, err => {
  if (err) throw err;

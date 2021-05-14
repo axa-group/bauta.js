@@ -2,7 +2,7 @@
 
 `bautajs` comes with a default request validation using the [openAPI schema v2 or v3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). **_BY DEFAULT IT'S SET TO TRUE_**.
 This feature is always enabled while you have a valid openAPI schema inputs and getRequest is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided.
-You can disable it locally for every operation using `operations.v1.operation1.validateRequest(false);`
+You can disable it locally for every operation using `operations.operation1.validateRequest(false);`
 
 **_It's recomended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors), you are free to convert them to a 400 or 422 errors_**
 
@@ -10,9 +10,9 @@ The request validation can be globally enabled by set it on the `bautajs` initia
 
 ```js
  const { BautaJS } = require('@bautajs/core');
- const apiDefinitions = require('./my-api-definitions');
+ const apiDefinition = require('./my-api-definitions');
 
- const bautajs = new BautaJS(apiDefinitions, { enableRequestValidation: true });
+ const bautajs = new BautaJS({ apiDefinition, enableRequestValidation: true });
 ```
 
 Alternative you can also validate inside every resolver by accessing to the context `ctx.validateRequestSchema()`.
@@ -20,7 +20,7 @@ Alternative you can also validate inside every resolver by accessing to the cont
 ```js
   const { getRequest } = require('@bautajs/express');
 
-  operations.v1.findCats.setup(p => 
+  operations.findCats.setup(p => 
       p.pipe(function pFn(_, ctx) {
       ctx.validateRequestSchema(getRequest(ctx));
       // if the request is not valid this will throw an [AJV](https://www.npmjs.com/package/ajv#validation-errors) error
@@ -41,15 +41,15 @@ The response validation can be globally enabled by set it on the `bautajs` initi
 
 ```js
  const { BautaJS } = require('@bautajs/core');
- const apiDefinitions = require('./my-api-definitions');
+ const apiDefinition = require('./my-api-definitions');
 
- const bautajs = new BautaJS(apiDefinitions, { enableResponseValidation: true });
+ const bautajs = new BautaJS({ apiDefinition, enableResponseValidation: true });
 ```
 
 Alternative you can also validate inside every resolver by accessing to the context `ctx.validateResponseSchema()`.
 
 ```js
-  operations.v1.findCats.setup(p => 
+  operations.findCats.setup(p => 
     p.pipe(function pFn(response, ctx) {
       ctx.validateResponseSchema(response);
       // if the response is not valid this will throw an ValidationError error 
@@ -60,7 +60,7 @@ Alternative you can also validate inside every resolver by accessing to the cont
 Alternative you can also set what is the valid response status that you want to validate to.
 
 ```js
-  operations.v1.findCats.setup(p => 
+  operations.findCats.setup(p => 
     p.pipe(function pFn(response, ctx) {
       ctx.validateResponseSchema(response, 201);
     })
@@ -122,9 +122,29 @@ If the default format validation is not enough, you can extend it by passing to 
 - a type, optional, that corresponds to an integer or string.
 - a validator: either a string that corresponds to a regular expression or a function. If it is a function it must accept one value and then return a boolean indicating whether the given value passes or not the validation.
 
-There is a way to put custom format validations. This is passed to bautajsoptions in customFormatsValidation, which is an array of objects. Each object must have:
+There is a way to put custom format validations. This is passed to bautajs options in customFormatsValidation, which is an array of objects. Each object must have:
 
 - a name, which is the format string that will be checked against the swagger format value.
 - a type, optional, that corresponds to integer or string.
 - a validator: which must be an string corresponding to a regular expression or to a function. If it is a function it must accept one value and then return a boolean indicating whether the given value passes or not the validation
 
+## In case an api definition is not provided
+
+In the case an apiDefinition is not provided, request and response validations are disabled and can not be enabled.
+
+```js
+ const { BautaJS } = require('@bautajs/core');
+
+ const bautajs = new BautaJS({ enableResponseValidation: true });
+```
+
+If an user try to call manually the validation for instance `ctx.validateResponseSchema()` nothing will be returned or thrown.
+
+```js
+  operations.findCats.setup(p => 
+    p.pipe(function pFn(response, ctx) {
+      ctx.validateResponseSchema(response);
+      // This won't do nothing
+    })
+  );
+```

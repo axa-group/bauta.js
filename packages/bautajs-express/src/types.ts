@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Request, RouterOptions } from 'express';
+import * as express from 'express';
 import bodyParser from 'body-parser';
 import { CorsOptions } from 'cors';
 import helmet from 'helmet';
@@ -67,14 +67,15 @@ export interface BodyParserOptions {
   urlEncoded?: bodyParser.OptionsUrlencoded;
 }
 
-export interface MiddlewareOptions {
+export interface RouterOptions {
   cors?: MiddlewareOption<CorsOptions>;
   bodyParser?: MiddlewareOption<BodyParserOptions>;
   helmet?: MiddlewareOption<helmet.IHelmetConfiguration>;
   morgan?: MiddlewareOption<MorganOptions>;
   explorer?: MiddlewareOption<ExplorerOptions>;
   reqGenerator?: MiddlewareOption<null>;
-  routerOptions?: RouterOptions;
+  routerOptions?: express.RouterOptions;
+  apiBasePath?: string;
 }
 
-export type ExpressRequest = Request & { id: string; log: Logger };
+export type ExpressRequest = express.Request & { id: string; log: Logger };

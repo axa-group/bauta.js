@@ -15,7 +15,7 @@
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.validateResponse(true).setup(() => [
+  operations.operation1.validateResponse(true).setup(() => [
     {
       id: 'patata', // The schema defines id as a number but here we put a string to force an schema validation error
       name: 'pet2'

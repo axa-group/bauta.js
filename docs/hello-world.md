@@ -18,14 +18,16 @@ The goal of this section is to describe the Pipeline.StepFunctions required to h
 ```js
 const express = require('express');
 const { BautaJSExpress } = require('@bautajs/express');
-const apiDefinitions = {};
-const apiOptions = {};
+const apiDefinition = {};
+const apiOptions = {
+  apiDefinition
+};
 (async () => {
- const bautJSExpress = new BautaJSExpress(apiDefinitions, apiOptions);
+ const bautJSExpress = new BautaJSExpress(apiOptions);
  const app = express();
  const router = await bautaJS.buildRouter();
 
- app.use(router);
+ app.use('/v1', router);
  app.listen(3000, err => {
     if (err) throw err;
     bautaJS.logger.info('Server listening on localhost: 3000');
@@ -42,7 +44,6 @@ The information about api definitions is [Here](./api-definition.md).
 Let's assume that we have the minimal empty with zero functionality api definitions (do not worry, it will grow to some usefulness later on). It could be in a separate file api-definitions.json with the following content:
 
 ```json
-[
   {
     "openapi": "3.0.0",
     "info": {
@@ -73,7 +74,6 @@ Let's assume that we have the minimal empty with zero functionality api definiti
       }
     }
   }
-]
 ```
 
 There is a lot of information here, but let's focus only on two fields:
@@ -86,10 +86,12 @@ Now let's modify slightly the server.js file:
 ```js
 const express = require('express');
 const { BautaJSExpress } = require('@bautajs/express');
-const apiDefinitions = require('./api-definitions');
-const apiOptions = {};
+const apiDefinition = require('./api-definition');
+const apiOptions = {
+  apiDefinition
+};
 (async () => {
- const bautJSExpress = new BautaJSExpress(apiDefinitions, apiOptions);
+ const bautJSExpress = new BautaJSExpress(apiOptions);
  const app = express();
  const router = await bautaJS.buildRouter();
 
@@ -122,7 +124,7 @@ Its content should be as follows:
 ```js
 const { resolver } = require('@bautajs/core');
 module.exports = resolver(operations =>
-    operations.v1.getGreetings.setup(() => ({
+    operations.getGreetings.setup(() => ({
         message: 'hello world'
       })
   );
@@ -131,6 +133,6 @@ module.exports = resolver(operations =>
 First of all, resolver decorator is only used in edition time, to allow the editor to show the signature of the different methods and
 parameters. At this point it has no other usage in runtime and can be ignored for our explanations.
 
-`operations` is the reference of all the operations for the middleware. From them, we have at the pointer `v1.getGreetings`  the version defined in the api definition and the id of the operation that must match the `operationId` in the api definition.
+`operations` is the reference of all the operations for the middleware. From them, we have at the pointer `.getGreetings`  the version defined in the api definition and the id of the operation that must match the `operationId` in the api definition.
 Finally, the setup method requires a pipeline parameter p, in which we push Pipeline.StepFunctions. Our pipeline is very simple and has only one Pipeline.StepFunction, that returns the message we desire.
 If we have start the server and we call the method GET /api/v1/greetings now, as expected, we are greeted! 

@@ -152,7 +152,6 @@ class ParserV2 {
       operationId: data.operationId || ParserV2.makeOperationId(path),
       openapiSource: data,
       isV2: true,
-      basePath: this.document.generic.basePath,
       path
     };
     this.document.routes.push(route);

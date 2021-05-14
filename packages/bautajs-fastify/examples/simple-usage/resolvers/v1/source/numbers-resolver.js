@@ -25,12 +25,12 @@ const transformResponse = step(response => {
 });
 
 module.exports = resolver(operations => {
-  operations.v1.randomYear.setup(p => p.pipe(exampleRestProviderYear(), transformResponse));
-  operations.v1.randomYear2.setup(p => p.pipe(exampleRestProviderYear(), transformResponse));
+  operations.randomYear.setup(p => p.pipe(exampleRestProviderYear(), transformResponse));
+  operations.randomYear2.setup(p => p.pipe(exampleRestProviderYear(), transformResponse));
 
-  operations.v1.factNumber.setup(p => p.pipe(exampleRestProvider(), transformResponse));
+  operations.factNumber.setup(p => p.pipe(exampleRestProvider(), transformResponse));
 
-  operations.v1.factNumber2.setup(p => p.pipe(exampleRestProvider(), transformResponse));
+  operations.factNumber2.setup(p => p.pipe(exampleRestProvider(), transformResponse));
 
-  operations.v1.cats.setup(p => p.pipe(catsRestProviderWithHttps(), transformResponse));
+  operations.cats.setup(p => p.pipe(catsRestProviderWithHttps(), transformResponse));
 });

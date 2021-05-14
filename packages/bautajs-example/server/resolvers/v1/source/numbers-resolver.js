@@ -24,26 +24,26 @@ const transformResponse = step(response => {
   return result;
 });
 module.exports = resolver(operations => {
-  operations.v1.randomYear
+  operations.randomYear
     .validateRequest(false)
     .validateResponse(false)
     .setup(pipe(exampleRestProviderYear(), transformResponse));
-  operations.v1.randomYear2
+  operations.randomYear2
     .validateRequest(false)
     .validateResponse(false)
     .setup(pipe(exampleRestProviderYear(), transformResponse));
 
-  operations.v1.factNumber
+  operations.factNumber
     .validateRequest(false)
     .validateResponse(false)
     .setup(pipe(exampleRestProvider(), transformResponse));
 
-  operations.v1.factNumber2
+  operations.factNumber2
     .validateRequest(false)
     .validateResponse(false)
     .setup(pipe(exampleRestProvider(), transformResponse));
 
-  operations.v1.cats
+  operations.cats
     .validateRequest(false)
     .validateResponse(false)
     .setup(pipe(catsRestProviderWithHttps(), transformResponse));

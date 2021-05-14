@@ -112,7 +112,7 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
 export function match<TIn, TOut>(
   matchFn: (m: Match<TIn, TOut>) => any
 ): Pipeline.StepFunction<TIn, TOut> {
-  return async (val: TIn, ctx: Context, bautajs: BautaJSInstance): Promise<TOut> => {
+  return (val: TIn, ctx: Context, bautajs: BautaJSInstance): PromiseLike<TOut> | TOut => {
     const builder = new MatchBuilder<TIn, TOut>(val, ctx, bautajs);
 
     matchFn(builder);

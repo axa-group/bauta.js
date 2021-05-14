@@ -17,7 +17,7 @@ import path from 'path';
 import fastify, { FastifyInstance } from 'fastify';
 import { bautajsFastify } from '../index';
 
-const apiDefinitionsCustomValidation = require('./fixtures/test-api-definitions-custom-validation.json');
+const apiDefinitionCustomValidation = require('./fixtures/test-api-definitions-custom-validation.json');
 
 describe('bautaJS fastify tests', () => {
   let fastifyInstance: FastifyInstance<any>;
@@ -30,14 +30,16 @@ describe('bautaJS fastify tests', () => {
 
   test('should validate the request with the internal fastify validator but allowing custom format', async () => {
     fastifyInstance.register(bautajsFastify, {
+      apiBasePath: '/api/',
+      prefix: '/v1/',
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      apiDefinitions: apiDefinitionsCustomValidation,
+      apiDefinition: apiDefinitionCustomValidation,
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
     const res = await fastifyInstance.inject({
       method: 'GET',
-      url: '/api/v1/test',
+      url: '/v1/api/test',
       query: {
         // @ts-ignore
         limit: 123
@@ -57,8 +59,32 @@ describe('bautaJS fastify tests', () => {
 
   test('should validate the response with the internal fastify validator', async () => {
     fastifyInstance.register(bautajsFastify, {
+      apiBasePath: '/api/',
+      prefix: '/v1/',
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      apiDefinitions: apiDefinitionsCustomValidation,
+      apiDefinition: apiDefinitionCustomValidation,
+      resolversPath: path.resolve(
+        __dirname,
+        './fixtures/test-resolvers/operation-resolver-invalid.js'
+      ),
+      enableResponseValidation: true
+    });
+
+    const res = await fastifyInstance.inject({
+      method: 'GET',
+      url: '/v1/api/test'
+    });
+
+    expect(res.statusCode).toStrictEqual(500);
+    expect(JSON.parse(res.body).message).toStrictEqual('"id" is required!');
+  });
+
+  test('response validation should be disabled by default', async () => {
+    fastifyInstance.register(bautajsFastify, {
+      apiBasePath: '/api/',
+      prefix: '/v1/',
+      customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
+      apiDefinition: apiDefinitionCustomValidation,
       resolversPath: path.resolve(
         __dirname,
         './fixtures/test-resolvers/operation-resolver-invalid.js'
@@ -67,32 +93,7 @@ describe('bautaJS fastify tests', () => {
 
     const res = await fastifyInstance.inject({
       method: 'GET',
-      url: '/api/v1/test'
-    });
-
-    expect(res.statusCode).toStrictEqual(500);
-    expect(JSON.parse(res.body).message).toStrictEqual('Something went wrong');
-  });
-
-  test('response validation should be disabled by default', async () => {
-    fastifyInstance.register(bautajsFastify, {
-      customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      apiDefinitions: apiDefinitionsCustomValidation,
-      resolvers: [
-        operations => {
-          operations.v1.operation1.setup(() => [
-            {
-              id: 'patata', // The schema defines id as a number but here we put a string to force an schema validation error
-              name: 'pet2'
-            }
-          ]);
-        }
-      ]
-    });
-
-    const res = await fastifyInstance.inject({
-      method: 'GET',
-      url: '/api/v1/test'
+      url: '/v1/api/test'
     });
 
     expect(res.statusCode).toStrictEqual(200);

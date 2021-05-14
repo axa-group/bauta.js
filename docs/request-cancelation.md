@@ -9,7 +9,7 @@ When a cancel event is triggered outside the pipeline scope, the pipeline is can
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver((operations) => {
-  operations.v1.findCats.setup(pipe(async (val, ctx) => {
+  operations.findCats.setup(pipe(async (val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled');
         })
@@ -46,7 +46,7 @@ In the example of above if the request is canceled before complete all Pipeline.
 const { resolver } = require('@bautajs/core');
 
 module.exports = resolver((operations) => {
-  operations.v1.findCats.setup(pipe(
+  operations.findCats.setup(pipe(
     async (val, ctx) => {
         ctx.token.onCancel(() => {
             console.log('The request was canceled');
@@ -78,7 +78,7 @@ const myAPIDefinitions = require('./my-api-definitions.json');
 
 const bautajs = new BautajsExpress(myAPIDefinitions);
 
-const promise = bautajs.operations.v1.findCats.run();
+const promise = bautajs.operations.findCats.run();
 // Cancelling the promise manually
 promise.cancel();
 ```

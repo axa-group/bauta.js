@@ -16,7 +16,8 @@ import compression from 'compression';
 import express, { Response, IRoute } from 'express';
 import routeOrder from 'route-order';
 import * as bautajs from '@bautajs/core';
-import { MiddlewareOptions, ExpressRequest } from './types';
+import { BautaJSOptions } from '@bautajs/core';
+import { RouterOptions, ExpressRequest } from './types';
 import {
   initReqIdGenerator,
   initMorgan,
@@ -31,7 +32,6 @@ import { getContentType, hrTimeToMilliseconds } from './utils';
  * Create an Express server using the BautaJS library with almost 0 configuration
  * @export
  * @class BautaJSExpress
- * @param {Document[]} apiDefinitions
  * @param {BautaJSOptions} options
  * @extends {BautaJS}
  * @example
@@ -51,11 +51,8 @@ import { getContentType, hrTimeToMilliseconds } from './utils';
  * });
  */
 export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: Response }> {
-  constructor(
-    apiDefinitions: bautajs.Document[],
-    options: Omit<bautajs.BautaJSOptions, 'getRequest' | 'getResponse'>
-  ) {
-    super(apiDefinitions, {
+  constructor(options: Omit<BautaJSOptions, 'getRequest' | 'getResponse'>) {
+    super({
       ...options,
       getRequest(raw) {
         return raw.req;
@@ -69,12 +66,15 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
     });
   }
 
-  private addRoute(operation: bautajs.Operation, router: express.Router) {
+  private addRoute(
+    operation: bautajs.Operation,
+    router: express.Router,
+    apiBasePath: string = '/api/'
+  ) {
     const method = operation.route?.method.toLowerCase() as keyof Omit<IRoute, 'path' | 'stack'>;
     const responses = operation.route?.schema.response;
-    const { url = '', basePath = '' } = operation.route || {};
-    const route = (basePath + url).replace(/\/\//, '/');
-
+    const { url = '' } = operation.route || {};
+    const route = (apiBasePath + url).replace(/\/\//, '/');
     router[method](route, (req, res, next) => {
       const startTime = process.hrtime();
       const resolverWrapper = (response: any) => {
@@ -103,7 +103,9 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
         const finalTime = process.hrtime(startTime);
 
         (req as ExpressRequest).log.info(
-          `The operation execution of ${url} took: ${hrTimeToMilliseconds(finalTime)} ms`
+          `The operation execution of ${req.originalUrl} took: ${hrTimeToMilliseconds(
+            finalTime
+          )} ms`
         );
         return res.end();
       };
@@ -111,7 +113,7 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
         // In case the request was canceled by the user there is no need to send any message to the user.
         if (response.name === 'CancelError') {
           (req as ExpressRequest).log.error(
-            `The request to ${req.url} was canceled by the requester`
+            `The request to ${req.originalUrl} was canceled by the requester`
           );
           return null;
         }
@@ -133,7 +135,9 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
         res.status(response.statusCode || 500);
         const finalTime = process.hrtime(startTime);
         (req as ExpressRequest).log.info(
-          `The operation execution of ${url} took: ${hrTimeToMilliseconds(finalTime)} ms`
+          `The operation execution of ${req.originalUrl} took: ${hrTimeToMilliseconds(
+            finalTime
+          )} ms`
         );
 
         return next(response);
@@ -166,24 +170,21 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
     });
 
     this.logger.info(
-      `[OK] [${method.toUpperCase()}] ${route} operation exposed on the API from ${
-        operation.version
-      }.${operation.id}`
+      `[OK] [${method.toUpperCase()}] ${route} operation exposed on the API from ${operation.id}`
     );
   }
 
   private processOperations() {
-    return Object.values(this.operations).reduce((routes: any, versions) => {
-      Object.values(versions).forEach(operation => {
-        if (!operation.isPrivate() && operation.route) {
-          if (!routes[operation.route.url]) {
-            // eslint-disable-next-line no-param-reassign
-            routes[operation.route.url] = {};
-          }
+    return Object.keys(this.operations).reduce((routes: any, operationId) => {
+      const operation = this.operations[operationId];
+      if (!operation.isPrivate() && operation.route) {
+        if (!routes[operation.route.url]) {
           // eslint-disable-next-line no-param-reassign
-          routes[operation.route.url][operation.route.method] = operation;
+          routes[operation.route.url] = {};
         }
-      });
+        // eslint-disable-next-line no-param-reassign
+        routes[operation.route.url][operation.route.method] = operation;
+      }
 
       return routes;
     }, {});
@@ -193,7 +194,7 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
    * Create a new express router with the standard express middleware's,
    * and the routes set up on the OpenAPI specification.
    * @async
-   * @param {MiddlewareOptions} [options={
+   * @param {RouterOptions} [options={
    *       cors: {
    *         enabled: true
    *       },
@@ -209,13 +210,14 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
    *       explorer: {
    *         enabled: true
    *       },
-   *       routerOptions: {}
+   *       routerOptions: {},
+   *       apiBasePath: '/api'
    *     }]
    * @returns
    * @memberof BautaJSExpress
    */
   public async buildRouter(
-    options: MiddlewareOptions = {
+    options: RouterOptions = {
       cors: {
         enabled: true
       },
@@ -254,10 +256,14 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
       .sort(routeOrder())
       .forEach(route => {
         const methods = Object.keys(routes[route]);
-        methods.forEach(method => this.addRoute(routes[route][method], router));
+        methods.forEach(method =>
+          this.addRoute(routes[route][method], router, options.apiBasePath)
+        );
       });
 
-    initExplorer(router, this.apiDefinitions, this.operations, options.explorer);
+    if (this.apiDefinition) {
+      initExplorer(router, this.apiDefinition, this.operations, options.explorer);
+    }
 
     return router;
   }

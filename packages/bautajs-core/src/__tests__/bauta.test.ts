@@ -28,7 +28,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         getRequest(raw): any {
           return raw.req;
@@ -38,46 +39,15 @@ describe('bauta core tests', () => {
             statusCode: raw.res.statusCode,
             isResponseFinished: raw.res.headersSent || raw.res.finished
           };
-        }
+        },
+        resolvers: [
+          operations => {
+            operations.operation1.setup(() => 'ok');
+          }
+        ]
       });
       await bautaJS.bootstrap();
-      expect(bautaJS.operations.v1.operation1).toBeDefined();
-    });
-
-    test('should initialize the core with the given api versions', async () => {
-      const config = {
-        endpoint: 'http://google.es'
-      };
-
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(
-        [
-          testApiDefinitionsJson[0],
-          {
-            ...testApiDefinitionsJson[0],
-            info: { version: 'v2', title: '1' }
-          }
-        ] as Document[],
-        {
-          staticConfig: config,
-          getRequest(raw): any {
-            return raw.req;
-          },
-          getResponse(raw) {
-            return {
-              statusCode: raw.res.statusCode,
-              isResponseFinished: raw.res.headersSent || raw.res.finished
-            };
-          }
-        }
-      );
-
-      await bautaJS.bootstrap();
-
-      expect(bautaJS.operations.v1.operation1).toBeDefined();
-      expect(bautaJS.operations.v2.operation1).toBeDefined();
+      expect(bautaJS.operations.operation1).toBeDefined();
     });
 
     test('should throw an error for a not valid testApi definition', () => {
@@ -90,11 +60,73 @@ describe('bauta core tests', () => {
           new BautaJS<{
             req: any;
             res: { statusCode: number; headersSent: boolean; finished: boolean };
+          }>({
             // @ts-ignore
-          }>([{}], {
+            apiDefinition: {},
             staticConfig: config
           })
-      ).toThrow('The Openapi API definition provided is not valid.');
+      ).toThrow(
+        'The OpenAPI API definition provided is not valid. Error Cannot convert undefined or null to object'
+      );
+    });
+
+    test('should initialize without api definition', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+
+      const bautaJS = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        },
+        resolvers: [
+          operations => {
+            operations.operation1.setup(() => 'ok');
+          }
+        ]
+      });
+      await bautaJS.bootstrap();
+      expect(bautaJS.operations.operation1).toBeDefined();
+    });
+    test('after bootstrap should not be possible to create new operations', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+
+      const bautaJS = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        },
+        resolvers: [
+          operations => {
+            operations.operation1.setup(() => 'ok');
+          }
+        ]
+      });
+      await bautaJS.bootstrap();
+      expect(bautaJS.operations.operation1).toBeDefined();
+      expect(bautaJS.operations.operation2).not.toBeDefined();
     });
   });
 
@@ -113,7 +145,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         getRequest(raw): any {
@@ -126,9 +159,10 @@ describe('bauta core tests', () => {
           };
         }
       });
+
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.v1.operation1.run({ req, res })).toThrow(
+      await expect(() => bautaJS.operations.operation1.run({ req, res })).toThrow(
         expect.objectContaining({
           message: 'The request was not valid',
           errors: [
@@ -157,7 +191,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         enableRequestValidation: false,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
@@ -173,7 +208,7 @@ describe('bauta core tests', () => {
       });
       await bautaJS.bootstrap();
 
-      expect(await bautaJS.operations.v1.operation1.run({ req, res })).toStrictEqual([
+      expect(await bautaJS.operations.operation1.run({ req, res })).toStrictEqual([
         {
           id: 134,
           name: 'pet2'
@@ -195,7 +230,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         enableRequestValidation: false,
@@ -209,10 +245,10 @@ describe('bauta core tests', () => {
           };
         }
       });
-      bautaJS.operations.v1.operation1.validateRequest(true);
+      bautaJS.operations.operation1.validateRequest(true);
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.v1.operation1.run({ req, res })).toThrow(
+      await expect(() => bautaJS.operations.operation1.run({ req, res })).toThrow(
         expect.objectContaining({
           message: 'The request was not valid',
           errors: [
@@ -243,7 +279,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         staticConfig: config,
         getRequest(raw): any {
@@ -257,13 +294,13 @@ describe('bauta core tests', () => {
         }
       });
 
-      bautaJS.operations.v1.operation1.validateResponse(true).setup(() => [{ id: '22' }]);
+      bautaJS.operations.operation1.validateResponse(true).setup(() => [{ id: '22' }]);
 
       await bautaJS.bootstrap();
 
       expect.assertions(1);
       try {
-        await bautaJS.operations.v1.operation1.run({ req, res });
+        await bautaJS.operations.operation1.run({ req, res });
       } catch (e) {
         // eslint-disable-next-line jest/no-conditional-expect
         expect(e.stack).toStrictEqual(
@@ -286,7 +323,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         staticConfig: config,
         getRequest(raw): any {
@@ -299,13 +337,13 @@ describe('bauta core tests', () => {
           };
         }
       });
-      bautaJS.operations.v1.operation1.setup(() => ({
+      bautaJS.operations.operation1.setup(() => ({
         id: 1,
         name: 'pety'
       }));
       await bautaJS.bootstrap();
 
-      expect(await bautaJS.operations.v1.operation1.run({ req, res })).toStrictEqual({
+      expect(await bautaJS.operations.operation1.run({ req, res })).toStrictEqual({
         id: 1,
         name: 'pety'
       });
@@ -325,7 +363,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         enableResponseValidation: true,
         getRequest(raw): any {
@@ -339,14 +378,14 @@ describe('bauta core tests', () => {
         }
       });
 
-      bautaJS.operations.v1.operation1.setup(() => ({
+      bautaJS.operations.operation1.setup(() => ({
         id: 1,
         name: 'pety'
       }));
 
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.v1.operation1.run({ req, res })).toThrow(
+      await expect(() => bautaJS.operations.operation1.run({ req, res })).toThrow(
         expect.objectContaining({
           name: 'Validation Error',
           errors: [
@@ -381,7 +420,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         enableResponseValidation: false,
         getRequest(raw): any {
@@ -395,14 +435,14 @@ describe('bauta core tests', () => {
         }
       });
 
-      bautaJS.operations.v1.operation1.validateResponse(true).setup(() => ({
+      bautaJS.operations.operation1.validateResponse(true).setup(() => ({
         id: 1,
         name: 'pety'
       }));
 
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.v1.operation1.run({ req, res })).toThrow(
+      await expect(() => bautaJS.operations.operation1.run({ req, res })).toThrow(
         expect.objectContaining({
           name: 'Validation Error',
           errors: [
@@ -433,7 +473,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         staticConfig: config,
         getRequest(raw): any {
@@ -448,7 +489,7 @@ describe('bauta core tests', () => {
       });
 
       expect(
-        await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
+        await bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
       ).toStrictEqual([
         {
           id: 134,
@@ -465,7 +506,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: [
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver-1.js')
@@ -484,7 +526,7 @@ describe('bauta core tests', () => {
       await bautaJS.bootstrap();
 
       expect(
-        await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} })
+        await bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
       ).toStrictEqual([
         {
           id: 132,
@@ -494,7 +536,7 @@ describe('bauta core tests', () => {
     });
   });
 
-  describe('execution cancelation', () => {
+  describe('execution cancellation', () => {
     test('should allow cancel a execution chain', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -502,10 +544,11 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(async () => {
+            operations.operation1.setup(async () => {
               await new Promise(resolve =>
                 setTimeout(() => {
                   resolve({});
@@ -526,7 +569,7 @@ describe('bauta core tests', () => {
         }
       });
       await bautaJS.bootstrap();
-      const request1 = bautaJS.operations.v1.operation1.run({
+      const request1 = bautaJS.operations.operation1.run({
         req: { query: {} },
         res: {}
       }) as CancelablePromise<any>;
@@ -551,10 +594,11 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(
+            operations.operation1.setup(
               pipe(async (_, ctx) => {
                 ctx.token.onCancel(() => {
                   expect(ctx.token.isCanceled).toStrictEqual(true);
@@ -581,7 +625,7 @@ describe('bauta core tests', () => {
         }
       });
       await bautaJS.bootstrap();
-      const request1 = bautaJS.operations.v1.operation1.run({
+      const request1 = bautaJS.operations.operation1.run({
         req: { query: {} },
         res: {}
       }) as CancelablePromise<any>;
@@ -602,10 +646,11 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(async () => {
+            operations.operation1.setup(async () => {
               await new Promise(resolve =>
                 setTimeout(() => {
                   resolve({});
@@ -626,7 +671,7 @@ describe('bauta core tests', () => {
         }
       });
       await bautaJS.bootstrap();
-      const request1 = bautaJS.operations.v1.operation1.run({
+      const request1 = bautaJS.operations.operation1.run({
         req: { query: {} },
         res: {}
       }) as CancelablePromise<any>;
@@ -648,10 +693,11 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.setup(
+            operations.operation1.setup(
               pipe(
                 (_, ctx) => {
                   ctx.token.onCancel(onCancel);
@@ -685,7 +731,7 @@ describe('bauta core tests', () => {
         }
       });
       await bautaJS.bootstrap();
-      const request1 = bautaJS.operations.v1.operation1.run({
+      const request1 = bautaJS.operations.operation1.run({
         req: { query: {} },
         res: {}
       }) as CancelablePromise<any>;
@@ -708,10 +754,11 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.validateResponse(false).setup(
+            operations.operation1.validateResponse(false).setup(
               pipe(
                 (_, ctx) => {
                   ctx.token.onCancel(onCancel);
@@ -744,11 +791,11 @@ describe('bauta core tests', () => {
         }
       });
       await bautaJS.bootstrap();
-      const request1 = bautaJS.operations.v1.operation1.run({
+      const request1 = bautaJS.operations.operation1.run({
         req: { query: {} },
         res: {}
       }) as CancelablePromise<any>;
-      const request2 = bautaJS.operations.v1.operation1.run({
+      const request2 = bautaJS.operations.operation1.run({
         req: { query: {} },
         res: {}
       }) as CancelablePromise<any>;
@@ -762,20 +809,46 @@ describe('bauta core tests', () => {
     });
   });
 
-  describe('inheritance between api versions', () => {
-    test('should inherit by default the operation pipeline', async () => {
+  describe('inheritance between api versions (inheritOperationsFrom)', () => {
+    test('should throw an error if no bautajs instance is passed to the inheritOperationsFrom method', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
+      const bautaJSV2 = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitions2VersionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
+        resolvers: [resolver(() => {})],
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        }
+      });
+      // @ts-ignore
+      expect(() => bautaJSV2.inheritOperationsFrom({})).toThrow(
+        new Error('A bautaJS instance must be provided.')
+      );
+    });
+    test('should inherit the given operations from another bautajs instance on use inheritOperationsFrom', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const bautaJSV1 = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v2.operation1.validateResponse(false);
-            operations.v1.operation1.validateResponse(false).setup(() => {
-              return 'ok';
+            operations.operation1.validateResponse(false).setup(() => {
+              return 'okv1';
             });
           })
         ],
@@ -790,40 +863,52 @@ describe('bauta core tests', () => {
           };
         }
       });
-      await bautaJS.bootstrap();
-      const request1 = (await bautaJS.operations.v1.operation1.run({
+      const bautaJSV2 = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
+        resolvers: [resolver(() => {})],
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        }
+      });
+      bautaJSV2.inheritOperationsFrom(bautaJSV1);
+      await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
+      const request1 = (await bautaJSV1.operations.operation1.run({
         req: { query: {} },
         res: {}
       })) as CancelablePromise<any>;
-      const request2 = (await bautaJS.operations.v2.operation1.run({
+      const request2 = (await bautaJSV2.operations.operation1.run({
         req: { query: {} },
         res: {}
       })) as CancelablePromise<any>;
 
       expect(request1).toStrictEqual(request2);
     });
-
-    test('version 2 should override the setup done by v1', async () => {
+    test('on setup an inherit operation the handler should be override', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
+      const bautaJSV1 = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitions2VersionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.validateResponse(false).setup(() => {
-              return {
-                key: 1
-              };
+            operations.operation1.validateResponse(false).setup(() => {
+              return 'okv1';
             });
-
-            operations.v2.operation1.validateResponse(false).setup((response: any = {}) => {
-              return {
-                ...response,
-                key: 2
-              };
+            operations.operationInherited.validateResponse(false).setup(() => {
+              return 'okoperationInherited';
             });
           })
         ],
@@ -838,42 +923,15 @@ describe('bauta core tests', () => {
           };
         }
       });
-      await bautaJS.bootstrap();
-      const request1 = (await bautaJS.operations.v1.operation1.run({
-        req: { query: {} },
-        res: {}
-      })) as CancelablePromise<any>;
-      const request2 = (await bautaJS.operations.v2.operation1.run({
-        req: { query: {} },
-        res: {}
-      })) as CancelablePromise<any>;
-
-      expect(request2).not.toStrictEqual(request1);
-      expect(request2).toStrictEqual({ key: 2 });
-    });
-
-    test('version 2 should override v1 behaviour even if they are not loaded in order', async () => {
-      const config = {
-        endpoint: 'http://google.es'
-      };
-      const bautaJS = new BautaJS<{
+      const bautaJSV2 = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitions2VersionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v2.operation1.validateResponse(false).setup((response: any = {}) => {
-              return {
-                ...response,
-                key: 2
-              };
-            });
-          }),
-          resolver(operations => {
-            operations.v1.operation1.validateResponse(false).setup(() => {
-              return {
-                key: 1
-              };
+            operations.operation1.validateResponse(false).setup(() => {
+              return 'okv2';
             });
           })
         ],
@@ -888,32 +946,44 @@ describe('bauta core tests', () => {
           };
         }
       });
-      await bautaJS.bootstrap();
-      const request1 = await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
-      const request2 = await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
+      bautaJSV2.inheritOperationsFrom(bautaJSV1);
+      await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
+      const request1 = (await bautaJSV1.operations.operation1.run({
+        req: { query: {} },
+        res: {}
+      })) as CancelablePromise<any>;
+      const request2 = (await bautaJSV2.operations.operation1.run({
+        req: { query: {} },
+        res: {}
+      })) as CancelablePromise<any>;
+      const request3 = (await bautaJSV2.operations.operationInherited.run({
+        req: { query: {} },
+        res: {}
+      })) as CancelablePromise<any>;
 
-      expect(request2).not.toStrictEqual(request1);
-      expect(request2).toStrictEqual({ key: 2 });
+      expect(request1).not.toStrictEqual(request2);
+      expect(request3).toStrictEqual('okoperationInherited');
     });
-
-    test('should not inherit from v1 id the operation was marked as deprecated', async () => {
+    test('should not inherit deprecated operations on use inheritOperationsFrom', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
+      const bautaJSV1 = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitions2VersionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1
+            operations.operation1
               .setAsDeprecated()
               .validateResponse(false)
               .setup(() => {
-                return {
-                  key: 1
-                };
+                return 'okv1';
               });
+            operations.operationInherited.validateResponse(false).setup(() => {
+              return 'okoperationInherited';
+            });
           })
         ],
         staticConfig: config,
@@ -927,29 +997,53 @@ describe('bauta core tests', () => {
           };
         }
       });
-      await bautaJS.bootstrap();
-      expect(() => bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} })).toThrow(
-        new Error('Not found')
-      );
-    });
+      const bautaJSV2 = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
+        resolvers: [resolver(() => {})],
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        }
+      });
+      bautaJSV2.inheritOperationsFrom(bautaJSV1);
+      await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
+      const request3 = (await bautaJSV2.operations.operationInherited.run({
+        req: { query: {} },
+        res: {}
+      })) as CancelablePromise<any>;
 
-    test('error handler should be inherit by default', async () => {
+      expect(Object.prototype.hasOwnProperty.call(bautaJSV2.operations, 'operation1')).toBeFalsy();
+      expect(request3).toStrictEqual('okoperationInherited');
+    });
+    test('operations can not be inherit after bootstrap', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
+      const bautaJSV1 = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitions2VersionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.validateResponse(false).setup(
-              pipe(() => {
-                return Promise.reject(new Error('error'));
-              }).catchError(() => {
-                return Promise.reject(new Error('An error occurred'));
-              })
-            );
+            operations.operation1
+              .setAsDeprecated()
+              .validateResponse(false)
+              .setup(() => {
+                return 'okv1';
+              });
+            operations.operationInherited.validateResponse(false).setup(() => {
+              return 'okoperationInherited';
+            });
           })
         ],
         staticConfig: config,
@@ -963,22 +1057,130 @@ describe('bauta core tests', () => {
           };
         }
       });
-      await bautaJS.bootstrap();
-      let error1;
-      let error2;
-      try {
-        await bautaJS.operations.v1.operation1.run({ req: { query: {} }, res: {} });
-      } catch (e) {
-        error1 = e;
-      }
+      const bautaJSV2 = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
+        resolvers: [resolver(() => {})],
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        }
+      });
+      await bautaJSV2.bootstrap();
 
-      try {
-        await bautaJS.operations.v2.operation1.run({ req: { query: {} }, res: {} });
-      } catch (e) {
-        error2 = e;
-      }
+      expect(() => bautaJSV2.inheritOperationsFrom(bautaJSV1)).toThrow(
+        new Error('Operation inherit should be done before bootstrap the BautaJS instance.')
+      );
+    });
 
-      expect(error1).toStrictEqual(error2);
+    test('operation schema should be inherit in case that is not present in the new api definition', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const bautaJSV1 = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
+        resolvers: [
+          resolver(operations => {
+            operations.getPet.validateResponse(false).setup(() => {
+              return 'okv1';
+            });
+          })
+        ],
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        }
+      });
+      const bautaJSV2 = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
+        resolvers: [resolver(() => {})],
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        }
+      });
+      await bautaJSV1.bootstrap();
+      bautaJSV2.inheritOperationsFrom(bautaJSV1);
+      await bautaJSV2.bootstrap();
+
+      expect(bautaJSV1.operations.getPet.schema).toStrictEqual(bautaJSV2.operations.getPet.schema);
+    });
+
+    test('operation schema of inherited instance should be override for the new version one', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+      const bautaJSV1 = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitionsJson as Document,
+        resolvers: [
+          resolver(operations => {
+            operations.operation1.validateResponse(false).setup(() => {
+              return 'okv1';
+            });
+          })
+        ],
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        }
+      });
+      const bautaJSV2 = new BautaJS<{
+        req: any;
+        res: { statusCode: number; headersSent: boolean; finished: boolean };
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
+        resolvers: [resolver(() => {})],
+        staticConfig: config,
+        getRequest(raw): any {
+          return raw.req;
+        },
+        getResponse(raw) {
+          return {
+            statusCode: raw.res.statusCode,
+            isResponseFinished: raw.res.headersSent || raw.res.finished
+          };
+        }
+      });
+      bautaJSV2.inheritOperationsFrom(bautaJSV1);
+      await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
+      expect(bautaJSV1.operations.operation1.schema).not.toStrictEqual(
+        bautaJSV2.operations.operation1.schema
+      );
     });
   });
 
@@ -990,7 +1192,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitions2VersionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [],
         staticConfig: config,
         getRequest(raw): any {
@@ -1003,12 +1206,9 @@ describe('bauta core tests', () => {
           };
         }
       });
-      await bautaJS.bootstrap();
 
       expect.assertions(1);
-      Object.keys(bautaJS.operations.v1).map((key: string) =>
-        expect(bautaJS.operations.v1[key].isPrivate()).toStrictEqual(true)
-      );
+      expect(bautaJS.operations.operation1.isPrivate()).toStrictEqual(true);
     });
 
     test('should set as public automatically if the setup is done for the operation', async () => {
@@ -1018,10 +1218,11 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitions2VersionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1.validateResponse(false).setup(() => {
+            operations.operation1.validateResponse(false).setup(() => {
               return 'ok';
             });
           })
@@ -1038,7 +1239,7 @@ describe('bauta core tests', () => {
         }
       });
       await bautaJS.bootstrap();
-      expect(bautaJS.operations.v1.operation1.isPrivate()).toStrictEqual(false);
+      expect(bautaJS.operations.operation1.isPrivate()).toStrictEqual(false);
     });
 
     test('should set as private if we specified even thought we did setup the operation', async () => {
@@ -1048,10 +1249,11 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS<{
         req: any;
         res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>(testApiDefinitions2VersionsJson as Document[], {
+      }>({
+        apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [
           resolver(operations => {
-            operations.v1.operation1
+            operations.operation1
               .validateResponse(false)
               .setAsPrivate()
               .setup(() => {
@@ -1071,7 +1273,7 @@ describe('bauta core tests', () => {
         }
       });
       await bautaJS.bootstrap();
-      expect(bautaJS.operations.v1.operation1.isPrivate()).toStrictEqual(true);
+      expect(bautaJS.operations.operation1.isPrivate()).toStrictEqual(true);
     });
   });
 });

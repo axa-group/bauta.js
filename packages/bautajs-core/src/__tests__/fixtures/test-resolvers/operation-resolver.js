@@ -15,7 +15,7 @@
 const { resolver } = require('../../../../dist/operators/resolver');
 
 module.exports = resolver(operations => {
-  operations.v1.operation1.setup(() => {
+  operations.operation1.setup(() => {
     return [
       {
         id: 134,

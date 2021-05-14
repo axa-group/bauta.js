@@ -12,34 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document, pipe } from '@bautajs/core';
+import { createContext, BautaJSInstance, pipe } from '@bautajs/core';
 import { template } from '../index';
-
-const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
 
 describe('template decorator', () => {
   test('should allow put a template', async () => {
-    const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
-    await bautajs.bootstrap();
-    bautajs.operations.v1.operation1.setup(
-      pipe(() => '1', template([{ id: '{{ctx.raw.req.id}}', name: '{{previousValue}}' }]))
+    const pipeline = pipe(
+      () => '1',
+      template([{ id: '{{ctx.data.id}}', name: '{{previousValue}}' }])
     );
 
     expect(
-      bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+      pipeline(null, createContext({ data: { id: 1 } }), {} as BautaJSInstance)
     ).toStrictEqual([{ id: 1, name: '1' }]);
   });
 
   test('should bypass not valid template', async () => {
-    const bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
-    await bautajs.bootstrap();
-
-    bautajs.operations.v1.operation1
-      .validateResponse(false)
-      .setup(pipe(() => '1', template(undefined)));
+    const pipeline = pipe(() => '1', template(undefined));
 
     expect(
-      bautajs.operations.v1.operation1.run({ req: { id: 1, query: {} }, res: {} })
+      pipeline(null, createContext({ data: { id: 1 } }), {} as BautaJSInstance)
     ).toBeUndefined();
   });
 });

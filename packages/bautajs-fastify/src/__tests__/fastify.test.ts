@@ -21,8 +21,8 @@ import fastify, { FastifyInstance } from 'fastify';
 import { bautajsFastify } from '../index';
 import { getRequest, getResponse } from '../operators';
 
-const apiDefinitions = require('./fixtures/test-api-definitions.json');
-const apiDefinitionsSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
+const apiDefinition = require('./fixtures/test-api-definitions.json');
+const apiDefinitionSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
 
 describe('bautaJS fastify tests', () => {
   describe('bautaJS fastify generic test', () => {
@@ -35,13 +35,15 @@ describe('bautaJS fastify tests', () => {
     });
     test('should expose the given swagger with an fastify API', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinitions,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        apiDefinition,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiBasePath: '/api/',
+        prefix: '/v1/'
       });
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/api/v1/test'
+        url: '/v1/api/test'
       });
 
       expect(res.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
@@ -55,7 +57,7 @@ describe('bautaJS fastify tests', () => {
 
     test('should not expose the endpoints that have been configured as private', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinitions,
+        apiDefinition,
         resolversPath: path.resolve(
           __dirname,
           './fixtures/test-resolvers/private-operation-resolver.js'
@@ -64,7 +66,7 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/api/v1/test'
+        url: '/v1/api/test'
       });
 
       expect(res.statusCode).toStrictEqual(404);
@@ -72,16 +74,18 @@ describe('bautaJS fastify tests', () => {
 
     test('should not send the response again if already has been sent', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinitions,
+        apiDefinition,
         resolversPath: path.resolve(
           __dirname,
           './fixtures/test-resolvers/operation-resolver-send-response.js'
-        )
+        ),
+        apiBasePath: '/api/',
+        prefix: '/v1/'
       });
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/api/v1/test'
+        url: '/v1/api/test'
       });
 
       expect(res.statusCode).toStrictEqual(200);
@@ -95,10 +99,12 @@ describe('bautaJS fastify tests', () => {
 
     test('should not send the response again if already has been sent on a readable pipe', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinitions,
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        apiDefinition,
         resolvers: [
           resolver(operations => {
-            operations.v1.operationStream.setup((_, ctx) => {
+            operations.operationStream.setup((_, ctx) => {
               const res = getResponse(ctx);
               // Create a buffer to hold the response chunks
               const s = new Readable();
@@ -122,7 +128,7 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/api/v1/test-stream'
+        url: '/v1/api/test-stream'
       });
 
       expect(res.statusCode).toStrictEqual(200);
@@ -133,10 +139,12 @@ describe('bautaJS fastify tests', () => {
     test('should allow set custom headers', async () => {
       const form = new FormData();
       fastifyInstance.register(bautajsFastify, {
-        apiDefinitions,
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        apiDefinition,
         resolvers: [
           resolver(operations => {
-            operations.v1.operationStream.setup((_, ctx) => {
+            operations.operationStream.setup((_, ctx) => {
               const res = getResponse(ctx);
               form.append('part1', 'part 1 data');
               form.append('part2', 'part 2 data');
@@ -150,7 +158,7 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/api/v1/test-stream'
+        url: '/v1/api/test-stream'
       });
 
       expect(res.statusCode).toStrictEqual(200);
@@ -161,13 +169,15 @@ describe('bautaJS fastify tests', () => {
 
     test('should allow swagger 2.0', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinitions: apiDefinitionsSwagger2,
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        apiDefinition: apiDefinitionSwagger2,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/api/v1/test'
+        url: '/v1/api/test'
       });
 
       expect(res.statusCode).toStrictEqual(200);
@@ -182,7 +192,9 @@ describe('bautaJS fastify tests', () => {
 
     test('should not expose the swagger if explorer is set to false', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinitions: apiDefinitionsSwagger2,
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        apiDefinition: apiDefinitionSwagger2,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
         explorer: { enabled: false }
       });
@@ -197,8 +209,10 @@ describe('bautaJS fastify tests', () => {
 
     test('should expose the swagger or openapi json by default', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinitions: apiDefinitionsSwagger2,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        apiDefinition: apiDefinitionSwagger2,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiBasePath: '/api/',
+        prefix: '/v1/'
       });
 
       const res = await fastifyInstance.inject({
@@ -208,20 +222,22 @@ describe('bautaJS fastify tests', () => {
 
       expect(res.statusCode).toStrictEqual(200);
     });
-    test('should not give a timeout if response of the pipeline is undefined by a 204', async () => {
+    test('should return a 204 empty response if the pipeline do not return anything', async () => {
       const fs = fastify();
       fs.register(bautajsFastify, {
-        apiDefinitions,
+        apiDefinition,
         resolvers: [
           op => {
-            op.v1.operation204.setup(() => {});
+            op.operation204.setup(() => {});
           }
-        ]
+        ],
+        apiBasePath: '/api/',
+        prefix: '/v1/'
       });
 
       const res = await fs.inject({
         method: 'GET',
-        url: '/api/v1/test204',
+        url: '/v1/api/test204',
         headers: {
           'x-request-id': 2
         }
@@ -238,10 +254,10 @@ describe('bautaJS fastify tests', () => {
         requestIdHeader: 'x-request-id'
       });
       fs.register(bautajsFastify, {
-        apiDefinitions,
+        apiDefinition,
         resolvers: [
           op => {
-            op.v1.operation1.setup(() => {
+            op.operation1.setup(() => {
               return {};
             });
           }
@@ -250,7 +266,7 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fs.inject({
         method: 'GET',
-        url: '/api/v1/test',
+        url: '/v1/api/test',
         headers: {
           'x-request-id': 2
         }
@@ -263,17 +279,13 @@ describe('bautaJS fastify tests', () => {
     test('should allow override the error handler', async () => {
       const fs = fastify();
       fs.register(bautajsFastify, {
-        apiDefinitions,
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        apiDefinition,
         resolversPath: path.resolve(
           __dirname,
           './fixtures/test-resolvers/operation-resolver-error.js'
-        ),
-        sensible: {
-          enabled: true,
-          options: {
-            errorHandler: false
-          }
-        }
+        )
       });
       fs.setErrorHandler((error, _request, reply) => {
         reply.send({ message: error.message, status: error.statusCode });
@@ -281,7 +293,7 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fs.inject({
         method: 'GET',
-        url: '/api/v1/test'
+        url: '/v1/api/test'
       });
       fs.close();
 
@@ -301,10 +313,12 @@ describe('bautaJS fastify tests', () => {
       };
       const fs = fastify({ logger });
       fs.register(bautajsFastify, {
-        apiDefinitions,
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        apiDefinition,
         resolvers: [
           operations => {
-            operations.v1.operation1.setup(
+            operations.operation1.setup(
               pipe(
                 (_, ctx) => {
                   const req = getRequest(ctx);
@@ -319,12 +333,61 @@ describe('bautaJS fastify tests', () => {
 
       await fs.inject({
         method: 'GET',
-        url: '/api/v1/test'
+        url: '/v1/api/test'
       });
 
       expect(logger.error).toHaveBeenCalledWith(
-        'The request to /api/v1/test was canceled by the requester'
+        'The request to /v1/api/test was canceled by the requester'
       );
+    });
+  });
+
+  describe('bautaJS fastify multiple versions/instances', () => {
+    let fastifyInstance: FastifyInstance<any>;
+    beforeEach(() => {
+      fastifyInstance = fastify();
+    });
+    afterEach(() => {
+      fastifyInstance.close();
+    });
+    test('should allow to specify multiple bautajs instances in different paths', async () => {
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiBasePath: '/api/',
+        prefix: '/v1/'
+      });
+
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiBasePath: '/api/',
+        prefix: '/v2/'
+      });
+
+      const res = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/api/test'
+      });
+      const res2 = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v2/api/test'
+      });
+
+      expect(res.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(JSON.parse(res.payload)).toStrictEqual([
+        {
+          id: 134,
+          name: 'pet2'
+        }
+      ]);
+      expect(res2.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(JSON.parse(res2.payload)).toStrictEqual([
+        {
+          id: 134,
+          name: 'pet2'
+        }
+      ]);
     });
   });
 });

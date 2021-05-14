@@ -13,7 +13,8 @@ levels but if any of those are missing you will not be able to use it.
 This is how you would pass a logger to bauta:
 
 ```js
-const bautaJS = new BautaJS(apiDefinitionsJson as Document[], {
+const bautaJS = new BautaJS({
+        apiDefinition: apiDefinitionJson,
         staticConfig: config,
         logger: myCustomLogger
       });

@@ -30,15 +30,13 @@ import { createContext } from '../utils/create-context';
 import { isPromise } from '../utils/is-promise';
 
 export class OperationBuilder implements Operation {
-  public static create(id: string, version: string, bautajs: BautaJSInstance): Operation {
-    return new OperationBuilder(id, version, bautajs);
+  public static create(id: string, bautajs: BautaJSInstance): Operation {
+    return new OperationBuilder(id, bautajs);
   }
 
   public route?: Route;
 
   public schema?: OpenAPI.Operation;
-
-  public nextVersionOperation?: Operation;
 
   public deprecated: boolean = false;
 
@@ -46,9 +44,9 @@ export class OperationBuilder implements Operation {
 
   public responseValidationEnabled: Boolean = false;
 
-  private private?: boolean;
+  public handler: Pipeline.StepFunction<any, any>;
 
-  private operationHandler: Pipeline.StepFunction<any, any>;
+  private private?: boolean;
 
   private setupDone: boolean = false;
 
@@ -58,12 +56,8 @@ export class OperationBuilder implements Operation {
 
   private getResponse?: Function;
 
-  constructor(
-    public readonly id: string,
-    public version: string,
-    private readonly bautajs: BautaJSInstance
-  ) {
-    this.operationHandler = buildDefaultStep();
+  constructor(public readonly id: string, private readonly bautajs: BautaJSInstance) {
+    this.handler = buildDefaultStep();
     this.getRequest =
       typeof this.bautajs.options.getRequest === 'function'
         ? this.bautajs.options.getRequest
@@ -191,7 +185,7 @@ export class OperationBuilder implements Operation {
       context.validateRequestSchema(this.getRequest(raw));
     }
 
-    const result = this.operationHandler(undefined, context, this.bautajs);
+    const result = this.handler(undefined, context, this.bautajs);
     // In case that is a promise convert it into a Cancelable promise
     if (isPromise(result)) {
       return PCancelable.fn<any, TOut>((_: any, onCancel: PCancelable.OnCancelFunction) => {
@@ -240,11 +234,7 @@ export class OperationBuilder implements Operation {
       throw new Error('"step" must be a Pipeline.StepFunction.');
     }
 
-    this.operationHandler = step;
-
-    if (!this.deprecated && this.nextVersionOperation && !this.nextVersionOperation.isSetup()) {
-      this.nextVersionOperation.setup(step);
-    }
+    this.handler = step;
 
     this.setupDone = true;
     if (this.private === undefined) {

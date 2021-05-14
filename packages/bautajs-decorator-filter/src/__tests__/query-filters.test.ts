@@ -12,43 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BautaJS, Document, pipe } from '@bautajs/core';
+import { BautaJSInstance, createContext, pipe } from '@bautajs/core';
 import { queryFilters } from '../index';
 
-const testApiDefinitionsJson = require('./fixtures/test-api-definitions.json');
-
 describe('query filter decorator', () => {
-  let bautajs: BautaJS;
-  beforeEach(async () => {
-    bautajs = new BautaJS(testApiDefinitionsJson as Document[]);
-    await bautajs.bootstrap();
-  });
-
-  test('should filter the given array with the given loobpack filters', async () => {
-    bautajs.operations.v1.operation1.validateResponse(false).setup(
-      pipe(
-        (_, ctx) => [
-          { id: ctx.raw.req.id, name: 'pet' },
-          { id: ctx.raw.req.id, name: 'pet2' }
-        ],
-        queryFilters(ctx => ctx.raw.req.query.filter)
-      )
+  test('should filter the given array with the given loopback filters', async () => {
+    const pipeline = pipe(
+      (_, ctx) => [
+        { id: ctx.data.id, name: 'pet' },
+        { id: ctx.data.id, name: 'pet2' }
+      ],
+      queryFilters(ctx => ctx.data.filter)
     );
 
     expect(
-      await bautajs.operations.v1.operation1.run({
-        req: {
-          id: 1,
-          query: {
+      pipeline(
+        null,
+        createContext({
+          data: {
+            id: 1,
             filter: {
               where: {
                 name: 'pet2'
               }
             }
           }
-        },
-        res: {}
-      })
+        }),
+        {} as BautaJSInstance
+      )
     ).toStrictEqual([{ id: 1, name: 'pet2' }]);
   });
 });

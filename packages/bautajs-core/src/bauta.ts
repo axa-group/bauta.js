@@ -17,7 +17,7 @@ import { resolve } from 'path';
 import { OperationBuilder } from './core/operation';
 import { defaultLogger } from './default-logger';
 import {
-  Dictionary,
+  Options,
   BautaJSInstance,
   BautaJSOptions,
   Document,
@@ -37,25 +37,22 @@ interface API {
   operations: BasicOperation[];
 }
 
-function prebuildApi(apiDefinitions: Document[]): API[] {
-  return apiDefinitions.map((apiDefinition: Document) => {
-    try {
-      return {
-        version: apiDefinition.info.version,
-        operations: Object.keys(apiDefinition.paths)
-          .map(path =>
-            Object.keys(apiDefinition.paths[path]).map(method => ({
-              id: apiDefinition.paths[path][method].operationId,
-              version: apiDefinition.info.version,
-              deprecated: apiDefinition.paths[path][method].deprecated
-            }))
-          )
-          .flat(1)
-      };
-    } catch (e) {
-      throw new Error(`The Openapi API definition provided is not valid. Error ${e.message}`);
-    }
-  });
+function prebuildApi(apiDefinition: Document): API {
+  try {
+    return {
+      version: apiDefinition.info?.version,
+      operations: Object.keys(apiDefinition.paths)
+        .map(path =>
+          Object.keys(apiDefinition.paths[path]).map(method => ({
+            id: apiDefinition.paths[path][method].operationId,
+            deprecated: apiDefinition.paths[path][method].deprecated
+          }))
+        )
+        .flat(1)
+    };
+  } catch (e) {
+    throw new Error(`The OpenAPI API definition provided is not valid. Error ${e.message}`);
+  }
 }
 
 /**
@@ -68,65 +65,81 @@ function prebuildApi(apiDefinitions: Document[]): API[] {
  * @param {BautaJSOptions<TRaw>} [options={}]
  * @example
  * const BautaJS = require('@bautajs/core');
- * const apiDefinitions = require('./open-api-definition.json');
+ * const apiDefinition = require('./open-api-definition.json');
  * const static = {
  *   someProp: 'someVal'
  * };
  *
- * const bautaJS = new BautaJS(apiDefinitions, {
+ * const bautaJS = new BautaJS({
+ *  apiDefinition,
  *  resolversPath:  './resolvers/*-resolver.js',
  *  staticConfig: static,
  * });
  *
- * // Assuming we have an api definition with version equals to 'v1' and have an operationId called 'find' we can run the following code:
- * await bautaJS.operations.v1.find.run({});
+ * // Assuming we setup an operationId called 'find' we can run the following code:
+ * await bautaJS.operations.find.run({});
  */
 export class BautaJS<TRaw = any> implements BautaJSInstance {
-  public readonly operations: Operations = {};
+  public readonly apiDefinition?: Document;
+
+  public operations: Operations = {};
 
   public readonly staticConfig: any;
 
   public readonly logger: Logger;
 
-  public readonly options: BautaJSOptions<TRaw>;
+  public readonly options: Options<TRaw>;
 
   public readonly validator: Validator<any>;
 
-  constructor(public readonly apiDefinitions: Document[], options: BautaJSOptions<TRaw> = {}) {
-    const apis: API[] = prebuildApi(apiDefinitions);
+  private bootstrapped: boolean = false;
+
+  constructor({
+    apiDefinition,
+    staticConfig,
+    logger,
+    enableRequestValidation,
+    enableResponseValidation,
+    customValidationFormats,
+    resolversPath,
+    resolvers,
+    ...options
+  }: BautaJSOptions<TRaw> = {}) {
+    const api = apiDefinition ? prebuildApi(apiDefinition) : undefined;
     let responseValidation = false;
     let requestValidation = true;
 
-    this.staticConfig = options.staticConfig;
+    this.apiDefinition = apiDefinition;
+    this.staticConfig = staticConfig;
     this.options = options;
 
-    this.logger = options.logger || defaultLogger();
+    this.logger = logger || defaultLogger();
     if (!isLoggerValid(this.logger)) {
       throw new Error(
         'Logger is not valid. Must be compliant with basic logging levels(trace, debug, info, warn, error, fatal)'
       );
     }
 
-    if (typeof options.enableRequestValidation === 'boolean') {
-      requestValidation = options.enableRequestValidation;
+    if (typeof enableRequestValidation === 'boolean') {
+      requestValidation = enableRequestValidation;
     }
 
-    if (typeof options.enableResponseValidation === 'boolean') {
-      responseValidation = options.enableResponseValidation;
+    if (typeof enableResponseValidation === 'boolean') {
+      responseValidation = enableResponseValidation;
     }
 
-    this.validator = new AjvValidator(options.customValidationFormats);
+    this.validator = new AjvValidator(customValidationFormats);
 
-    this.operations = this.registerOperations(apis, requestValidation, responseValidation);
+    this.operations = this.registerOperations(requestValidation, responseValidation, api);
 
     // Load custom resolvers and operations modifiers
-    if (options.resolvers) {
-      options.resolvers.forEach(resolver => {
+    if (resolvers) {
+      resolvers.forEach(resolver => {
         resolver(this.operations);
       });
     } else {
       BautaJS.requireAll<[Operations]>(
-        options.resolversPath || './server/resolvers/**/*resolver.js',
+        resolversPath || './server/resolvers/**/*resolver.js',
         true,
         [this.operations]
       );
@@ -140,18 +153,34 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
   }
 
   public async bootstrap(): Promise<void> {
-    const asyncTasks = this.apiDefinitions.map(async apiDefinition => {
+    if (this.bootstrapped === true) {
+      throw new Error('The instance has already being bootstrapped.');
+    }
+    if (this.apiDefinition) {
       const parser = new Parser(this.logger);
-      const parsedApiDefinition = await parser.asyncParse(apiDefinition);
-      const { version } = parsedApiDefinition.generic.info;
+      const parsedApiDefinition = await parser.asyncParse(this.apiDefinition);
       parsedApiDefinition.routes.forEach(route => {
-        this.operations[version][route.operationId].addRoute(route);
+        if (Object.prototype.hasOwnProperty.call(this.operations, route.operationId)) {
+          this.operations[route.operationId].addRoute(route);
+        } else {
+          this.logger.warn(
+            `OpenAPI specification operation ID ${route.operationId} don't have a resolver.`
+          );
+        }
       });
-    });
+    }
 
     this.logBautaOptions();
 
-    await Promise.all(asyncTasks);
+    // This will prevent to create new operations after bootstrapping the bautajs instance.
+    this.operations = Object.freeze(
+      Object.entries(this.operations).reduce((acc: Operations, [key, val]) => {
+        acc[key] = val;
+
+        return acc;
+      }, {})
+    );
+    this.bootstrapped = true;
   }
 
   public decorate(property: string | symbol, value: any, dependencies?: string[]) {
@@ -160,69 +189,51 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
   }
 
   private registerOperations(
-    apis: API[],
     enableRequestValidation: boolean,
-    enableResponseValidation: boolean
+    enableResponseValidation: boolean,
+    api?: API
   ): Operations {
+    const self = this;
+
+    function createOperation(operationId: string) {
+      const operationSchema = api?.operations.find(op => op.id === operationId);
+      const operation = OperationBuilder.create(operationId, self);
+      operation.validateResponse(enableResponseValidation);
+      operation.validateRequest(enableRequestValidation);
+
+      if (operationSchema?.deprecated === true) {
+        operation.setAsDeprecated();
+      }
+
+      self.logger.info(`[OK] ${operation.id} operation registered on bautajs.`);
+
+      return operation;
+    }
+
+    // With Reflect we can access to the properties of the proxied object.
     const operations: Operations = new Proxy(
       {},
       {
-        get(target: Dictionary<any>, prop: string) {
+        has(target, key) {
+          return Reflect.has(target, key);
+        },
+        ownKeys(target) {
+          return Reflect.ownKeys(target);
+        },
+        get(target: Operations, prop: string, receiver) {
           if (!Object.prototype.hasOwnProperty.call(target, prop)) {
-            throw new Error(
-              `[ERROR] API version "${prop}" not found on your apiDefinitions.info.version`
-            );
+            const operation = createOperation(prop);
+            Object.defineProperty(target, prop, {
+              value: operation,
+              writable: false,
+              enumerable: true,
+              configurable: false
+            });
           }
-
-          return target[prop];
+          return Reflect.get(target, prop, receiver);
         }
       }
     );
-
-    apis.forEach((api, apiIndex) => {
-      const apiVersion = api.version;
-      let prevApiVersion: string;
-      const prevApi = apis[apiIndex - 1];
-      if (apiIndex > 0 && prevApi) {
-        prevApiVersion = prevApi.version;
-      }
-      operations[apiVersion] = new Proxy(
-        {},
-        {
-          get(target: Dictionary<any>, prop: string) {
-            if (!Object.prototype.hasOwnProperty.call(target, prop)) {
-              throw new Error(
-                `[ERROR] API operationId "${prop}" not found on your apiDefinitions[${apiVersion}].paths[path][method].operationId`
-              );
-            }
-
-            return target[prop];
-          }
-        }
-      );
-
-      api.operations.forEach(op => {
-        const operation = OperationBuilder.create(op.id, apiVersion, this);
-        operation.validateResponse(enableResponseValidation);
-        operation.validateRequest(enableRequestValidation);
-
-        if (op.deprecated === true) {
-          operation.setAsDeprecated();
-        }
-        if (
-          prevApiVersion &&
-          operations[prevApiVersion][operation.id] &&
-          !operations[prevApiVersion][operation.id].deprecated
-        ) {
-          operations[prevApiVersion][operation.id].nextVersionOperation = operation;
-        }
-
-        operations[apiVersion][operation.id] = operation;
-
-        this.logger.info(`[OK] ${apiVersion}.${operation.id} operation registered on bautajs`);
-      });
-    });
-
     return operations;
   }
 
@@ -267,6 +278,40 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
     }
 
     return files;
+  }
+
+  public inheritOperationsFrom(bautajsInstance: BautaJSInstance) {
+    if (!(bautajsInstance instanceof BautaJS)) {
+      throw new Error('A bautaJS instance must be provided.');
+    }
+    if (this.bootstrapped === true) {
+      throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
+    }
+    if (bautajsInstance.bootstrapped === false) {
+      this.logger.warn(
+        'The given instance is not bootstrapped, thus operation schema will be no inherited.'
+      );
+    }
+    Object.keys(bautajsInstance.operations).forEach(operationId => {
+      const operation = bautajsInstance.operations[operationId];
+      if (
+        operation.deprecated !== true &&
+        !Object.prototype.hasOwnProperty.call(this.operations, operationId)
+      ) {
+        this.operations[operationId] = OperationBuilder.create(operation.id, this);
+        this.operations[operationId].setup(operation.handler);
+        this.operations[operationId].requestValidationEnabled = operation.requestValidationEnabled;
+        this.operations[operationId].responseValidationEnabled =
+          operation.responseValidationEnabled;
+        if (operation.isPrivate()) {
+          this.operations[operationId].setAsPrivate();
+        }
+        if (operation.route) {
+          this.operations[operationId].addRoute(operation.route);
+        }
+      }
+    });
+    return this;
   }
 }
 
