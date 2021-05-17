@@ -19,9 +19,11 @@ import { resolver } from '@bautajs/core';
 import express from 'express';
 import { BautaJSExpress } from '../index';
 
+const apiDefinitionExtraTag = require('./fixtures/test-api-definitions-extra-tag.json');
 const apiDefinition = require('./fixtures/test-api-unused-definitions.json');
 const expectedFullSwagger = require('./fixtures/expected-api-full-unused-swagger.json');
 const expectedUnusedSwagger = require('./fixtures/expected-api-unused-swagger.json');
+const expectedOnlyTagsSwagger = require('./fixtures/expected-api-only-used-tags-swagger.json');
 
 describe('express explorer', () => {
   test('should exposes all endpoints that has a resolver', async () => {
@@ -84,5 +86,33 @@ describe('express explorer', () => {
       .expect(200);
 
     expect(JSON.parse(res.text)).toStrictEqual(expectedUnusedSwagger);
+  });
+
+  test('should only show the tags that are in the exposed routes', async () => {
+    const bautajs = new BautaJSExpress({
+      apiDefinition: apiDefinitionExtraTag,
+      resolvers: [
+        resolver(operations => {
+          operations.operation1.setup(() => [
+            {
+              id: 134,
+              name: 'pet2'
+            }
+          ]);
+        })
+      ]
+    });
+
+    const router = await bautajs.buildRouter();
+
+    const app = express();
+    app.use('/v1', router);
+
+    const res = await supertest(app)
+      .get('/v1/openapi.json')
+      .expect('Content-Type', 'text/html; charset=utf-8')
+      .expect(200);
+
+    expect(JSON.parse(res.text)).toStrictEqual(expectedOnlyTagsSwagger);
   });
 });

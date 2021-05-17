@@ -98,11 +98,11 @@ For example, let's assume that we have the following responses definition:
           }
         },
         "default": {
-          "description": "unexpected error",
+          "description": "Some other request",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Error"
+                "$ref": "#/components/schemas/SomeResponse"
               }
             }
           }
@@ -113,6 +113,10 @@ For example, let's assume that we have the following responses definition:
 - if you pipe a response stream file, which generates a 200 http status code, then there will be no validation.
 
 - if instead you force a 201 http status code when piping a response stream file, the default definition will be used, and thus you may an error because the validation will expect a json.
+
+### Response Error validation
+
+Since it is not `bautaJS` responsibility to do the response serialization, no validation is being done by default. Also, error handler occurs outside `bautaJS` scope, as this can change the error format itself, the error response validation falls under the framework used.
 
 ## Custom format validation
 

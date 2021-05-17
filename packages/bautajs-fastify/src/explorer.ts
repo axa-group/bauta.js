@@ -17,6 +17,21 @@ import fOpenAPIDocs from 'fastify-openapi-docs';
 import { FastifyInstance } from 'fastify';
 import { Operations, Document } from '@bautajs/core';
 
+function getTags(operations: Operations) {
+  const tags: string[] = [];
+
+  Object.keys(operations).forEach((key: string) => {
+    const operation = operations[key];
+    if (operation.route && operation.isSetup()) {
+      if (operation.route?.openapiSource.tags) {
+        tags.push(...operation.route?.openapiSource.tags);
+      }
+    }
+  });
+
+  return tags;
+}
+
 async function explorerPlugin(
   fastify: FastifyInstance,
   opts: {
@@ -26,9 +41,12 @@ async function explorerPlugin(
   }
 ) {
   const { paths: unusedPath, ...openapi } = opts.apiDefinition;
+  const tags = getTags(opts.operations);
+  const availableTags = openapi.tags?.filter(t => tags.includes(t.name));
+  const opiFixed = JSON.parse(JSON.stringify(openapi).replace(/#\/components\/schemas\//, '#'));
   fastify.register(fOpenAPIDocs, {
     prefix: opts.prefix?.replace(/\/$/, ''),
-    openapi: JSON.parse(JSON.stringify(openapi).replace(/#\/components\/schemas\//, '#'))
+    openapi: { ...opiFixed, tags: availableTags }
   });
 }
 

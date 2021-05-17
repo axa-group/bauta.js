@@ -23,6 +23,7 @@ import { getRequest, getResponse } from '../operators';
 
 const apiDefinition = require('./fixtures/test-api-definitions.json');
 const apiDefinitionSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
+const apiDefinitionSwaggerWithExtraTag = require('./fixtures/test-api-definition-extra-tag.json');
 
 describe('bautaJS fastify tests', () => {
   describe('bautaJS fastify generic test', () => {
@@ -205,6 +206,22 @@ describe('bautaJS fastify tests', () => {
       });
 
       expect(res.statusCode).toStrictEqual(404);
+    });
+
+    test('should only show the tags that are in the exposed routes', async () => {
+      fastifyInstance.register(bautajsFastify, {
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        apiDefinition: apiDefinitionSwaggerWithExtraTag,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+      });
+
+      const res = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/openapi.json'
+      });
+
+      expect(res.body).not.toContain('extraTag');
     });
 
     test('should expose the swagger or openapi json by default', async () => {

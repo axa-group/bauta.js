@@ -262,7 +262,13 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
       });
 
     if (this.apiDefinition) {
-      initExplorer(router, this.apiDefinition, this.operations, options.explorer);
+      initExplorer(
+        router,
+        this.apiDefinition,
+        this.operations,
+        options.apiBasePath,
+        options.explorer
+      );
     }
 
     return router;

@@ -21,7 +21,7 @@ const bautaJS = require('./server/instances/bauta');
 
   const router = await bautaJS.buildRouter();
 
-  app.use('v1/', router);
+  app.use('/v1/', router);
 
   /* Error handler */
   // 404 error
