@@ -17,6 +17,7 @@ module.exports = {
   preset: 'ts-jest',
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/fixtures/'],
   testMatch: ['**/?(*.)+(spec|test).ts?(x)'],
+  coveragePathIgnorePatterns: ['dist', 'benchmark'],
   globals: {
     'ts-jest': {
       tsconfig: 'tsconfig.test.json',

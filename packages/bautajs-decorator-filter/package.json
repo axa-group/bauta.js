@@ -42,7 +42,7 @@
   ],
   "license": "see LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "3.4.1",
-    "loopback-filters": "1.1.0"
+    "@bautajs/core": "^3.4.1",
+    "loopback-filters": "1.1.1"
   }
 }

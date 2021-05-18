@@ -18,7 +18,7 @@ import QuickLRU, { Options } from 'quick-lru-cjs';
 import nodeObjectHash from 'node-object-hash';
 import { Normalizer, CacheStepFunction } from './types';
 
-const { hash } = nodeObjectHash({
+const objectHash = nodeObjectHash({
   // We don't care about the order of an object properties this could add some overhead over the performance.
   sort: false,
   // Set and array will generate same hashes and different symbol will generate different hashes in order to improve performance.
@@ -67,7 +67,7 @@ const { hash } = nodeObjectHash({
  */
 export function cache<TIn, TOut, CacheKey = string>(
   fn: Pipeline.StepFunction<TIn, TOut>,
-  normalizer: Normalizer<TIn, CacheKey> = (prev: TIn): CacheKey => hash(prev) as any,
+  normalizer: Normalizer<TIn, CacheKey> = (prev: TIn): CacheKey => objectHash.hash(prev) as any,
   options: Options<CacheKey, TOut>
 ): CacheStepFunction<TIn, TOut, CacheKey> {
   const store = new QuickLRU<CacheKey, TOut>(options);

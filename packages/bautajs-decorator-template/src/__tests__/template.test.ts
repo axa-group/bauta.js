@@ -22,9 +22,9 @@ describe('template decorator', () => {
       template([{ id: '{{ctx.data.id}}', name: '{{previousValue}}' }])
     );
 
-    expect(
-      pipeline(null, createContext({ data: { id: 1 } }), {} as BautaJSInstance)
-    ).toStrictEqual([{ id: 1, name: '1' }]);
+    expect(pipeline(null, createContext({ data: { id: 1 } }), {} as BautaJSInstance)).toStrictEqual(
+      [{ id: 1, name: '1' }]
+    );
   });
 
   test('should bypass not valid template', async () => {

@@ -2,6 +2,17 @@
 
 ### bautajs-core
 
+#### Validation library
+
+The core validation library has been updated to his version 8.x please check the [migration guide](https://ajv.js.org/v6-to-v8-migration.html) if any of those changes affects 
+on your project.
+
+Main affecting change is that on the error path [jsonPath](https://github.com/JSONPath-Plus/JSONPath) is not used anymore, instead [jsonPointer](https://datatracker.ietf.org/doc/html/rfc6901) is used as a replacement.
+
+Also [ajv-oai](https://github.com/oaijs/ajv-oai) was replaced by [ajv-formats](https://github.com/ajv-validator/ajv-formats) which has pretty the same features but adding
+more formats. This change should be transparent for your implementations.
+
+
 #### Api versioning
 
 Api versioning has been refactored to a different pattern.

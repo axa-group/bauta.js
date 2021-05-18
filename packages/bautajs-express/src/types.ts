@@ -15,7 +15,6 @@
 import * as express from 'express';
 import bodyParser from 'body-parser';
 import { CorsOptions } from 'cors';
-import helmet from 'helmet';
 import morgan from 'morgan';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { Operation, GenericError, Logger } from '@bautajs/core';
@@ -67,10 +66,15 @@ export interface BodyParserOptions {
   urlEncoded?: bodyParser.OptionsUrlencoded;
 }
 
+export interface HelmetOptions {
+  // See helment options at https://github.com/helmetjs/helmet
+  [key: string]: any;
+}
+
 export interface RouterOptions {
   cors?: MiddlewareOption<CorsOptions>;
   bodyParser?: MiddlewareOption<BodyParserOptions>;
-  helmet?: MiddlewareOption<helmet.IHelmetConfiguration>;
+  helmet?: MiddlewareOption<HelmetOptions>;
   morgan?: MiddlewareOption<MorganOptions>;
   explorer?: MiddlewareOption<ExplorerOptions>;
   reqGenerator?: MiddlewareOption<null>;

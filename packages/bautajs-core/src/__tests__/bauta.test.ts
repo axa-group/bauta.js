@@ -167,9 +167,9 @@ describe('bauta core tests', () => {
           message: 'The request was not valid',
           errors: [
             {
-              path: '.limit',
+              path: '/limit',
               location: 'query',
-              message: 'should be integer',
+              message: 'must be integer',
               errorCode: 'type'
             }
           ]
@@ -253,9 +253,9 @@ describe('bauta core tests', () => {
           message: 'The request was not valid',
           errors: [
             {
-              path: '.limit',
+              path: '/limit',
               location: 'query',
-              message: 'should be integer',
+              message: 'must be integer',
               errorCode: 'type'
             }
           ]
@@ -392,7 +392,7 @@ describe('bauta core tests', () => {
             {
               path: '',
               location: 'response',
-              message: 'should be array',
+              message: 'must be array',
               errorCode: 'type'
             }
           ],
@@ -449,7 +449,7 @@ describe('bauta core tests', () => {
             {
               path: '',
               location: 'response',
-              message: 'should be array',
+              message: 'must be array',
               errorCode: 'type'
             }
           ],

@@ -63,9 +63,9 @@ describe('operation class tests', () => {
       const res = {};
       const expected = [
         {
-          path: '.limit',
+          path: '/limit',
           location: 'query',
-          message: 'should be integer',
+          message: 'must be integer',
           errorCode: 'type'
         }
       ];
@@ -86,7 +86,7 @@ describe('operation class tests', () => {
         {
           path: '',
           location: 'response',
-          message: 'should be array',
+          message: 'must be array',
           errorCode: 'type'
         }
       ];
@@ -252,7 +252,7 @@ describe('operation class tests', () => {
         {
           path: '',
           location: 'body',
-          message: 'should be object',
+          message: 'must be object',
           errorCode: 'type'
         }
       ];
@@ -281,7 +281,7 @@ describe('operation class tests', () => {
         {
           path: '',
           location: 'body',
-          message: "should have required property 'grant_type'",
+          message: "must have required property 'grant_type'",
           errorCode: 'required'
         }
       ];
@@ -309,9 +309,9 @@ describe('operation class tests', () => {
       operationTest.addRoute(document.routes[0]);
       const expected = [
         {
-          path: '.grant_type',
+          path: '/grant_type',
           location: 'body',
-          message: 'should be equal to one of the allowed values',
+          message: 'must be equal to one of the allowed values',
           errorCode: 'enum'
         }
       ];
@@ -402,27 +402,27 @@ describe('operation class tests', () => {
       operationTest.addRoute(document.routes[0]);
       const expected = [
         {
-          path: '[0]',
+          path: '/0',
           location: 'response',
-          message: "should have required property 'id'",
+          message: "must have required property 'id'",
           errorCode: 'required'
         },
         {
-          path: '[0]',
+          path: '/0',
           location: 'response',
-          message: "should have required property 'name'",
+          message: "must have required property 'name'",
           errorCode: 'required'
         },
         {
-          path: '[1]',
+          path: '/1',
           location: 'response',
-          message: "should have required property 'id'",
+          message: "must have required property 'id'",
           errorCode: 'required'
         },
         {
-          path: '[1]',
+          path: '/1',
           location: 'response',
-          message: "should have required property 'name'",
+          message: "must have required property 'name'",
           errorCode: 'required'
         }
       ];

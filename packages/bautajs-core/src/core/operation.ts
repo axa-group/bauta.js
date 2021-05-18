@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OpenAPI } from 'openapi-types';
+import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 import PCancelable from 'p-cancelable';
 import {
   BautaJSInstance,
@@ -60,11 +60,11 @@ export class OperationBuilder implements Operation {
     this.handler = buildDefaultStep();
     this.getRequest =
       typeof this.bautajs.options.getRequest === 'function'
-        ? this.bautajs.options.getRequest
+        ? this.bautajs.options.getRequest.bind(this)
         : undefined;
     this.getResponse =
       typeof this.bautajs.options.getResponse === 'function'
-        ? this.bautajs.options.getResponse
+        ? this.bautajs.options.getResponse.bind(this)
         : undefined;
   }
 
@@ -128,9 +128,9 @@ export class OperationBuilder implements Operation {
       // If default is not defined in the schema, we take as default response that for 200 response.
       const defaultStatus = getDefaultStatusCode(responses);
       const targetStatusCode = statusCode || defaultStatus;
-
-      if (responses[targetStatusCode] && responses[targetStatusCode].content) {
-        const content = Object.keys(responses[targetStatusCode].content)[0];
+      const contentSchema = (responses[targetStatusCode] as OpenAPIV3.ResponseObject)?.content;
+      if (contentSchema) {
+        const content = Object.keys(contentSchema)[0];
 
         if (content.startsWith('application/json')) {
           return true;

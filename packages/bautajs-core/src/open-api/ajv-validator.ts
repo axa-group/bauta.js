@@ -1,5 +1,5 @@
-import Ajv from 'ajv';
-import AjvOai from 'ajv-oai';
+import Ajv, { ValidateFunction, Format, Options } from 'ajv';
+import addFormats from 'ajv-formats';
 import crypto from 'crypto';
 import { Validator, RouteSchema, Dictionary, CustomValidationFormat, JSONSchema } from '../types';
 import {
@@ -13,36 +13,29 @@ import {
 } from './validator-utils';
 import { AJVOperationValidators } from './operation-validators';
 
-export class AjvValidator implements Validator<Ajv.ValidateFunction> {
-  private cache: any;
+export class AjvValidator implements Validator<ValidateFunction> {
+  private ajv: Ajv;
 
-  private ajv: Ajv.Ajv;
-
-  constructor(private readonly customValidationFormats?: CustomValidationFormat[]) {
-    this.cache = AjvValidator.buildCache();
-    this.ajv = AjvValidator.buildAjv(this.cache);
-    this.addCustomFormats(this.customValidationFormats);
+  constructor(
+    private readonly customValidationFormats?: CustomValidationFormat[],
+    validatorOptions?: Options
+  ) {
+    this.ajv = AjvValidator.buildAjv(validatorOptions);
+    addFormats(this.ajv);
+    if (this.customValidationFormats?.length) {
+      this.addCustomFormats(this.customValidationFormats);
+    }
   }
 
-  private static buildCache(): any {
-    const cache: any = new Map();
-    cache.put = cache.set; // why?
-    return cache;
-  }
-
-  private static buildAjv(cache: any) {
-    const ajv = new AjvOai({
-      // disable ajv logs until issue #165 can be released
+  private static buildAjv(validatorOptions: Options = {}) {
+    const ajv = new Ajv({
       logger: false,
-      unknownFormats: 'ignore',
+      strict: false,
       coerceTypes: false,
       useDefaults: true,
       removeAdditional: true,
       allErrors: true,
-      nullable: true,
-      schemaId: 'auto',
-      cache,
-      metaSchema: 'json-schema-draft-07'
+      ...validatorOptions
     });
 
     return ajv;
@@ -50,13 +43,13 @@ export class AjvValidator implements Validator<Ajv.ValidateFunction> {
 
   private addCustomFormats(customValidationFormats?: CustomValidationFormat[]): void {
     const addCustomFormat = ({ name, ...customValidationFormat }: CustomValidationFormat) =>
-      this.ajv.addFormat(name, customValidationFormat);
+      this.ajv.addFormat(name, customValidationFormat as Format);
     if (Array.isArray(customValidationFormats)) {
       customValidationFormats.forEach(addCustomFormat);
     }
   }
 
-  buildSchemaCompiler(schema: JSONSchema): Ajv.ValidateFunction {
+  buildSchemaCompiler(schema: JSONSchema): ValidateFunction {
     const cleanSchema = removeCircularReferences(schema);
     if (cleanSchema.$id) {
       const compiledSchema = this.ajv.getSchema(cleanSchema.$id);
@@ -75,7 +68,7 @@ export class AjvValidator implements Validator<Ajv.ValidateFunction> {
   }
 
   generate(operationSchema: RouteSchema): AJVOperationValidators {
-    const validators: Dictionary<Dictionary<Ajv.ValidateFunction> | Ajv.ValidateFunction> = {};
+    const validators: Dictionary<Dictionary<ValidateFunction> | ValidateFunction> = {};
 
     if (operationSchema.body) {
       validators[bodySchema.toString()] = this.buildSchemaCompiler(operationSchema.body);
@@ -93,7 +86,7 @@ export class AjvValidator implements Validator<Ajv.ValidateFunction> {
     }
     if (operationSchema.response) {
       validators[responseSchema.toString()] = Object.keys(operationSchema.response).reduce(
-        (acc: Dictionary<Ajv.ValidateFunction>, statusCode: string) => {
+        (acc: Dictionary<ValidateFunction>, statusCode: string) => {
           if (operationSchema.response && operationSchema.response[statusCode]) {
             acc[statusCode] = this.buildSchemaCompiler(operationSchema.response[statusCode]);
           }

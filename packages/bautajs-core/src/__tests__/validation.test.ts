@@ -104,9 +104,9 @@ describe('validation tests', () => {
       expect.objectContaining({
         errors: [
           {
-            path: '[0].id',
+            path: '/0/id',
             location: 'response',
-            message: 'should be integer',
+            message: 'must be integer',
             errorCode: 'type'
           }
         ]
@@ -185,9 +185,9 @@ describe('validation tests', () => {
       expect.objectContaining({
         errors: [
           {
-            path: '[0].id',
+            path: '/0/id',
             location: 'response',
-            message: 'should be integer',
+            message: 'must be integer',
             errorCode: 'type'
           }
         ]
@@ -235,9 +235,9 @@ describe('validation tests', () => {
       expect.objectContaining({
         errors: [
           {
-            path: '.some_field',
+            path: '/some_field',
             location: 'body',
-            message: 'should be string',
+            message: 'must be string',
             errorCode: 'type'
           }
         ]
@@ -288,7 +288,12 @@ describe('validation tests', () => {
 });
 
 describe('custom formats', () => {
-  test('should ignore custom formats in a schema if they are not defined', async () => {
+  test('should allow override validator options', async () => {
+    const logger = {
+      log: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn()
+    };
     const config = {
       endpoint: 'http://google.es'
     };
@@ -317,11 +322,20 @@ describe('custom formats', () => {
           statusCode: raw.res.statusCode,
           isResponseFinished: raw.res.headersSent || raw.res.finished
         };
+      },
+      validatorOptions: {
+        logger
       }
     });
     await bautaJS.bootstrap();
-    expect(bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
-      expected
+    expect(logger.warn).toHaveBeenCalledWith(
+      'unknown format "customIdFormat" ignored in schema at path "#/items/properties/id"'
+    );
+    expect(logger.warn).toHaveBeenCalledWith(
+      'unknown format "customIdFormat" ignored in schema at path "#/items/properties/id"'
+    );
+    expect(logger.warn).toHaveBeenCalledWith(
+      'unknown format "customTagFormat" ignored in schema at path "#/items/properties/tag"'
     );
   });
 
@@ -375,9 +389,9 @@ describe('custom formats', () => {
       expect.objectContaining({
         errors: [
           {
-            path: '[0].id',
+            path: '/0/id',
             location: 'response',
-            message: 'should match format "customIdFormat"',
+            message: 'must match format "customIdFormat"',
             errorCode: 'format'
           }
         ]
@@ -412,7 +426,8 @@ describe('custom formats', () => {
         {
           name: 'customTagFormat',
           type: 'string',
-          validate: /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?$/
+          validate:
+            /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?$/
         }
       ],
       getRequest(raw: any): any {
@@ -436,9 +451,9 @@ describe('custom formats', () => {
       expect.objectContaining({
         errors: [
           {
-            path: '[0].tag',
+            path: '/0/tag',
             location: 'response',
-            message: 'should match format "customTagFormat"',
+            message: 'must match format "customTagFormat"',
             errorCode: 'format'
           }
         ]
@@ -499,9 +514,9 @@ describe('custom formats', () => {
       expect.objectContaining({
         errors: [
           {
-            path: '[0].tag',
+            path: '/0/tag',
             location: 'response',
-            message: 'should match format "customTagFormat"',
+            message: 'must match format "customTagFormat"',
             errorCode: 'format'
           }
         ]

@@ -15,7 +15,7 @@
 import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import PCancelable from 'p-cancelable';
 import { Bindings } from 'pino';
-import Ajv from 'ajv';
+import * as Ajv from 'ajv';
 
 export type JSONSchema = any;
 
@@ -143,7 +143,6 @@ export interface IValidationError extends Error {
   response: any;
   toJSON: () => ValidationErrorJSON;
 }
-
 export interface Logger {
   fatal(msg: string, ...args: any[]): void;
   fatal(obj: {}, msg?: string, ...args: any[]): void;
@@ -298,6 +297,13 @@ export interface BautaJSOptions<TRaw = any> {
    * @memberof BautaJSOptions
    */
   readonly customValidationFormats?: CustomValidationFormat[];
+  /**
+   *
+   *
+   * @type {Ajv.Options}
+   * @memberof BautaJSOptions
+   */
+  readonly validatorOptions?: Ajv.Options;
 }
 
 export interface BautaJSInstance {
@@ -363,7 +369,7 @@ export interface BautaJSInstance {
 
 export type CustomValidationFormat = {
   name: string;
-} & Ajv.FormatDefinition;
+} & Ajv.FormatDefinition<any>;
 
 // Service
 export type Operations = Dictionary<Operation>;

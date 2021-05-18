@@ -14,6 +14,7 @@
  */
 import fastGlob from 'fast-glob';
 import { resolve } from 'path';
+import { OpenAPIV2 } from 'openapi-types';
 import { OperationBuilder } from './core/operation';
 import { defaultLogger } from './default-logger';
 import {
@@ -42,12 +43,20 @@ function prebuildApi(apiDefinition: Document): API {
     return {
       version: apiDefinition.info?.version,
       operations: Object.keys(apiDefinition.paths)
-        .map(path =>
-          Object.keys(apiDefinition.paths[path]).map(method => ({
-            id: apiDefinition.paths[path][method].operationId,
-            deprecated: apiDefinition.paths[path][method].deprecated
-          }))
-        )
+        .map(path => {
+          const pathItem = apiDefinition.paths[path];
+          if (pathItem) {
+            return Object.keys(pathItem)
+              .filter(method => pathItem[method as OpenAPIV2.HttpMethods]?.operationId)
+              .map(method => ({
+                // Typescript do not get the filter done before, due to that we need the casting
+                id: (pathItem[method as OpenAPIV2.HttpMethods] as OpenAPIV2.OperationObject)
+                  .operationId as string,
+                deprecated: pathItem[method as OpenAPIV2.HttpMethods]?.deprecated || false
+              }));
+          }
+          return [];
+        })
         .flat(1)
     };
   } catch (e) {
@@ -103,6 +112,7 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
     customValidationFormats,
     resolversPath,
     resolvers,
+    validatorOptions,
     ...options
   }: BautaJSOptions<TRaw> = {}) {
     const api = apiDefinition ? prebuildApi(apiDefinition) : undefined;
@@ -128,7 +138,7 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
       responseValidation = enableResponseValidation;
     }
 
-    this.validator = new AjvValidator(customValidationFormats);
+    this.validator = new AjvValidator(customValidationFormats, validatorOptions);
 
     this.operations = this.registerOperations(requestValidation, responseValidation, api);
 

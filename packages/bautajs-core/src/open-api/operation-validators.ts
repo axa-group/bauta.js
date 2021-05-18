@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import * as Ajv from 'ajv';
 import { Dictionary, LocationError, OperationValidators } from '../types';
 import { ValidationError } from '../core/validation-error';
 import {
@@ -16,7 +16,7 @@ function formatLocationErrors(
 ): LocationError[] | undefined {
   return Array.isArray(errors)
     ? errors.map(error => ({
-        path: error.dataPath,
+        path: error.instancePath,
         location: location || '',
         message: error.message || '',
         errorCode: error.keyword

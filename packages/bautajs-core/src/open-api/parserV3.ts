@@ -166,22 +166,23 @@ class ParserV3 {
     const copyItems = ['summary', 'description'];
     Object.keys(paths).forEach(path => {
       const routeSchema: RouteSchema = {};
-      const data: OpenAPIV3.PathItemObject = paths[path];
-
-      ParserV3.copyProps(data, routeSchema, copyItems);
-      if (typeof data.parameters === 'object') {
-        ParserV3.parseParameters(routeSchema, data.parameters);
-      }
-      Object.keys(data).forEach(pathItem => {
-        if (HttpOperations.has(pathItem)) {
-          this.processOperation(
-            path,
-            pathItem,
-            data[pathItem as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject,
-            routeSchema
-          );
+      const data = paths[path];
+      if (data) {
+        ParserV3.copyProps(data, routeSchema, copyItems);
+        if (typeof data.parameters === 'object') {
+          ParserV3.parseParameters(routeSchema, data.parameters);
         }
-      });
+        Object.keys(data).forEach(pathItem => {
+          if (HttpOperations.has(pathItem)) {
+            this.processOperation(
+              path,
+              pathItem,
+              data[pathItem as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject,
+              routeSchema
+            );
+          }
+        });
+      }
     });
   }
 }

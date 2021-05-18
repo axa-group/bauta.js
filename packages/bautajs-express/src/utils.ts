@@ -12,18 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Route, idGenerator } from '@bautajs/core';
-import { OpenAPIV2 } from '@bautajs/core/node_modules/openapi-types';
-import { IncomingHttpHeaders } from 'node:http';
+import { Route, idGenerator, OpenAPIV2Document } from '@bautajs/core';
+import { OpenAPIV3 } from 'openapi-types';
+import { IncomingHttpHeaders } from 'http';
 
 function getContentType(route: Route, statusCode: number) {
   if (route.isV2) {
-    const produces = route.openapiSource as OpenAPIV2.OperationObject;
+    const { produces } = route.openapiSource as OpenAPIV2Document;
     return produces && produces[0];
   }
-  const { responses } = route.openapiSource;
+  const { responses } = route.openapiSource as OpenAPIV3.OperationObject;
+  const responseObject: OpenAPIV3.ResponseObject | undefined = responses?.[
+    statusCode
+  ] as OpenAPIV3.ResponseObject;
 
-  return responses && responses[statusCode] && responses[statusCode][0];
+  return responseObject?.content?.[0];
 }
 
 function genReqId(headers: IncomingHttpHeaders) {

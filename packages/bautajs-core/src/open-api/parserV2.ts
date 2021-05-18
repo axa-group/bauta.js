@@ -111,12 +111,15 @@ class ParserV2 {
     if (formData.length > 0) routeSchema.body = ParserV2.parseParams(formData);
   }
 
-  private static parseResponses(responses: OpenAPIV2.ResponsesDefinitionsObject) {
+  private static parseResponses(responses: OpenAPIV2.ResponsesObject) {
     const result: any = {};
     let hasResponse = false;
     Object.keys(responses).forEach(httpCode => {
-      if (responses[httpCode].schema !== undefined) {
-        result[httpCode] = responses[httpCode].schema;
+      const schema = (
+        responses[httpCode as keyof OpenAPIV2.ResponseObject] as OpenAPIV2.SchemaObject
+      )?.schema;
+      if (schema) {
+        result[httpCode] = schema;
         hasResponse = true;
       }
     });
@@ -158,9 +161,9 @@ class ParserV2 {
   }
 
   processPaths(paths: OpenAPIV2.PathsObject): void {
-    Object.keys(paths).forEach(path => {
+    Object.keys(paths).forEach((path: string) => {
       Object.keys(paths[path]).forEach(operation => {
-        this.processOperation(path, operation, paths[path][operation]);
+        this.processOperation(path, operation, (paths[path] as any)[operation]);
       });
     });
   }

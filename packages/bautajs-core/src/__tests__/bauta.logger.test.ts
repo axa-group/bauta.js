@@ -38,13 +38,14 @@ describe('core tests', () => {
 
       validLevels.forEach((level: any) => {
         const spy = jest.spyOn(logger, level);
-        logger[level](message);
+        (logger[level as keyof Logger] as Function)(message);
         expect(spy).toHaveBeenCalledWith(message);
       });
     });
 
     test('should not initialize the core if using an invalid logger', async () => {
       const invalidLogger = defaultLogger();
+      // @ts-ignore
       delete invalidLogger.info; // A custom made logger with no info is considered invalid
 
       const config = {
@@ -71,7 +72,7 @@ describe('core tests', () => {
         prettyPrint: false
       };
 
-      const validLogger = (pino(configLogger, pino.destination(1)) as unknown) as Logger;
+      const validLogger = pino(configLogger, pino.destination(1)) as unknown as Logger;
 
       const config = {
         endpoint: 'http://google.es'
@@ -90,7 +91,7 @@ describe('core tests', () => {
 
       validLevels.forEach((level: any) => {
         const spy = jest.spyOn(logger, level);
-        logger[level](message);
+        (logger[level as keyof Logger] as Function)(message);
         expect(spy).toHaveBeenCalledWith(message);
       });
     });
@@ -126,7 +127,7 @@ describe('core tests', () => {
 
       customValidLevels.forEach((level: any) => {
         const spy = jest.spyOn(logger, level);
-        logger[level](message);
+        (logger[level as keyof Logger] as Function)(message);
         expect(spy).toHaveBeenCalledWith(message);
       });
     });

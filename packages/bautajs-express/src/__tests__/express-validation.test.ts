@@ -46,9 +46,9 @@ describe('bautaJS express validation tests', () => {
 
     expect(res.body.message).toStrictEqual(`The request was not valid`);
     expect(res.body.errors[0]).toStrictEqual({
-      path: '.limit',
+      path: '/limit',
       location: 'query',
-      message: 'should match format "test"',
+      message: 'must match format "test"',
       errorCode: 'format'
     });
   });

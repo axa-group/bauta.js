@@ -50,9 +50,8 @@ describe('bautaJS fastify tests', () => {
     expect(res.statusCode).toStrictEqual(422);
     expect(body.message).toStrictEqual(`The request was not valid`);
     expect(body.errors[0]).toStrictEqual({
-      path: '.limit',
       location: 'querystring',
-      message: 'should match format "test"',
+      message: 'must match format "test"',
       errorCode: 'format'
     });
   });

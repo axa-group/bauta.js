@@ -19,8 +19,15 @@ import { json, Router, urlencoded } from 'express';
 import helmet from 'helmet';
 import { Document, Operations, Logger, PathsObject } from '@bautajs/core';
 import fastSafeStringify from 'fast-safe-stringify';
+import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 
-import { MiddlewareOption, MorganOptions, BodyParserOptions, ExplorerOptions } from './types';
+import {
+  MiddlewareOption,
+  MorganOptions,
+  BodyParserOptions,
+  ExplorerOptions,
+  HelmetOptions
+} from './types';
 import { genReqId } from './utils';
 
 const morganJson = require('morgan-json');
@@ -33,13 +40,16 @@ function buildOpenAPIPaths(operations: Operations) {
     const operation = operations[key];
     if (operation.route && operation.isSetup()) {
       if (!paths[operation.route.path]) {
-        paths[operation.route?.path] = {};
+        paths[operation.route.path] = {};
       }
-      if (operation.route?.openapiSource.tags) {
-        tags.push(...operation.route?.openapiSource.tags);
+      if (operation.route.openapiSource.tags) {
+        tags.push(...operation.route.openapiSource.tags);
       }
-      paths[operation.route?.path][operation.route?.method.toLowerCase()] =
-        operation.route?.openapiSource;
+      const pathItem = paths[operation.route.path];
+      if (pathItem) {
+        pathItem[operation.route.method.toLowerCase() as OpenAPIV2.HttpMethods] =
+          operation.route.openapiSource;
+      }
     }
   });
 
@@ -94,7 +104,7 @@ export function initMorgan(router: Router, opt?: MiddlewareOption<MorganOptions>
   }
 }
 
-export function initHelmet(router: Router, opt?: MiddlewareOption<helmet.IHelmetConfiguration>) {
+export function initHelmet(router: Router, opt?: MiddlewareOption<HelmetOptions>) {
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     router.use(helmet());
   } else if (opt && opt.enabled === true && opt.options) {
@@ -136,7 +146,9 @@ export function initExplorer(
   if (swaggerEnabled) {
     const openAPIPath = `/openapi.json`;
     const { paths, tags } = buildOpenAPIPaths(operations);
-    const availableTags = apiDefinition.tags?.filter(t => tags.includes(t.name));
+    const availableTags = apiDefinition.tags?.filter((t: OpenAPIV3.TagObject) =>
+      tags.includes(t.name)
+    );
     router.get(openAPIPath, (_, res) => {
       res.send(fastSafeStringify({ ...apiDefinition, paths, tags: availableTags }));
       res.end();

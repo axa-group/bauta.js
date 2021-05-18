@@ -42,7 +42,7 @@
   ],
   "license": "see LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "3.4.1",
+    "@bautajs/core": "^3.4.1",
     "node-object-hash": "^2.0.0",
     "quick-lru-cjs": "^5.2.0"
   }

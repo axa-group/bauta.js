@@ -6,6 +6,6 @@
   },
   "references": [
     { "path": "./tsconfig.build.json" },
-    { "path": "./tsconfig.test.base.json" },
+    { "path": "./tsconfig.test.json" },
   ]
 }

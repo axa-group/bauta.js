@@ -42,7 +42,7 @@
   ],
   "license": "see LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "3.4.1",
+    "@bautajs/core": "^3.4.1",
     "stjs": "0.0.5"
   }
 }
