@@ -12,31 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { resolver, pipe, match } = require('@bautajs/core');
-const { provider1 } = require('./source-datasource');
+import { Response } from 'express';
 
-const myPipelinetwo = pipe((response, ctx) => {
-  ctx.log.info('pipeline 2');
-
-  return response;
+const rawSymbol = Symbol('pino-raw-res-ref');
+const pinoResProto = Object.create(
+  {},
+  {
+    statusCode: {
+      enumerable: true,
+      writable: true,
+      value: 0
+    }
+  }
+);
+Object.defineProperty(pinoResProto, rawSymbol, {
+  writable: true,
+  value: {}
 });
 
-const myPipeline = pipe((response, ctx) => {
-  ctx.log.info('pipeline 1');
-  return response;
-});
-
-module.exports = resolver(operations => {
-  operations.operation1.setup(
-    pipe(
-      provider1(),
-      match(m =>
-        m
-          .on(prev => {
-            return prev === null;
-          }, myPipeline)
-          .otherwise(myPipelinetwo)
-      )
-    )
-  );
-});
+export function resSerializer(res: Response) {
+  const serializerResponse = Object.create(pinoResProto);
+  serializerResponse.statusCode = res.statusCode;
+  return serializerResponse;
+}

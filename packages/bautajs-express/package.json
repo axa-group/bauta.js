@@ -40,17 +40,17 @@
       "name": "Xavier Redondo"
     }
   ],
-  "license": "see LICENSE.txt",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "^3.4.1",
     "compression": "1.x",
     "cors": "2.x",
     "express": "4.x",
     "helmet": "4.x",
-    "morgan": "1.x",
-    "morgan-json": "^1.1.0",
+    "express-pino-logger": "6.x",
     "openapi-types": "9.0.0",
     "route-order": "0.1.0",
-    "swagger-ui-express": "4.x"
+    "swagger-ui-express": "4.x",
+    "pino": "^6.2.1"
   }
 }

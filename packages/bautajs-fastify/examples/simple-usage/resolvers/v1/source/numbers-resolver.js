@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { resolver, step } = require('@bautajs/core');
+const { resolver, step, pipe } = require('@bautajs/core');
 const { exampleRestProviderYear, exampleRestProvider } = require('./numbers-datasource');
 const { catsRestProviderWithHttps } = require('./cats-datasource');
 
@@ -25,12 +25,12 @@ const transformResponse = step(response => {
 });
 
 module.exports = resolver(operations => {
-  operations.randomYear.setup(p => p.pipe(exampleRestProviderYear(), transformResponse));
-  operations.randomYear2.setup(p => p.pipe(exampleRestProviderYear(), transformResponse));
+  operations.randomYear.setup(pipe(exampleRestProviderYear(), transformResponse));
+  operations.randomYear2.setup(pipe(exampleRestProviderYear(), transformResponse));
 
-  operations.factNumber.setup(p => p.pipe(exampleRestProvider(), transformResponse));
+  operations.factNumber.setup(pipe(exampleRestProvider(), transformResponse));
 
-  operations.factNumber2.setup(p => p.pipe(exampleRestProvider(), transformResponse));
+  operations.factNumber2.setup(pipe(exampleRestProvider(), transformResponse));
 
-  operations.cats.setup(p => p.pipe(catsRestProviderWithHttps(), transformResponse));
+  operations.cats.setup(pipe(catsRestProviderWithHttps(), transformResponse));
 });

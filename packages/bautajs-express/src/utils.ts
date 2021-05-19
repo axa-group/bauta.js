@@ -32,9 +32,4 @@ function getContentType(route: Route, statusCode: number) {
 function genReqId(headers: IncomingHttpHeaders) {
   return headers?.['x-request-id'] || idGenerator();
 }
-
-function hrTimeToMilliseconds(hrTime: number[]) {
-  return hrTime[0] * 1000000 + hrTime[1] / 1000;
-}
-
-export { getContentType, genReqId, hrTimeToMilliseconds };
+export { getContentType, genReqId };

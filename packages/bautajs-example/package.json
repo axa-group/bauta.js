@@ -4,7 +4,7 @@
   "description": "A bautaJS example",
   "main": "./server.js",
   "scripts": {
-    "start": "LOG_LEVEL=debug DEBUG=bautajs* node ./server.js"
+    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server.js"
   },
   "repository": {
     "type": "git",
@@ -34,13 +34,15 @@
       "name": "Xavier Redondo"
     }
   ],
-  "license": "see LICENSE.txt",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "^3.4.1",
     "@bautajs/datasource-rest": "^3.4.1",
     "@bautajs/decorator-cache": "^3.4.1",
     "@bautajs/express": "^3.4.1",
     "@hapi/boom": "^9.1.0",
-    "express": "4.x"
+    "express": "4.x",
+    "pino": "^6.2.1",
+    "pino-pretty": "^4.8.0"
   }
 }

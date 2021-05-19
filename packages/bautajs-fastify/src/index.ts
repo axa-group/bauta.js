@@ -214,16 +214,6 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: BautaJSFast
           schema: {
             ...requestSchema,
             ...responseSchema
-          },
-          // Missing logSerializers from types on fastify v3 https://github.com/fastify/fastify/issues/2511
-          // @ts-ignore
-          logSerializers: {
-            res(reply: FastifyReply) {
-              return {
-                statusCode: reply.statusCode,
-                url: route
-              };
-            }
           }
         });
 

@@ -16,17 +16,17 @@ import compression from 'compression';
 import express, { Response, IRoute } from 'express';
 import routeOrder from 'route-order';
 import * as bautajs from '@bautajs/core';
-import { BautaJSOptions } from '@bautajs/core';
-import { RouterOptions, ExpressRequest } from './types';
+import P from 'pino';
+import { RouterOptions, ExpressRequest, BautaJSExpressOptions } from './types';
 import {
   initReqIdGenerator,
-  initMorgan,
+  initExpressPino,
   initBodyParser,
   initHelmet,
   initCors,
   initExplorer
 } from './middlewares';
-import { getContentType, hrTimeToMilliseconds } from './utils';
+import { getContentType } from './utils';
 
 /**
  * Create an Express server using the BautaJS library with almost 0 configuration
@@ -51,7 +51,7 @@ import { getContentType, hrTimeToMilliseconds } from './utils';
  * });
  */
 export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: Response }> {
-  constructor(options: Omit<BautaJSOptions, 'getRequest' | 'getResponse'>) {
+  constructor(options: BautaJSExpressOptions) {
     super({
       ...options,
       getRequest(raw) {
@@ -76,7 +76,6 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
     const { url = '' } = operation.route || {};
     const route = (apiBasePath + url).replace(/\/\//, '/');
     router[method](route, (req, res, next) => {
-      const startTime = process.hrtime();
       const resolverWrapper = (response: any) => {
         if (res.headersSent || res.finished) {
           return null;
@@ -100,13 +99,7 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
         } else {
           res.json(response || {});
         }
-        const finalTime = process.hrtime(startTime);
 
-        (req as ExpressRequest).log.info(
-          `The operation execution of ${req.originalUrl} took: ${hrTimeToMilliseconds(
-            finalTime
-          )} ms`
-        );
         return res.end();
       };
       const rejectWrapper = (response: any) => {
@@ -133,12 +126,6 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
         }
 
         res.status(response.statusCode || 500);
-        const finalTime = process.hrtime(startTime);
-        (req as ExpressRequest).log.info(
-          `The operation execution of ${req.originalUrl} took: ${hrTimeToMilliseconds(
-            finalTime
-          )} ms`
-        );
 
         return next(response);
       };
@@ -204,7 +191,7 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
    *       helmet: {
    *         enabled: true
    *       },
-   *       morgan: {
+   *       expressPino: {
    *         enabled: true
    *       },
    *       explorer: {
@@ -227,7 +214,7 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
       helmet: {
         enabled: true
       },
-      morgan: {
+      expressPino: {
         enabled: true
       },
       explorer: {
@@ -241,8 +228,8 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
   ): Promise<express.Router> {
     const router = express.Router(options.routerOptions);
 
-    initReqIdGenerator(router, this.logger, options.reqGenerator);
-    initMorgan(router, options.morgan);
+    initReqIdGenerator(router, this.logger, options.reqGenerator, options.expressPino);
+    initExpressPino(router, this.logger as P.Logger, options.expressPino);
     initHelmet(router, options.helmet);
     initCors(router, options.cors);
     router.use(compression());
@@ -277,4 +264,6 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
 
 export * from './operators';
 export * from './types';
+export * from './serializers/req';
+export * from './serializers/res';
 export default BautaJSExpress;

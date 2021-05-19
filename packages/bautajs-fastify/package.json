@@ -41,7 +41,7 @@
       "name": "Xavier Redondo"
     }
   ],
-  "license": "see LICENSE.txt",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "fast-json-stringify": "^2.7.3",
     "@bautajs/core": "3.4.1",

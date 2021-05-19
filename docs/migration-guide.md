@@ -357,3 +357,7 @@ app.router('/v1', router);
     console.info('Server listening on localhost: 3000');
  });
 ```
+
+#### Logger
+
+[Morgan](https://github.com/expressjs/morgan) has been replaced by [express-pino](https://github.com/pinojs/express-pino-logger)

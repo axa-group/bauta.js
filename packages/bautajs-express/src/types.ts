@@ -12,12 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Options as ExpressPinoOptions } from 'express-pino-logger';
 import * as express from 'express';
 import bodyParser from 'body-parser';
 import { CorsOptions } from 'cors';
-import morgan from 'morgan';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-import { Operation, GenericError, Logger } from '@bautajs/core';
+import { Operation, GenericError, Logger, BautaJSOptions } from '@bautajs/core';
+import P from 'pino';
 
 export interface ICallback {
   (error?: GenericError, result?: any): void;
@@ -56,11 +57,6 @@ export interface ExplorerOptions {
   swaggerOptions?: SwaggerOptions;
 }
 
-export interface MorganOptions {
-  format: morgan.FormatFn;
-  options?: morgan.Options<any, any>;
-}
-
 export interface BodyParserOptions {
   json?: bodyParser.OptionsJson;
   urlEncoded?: bodyParser.OptionsUrlencoded;
@@ -75,7 +71,7 @@ export interface RouterOptions {
   cors?: MiddlewareOption<CorsOptions>;
   bodyParser?: MiddlewareOption<BodyParserOptions>;
   helmet?: MiddlewareOption<HelmetOptions>;
-  morgan?: MiddlewareOption<MorganOptions>;
+  expressPino?: MiddlewareOption<ExpressPinoOptions>;
   explorer?: MiddlewareOption<ExplorerOptions>;
   reqGenerator?: MiddlewareOption<null>;
   routerOptions?: express.RouterOptions;
@@ -83,3 +79,8 @@ export interface RouterOptions {
 }
 
 export type ExpressRequest = express.Request & { id: string; log: Logger };
+
+// Since the request logger is express-pino, force the logger on options to be Pino
+export interface BautaJSExpressOptions extends Omit<BautaJSOptions, 'getRequest' | 'getResponse'> {
+  logger?: P.Logger;
+}

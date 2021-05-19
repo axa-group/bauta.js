@@ -12,25 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import expressPino, { Options as ExpressPinoOptions } from 'express-pino-logger';
 import swaggerUiExpress from 'swagger-ui-express';
-import morgan from 'morgan';
 import cors, { CorsOptions } from 'cors';
-import { json, Router, urlencoded } from 'express';
+import { json, RequestHandler, Router, urlencoded } from 'express';
 import helmet from 'helmet';
 import { Document, Operations, Logger, PathsObject } from '@bautajs/core';
 import fastSafeStringify from 'fast-safe-stringify';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-
-import {
-  MiddlewareOption,
-  MorganOptions,
-  BodyParserOptions,
-  ExplorerOptions,
-  HelmetOptions
-} from './types';
+import P from 'pino';
+import { MiddlewareOption, BodyParserOptions, ExplorerOptions, HelmetOptions } from './types';
 import { genReqId } from './utils';
-
-const morganJson = require('morgan-json');
+import { reqSerializer } from './serializers/req';
+import { resSerializer } from './serializers/res';
 
 function buildOpenAPIPaths(operations: Operations) {
   const paths: PathsObject = {};
@@ -56,51 +50,79 @@ function buildOpenAPIPaths(operations: Operations) {
   return { paths, tags };
 }
 
-export function initReqIdGenerator(router: Router, logger: Logger, opt?: MiddlewareOption<null>) {
+export function initReqIdGenerator(
+  router: Router,
+  logger: Logger,
+  opt?: MiddlewareOption<null>,
+  expressPinoOpt?: MiddlewareOption<ExpressPinoOptions>
+) {
   if (!opt || (opt && opt.enabled === true)) {
     router.use((req: any, _, next) => {
       const { headers } = req;
       req.id = genReqId(headers);
-      req.log = logger.child({
-        url: req.url,
-        reqId: req.id
-      });
+      // The request logger will be provided by express-pino if it's not disabled
+      if (expressPinoOpt?.enabled === false) {
+        req.log = logger.child({
+          reqId: req.id,
+          req: {
+            url: req.url,
+            method: req.method
+          }
+        });
+      }
       next();
     });
   }
 }
 
-export function initMorgan(router: Router, opt?: MiddlewareOption<MorganOptions>) {
-  morgan.token('reqId', (req: any) => req.id);
+export function initExpressPino(
+  router: Router,
+  logger: P.Logger,
+  opt?: MiddlewareOption<ExpressPinoOptions>
+) {
+  // Align with Fastify logger.
+  const reqStartMw: RequestHandler = (req, _res, next) => {
+    req.log.info({
+      msg: 'incoming request'
+    });
 
-  const tinyWithTimestampAndreqId = morganJson({
-    date: ':date[iso]',
-    reqId: ':reqId',
-    method: ':method',
-    url: ':url',
-    status: ':status',
-    length: ':res[content-length]',
-    'response-time': ':response-time ms'
-  });
-
+    next();
+  };
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
-    router.use(
-      morgan(tinyWithTimestampAndreqId, {
-        immediate: true
-      })
+    const pino = expressPino(
+      {
+        logger,
+        genReqId: (req: any) => req.id,
+        serializers: {
+          req: reqSerializer,
+          res: resSerializer
+        },
+        reqCustomProps: req => ({
+          reqId: req.id
+        })
+      },
+      undefined
     );
-    router.use(
-      morgan(tinyWithTimestampAndreqId, {
-        immediate: false
-      })
-    );
+    router.use(pino);
+    router.use(reqStartMw);
   } else if (opt && opt.enabled === true && opt.options) {
-    router.use(morgan(opt.options.format, opt.options.options));
-    router.use(
-      morgan(tinyWithTimestampAndreqId, {
-        immediate: false
-      })
+    const pino = expressPino(
+      {
+        logger,
+        genReqId: (req: any) => req.id,
+        serializers: {
+          req: reqSerializer,
+          res: resSerializer
+        },
+        reqCustomProps: req => ({
+          reqId: req.id
+        }),
+        ...opt.options
+      },
+      undefined
     );
+    router.use(pino);
+    router.use(reqStartMw);
   }
 }
 

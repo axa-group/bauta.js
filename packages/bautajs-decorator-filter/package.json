@@ -40,7 +40,7 @@
       "name": "Xavier Redondo"
     }
   ],
-  "license": "see LICENSE.txt",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "^3.4.1",
     "loopback-filters": "1.1.1"
