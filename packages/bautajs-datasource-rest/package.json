@@ -43,6 +43,7 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
+    "@sindresorhus/is":"4.0.1",
     "@bautajs/core": "^3.4.1",
     "got": "^11.8.0",
     "native-proxy-agent": "^2.5.0"

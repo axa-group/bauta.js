@@ -156,12 +156,6 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
     }
   }
 
-  private logBautaOptions(): void {
-    this.logger.debug(
-      `Bauta started with the options disableTruncateLog=${this.options.disableTruncateLog}, truncateLogSize=${this.options.truncateLogSize}`
-    );
-  }
-
   public async bootstrap(): Promise<void> {
     if (this.bootstrapped === true) {
       throw new Error('The instance has already being bootstrapped.');
@@ -179,8 +173,6 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
         }
       });
     }
-
-    this.logBautaOptions();
 
     // This will prevent to create new operations after bootstrapping the bautajs instance.
     this.operations = Object.freeze(

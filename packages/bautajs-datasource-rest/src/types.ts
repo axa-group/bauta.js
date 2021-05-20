@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) AXA Group Operations Spain S.A.
+ *
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
+ * A copy of the License can be found in the LICENSE.TXT file distributed
+ * together with this file.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+import { ExtendOptions, Got } from 'got';
+import { Context, BautaJSInstance, Pipeline } from '@bautajs/core';
+
+export interface RestProviderOptions {
+  /**
+   * Ignore the process.env.LOG_LEVEL and log all data (body, headers...)
+   *
+   * @type {boolean}
+   * @memberof RestProviderOptions
+   */
+  ignoreLogLevel?: boolean;
+  /**
+   * Indicates the size after which request and response body are truncated in the logs.
+   *
+   * @type {number}
+   * @memberof RestProviderOptions
+   */
+  truncateBodyLogSize?: number;
+
+  /**
+   * Indicates if the truncation of the request and response logs are disabled. Avoid setting this to true in production, this is a utility though for troubleshooting development issues.
+   *
+   * @type {boolean}
+   * @memberof RestProviderOptions
+   */
+  disableBodyTruncateLog?: boolean;
+}
+export type ProviderOperation<TOut> = (
+  client: Got,
+  value: any,
+  ctx: Context,
+  bautajs: BautaJSInstance
+) => TOut | Promise<TOut>;
+export type Provider<TOut> = <TIn>(options?: ExtendOptions) => Pipeline.StepFunction<TIn, TOut>;
+export interface RestProvider {
+  <TOut>(fn: ProviderOperation<TOut>, restProviderOptions?: RestProviderOptions): Provider<TOut>;
+  extend: (options?: ExtendOptions) => RestProvider;
+}

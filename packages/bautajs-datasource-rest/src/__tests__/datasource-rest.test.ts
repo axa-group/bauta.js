@@ -16,6 +16,7 @@
 import nock from 'nock';
 import { BautaJS, BautaJSInstance, createContext, defaultLogger, pipe } from '@bautajs/core';
 import { CancelableRequest } from 'got';
+import { Readable } from 'stream';
 
 describe('provider rest', () => {
   afterEach(() => {
@@ -234,31 +235,26 @@ describe('provider rest', () => {
 
       expect(logger.debug).toHaveBeenCalledWith(
         {
-          requestData: {
+          datasourceReq: {
             body: '{"test":"1234"}',
-            headers:
-              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","content-type":"application/json","content-length":"15","accept-encoding":"gzip, deflate, br","x-request-id":"1"}',
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-type': 'application/json',
+              'content-length': '15',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            query: {},
             method: 'POST',
             url: 'https://pets.com/v1/policies'
           }
         },
-        'request-logger: Request data'
-      );
-
-      expect(logger.debug).toHaveBeenCalledWith(
-        {
-          providerUrl: '[POST] https://pets.com/v1/policies',
-          response: {
-            body: '{"bender":"ok"}',
-            headers: '{"content-type":"application/json"}',
-            statusCode: 200
-          }
-        },
-        'response-logger: Response for [POST] https://pets.com/v1/policies'
+        'outgoing request'
       );
     });
 
-    test('should log only the requests method and url and response time if log level is info', async () => {
+    test('should not log headers and body if the log level is set to info', async () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'debug').mockImplementation();
       jest.spyOn(logger, 'info').mockImplementation();
@@ -289,13 +285,27 @@ describe('provider rest', () => {
       expect(logger.debug).toHaveBeenCalledTimes(0);
 
       expect(logger.info).toHaveBeenCalledWith(
-        'request-logger: Request to [POST] https://pets.com/v1/policies'
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'outgoing request'
       );
-
       expect(logger.info).toHaveBeenCalledWith(
-        expect.stringMatching(
-          /response-logger: The request to https:\/\/pets\.com\/v1\/policies took: (\d*) ms/
-        )
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200
+          })
+        },
+        'outgoing request completed'
       );
     });
 
@@ -330,27 +340,307 @@ describe('provider rest', () => {
 
       expect(logger.debug).toHaveBeenCalledWith(
         {
-          requestData: {
+          datasourceReq: {
             body: 'someString',
-            headers:
-              '{"user-agent":"got (https://github.com/sindresorhus/got)","accept":"application/json","content-length":"10","accept-encoding":"gzip, deflate, br","x-request-id":"1"}',
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-length': '10',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
             method: 'POST',
+            query: {},
             url: 'https://pets.com/v1/policies'
           }
         },
-        'request-logger: Request data'
+        'outgoing request'
       );
 
       expect(logger.debug).toHaveBeenCalledWith(
         {
-          providerUrl: '[POST] https://pets.com/v1/policies',
-          response: {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
             statusCode: 200,
-            headers: JSON.stringify({ 'content-type': 'application/json' }),
+            headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ bender: 'ok' })
+          })
+        },
+        'outgoing request completed'
+      );
+    });
+
+    test('should log always the body and headers if ignoreLogLevel is set to true', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'info').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'info';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com').post('/v1/policies', 'someString').reply(200, { bender: 'ok' });
+
+      const provider = restProvider(
+        client => {
+          return client.post('https://pets.com/v1/policies', {
+            body: 'someString',
+            headers: {
+              accept: 'application/json'
+            },
+            responseType: 'json'
+          });
+        },
+        { ignoreLogLevel: true }
+      );
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, bautajs);
+
+      expect(logger.info).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: 'someString',
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-length': '10',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
           }
         },
-        'response-logger: Response for [POST] https://pets.com/v1/policies'
+        'outgoing request'
+      );
+
+      expect(logger.info).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200,
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ bender: 'ok' })
+          })
+        },
+        'outgoing request completed'
+      );
+    });
+
+    test('should truncate the body to the specified size', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com').post('/v1/policies', 'someString').reply(200, { bender: 'ok' });
+
+      const provider = restProvider(
+        client => {
+          return client.post('https://pets.com/v1/policies', {
+            body: 'someString',
+            headers: {
+              accept: 'application/json'
+            },
+            responseType: 'json'
+          });
+        },
+        { truncateBodyLogSize: 10 }
+      );
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, bautajs);
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: 'someString',
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-length': '10',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'outgoing request'
+      );
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200,
+            headers: { 'content-type': 'application/json' },
+            body: '{"bender":...'
+          })
+        },
+        'outgoing request completed'
+      );
+    });
+
+    test('should not log the body in a buffer format in case that is a buffer', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com').post('/v1/policies').reply(200, { bender: 'ok' });
+
+      const provider = restProvider(client => {
+        return client.post('https://pets.com/v1/policies', {
+          body: Buffer.from('string'),
+          headers: {
+            accept: 'application/json'
+          },
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, bautajs);
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: {
+              file: {
+                type: 'Buffer',
+                byteLength: 6
+              }
+            },
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-length': '6',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'outgoing request'
+      );
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200,
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ bender: 'ok' })
+          })
+        },
+        'outgoing request completed'
+      );
+    });
+    test('should not log the body if is an stream', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com').post('/v1/policies').reply(200, { bender: 'ok' });
+
+      const provider = restProvider(client => {
+        return client.post('https://pets.com/v1/policies', {
+          body: Readable.from(['input string']),
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, bautajs);
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: {
+              file: {
+                type: 'Stream'
+              }
+            },
+            headers: {
+              accept: 'application/json',
+              'accept-encoding': 'gzip, deflate, br',
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              'x-request-id': '1'
+            },
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'outgoing request'
+      );
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200,
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ bender: 'ok' })
+          })
+        },
+        'outgoing request completed'
       );
     });
   });
@@ -427,14 +717,18 @@ describe('provider rest', () => {
 
         expect(logger.error).toHaveBeenCalledWith(
           {
-            error: {
+            datasourceReq: {
+              method: 'GET',
+              query: {},
+              url: 'https://pets.com/v1/policies'
+            },
+            datasourceErr: {
               code: undefined,
               name: 'RequestError',
               message: 'something awful happened'
-            },
-            providerUrl: '[GET] https://pets.com/v1/policies'
+            }
           },
-          'response-logger: Error for [GET] https://pets.com/v1/policies'
+          'outgoing request failed'
         );
       });
 
@@ -470,26 +764,31 @@ describe('provider rest', () => {
 
         expect(logger.error).toHaveBeenCalledWith(
           {
-            error: {
+            datasourceErr: expect.objectContaining({
+              headers: {},
               code: undefined,
               body: 'this is not a json and this will generate a parser error',
               statusCode: 200,
               message: 'Unexpected token h in JSON at position 1 in "https://pets.com/v1/policies"',
               name: 'ParseError'
-            },
-            providerUrl: '[GET] https://pets.com/v1/policies'
+            }),
+            datasourceReq: {
+              method: 'GET',
+              query: {},
+              url: 'https://pets.com/v1/policies'
+            }
           },
-          'response-logger: Error for [GET] https://pets.com/v1/policies'
+          'outgoing request failed'
         );
       });
 
-      test('should not log the response time when there is an error', async () => {
+      test('should log a crash error on parsing', async () => {
         const logger = defaultLogger();
         // create context will create a logger child
         logger.child = () => logger;
         jest.spyOn(logger, 'error').mockImplementation();
-        jest.spyOn(logger, 'info').mockImplementation();
-        process.env.LOG_LEVEL = 'info';
+        jest.spyOn(logger, 'debug').mockImplementation();
+        process.env.LOG_LEVEL = 'debug';
         const { restProvider } = await import('../index');
 
         nock('https://pets.com/v1').get('/policies').reply(200, 'we force with this a parserError');
@@ -501,6 +800,7 @@ describe('provider rest', () => {
         });
 
         const ctx = createContext({
+          id: '1',
           req: { headers: { 'x-request-id': 1 } },
           res: {},
           log: logger
@@ -516,9 +816,40 @@ describe('provider rest', () => {
 
         expect(logger.error).toHaveBeenCalledTimes(1); // We check error logging in another test
 
-        expect(logger.info).toHaveBeenCalledTimes(1); // If there was not an error, info is called twice
-        expect(logger.info).toHaveBeenCalledWith(
-          'request-logger: Request to [GET] https://pets.com/v1/policies'
+        expect(logger.debug).toHaveBeenCalledTimes(1); // If there was not an error, info is called twice
+        expect(logger.debug).toHaveBeenCalledWith(
+          {
+            datasourceReq: {
+              headers: {
+                accept: 'application/json',
+                'accept-encoding': 'gzip, deflate, br',
+                'user-agent': 'got (https://github.com/sindresorhus/got)',
+                'x-request-id': '1'
+              },
+              method: 'GET',
+              query: {},
+              url: 'https://pets.com/v1/policies'
+            }
+          },
+          'outgoing request'
+        );
+        expect(logger.error).toHaveBeenCalledWith(
+          {
+            datasourceErr: expect.objectContaining({
+              code: undefined,
+              message: 'Unexpected token w in JSON at position 0 in "https://pets.com/v1/policies"',
+              name: 'ParseError',
+              body: 'we force with this a parserError',
+              headers: {},
+              statusCode: 200
+            }),
+            datasourceReq: {
+              method: 'GET',
+              query: {},
+              url: 'https://pets.com/v1/policies'
+            }
+          },
+          'outgoing request failed'
         );
       });
 

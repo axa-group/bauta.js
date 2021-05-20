@@ -180,21 +180,6 @@ export interface Options<TRaw = any> {
    * @memberof Options
    */
   getResponse?(raw: RawData<TRaw>): { isResponseFinished: boolean; statusCode: number };
-  /**
-   * Indicates the size after which bauta truncates the logs.
-   *
-   * @type {number}
-   * @memberof Options
-   */
-  truncateLogSize?: number;
-
-  /**
-   * Indicates if the truncation of the logs is disabled. Avoid setting this to true in production, this is a utility though for troubleshooting development issues.
-   *
-   * @type {boolean}
-   * @memberof BautaJSOptions
-   */
-  disableTruncateLog?: boolean;
 }
 
 // BautaJS
@@ -271,24 +256,6 @@ export interface BautaJSOptions<TRaw = any> {
    * @memberof BautaJSOptions
    */
   logger?: Logger;
-
-  /**
-   * Any request or response log message exceeding this size is truncated.
-   *
-   * @type {number}
-   * @memberof BautaJSOptions
-   */
-  truncateLogSize?: number;
-
-  /**
-   * If set to true, it disables the truncate. If set to false or unset, the truncate of logs happens as usual.
-   *
-   * Note: in productive environments it is strongly recommended not to set this variable to true.
-   *
-   * @type {boolean}
-   * @memberof BautaJSOptions
-   */
-  disableTruncateLog?: boolean;
 
   /**
    *

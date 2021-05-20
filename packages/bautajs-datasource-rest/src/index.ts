@@ -22,132 +22,74 @@ import got, {
   Response as GOTResponse
 } from 'got';
 import { createHttpAgent, createHttpsAgent } from 'native-proxy-agent';
-import { Context, BautaJSInstance, utils, Logger, Pipeline, BautaJSOptions } from '@bautajs/core';
-
-export interface RequestLog {
-  url: string | undefined;
-  method: string | undefined;
-  headers: string;
-  body?: string;
-}
-
-export type ProviderOperation<TOut> = (
-  client: Got,
-  value: any,
-  ctx: Context,
-  bautajs: BautaJSInstance
-) => TOut | Promise<TOut>;
-export type Provider<TOut> = <TIn>(options?: ExtendOptions) => Pipeline.StepFunction<TIn, TOut>;
-export interface RestProvider {
-  <TOut>(fn: ProviderOperation<TOut>): Provider<TOut>;
-  extend: (options?: ExtendOptions) => RestProvider;
-}
+import { Context, BautaJSInstance } from '@bautajs/core';
+import { reqSerializer } from './serializers/req';
+import { resSerializer } from './serializers/res';
+import { errSerializer } from './serializers/err';
+import { ProviderOperation, RestProvider, RestProviderOptions } from './types';
 
 const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
 const isDebugLogLevel = process.env.LOG_LEVEL?.toLowerCase() === 'debug';
-
-function logRequestHook(logger: Logger, bautaOptions: BautaJSOptions) {
+function logRequestHook(
+  log: (...args: any[]) => void,
+  restProviderOptions: RestProviderOptions,
+  logAll: boolean
+) {
   return (options: NormalizedOptions) => {
-    logger.info(`request-logger: Request to [${options.method}] ${options.url}`);
-    if (isDebugLogLevel) {
-      const requestData: RequestLog = {
-        url: options.url.toString(),
-        method: options.method,
-        headers: utils.prepareToLog(
-          options.headers,
-          bautaOptions.truncateLogSize,
-          bautaOptions.disableTruncateLog
-        )
-      };
-      if (options.body || options.json) {
-        requestData.body = utils.prepareToLog(
-          options.body || options.json,
-          bautaOptions.truncateLogSize,
-          bautaOptions.disableTruncateLog
-        );
-      }
-      logger.debug({ requestData }, 'request-logger: Request data');
-    }
+    log(
+      {
+        datasourceReq: reqSerializer(options, logAll, restProviderOptions)
+      },
+      'outgoing request'
+    );
   };
 }
-function logErrorsHook(logger: Logger, bautaOptions: BautaJSOptions) {
+
+function logErrorsHook(
+  log: (...args: any[]) => void,
+  restProviderOptions: RestProviderOptions,
+  logAll: boolean
+) {
   return (error: RequestError) => {
-    if (error.response && error.response.body) {
-      // RequestError
-      logger.error(
-        {
-          providerUrl: `[${error.options.method}] ${error.options.url}`,
-          error: {
-            statusCode: error.response.statusCode,
-            body: utils.prepareToLog(
-              error.response.body,
-              bautaOptions.truncateLogSize,
-              bautaOptions.disableTruncateLog
-            ),
-            name: error.name,
-            message: error.message
-          }
-        },
-        `response-logger: Error for [${error.options.method}] ${error.options.url}`
-      );
-    } else if (error.options) {
-      // GenericError
-      logger.error(
-        {
-          providerUrl: `[${error.options.method}] ${error.options.url}`,
-          error: {
-            name: error.name,
-            code: error.code,
-            message: error.message
-          }
-        },
-        `response-logger: Error for [${error.options.method}] ${error.options.url}`
-      );
-    } else {
-      // Unexpected Error
-      logger.error(
-        {
-          error: {
-            message: error.message,
-            name: error.name
-          }
-        },
-        `response-logger: Internal error on a provider request`
-      );
-    }
+    log(
+      {
+        // Do not log request headers and body on the response. This information may be logged already on the request hook
+        datasourceReq: reqSerializer(error.options, false, restProviderOptions),
+        datasourceErr: errSerializer(error, logAll, restProviderOptions)
+      },
+      `outgoing request failed`
+    );
 
     return error;
   };
 }
-function logResponseHook(logger: Logger, bautaOptions: BautaJSOptions) {
+function logResponseHook(
+  log: (...args: any[]) => void,
+  restProviderOptions: RestProviderOptions,
+  logAll: boolean
+) {
   return (response: GOTResponse) => {
+    if (response.statusCode > 399) {
+      return response;
+    }
+    // Do not log request headers and body on response
+    const datasourceReq = reqSerializer(response.request.options, false, restProviderOptions);
     if (response.isFromCache) {
-      logger.info(`response-logger: Response for ${response.requestUrl} is cached.`);
+      log(
+        {
+          datasourceReq
+        },
+        `outgoing request is cached.`
+      );
     } else {
-      if (isDebugLogLevel) {
-        logger.debug(
-          {
-            providerUrl: `[${response.request.options.method}] ${response.requestUrl}`,
-            response: {
-              headers: utils.prepareToLog(
-                response.headers,
-                bautaOptions.truncateLogSize,
-                bautaOptions.disableTruncateLog
-              ),
-              statusCode: response.statusCode,
-              body: utils.prepareToLog(
-                response.body,
-                bautaOptions.truncateLogSize,
-                bautaOptions.disableTruncateLog
-              )
-            }
-          },
-          `response-logger: Response for [${response.request.options.method}] ${response.requestUrl}`
-        );
-      }
-      const totalTime = response.timings ? response.timings.phases.total : 'unknown';
-      logger.info(`response-logger: The request to ${response.requestUrl} took: ${totalTime} ms`);
+      log(
+        {
+          datasourceReq,
+          datasourceRes: resSerializer(response, logAll, restProviderOptions)
+        },
+        `outgoing request completed`
+      );
     }
 
     return response;
@@ -177,15 +119,29 @@ function addRequestIdHook(id?: string | number) {
     }
   };
 }
-
-function operatorFn<TOut>(client: Got, fn: ProviderOperation<TOut>) {
+function operatorFn<TOut>(
+  client: Got,
+  fn: ProviderOperation<TOut>,
+  restProviderOptions: RestProviderOptions = {}
+) {
+  const logAll = isDebugLogLevel || restProviderOptions.ignoreLogLevel === true;
   return <TIn>(value: TIn, ctx: Context, bautajs: BautaJSInstance) => {
+    const logger = ctx.log.child({
+      module: '@bautajs/datasource'
+    });
+    const log = isDebugLogLevel ? logger.debug.bind(logger) : logger.info.bind(logger);
     const promiseOrStream = fn(
       client.extend({
         hooks: {
-          beforeRequest: [addRequestIdHook(ctx.id), logRequestHook(ctx.log, bautajs.options)],
-          afterResponse: [logResponseHook(ctx.log, bautajs.options)],
-          beforeError: [logErrorsHook(ctx.log, bautajs.options), addErrorStatusCodeHook]
+          beforeRequest: [
+            addRequestIdHook(ctx.id),
+            logRequestHook(log, restProviderOptions, logAll)
+          ],
+          afterResponse: [logResponseHook(log, restProviderOptions, logAll)],
+          beforeError: [
+            logErrorsHook(logger.error.bind(logger), restProviderOptions, logAll),
+            addErrorStatusCodeHook
+          ]
         }
       }),
       value,
@@ -221,13 +177,17 @@ function create(globalGotOptions?: ExtendOptions) {
    *
    * @template TOut
    * @param {ProviderOperation<TOut>} fn
+   * @param {RestProviderOptions} restProviderOptions
    * @returns {Provider<TOut>}
    */
-  const restProvider: RestProvider = <TOut>(fn: ProviderOperation<TOut>) => {
+  const restProvider: RestProvider = <TOut>(
+    fn: ProviderOperation<TOut>,
+    restProviderOptions?: RestProviderOptions
+  ) => {
     return (options?: ExtendOptions) => {
       const client =
         options && Object.keys(options).length > 0 ? defaultClient.extend(options) : defaultClient;
-      return operatorFn(client, fn);
+      return operatorFn(client, fn, restProviderOptions);
     };
   };
 
@@ -240,6 +200,9 @@ const restProvider = create({});
 
 export default restProvider;
 export {
+  reqSerializer,
+  resSerializer,
+  errSerializer,
   restProvider,
   logRequestHook,
   httpAgent,

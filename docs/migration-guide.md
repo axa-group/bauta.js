@@ -189,6 +189,11 @@ After:
       });
 ```
 
+### Bautajs options 
+
+truncateLogSize and disableTruncateLog options has been moved to @bautajs/datasource. These properties were only used to limit the log size on datasources requests, so
+it makes more sense to be a datasource option instead of a bautajs option
+
 ### Context
 
 In an effort to split responsibilities all records to .req and .res has been removed from the pipeline context. Since `bautajs` can be used with different frameworks such `express` or `fastify` the core package should not know anything about request or response object, that must be added by the correspondent framework plugin.
@@ -257,6 +262,75 @@ const got = require('got');
         console.log('Download progress:', error.request.downloadProgress);
     }
 })();
+
+#### Log for request and responses
+
+Logs have been complete refactored into a more useful way. Now all the properties on the logs are JSON properties making easy the debugging and the redaction of logs if needed.
+
+See an example of logs:
+
+```json
+{
+  "level": 50,
+  "time": 1621502114594,
+  "pid": 67906,
+  "hostname": "macags60.local",
+  "name": "bautajs",
+  "req": {
+    "method": "GET",
+    "url": "/v1/api/randomYear",
+    "query": {},
+    "params": {}
+  },
+  "reqId": "AT6slakmT96AjGXvxQpeog/0",
+  "module": "@bautajs/datasource",
+  "datasourceReq": {
+    "url": "http://numbersapi.com/random/year/test",
+    "method": "GET",
+    "query": {
+      "json": "true"
+    },
+    "headers": {
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+      "host": "localhost:3000",
+      "connection": "keep-alive",
+      "cache-control": "max-age=0",
+      "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"90\", \"Google Chrome\";v=\"90\"",
+      "sec-ch-ua-mobile": "?0",
+      "dnt": "1",
+      "upgrade-insecure-requests": "1",
+      "sec-fetch-site": "none",
+      "sec-fetch-mode": "navigate",
+      "sec-fetch-user": "?1",
+      "sec-fetch-dest": "document",
+      "accept-encoding": "gzip, deflate, br",
+      "accept-language": "es,en;q=0.9,en-US;q=0.8,ca;q=0.7",
+      "cookie": "grafana_session=adb90b03adaf89cd31ca1a23f2c7448f",
+      "x-request-id": "AT6slakmT96AjGXvxQpeog/0"
+    }
+  },
+  "datasourceErr": {
+    "responseTime": 281,
+    "statusCode": 404,
+    "message": "Response code 404 (Not Found)",
+    "name": "HTTPError",
+    "headers": {
+      "date": "Thu, 20 May 2021 09:17:03 GMT",
+      "server": "nginx/1.4.6 (Ubuntu)",
+      "content-type": "text/html; charset=utf-8",
+      "x-powered-by": "Express",
+      "proxy-connection": "Keep-Alive",
+      "transfer-encoding": "chunked",
+      "x-content-type-options": "nosniff",
+      "content-security-policy": "default-src 'none'",
+      "access-control-allow-origin": "*"
+    },
+    "body": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Cannot GET /random/year/test</pre>\n</body>\n</html>\n"
+  },
+  "msg": "outgoing request failed"
+}
+```
 
 ### bautajs-fastify
 
