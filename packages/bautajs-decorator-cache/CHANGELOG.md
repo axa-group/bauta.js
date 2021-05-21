@@ -8,22 +8,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* **@bautajs/express:** replace morgan by pino ([#228](https://github.axa.com/Digital/bauta-nodejs/issues/228)) ([7557184](https://github.axa.com/Digital/bauta-nodejs/commit/7557184f67d049f35edb3a96404cdb09a73a5914))
-* api versioning refactor ([#221](https://github.axa.com/Digital/bauta-nodejs/issues/221)) ([836f22a](https://github.axa.com/Digital/bauta-nodejs/commit/836f22a7b66668e4308f8b944d226370e3c2beba)), closes [#215](https://github.axa.com/Digital/bauta-nodejs/issues/215)
-* refactor pipeline and context ([#218](https://github.axa.com/Digital/bauta-nodejs/issues/218)) ([4cda721](https://github.axa.com/Digital/bauta-nodejs/commit/4cda7210312884613098acaf1fbde2f2da99fea6))
-* update packages ([#226](https://github.axa.com/Digital/bauta-nodejs/issues/226)) ([f024891](https://github.axa.com/Digital/bauta-nodejs/commit/f024891c8cf7c56a7a6c0d0e453fcaf6877ea5c9))
-* **@bautajs/decorator-cache:** improve cache performance ([#212](https://github.axa.com/Digital/bauta-nodejs/issues/212)) ([6783a88](https://github.axa.com/Digital/bauta-nodejs/commit/6783a88ba7f69ce787e903539038da1a9e0d6393)), closes [#171](https://github.axa.com/Digital/bauta-nodejs/issues/171)
+* **@bautajs/decorator-cache:** improve cache performance ([#212](http://github.axa.com/Digital/bauta-nodejs/issues/212)) ([6783a88](http://github.axa.com/Digital/bauta-nodejs/commit/6783a88ba7f69ce787e903539038da1a9e0d6393)), closes [#171](http://github.axa.com/Digital/bauta-nodejs/issues/171)
+* add remote containers ([#202](http://github.axa.com/Digital/bauta-nodejs/issues/202)) ([a37c1ab](http://github.axa.com/Digital/bauta-nodejs/commit/a37c1abed2fe5c496525d54a40069c987e585dfc)), closes [#42](http://github.axa.com/Digital/bauta-nodejs/issues/42)
 
 
 ### BREAKING CHANGES
 
-* **@bautajs/express:** replace morgan by express-pino
-* ajv from 6 to 8
-* ajv-oai to ajv-formats
-* remove API from operation access
-* remove strong relation between operation and OpenAPI
 * **@bautajs/decorator-cache:** Move from moize to quick-lru-cjs
 * **@bautajs/decorator-cache:** Complete rewrite the library
+
 
 
 
