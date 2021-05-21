@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.4.1...v4.0.0) (2021-05-21)
+
+
+### Features
+
+* **@bautajs/datasource:** improve logs ([#230](https://github.axa.com/Digital/bauta-nodejs/issues/230)) ([16567b0](https://github.axa.com/Digital/bauta-nodejs/commit/16567b02a40facf23d65359c839148aea26bb777))
+* **@bautajs/express:** replace morgan by pino ([#228](https://github.axa.com/Digital/bauta-nodejs/issues/228)) ([7557184](https://github.axa.com/Digital/bauta-nodejs/commit/7557184f67d049f35edb3a96404cdb09a73a5914))
+* api versioning refactor ([#221](https://github.axa.com/Digital/bauta-nodejs/issues/221)) ([836f22a](https://github.axa.com/Digital/bauta-nodejs/commit/836f22a7b66668e4308f8b944d226370e3c2beba)), closes [#215](https://github.axa.com/Digital/bauta-nodejs/issues/215)
+* refactor pipeline and context ([#218](https://github.axa.com/Digital/bauta-nodejs/issues/218)) ([4cda721](https://github.axa.com/Digital/bauta-nodejs/commit/4cda7210312884613098acaf1fbde2f2da99fea6))
+* update packages ([#226](https://github.axa.com/Digital/bauta-nodejs/issues/226)) ([f024891](https://github.axa.com/Digital/bauta-nodejs/commit/f024891c8cf7c56a7a6c0d0e453fcaf6877ea5c9))
+* **@bautajs/rest-datasource:** move to got 11 ([#204](https://github.axa.com/Digital/bauta-nodejs/issues/204)) ([1ae7147](https://github.axa.com/Digital/bauta-nodejs/commit/1ae7147042900c5841584ea9745018dcb0eaf950)), closes [#201](https://github.axa.com/Digital/bauta-nodejs/issues/201)
+* **bautajs-datasource:** expose hooks in the datasource ([#209](https://github.axa.com/Digital/bauta-nodejs/issues/209)) ([5dbeecf](https://github.axa.com/Digital/bauta-nodejs/commit/5dbeecf33b697a37fcbd40170b1df6979bf4988e)), closes [#207](https://github.axa.com/Digital/bauta-nodejs/issues/207) [#207](https://github.axa.com/Digital/bauta-nodejs/issues/207)
+
+
+### BREAKING CHANGES
+
+* **@bautajs/datasource:** move truncateLogSize and disableTruncateLog to @bautajs/datasource
+* **@bautajs/datasource:** logs has been refactored
+* **@bautajs/express:** replace morgan by express-pino
+* ajv from 6 to 8
+* ajv-oai to ajv-formats
+* remove API from operation access
+* remove strong relation between operation and OpenAPI
+* **@bautajs/rest-datasource:** move from got 10.x to got 11.x
+
+
+
+
+
 ## [3.4.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.4.0...v3.4.1) (2020-09-17)
 
 **Note:** Version bump only for package @bautajs/datasource-rest

@@ -1,6 +1,6 @@
 {
   "name": "bautajs-example",
-  "version": "3.4.1",
+  "version": "4.0.0",
   "description": "A bautaJS example",
   "main": "./server.js",
   "scripts": {
@@ -36,10 +36,10 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "^3.4.1",
-    "@bautajs/datasource-rest": "^3.4.1",
-    "@bautajs/decorator-cache": "^3.4.1",
-    "@bautajs/express": "^3.4.1",
+    "@bautajs/core": "4.0.0",
+    "@bautajs/datasource-rest": "4.0.0",
+    "@bautajs/decorator-cache": "4.0.0",
+    "@bautajs/express": "4.0.0",
     "@hapi/boom": "^9.1.0",
     "express": "4.x",
     "pino": "^6.2.1",

@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v3.4.1...v4.0.0) (2021-05-21)
+
+
+### Bug Fixes
+
+* remove unused tags ([#225](https://github.axa.com/Digital/bauta-nodejs/issues/225)) ([c6f6d3d](https://github.axa.com/Digital/bauta-nodejs/commit/c6f6d3dbfdf5bf8b62f79c34d83a378b29e79efb)), closes [#200](https://github.axa.com/Digital/bauta-nodejs/issues/200) [#214](https://github.axa.com/Digital/bauta-nodejs/issues/214)
+* **@bautajs/express,@bautajs/fastify:** types ([cff7bd9](https://github.axa.com/Digital/bauta-nodejs/commit/cff7bd95b4e9b227c1b228f8ca7ad11c4ccfe6d7))
+
+
+### Features
+
+* **@bautajs/express:** replace morgan by pino ([#228](https://github.axa.com/Digital/bauta-nodejs/issues/228)) ([7557184](https://github.axa.com/Digital/bauta-nodejs/commit/7557184f67d049f35edb3a96404cdb09a73a5914))
+* api versioning refactor ([#221](https://github.axa.com/Digital/bauta-nodejs/issues/221)) ([836f22a](https://github.axa.com/Digital/bauta-nodejs/commit/836f22a7b66668e4308f8b944d226370e3c2beba)), closes [#215](https://github.axa.com/Digital/bauta-nodejs/issues/215)
+* refactor pipeline and context ([#218](https://github.axa.com/Digital/bauta-nodejs/issues/218)) ([4cda721](https://github.axa.com/Digital/bauta-nodejs/commit/4cda7210312884613098acaf1fbde2f2da99fea6))
+* update packages ([#226](https://github.axa.com/Digital/bauta-nodejs/issues/226)) ([f024891](https://github.axa.com/Digital/bauta-nodejs/commit/f024891c8cf7c56a7a6c0d0e453fcaf6877ea5c9))
+* **@bautajs-express:** allow disable reqGenerator ([b4d5e01](https://github.axa.com/Digital/bauta-nodejs/commit/b4d5e01472e7479211baa67149c8d2fab91b96f0))
+* **@bautajs/express:** refactor module ([#219](https://github.axa.com/Digital/bauta-nodejs/issues/219)) ([067f786](https://github.axa.com/Digital/bauta-nodejs/commit/067f786ddb8334ab170b38ca7f08ad3f497c8711)), closes [#216](https://github.axa.com/Digital/bauta-nodejs/issues/216)
+
+
+### BREAKING CHANGES
+
+* **@bautajs/express:** replace morgan by express-pino
+* ajv from 6 to 8
+* ajv-oai to ajv-formats
+* remove API from operation access
+* remove strong relation between operation and OpenAPI
+
+
+
+
+
 ## [3.4.1](https://github.axa.com/Digital/bauta-nodejs/compare/v3.4.0...v3.4.1) (2020-09-17)
 
 **Note:** Version bump only for package @bautajs/express

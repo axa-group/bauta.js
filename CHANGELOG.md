@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.4.1...v4.0.0) (2021-05-21)
+
+
+### Bug Fixes
+
+* remove unused tags ([#225](http://github.axa.com/Digital/bauta-nodejs/issues/225)) ([c6f6d3d](http://github.axa.com/Digital/bauta-nodejs/commit/c6f6d3dbfdf5bf8b62f79c34d83a378b29e79efb)), closes [#200](http://github.axa.com/Digital/bauta-nodejs/issues/200) [#214](http://github.axa.com/Digital/bauta-nodejs/issues/214)
+* **@bautajs/express,@bautajs/fastify:** types ([cff7bd9](http://github.axa.com/Digital/bauta-nodejs/commit/cff7bd95b4e9b227c1b228f8ca7ad11c4ccfe6d7))
+
+
+### Features
+
+* **@bautajs/datasource:** improve logs ([#230](http://github.axa.com/Digital/bauta-nodejs/issues/230)) ([16567b0](http://github.axa.com/Digital/bauta-nodejs/commit/16567b02a40facf23d65359c839148aea26bb777))
+* **@bautajs/express:** replace morgan by pino ([#228](http://github.axa.com/Digital/bauta-nodejs/issues/228)) ([7557184](http://github.axa.com/Digital/bauta-nodejs/commit/7557184f67d049f35edb3a96404cdb09a73a5914))
+* api versioning refactor ([#221](http://github.axa.com/Digital/bauta-nodejs/issues/221)) ([836f22a](http://github.axa.com/Digital/bauta-nodejs/commit/836f22a7b66668e4308f8b944d226370e3c2beba)), closes [#215](http://github.axa.com/Digital/bauta-nodejs/issues/215)
+* update packages ([#226](http://github.axa.com/Digital/bauta-nodejs/issues/226)) ([f024891](http://github.axa.com/Digital/bauta-nodejs/commit/f024891c8cf7c56a7a6c0d0e453fcaf6877ea5c9))
+* **@bautajs-express:** allow disable reqGenerator ([b4d5e01](http://github.axa.com/Digital/bauta-nodejs/commit/b4d5e01472e7479211baa67149c8d2fab91b96f0))
+* **@bautajs/express:** refactor module ([#219](http://github.axa.com/Digital/bauta-nodejs/issues/219)) ([067f786](http://github.axa.com/Digital/bauta-nodejs/commit/067f786ddb8334ab170b38ca7f08ad3f497c8711)), closes [#216](http://github.axa.com/Digital/bauta-nodejs/issues/216)
+* refactor pipeline and context ([#218](http://github.axa.com/Digital/bauta-nodejs/issues/218)) ([4cda721](http://github.axa.com/Digital/bauta-nodejs/commit/4cda7210312884613098acaf1fbde2f2da99fea6))
+* **@bautajs/decorator-cache:** improve cache performance ([#212](http://github.axa.com/Digital/bauta-nodejs/issues/212)) ([6783a88](http://github.axa.com/Digital/bauta-nodejs/commit/6783a88ba7f69ce787e903539038da1a9e0d6393)), closes [#171](http://github.axa.com/Digital/bauta-nodejs/issues/171)
+* **@bautajs/fastify:** update fastify to v3 ([#213](http://github.axa.com/Digital/bauta-nodejs/issues/213)) ([32764f3](http://github.axa.com/Digital/bauta-nodejs/commit/32764f3ed4036fe77cbeb4e977b892258778827c)), closes [#196](http://github.axa.com/Digital/bauta-nodejs/issues/196)
+* **@bautajs/rest-datasource:** move to got 11 ([#204](http://github.axa.com/Digital/bauta-nodejs/issues/204)) ([1ae7147](http://github.axa.com/Digital/bauta-nodejs/commit/1ae7147042900c5841584ea9745018dcb0eaf950)), closes [#201](http://github.axa.com/Digital/bauta-nodejs/issues/201)
+* **bautajs-datasource:** expose hooks in the datasource ([#209](http://github.axa.com/Digital/bauta-nodejs/issues/209)) ([5dbeecf](http://github.axa.com/Digital/bauta-nodejs/commit/5dbeecf33b697a37fcbd40170b1df6979bf4988e)), closes [#207](http://github.axa.com/Digital/bauta-nodejs/issues/207) [#207](http://github.axa.com/Digital/bauta-nodejs/issues/207)
+* add remote containers ([#202](http://github.axa.com/Digital/bauta-nodejs/issues/202)) ([a37c1ab](http://github.axa.com/Digital/bauta-nodejs/commit/a37c1abed2fe5c496525d54a40069c987e585dfc)), closes [#42](http://github.axa.com/Digital/bauta-nodejs/issues/42)
+
+
+### BREAKING CHANGES
+
+* **@bautajs/datasource:** move truncateLogSize and disableTruncateLog to @bautajs/datasource
+* **@bautajs/datasource:** logs has been refactored
+* **@bautajs/express:** replace morgan by express-pino
+* ajv from 6 to 8
+* ajv-oai to ajv-formats
+* remove API from operation access
+* remove strong relation between operation and OpenAPI
+* **@bautajs/decorator-cache:** Move from moize to quick-lru-cjs
+* **@bautajs/decorator-cache:** Complete rewrite the library
+* **@bautajs/rest-datasource:** move from got 10.x to got 11.x
+
+
+
+
+
 ## [3.4.1](http://github.axa.com/Digital/bauta-nodejs/compare/v3.4.0...v3.4.1) (2020-09-17)
 
 
