@@ -25,10 +25,7 @@ describe('provider rest', () => {
   let bautajs: BautaJSInstance;
 
   beforeEach(async () => {
-    bautajs = new BautaJS({
-      disableTruncateLog: false,
-      truncateLogSize: 30000
-    });
+    bautajs = new BautaJS();
     await bautajs.bootstrap();
   });
   describe('restProvider extend', () => {

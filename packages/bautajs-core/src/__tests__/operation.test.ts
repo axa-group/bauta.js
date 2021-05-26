@@ -72,7 +72,9 @@ describe('operation class tests', () => {
       const data = { req, res };
       operationTest.setup(() => 'new');
       operationTest.addRoute(route);
-      expect(() => operationTest.run(data)).toThrow(expect.objectContaining({ errors: expected }));
+      await expect(operationTest.run(data)).rejects.toThrow(
+        expect.objectContaining({ errors: expected })
+      );
     });
 
     test('should build the response validator from the schema response', async () => {
@@ -93,7 +95,9 @@ describe('operation class tests', () => {
       const ctx = { req, res };
       operationTest.validateResponse(true).setup(() => 1);
       operationTest.addRoute(route);
-      expect(() => operationTest.run(ctx)).toThrow(expect.objectContaining({ errors: expected }));
+      await expect(operationTest.run(ctx)).rejects.toThrow(
+        expect.objectContaining({ errors: expected })
+      );
     });
 
     test('the default error handler should be a promise reject of the given error', async () => {
@@ -104,7 +108,7 @@ describe('operation class tests', () => {
         throw new Error('someError');
       });
 
-      expect(() => operationTest.run(ctx)).toThrow(error);
+      await expect(operationTest.run(ctx)).rejects.toThrow(error);
     });
   });
 
@@ -132,7 +136,7 @@ describe('operation class tests', () => {
       );
       const ctx = { req: {}, res: {} };
 
-      expect(operationTest.run(ctx)).toStrictEqual(expected);
+      await expect(operationTest.run(ctx)).resolves.toStrictEqual(expected);
     });
 
     test('should allow to setup a pipeline build with pipe', async () => {
@@ -144,7 +148,7 @@ describe('operation class tests', () => {
       operationTest.validateRequest(false).setup(pipeline);
       const ctx = { req: {}, res: {} };
 
-      expect(operationTest.run(ctx)).toStrictEqual(expected);
+      await expect(operationTest.run(ctx)).resolves.toStrictEqual(expected);
     });
 
     test('step should be a function', async () => {
@@ -178,7 +182,7 @@ describe('operation class tests', () => {
       });
       op.validateRequest(false).setup(() => 'good');
       op.addRoute(route);
-      expect(op.run({ res: {} })).toStrictEqual('good');
+      await expect(op.run({ res: {} })).resolves.toStrictEqual('good');
     });
 
     test('should allow to run without getResponse', async () => {
@@ -192,7 +196,7 @@ describe('operation class tests', () => {
       });
       op.validateRequest(false).setup(() => 'good');
       op.addRoute(route);
-      expect(op.run({ res: {} })).toStrictEqual('good');
+      await expect(op.run({ res: {} })).resolves.toStrictEqual('good');
     });
 
     test('should return a promise if there is some promise on some of the steps', async () => {
@@ -217,11 +221,11 @@ describe('operation class tests', () => {
       expect(await result).toStrictEqual('sounds good');
     });
 
-    test('should return a value if there is no promise as part of the pipeline', async () => {
+    test('should return a value as a promise even if there is no promise as part of the pipeline', async () => {
       operationTest.validateRequest(false).setup(() => 'good');
       operationTest.addRoute(route);
       const result = operationTest.run({ req: {}, res: {} });
-      expect(result).not.toBeInstanceOf(Promise);
+      expect(result).toBeInstanceOf(Promise);
       expect(await result).toStrictEqual('good');
     });
   });
@@ -257,12 +261,12 @@ describe('operation class tests', () => {
         }
       ];
       const body = null;
-      expect(() =>
+      await expect(
         operationTest.run({
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
         })
-      ).toThrow(expect.objectContaining({ statusCode: 422, errors: expected }));
+      ).rejects.toThrow(expect.objectContaining({ statusCode: 422, errors: expected }));
     });
 
     test('should validate an empty body', async () => {
@@ -287,12 +291,12 @@ describe('operation class tests', () => {
       ];
       const body = {};
 
-      expect(() =>
+      await expect(
         operationTest.run({
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
         })
-      ).toThrow(expect.objectContaining({ statusCode: 422, errors: expected }));
+      ).rejects.toThrow(expect.objectContaining({ statusCode: 422, errors: expected }));
     });
 
     test('should validate against the operation schema', async () => {
@@ -321,7 +325,7 @@ describe('operation class tests', () => {
         password: 'pass'
       };
 
-      expect(() => operationTest.run({ req: { body }, res: {} })).toThrow(
+      await expect(operationTest.run({ req: { body }, res: {} })).rejects.toThrow(
         expect.objectContaining({ statusCode: 422, errors: expected })
       );
     });
@@ -348,7 +352,7 @@ describe('operation class tests', () => {
         password: 'pass'
       };
 
-      expect(operationTest.run({ req: { body }, res: {} })).toStrictEqual(expected);
+      await expect(operationTest.run({ req: { body }, res: {} })).resolves.toStrictEqual(expected);
     });
 
     test('should use default Pipeline.StepFunction if setup is not done', async () => {
@@ -359,7 +363,9 @@ describe('operation class tests', () => {
         password: 'pass'
       };
 
-      expect(() => operationTest.run({ req: { body }, res: {} })).toThrow(new Error('Not found'));
+      await expect(operationTest.run({ req: { body }, res: {} })).rejects.toThrow(
+        new Error('Not found')
+      );
     });
   });
 
@@ -432,12 +438,12 @@ describe('operation class tests', () => {
         password: 'pass'
       };
 
-      expect(() =>
+      await expect(
         operationTest.run({
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
         })
-      ).toThrow(expect.objectContaining({ errors: expected }));
+      ).rejects.toThrow(expect.objectContaining({ errors: expected }));
     });
 
     test('should validate an valid response', async () => {
@@ -472,7 +478,7 @@ describe('operation class tests', () => {
           name: 'pet2'
         }
       ];
-      const result = operationTest.run({
+      const result = await operationTest.run({
         req: { headers: { 'content-type': 'application/json' } },
         res: {}
       });
@@ -513,7 +519,7 @@ describe('operation class tests', () => {
         }
       };
 
-      operationTest.run({
+      await operationTest.run({
         req: { query: {}, body, headers: { 'content-type': 'application/json' } },
         res
       });
@@ -533,7 +539,7 @@ describe('operation class tests', () => {
         return null;
       });
       await emptyResponseContentTest.addRoute(document.routes[2]);
-      const result = emptyResponseContentTest.run({
+      const result = await emptyResponseContentTest.run({
         req: { headers: { 'content-type': 'application/json' } },
         res: { statusCode: 200 }
       });

@@ -162,7 +162,7 @@ describe('bauta core tests', () => {
 
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.operation1.run({ req, res })).toThrow(
+      await expect(() => bautaJS.operations.operation1.run({ req, res })).rejects.toThrow(
         expect.objectContaining({
           message: 'The request was not valid',
           errors: [
@@ -248,7 +248,7 @@ describe('bauta core tests', () => {
       bautaJS.operations.operation1.validateRequest(true);
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.operation1.run({ req, res })).toThrow(
+      await expect(() => bautaJS.operations.operation1.run({ req, res })).rejects.toThrow(
         expect.objectContaining({
           message: 'The request was not valid',
           errors: [
@@ -385,7 +385,7 @@ describe('bauta core tests', () => {
 
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.operation1.run({ req, res })).toThrow(
+      await expect(() => bautaJS.operations.operation1.run({ req, res })).rejects.toThrow(
         expect.objectContaining({
           name: 'Validation Error',
           errors: [
@@ -406,7 +406,7 @@ describe('bauta core tests', () => {
       );
     });
 
-    test('should priorize the local operation toggle over the global one', async () => {
+    test('should prioritize the local operation toggle over the global one', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -442,7 +442,7 @@ describe('bauta core tests', () => {
 
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.operation1.run({ req, res })).toThrow(
+      await expect(() => bautaJS.operations.operation1.run({ req, res })).rejects.toThrow(
         expect.objectContaining({
           name: 'Validation Error',
           errors: [
@@ -794,15 +794,23 @@ describe('bauta core tests', () => {
       const request1 = bautaJS.operations.operation1.run({
         req: { query: {} },
         res: {}
-      }) as CancelablePromise<any>;
+      });
       const request2 = bautaJS.operations.operation1.run({
         req: { query: {} },
         res: {}
-      }) as CancelablePromise<any>;
-
+      });
       request1.cancel();
+      expect.assertions(3);
+
       // eslint-disable-next-line jest/valid-expect-in-promise
-      const [, req2] = await Promise.all([request1.catch(() => Promise.resolve()), request2]);
+      const [, req2] = await Promise.all([
+        request1.catch(e => {
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(e).toStrictEqual(expect.objectContaining({ message: 'Promise was canceled' }));
+          return Promise.resolve({});
+        }),
+        request2
+      ]);
 
       expect(onCancel).toHaveBeenCalledTimes(1);
       expect(req2).toStrictEqual('ok');

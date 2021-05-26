@@ -56,7 +56,7 @@ describe('bautaJS fastify tests', () => {
     });
   });
 
-  test('should validate the response with the internal fastify validator', async () => {
+  test('should validate the response with bautajs validator', async () => {
     fastifyInstance.register(bautajsFastify, {
       apiBasePath: '/api/',
       prefix: '/v1/',
@@ -73,11 +73,18 @@ describe('bautaJS fastify tests', () => {
       method: 'GET',
       url: '/v1/api/test'
     });
-
+    const body = JSON.parse(res.body);
     expect(res.statusCode).toStrictEqual(500);
-    expect(JSON.parse(res.body).message).toStrictEqual('"id" is required!');
+    expect(body.message).toStrictEqual('Internal error');
+    expect(body.errors).toStrictEqual([
+      {
+        path: '/0/id',
+        location: 'response',
+        message: 'must be integer',
+        errorCode: 'type'
+      }
+    ]);
   });
-
   test('response validation should be disabled by default', async () => {
     fastifyInstance.register(bautajsFastify, {
       apiBasePath: '/api/',

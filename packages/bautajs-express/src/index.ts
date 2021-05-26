@@ -129,31 +129,23 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
 
         return next(response);
       };
-      try {
-        const op = operation.run<{ req: ExpressRequest; res: Response }, any>({
-          req: req as ExpressRequest,
-          res,
-          id: (req as ExpressRequest).id || req.header('x-request-id'),
-          url: (req as ExpressRequest).url,
-          log: (req as ExpressRequest).log
-        });
-        if (bautajs.isPromise(op)) {
-          req.on('abort', () => {
-            (op as any).cancel('Request was aborted by the requester intentionally');
-          });
-          req.on('aborted', () => {
-            (op as any).cancel('Request was aborted by the requester intentionally');
-          });
-          req.on('timeout', () => {
-            (op as any).cancel('Request was aborted by the requester because of a timeout');
-          });
-          op.then(resolverWrapper).catch(rejectWrapper);
-        } else {
-          resolverWrapper(op);
-        }
-      } catch (e) {
-        rejectWrapper(e);
-      }
+      const op = operation.run<{ req: ExpressRequest; res: Response }, any>({
+        req: req as ExpressRequest,
+        res,
+        id: (req as ExpressRequest).id || req.header('x-request-id'),
+        url: (req as ExpressRequest).url,
+        log: (req as ExpressRequest).log
+      });
+      req.on('abort', () => {
+        (op as any).cancel('Request was aborted by the requester intentionally');
+      });
+      req.on('aborted', () => {
+        (op as any).cancel('Request was aborted by the requester intentionally');
+      });
+      req.on('timeout', () => {
+        (op as any).cancel('Request was aborted by the requester because of a timeout');
+      });
+      op.then(resolverWrapper).catch(rejectWrapper);
     });
 
     this.logger.info(

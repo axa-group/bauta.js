@@ -52,6 +52,16 @@
                 }
               }
             },
+            "500": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
             "default": {
               "description": "unexpected error",
               "content": {
@@ -97,6 +107,16 @@
               },
               "content": {}
             },
+            "500": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
             "default": {
               "description": "unexpected error",
               "content": {
@@ -134,6 +154,16 @@
               "description": "An stream of pets",
               "content": {
                 "application/octet-stream": {}
+              }
+            },
+            "500": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
               }
             },
             "default": {
@@ -205,6 +235,12 @@
             "message"
           ],
           "properties": {
+            "path": {
+              "type":"string"
+            },
+            "errorCode": {
+              "type":"string"
+            },
             "location": {
               "type": "string",
               "description": " The location of the error. for example, It can be the dynamicParameter.key when a validation error occurred.",

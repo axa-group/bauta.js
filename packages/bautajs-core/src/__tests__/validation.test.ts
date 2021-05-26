@@ -58,9 +58,9 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
-      expected
-    );
+    await expect(
+      bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
+    ).resolves.toStrictEqual(expected);
   });
 
   test('should validate a wrong circular response', async () => {
@@ -100,7 +100,9 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(() => bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toThrow(
+    await expect(
+      bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
+    ).rejects.toThrow(
       expect.objectContaining({
         errors: [
           {
@@ -145,9 +147,9 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toStrictEqual(
-      expected
-    );
+    await expect(
+      bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
+    ).resolves.toStrictEqual(expected);
   });
 
   test('should validate a schema with not valid formats', async () => {
@@ -181,7 +183,9 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(() => bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })).toThrow(
+    await expect(
+      bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
+    ).rejects.toThrow(
       expect.objectContaining({
         errors: [
           {
@@ -226,12 +230,12 @@ describe('validation tests', () => {
       }
     });
     await bautaJS.bootstrap();
-    expect(() =>
+    await expect(
       bautaJS.operations.operation1.run({
         req: { query: {}, body: { some_field: null } },
         res: {}
       })
-    ).toThrow(
+    ).rejects.toThrow(
       expect.objectContaining({
         errors: [
           {
@@ -281,9 +285,9 @@ describe('validation tests', () => {
     await bautaJS.bootstrap();
 
     // Should not return an error since operation2 has no parameters
-    expect(bautaJS.operations.operation2.run({ req: { query: {} }, res: {} })).toStrictEqual(
-      expected
-    );
+    await expect(
+      bautaJS.operations.operation2.run({ req: { query: {} }, res: {} })
+    ).resolves.toStrictEqual(expected);
   });
 });
 
@@ -380,12 +384,12 @@ describe('custom formats', () => {
     });
 
     await bautaJS.bootstrap();
-    expect(() =>
+    await expect(
       bautaJS.operations.operation1.run({
         req: { query: {}, body: {} },
         res: {}
       })
-    ).toThrow(
+    ).rejects.toThrow(
       expect.objectContaining({
         errors: [
           {
@@ -442,12 +446,12 @@ describe('custom formats', () => {
     });
 
     await bautaJS.bootstrap();
-    expect(() =>
+    await expect(
       bautaJS.operations.operation1.run({
         req: { query: {}, body: {} },
         res: {}
       })
-    ).toThrow(
+    ).rejects.toThrow(
       expect.objectContaining({
         errors: [
           {
@@ -505,12 +509,12 @@ describe('custom formats', () => {
     });
 
     await bautaJS.bootstrap();
-    expect(() =>
+    await expect(
       bautaJS.operations.operation1.run({
         req: { query: {}, body: {} },
         res: {}
       })
-    ).toThrow(
+    ).rejects.toThrow(
       expect.objectContaining({
         errors: [
           {

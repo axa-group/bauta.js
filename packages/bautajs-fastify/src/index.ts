@@ -23,10 +23,7 @@ import {
 import responseXRequestId from 'fastify-x-request-id';
 import routeOrder from 'route-order';
 import * as bautaJS from '@bautajs/core';
-import fastJson from 'fast-json-stringify';
 import explorerPlugin from './explorer';
-
-const stringify = fastJson({});
 
 export interface ValidationObject {
   validation: ValidationResult[];
@@ -52,12 +49,14 @@ export interface BautaJSFastifyPluginOptions
    * - If this is disabled responses will be serialized with a normal stringify method.
    * @default false
    * @type {boolean}
+   * @memberof BautaJSFastifyPluginOptions
    */
   enableResponseValidation?: boolean;
   /**
    * Automatically expose the bautajs operations as an endpoint.
    * @default true
    * @type {boolean}
+   * @memberof BautaJSFastifyPluginOptions
    */
   exposeOperations?: boolean;
   explorer?: {
@@ -67,14 +66,26 @@ export interface BautaJSFastifyPluginOptions
    * Referees to the API base path
    * @default "/api/"
    * @type string
+   * @memberof BautaJSFastifyPluginOptions
    */
   apiBasePath?: string;
   /**
    * Referees to the root path of your Application. It can be used to split the api in different versions such 'v1', 'v2'...
    * @default ""
    * @type string
+   * @memberof BautaJSFastifyPluginOptions
    */
   prefix?: string;
+
+  /**
+   * If set to true, responses schemas will be add it to fastify instance making the response serialization strict by cutting out
+   * all properties not present on the schema. See more info on https://github.com/fastify/fastify/blob/main/docs/Validation-and-Serialization.md#serialization
+   *
+   * @type {boolean}
+   * @default true
+   * @memberof BautaJSFastifyPluginOptions
+   */
+  strictResponseSerialization?: boolean;
 }
 
 function processOperations(operations: bautaJS.Operations) {
@@ -108,29 +119,25 @@ function createHandler(operation: bautaJS.Operation) {
         ).toJSON()
       );
     }
+    const op = operation.run<{ req: FastifyRequest; res: FastifyReply }, any>({
+      req: request,
+      res: reply,
+      id: request.id || request.headers['x-request-id'],
+      url: request.url,
+      log: request.log
+    });
+    request.raw.on('abort', () => {
+      op.cancel('Request was aborted by the requester intentionally');
+    });
+    request.raw.on('aborted', () => {
+      op.cancel('Request was aborted by the requester intentionally');
+    });
+    request.raw.on('timeout', () => {
+      op.cancel('Request was aborted by the requester because of a timeout');
+    });
 
     try {
-      const op = operation.run<{ req: FastifyRequest; res: FastifyReply }, any>({
-        req: request,
-        res: reply,
-        id: request.id || request.headers['x-request-id'],
-        url: request.url,
-        log: request.log
-      });
-      if (bautaJS.isPromise(op)) {
-        request.raw.on('abort', () => {
-          op.cancel('Request was aborted by the requester intentionally');
-        });
-        request.raw.on('aborted', () => {
-          op.cancel('Request was aborted by the requester intentionally');
-        });
-        request.raw.on('timeout', () => {
-          op.cancel('Request was aborted by the requester because of a timeout');
-        });
-        response = await op;
-      } else {
-        response = op;
-      }
+      response = await op;
 
       // In case the response is already sent to the user don't send it again.
       if (reply.sent) {
@@ -184,28 +191,16 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: BautaJSFast
           }
         : {};
 
-    // Response validation could be disabled. Take in account that if is disabled
-    // the performance improvement of fastify is not fulfilled at 100%
-    const responseSchema =
-      operation.route?.schema && operation.responseValidationEnabled
-        ? { response: operation.route?.schema.response }
-        : {};
-
-    // Use fastify Request validation and serialization.
+    const responseSchema = operation.route?.schema
+      ? { response: operation.route?.schema.response }
+      : {};
+    // Use fastify Request validation.
     operation.validateRequest(false);
-    // Use fastify Response validation and serialization.
-    operation.validateResponse(false);
 
     fastify.register(
       async fastifyAPI => {
         const route = (basePath + url).replace(/\/\//, '/');
         fastifyAPI.route({
-          serializerCompiler:
-            opts.enableResponseValidation === true
-              ? undefined
-              : () => {
-                  return data => stringify(data);
-                },
           validatorCompiler: ({ schema }) => validator.buildSchemaCompiler(schema),
           attachValidation: true,
           method,
@@ -213,7 +208,7 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: BautaJSFast
           handler: createHandler(operation),
           schema: {
             ...requestSchema,
-            ...responseSchema
+            ...(opts.strictResponseSerialization !== false ? responseSchema : {})
           }
         });
 
@@ -228,7 +223,6 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: BautaJSFast
       }
     );
   }
-
   const bautajs = new bautaJS.BautaJS({
     // Cast should be done because interface of fastify is wrong https://github.com/fastify/fastify/issues/1715
     logger: fastify.log as bautaJS.Logger,
@@ -243,6 +237,7 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: BautaJSFast
       };
     }
   });
+
   await bautajs.bootstrap();
 
   // Add x-request-id on the response

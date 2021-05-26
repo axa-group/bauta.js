@@ -101,8 +101,6 @@ export interface OpenAPIV3Document extends OpenAPIV3.Document {
   basePath?: string;
 }
 export interface SwaggerComponents {
-  validateRequest?: boolean;
-  validateResponse?: boolean;
   swaggerVersion: string;
   apiVersion: string;
   schemes?: string[];
@@ -116,8 +114,6 @@ export interface SwaggerComponents {
   externalDocs?: OpenAPIV2.ExternalDocumentationObject;
 }
 export interface OpenAPIComponents extends OpenAPIV3.ComponentsObject {
-  validateRequest?: boolean;
-  validateResponse?: boolean;
   swaggerVersion: string;
   apiVersion: string;
 }
@@ -390,7 +386,7 @@ export interface Operation extends BasicOperation {
    * @returns {PCancelable<TOut> | TOut} A cancelable promise or a value
    * @memberof Operation
    */
-  run<TRaw, TOut>(raw?: RawData<TRaw>): TOut | PCancelable<TOut>;
+  run<TRaw, TOut>(raw?: RawData<TRaw>): PCancelable<TOut>;
   /**
    * Set the operation as private. This will means that this operation will be
    * removed from the output swagger definition.

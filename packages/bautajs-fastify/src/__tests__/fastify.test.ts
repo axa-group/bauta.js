@@ -34,7 +34,67 @@ describe('bautaJS fastify tests', () => {
     afterEach(() => {
       fastifyInstance.close();
     });
-    test('should expose the given swagger with an fastify API', async () => {
+    test('should disable the strict serialization from fastify', async () => {
+      const expected = {
+        id: 134,
+        name: 'pet2',
+        customPropertyNotInAPIdefinition:
+          'this is a custom property not defined on OPENAPI definition'
+      };
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition,
+        resolvers: [
+          operations => {
+            operations.operation1.setup(() => [expected]);
+          }
+        ],
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        strictResponseSerialization: false
+      });
+
+      const res = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/api/test'
+      });
+
+      expect(res.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(JSON.parse(res.payload)).toStrictEqual([expected]);
+    });
+
+    test('strict serialization from fastify should be enabled by default if an schema is provided', async () => {
+      const expected = {
+        id: 134,
+        name: 'pet2'
+      };
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition,
+        resolvers: [
+          operations => {
+            operations.operation1.setup(() => [
+              {
+                id: 134,
+                name: 'pet2',
+                customPropertyNotInAPIdefinition:
+                  'this is a custom property not defined on OPENAPI definition'
+              }
+            ]);
+          }
+        ],
+        apiBasePath: '/api/',
+        prefix: '/v1/'
+      });
+
+      const res = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/api/test'
+      });
+
+      expect(res.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(JSON.parse(res.payload)).toStrictEqual([expected]);
+    });
+
+    test('should expose the given openAPI endpoints with an fastify API', async () => {
       fastifyInstance.register(bautajsFastify, {
         apiDefinition,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),

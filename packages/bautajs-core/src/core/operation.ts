@@ -94,12 +94,6 @@ export class OperationBuilder implements Operation {
     return this;
   }
 
-  public validateResponses(toggle: boolean): Operation {
-    this.responseValidationEnabled = toggle;
-
-    return this;
-  }
-
   public validateRequest(toggle: boolean): Operation {
     this.requestValidationEnabled = toggle;
 
@@ -151,14 +145,12 @@ export class OperationBuilder implements Operation {
     if (!this.isResponseJson(statusCode)) {
       return false; // No validation for streams
     }
-
     const isValidationFunctionSet =
       this.responseValidationEnabled === true && !!ctx.validateResponseSchema;
-
     return isValidationFunctionSet && !isResponseFinished;
   }
 
-  public run<TRaw, TOut>(raw: RawData<TRaw>): PCancelable<TOut> | TOut {
+  public run<TRaw, TOut>(raw: RawData<TRaw>): PCancelable<TOut> {
     const context: Context = createContext({
       ...raw,
       log: raw.log || this.bautajs.logger
@@ -182,17 +174,28 @@ export class OperationBuilder implements Operation {
       context.validateRequestSchema &&
       this.requestValidationEnabled === true
     ) {
-      context.validateRequestSchema(this.getRequest(raw));
+      try {
+        context.validateRequestSchema(this.getRequest(raw));
+      } catch (e) {
+        return new PCancelable((_, reject) => {
+          reject(e);
+        });
+      }
     }
 
-    const result = this.handler(undefined, context, this.bautajs);
-    // In case that is a promise convert it into a Cancelable promise
-    if (isPromise(result)) {
-      return PCancelable.fn<any, TOut>((_: any, onCancel: PCancelable.OnCancelFunction) => {
-        onCancel(() => {
-          context.token.isCanceled = true;
-          context.token.cancel();
-        });
+    return PCancelable.fn<any, TOut>((_: any, onCancel: PCancelable.OnCancelFunction) => {
+      onCancel(() => {
+        context.token.isCanceled = true;
+        context.token.cancel();
+      });
+
+      try {
+        let result = this.handler(undefined, context, this.bautajs);
+
+        if (!isPromise(result)) {
+          result = Promise.resolve(result);
+        }
+
         return result.then((finalResult: TOut) => {
           if (this.getResponse) {
             const responseStatus = this.getResponse(raw);
@@ -210,23 +213,10 @@ export class OperationBuilder implements Operation {
 
           return finalResult;
         });
-      })(null);
-    }
-
-    if (this.getResponse) {
-      const responseStatus = this.getResponse(raw);
-      if (
-        this.shouldValidateResponse(
-          context,
-          responseStatus.isResponseFinished,
-          responseStatus.statusCode
-        )
-      ) {
-        context.validateResponseSchema(result, responseStatus.statusCode);
+      } catch (e) {
+        return Promise.reject(e);
       }
-    }
-
-    return result;
+    })(null);
   }
 
   public setup(step: Pipeline.StepFunction<undefined, any>): void {

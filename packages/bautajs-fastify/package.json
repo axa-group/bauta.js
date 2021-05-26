@@ -44,7 +44,6 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "4.0.0",
-    "fast-json-stringify": "^2.7.3",
     "fastify": "^3.14.0",
     "fastify-openapi-docs": "^0.4.0",
     "fastify-plugin": "^3.0.0",

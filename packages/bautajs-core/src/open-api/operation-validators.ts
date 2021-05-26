@@ -90,7 +90,6 @@ export class AJVOperationValidators implements OperationValidators {
       const status = statusCode || getDefaultStatusCode(schemaValidators);
       const isValid =
         schemaValidators && schemaValidators[status] ? schemaValidators[status](response) : null;
-
       if (isValid === false) {
         throw new ValidationError(
           'Internal error',

@@ -139,7 +139,6 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
     }
 
     this.validator = new AjvValidator(customValidationFormats, validatorOptions);
-
     this.operations = this.registerOperations(requestValidation, responseValidation, api);
 
     // Load custom resolvers and operations modifiers
@@ -208,7 +207,6 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
       }
 
       self.logger.info(`[OK] ${operation.id} operation registered on bautajs.`);
-
       return operation;
     }
 
@@ -222,17 +220,17 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
         ownKeys(target) {
           return Reflect.ownKeys(target);
         },
-        get(target: Operations, prop: string, receiver) {
-          if (!Object.prototype.hasOwnProperty.call(target, prop)) {
-            const operation = createOperation(prop);
-            Object.defineProperty(target, prop, {
+        get(target: Operations, operationId: string, receiver) {
+          if (!Object.prototype.hasOwnProperty.call(target, operationId)) {
+            const operation = createOperation(operationId);
+            Object.defineProperty(target, operationId, {
               value: operation,
               writable: false,
               enumerable: true,
               configurable: false
             });
           }
-          return Reflect.get(target, prop, receiver);
+          return Reflect.get(target, operationId, receiver);
         }
       }
     );
