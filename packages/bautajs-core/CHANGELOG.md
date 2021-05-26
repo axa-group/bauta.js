@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1](http://github.axa.com/Digital/bauta-nodejs/compare/v4.0.0...v4.0.1) (2021-05-26)
+
+
+### Bug Fixes
+
+* run must be async ([#231](http://github.axa.com/Digital/bauta-nodejs/issues/231)) ([63338c1](http://github.axa.com/Digital/bauta-nodejs/commit/63338c12873f63fa02ed67e489be3b21a0d358a9))
+
+
+
+
+
 # [4.0.0](http://github.axa.com/Digital/bauta-nodejs/compare/v3.4.1...v4.0.0) (2021-05-21)
 
 
