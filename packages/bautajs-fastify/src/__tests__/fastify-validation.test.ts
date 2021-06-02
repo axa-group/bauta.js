@@ -94,7 +94,8 @@ describe('bautaJS fastify tests', () => {
       resolversPath: path.resolve(
         __dirname,
         './fixtures/test-resolvers/operation-resolver-invalid.js'
-      )
+      ),
+      strictResponseSerialization: false
     });
 
     const res = await fastifyInstance.inject({
