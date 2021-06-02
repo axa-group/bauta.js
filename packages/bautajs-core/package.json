@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/core",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "A simple library to make middlewares",
   "main": "dist",
   "types": "dist",
