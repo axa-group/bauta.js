@@ -15,7 +15,7 @@
     "url": "https://github.axa.com/Digital/bauta-nodejs"
   },
   "publishConfig": {
-    "registry": "https://default.artifactory.pink.eu-central-1.aws.openpaas.axa-cloud.com/artifactory/api/npm/axa-services-es_go-digital-npm-release"
+    "registry": "https://artifactory.europe.axa-cloud.com/artifactory/api/npm/axa-services-es_go-digital-npm-release"
   },
   "keywords": [
     "bautajs",
