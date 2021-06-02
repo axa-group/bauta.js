@@ -47,7 +47,7 @@ describe('bautaJS fastify tests', () => {
     });
 
     const body = JSON.parse(res.body);
-    expect(res.statusCode).toStrictEqual(422);
+    expect(res.statusCode).toStrictEqual(400);
     expect(body.message).toStrictEqual(`The request was not valid`);
     expect(body.errors[0]).toStrictEqual({
       location: 'querystring',

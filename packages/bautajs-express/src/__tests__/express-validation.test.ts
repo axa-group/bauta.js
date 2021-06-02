@@ -42,7 +42,7 @@ describe('bautaJS express validation tests', () => {
       .get('/v1/api/test')
       .query({ limit: 123 })
       .expect('Content-Type', /json/)
-      .expect(422);
+      .expect(400);
 
     expect(res.body.message).toStrictEqual(`The request was not valid`);
     expect(res.body.errors[0]).toStrictEqual({

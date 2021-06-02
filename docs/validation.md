@@ -4,7 +4,7 @@
 This feature is always enabled while you have a valid openAPI schema inputs and getRequest is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided.
 You can disable it locally for every operation using `operations.operation1.validateRequest(false);`
 
-**_It's recomended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors), you are free to convert them to a 400 or 422 errors_**
+**_It's recommended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors**
 
 The request validation can be globally enabled by set it on the `bautajs` initialization:
 
@@ -35,7 +35,7 @@ Alternative you can also validate inside every resolver by accessing to the cont
 This feature is always enabled while you have a valid openAPI schema response and getResponse is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided.
 using `operations.v1.operation1.validateResponse(true);`
 s
-**_It's recomended to have an error handler since this will throw a [ValidationError](../packages/bautajs/src/core/validation-error.ts), you are free to convert them to a 400 or 422 errors_**
+**_It's recomended to have an error handler since this will throw a [ValidationError](../packages/bautajs/src/core/validation-error.ts), error status code thrown is a 400_**
 
 The response validation can be globally enabled by set it on the `bautajs` initialization:
 

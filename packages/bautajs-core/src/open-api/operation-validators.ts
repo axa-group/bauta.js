@@ -39,7 +39,7 @@ export class AJVOperationValidators implements OperationValidators {
       return new ValidationError(
         'The request was not valid',
         formatLocationErrors(validators.errors, paramName) || [],
-        422
+        400
       );
     }
 

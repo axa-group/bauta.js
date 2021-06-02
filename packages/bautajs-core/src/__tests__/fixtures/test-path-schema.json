@@ -132,8 +132,8 @@
             }
           }
         },
-        "422": {
-          "description": "Unprocessable entity",
+        "400": {
+          "description": "Bad Request",
           "schema": {
             "type": "object",
             "required": ["code", "developerMessage"],

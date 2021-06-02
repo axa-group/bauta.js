@@ -266,7 +266,7 @@ describe('operation class tests', () => {
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
         })
-      ).rejects.toThrow(expect.objectContaining({ statusCode: 422, errors: expected }));
+      ).rejects.toThrow(expect.objectContaining({ statusCode: 400, errors: expected }));
     });
 
     test('should validate an empty body', async () => {
@@ -296,7 +296,7 @@ describe('operation class tests', () => {
           req: { body, headers: { 'content-type': 'application/json' } },
           res: {}
         })
-      ).rejects.toThrow(expect.objectContaining({ statusCode: 422, errors: expected }));
+      ).rejects.toThrow(expect.objectContaining({ statusCode: 400, errors: expected }));
     });
 
     test('should validate against the operation schema', async () => {
@@ -326,7 +326,7 @@ describe('operation class tests', () => {
       };
 
       await expect(operationTest.run({ req: { body }, res: {} })).rejects.toThrow(
-        expect.objectContaining({ statusCode: 422, errors: expected })
+        expect.objectContaining({ statusCode: 400, errors: expected })
       );
     });
 

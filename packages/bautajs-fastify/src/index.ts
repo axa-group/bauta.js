@@ -110,12 +110,12 @@ function createHandler(operation: bautaJS.Operation) {
     // Convert the fastify validation error to the bautajs validation error format
     // @ts-ignore
     if (request.validationError) {
-      return reply.status(422).send(
+      return reply.status(400).send(
         new bautaJS.ValidationError(
           'The request was not valid',
           // @ts-ignore
           formatLocationErrors(request.validationError) || [],
-          422
+          400
         ).toJSON()
       );
     }
