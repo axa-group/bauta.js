@@ -25,10 +25,9 @@ import { BautaJSInstance, Context, Pipeline } from '../types';
  * @template TResponse
  */
 export interface Match<TIn, TOut> {
-  pipeline?: Pipeline.StepFunction<TIn, TOut>;
   /**
-   * Set a predicate function that have to return true or false. Depending on that resolution the
-   * given pipeline will be executed.
+   * Sets a condition step function that returns a boolean and a second statement step function.
+   * If the result of the condition step function is true, the statement step function is executed.
    *
    * @param {(prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean} pred
    * @param {Pipeline.StepFunction<TIn, TOut>} pipeline
@@ -40,7 +39,7 @@ export interface Match<TIn, TOut> {
     pipeline: Pipeline.StepFunction<TIn, TOut>
   ): Match<TIn, TOut>;
   /**
-   * Set the pipeline that will be executed by default if any of the given predicates succed.
+   * Set the pipeline that will be executed by default if any of the given conditions are not returning true.
    *
    * @param {Pipeline.StepFunction<TIn, TOut>} pipeline
    * @memberof Match
@@ -49,12 +48,19 @@ export interface Match<TIn, TOut> {
 }
 
 class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
-  public pipeline?: Pipeline.StepFunction<TIn, TOut>;
+  private matchers: {
+    pred: Pipeline.StepFunction<TIn, Boolean>;
+    pipeline: Pipeline.StepFunction<TIn, TOut>;
+  }[] = [];
 
-  private matched: boolean = false;
+  private otherwisePipeline: Pipeline.StepFunction<TIn, TOut> = () => null as any;
 
-  constructor(private value: any, private ctx: Context, private bautajs: BautaJSInstance) {
-    // eslint-disable-next-line no-empty-function
+  run(value: TIn, ctx: Context, bautajs: BautaJSInstance) {
+    const matcher = this.matchers.find(({ pred }) => pred(value, ctx, bautajs));
+
+    return matcher?.pipeline
+      ? matcher.pipeline(value, ctx, bautajs)
+      : this.otherwisePipeline(value, ctx, bautajs);
   }
 
   on(
@@ -68,11 +74,10 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
       throw new Error('Match.on pipeline must be a built with `pipeline` builder.');
     }
 
-    if (!this.matched && pred(this.value, this.ctx, this.bautajs)) {
-      this.pipeline = pipeline;
-
-      this.matched = true;
-    }
+    this.matchers.push({
+      pred,
+      pipeline
+    });
 
     return this;
   }
@@ -82,9 +87,7 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
       throw new Error('Match.otherwise pipeline must be a built with `pipeline` builder.');
     }
 
-    if (!this.matched) {
-      this.pipeline = pipeline;
-    }
+    this.otherwisePipeline = pipeline;
   }
 }
 
@@ -112,16 +115,10 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
 export function match<TIn, TOut>(
   matchFn: (m: Match<TIn, TOut>) => any
 ): Pipeline.StepFunction<TIn, TOut> {
-  return (val: TIn, ctx: Context, bautajs: BautaJSInstance): PromiseLike<TOut> | TOut => {
-    const builder = new MatchBuilder<TIn, TOut>(val, ctx, bautajs);
+  const builder = new MatchBuilder<TIn, TOut>();
+  matchFn(builder);
 
-    matchFn(builder);
-    if (builder.pipeline) {
-      return builder.pipeline(val, ctx, bautajs);
-    }
-
-    return null as any;
-  };
+  return builder.run.bind(builder);
 }
 
 export default match;
