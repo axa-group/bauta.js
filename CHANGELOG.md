@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.3](http://github.axa.com/Digital/bauta-nodejs/compare/v4.0.2...v4.0.3) (2021-06-11)
+
+
+### Bug Fixes
+
+* **@bautajs/core:** match operator fix ([#234](http://github.axa.com/Digital/bauta-nodejs/issues/234)) ([717414a](http://github.axa.com/Digital/bauta-nodejs/commit/717414ad494a6d1eaba8beb4b4fbb4f0c54e11ef)), closes [#233](http://github.axa.com/Digital/bauta-nodejs/issues/233)
+
+
+
+
+
 ## [4.0.2](http://github.axa.com/Digital/bauta-nodejs/compare/v4.0.1...v4.0.2) (2021-06-02)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/express",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "A bautaJS express plugin. Allows auto exposing the bautaJS operations.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "4.0.2",
+    "@bautajs/core": "4.0.3",
     "compression": "1.x",
     "cors": "2.x",
     "express": "4.x",
