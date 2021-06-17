@@ -19,6 +19,7 @@ import formatSchema from './fixtures/schema-with-format.json';
 import nullableSchema from './fixtures/nullable-schema.json';
 import customFormatSchema from './fixtures/schema-with-custom-format.json';
 import schemaTwoOperations from './fixtures/schema-two-operations.json';
+import schemaWithoutDefaultResponse from './fixtures/schema-without-default-response.json';
 
 describe('validation tests', () => {
   test('should allow the validation of circular schemas', async () => {
@@ -243,6 +244,37 @@ describe('validation tests', () => {
       await bautaJS.operations.v1.operation2.run({ req: { query: {} }, res: {} })
     ).toStrictEqual(expected);
   });
+
+  test('should validate the response schema and fail for a not found status code', async () => {
+    const config = {
+      endpoint: 'http://google.es'
+    };
+    const bautaJS = new BautaJS(schemaWithoutDefaultResponse as Document[], {
+      resolvers: [
+        resolver(operations => {
+          operations.v1.operation1.validateResponse(true).setup(p =>
+            p.pipe((_, ctx) => {
+              ctx.res.statusCode = 200;
+              return [
+                {
+                  id: 123,
+                  name: 'pet'
+                }
+              ];
+            })
+          );
+        })
+      ],
+      staticConfig: config
+    });
+    await bautaJS.bootstrap();
+
+    await expect(
+      bautaJS.operations.v1.operation1.run({ req: { query: {}, params: { id: '1' } }, res: {} })
+    ).rejects.toThrow(
+      expect.objectContaining({ message: 'Status code 200 not defined on schema' })
+    );
+  });
 });
 
 describe('custom formats', () => {
@@ -355,7 +387,8 @@ describe('custom formats', () => {
         {
           name: 'customTagFormat',
           type: 'string',
-          validate: /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?$/
+          validate:
+            /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?$/
         }
       ]
     });
