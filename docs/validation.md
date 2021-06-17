@@ -81,6 +81,8 @@ After getting the right statusCode, bauta searches in the schema definition for 
 - If not, if ```responses['200']``` is defined, we use it and we do the validation if its content is a json as well.
 - Finally, if no content response definition was defined for none of the previous cases, *no validation is done*.
 
+**Response validation is only performed for successful response.** 
+
 For example, let's assume that we have the following responses definition:
 
 ```json

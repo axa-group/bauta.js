@@ -2,7 +2,6 @@ import * as Ajv from 'ajv';
 import { Dictionary, LocationError, OperationValidators } from '../types';
 import { ValidationError } from '../core/validation-error';
 import {
-  getDefaultStatusCode,
   bodySchema,
   querystringSchema,
   paramsSchema,
@@ -87,13 +86,27 @@ export class AJVOperationValidators implements OperationValidators {
     const validate = (
       schemaValidators: Dictionary<Ajv.ValidateFunction>
     ): ValidationError | null => {
-      const status = statusCode || getDefaultStatusCode(schemaValidators);
-      const isValid =
-        schemaValidators && schemaValidators[status] ? schemaValidators[status](response) : null;
-      if (isValid === false) {
+      if (!schemaValidators) {
+        return null;
+      }
+      let validator;
+      if (statusCode && schemaValidators[statusCode]) {
+        validator = schemaValidators[statusCode];
+      } else if (schemaValidators.default) {
+        validator = schemaValidators.default;
+      } else {
+        throw new ValidationError(
+          `Status code ${statusCode || 'default'} not defined on schema`,
+          [],
+          500,
+          response
+        );
+      }
+
+      if (validator(response) === false) {
         throw new ValidationError(
           'Internal error',
-          formatLocationErrors(schemaValidators[status].errors, 'response') || [],
+          formatLocationErrors(validator.errors, 'response') || [],
           500,
           response
         );

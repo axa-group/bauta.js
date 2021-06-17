@@ -25,9 +25,9 @@ import {
   RawData
 } from '../types';
 import { buildDefaultStep } from '../utils/default-step';
-import { getDefaultStatusCode } from '../open-api/validator-utils';
 import { createContext } from '../utils/create-context';
 import { isPromise } from '../utils/is-promise';
+import { ValidationError } from './validation-error';
 
 export class OperationBuilder implements Operation {
   public static create(id: string, bautajs: BautaJSInstance): Operation {
@@ -115,30 +115,41 @@ export class OperationBuilder implements Operation {
     }
   }
 
-  private isResponseJson(statusCode?: number): boolean {
+  private isResponseJson(statusCode: number): boolean {
     const responses = this.schema?.responses;
+    const hasJSONContent = (response: any) =>
+      Object.keys(response.content).some(c => c.includes('application/json'));
 
     if (responses) {
-      // If default is not defined in the schema, we take as default response that for 200 response.
-      const defaultStatus = getDefaultStatusCode(responses);
-      const targetStatusCode = statusCode || defaultStatus;
-      const contentSchema = (responses[targetStatusCode] as OpenAPIV3.ResponseObject)?.content;
-      if (contentSchema) {
-        const content = Object.keys(contentSchema)[0];
-
-        if (content.startsWith('application/json')) {
-          return true;
-        }
+      if (responses[statusCode] && (responses[statusCode] as OpenAPIV3.ResponseObject).content) {
+        return hasJSONContent(responses[statusCode]);
       }
+      if (responses.default && (responses.default as OpenAPIV3.ResponseObject).content) {
+        return hasJSONContent(responses.default);
+      }
+
+      throw new ValidationError(
+        `Status code ${statusCode || 'default'} not defined on schema`,
+        [],
+        500
+      );
     }
 
     return false;
   }
 
+  private static getStatusCode(res: any): number | undefined {
+    return res.statusCode !== null &&
+      res.statusCode !== undefined &&
+      Number.isInteger(res.statusCode)
+      ? res.statusCode
+      : undefined;
+  }
+
   private shouldValidateResponse(
     ctx: Context,
     isResponseFinished: boolean,
-    statusCode?: number
+    statusCode: number
   ): boolean {
     // If we have a stream, the headers and finished flags are true as soon as the response
     // is piped and thus we cannot use those flags to determine if validation is required
@@ -199,13 +210,9 @@ export class OperationBuilder implements Operation {
         return result.then((finalResult: TOut) => {
           if (this.getResponse) {
             const responseStatus = this.getResponse(raw);
-
+            const statusCode = OperationBuilder.getStatusCode(responseStatus) || 200;
             if (
-              this.shouldValidateResponse(
-                context,
-                responseStatus.isResponseFinished,
-                responseStatus.statusCode
-              )
+              this.shouldValidateResponse(context, responseStatus.isResponseFinished, statusCode)
             ) {
               context.validateResponseSchema(finalResult, responseStatus.statusCode);
             }
