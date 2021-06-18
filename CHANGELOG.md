@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.3](http://github.axa.com/Digital/bauta-nodejs/compare/v3.6.2...v3.6.3) (2021-06-18)
+
+
+### Bug Fixes
+
+* **@bautajs/core:** response validation ([#235](http://github.axa.com/Digital/bauta-nodejs/issues/235)) ([93ea0a5](http://github.axa.com/Digital/bauta-nodejs/commit/93ea0a5de008c6fd482f6ad8df2950a8dc11e35f))
+* **core:** allow open api v2 res validation ([482ac69](http://github.axa.com/Digital/bauta-nodejs/commit/482ac69dc1f6afc52a09d1f1b41a95bef844f87f))
+
+
+
+
+
 ## [3.6.2](http://github.axa.com/Digital/bauta-nodejs/compare/v3.6.1...v3.6.2) (2021-05-12)
 
 
