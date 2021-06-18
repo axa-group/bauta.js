@@ -32,14 +32,9 @@ function removeCircularReferences(schema: JSONSchema) {
   );
 }
 
-function getDefaultStatusCode(responses: any = {}) {
-  return responses.default ? 'default' : 200;
-}
-
 export {
   cleanId,
   removeCircularReferences,
-  getDefaultStatusCode,
   bodySchema,
   querystringSchema,
   paramsSchema,

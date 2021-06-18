@@ -12,7 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OpenAPI, OpenAPIV3 } from 'openapi-types';
+import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+// import Ajv from 'ajv';
 import PCancelable from 'p-cancelable';
 import {
   BautaJSInstance,
@@ -121,9 +122,19 @@ export class OperationBuilder implements Operation {
       Object.keys(response.content).some(c => c.includes('application/json'));
 
     if (responses) {
-      if (responses[statusCode] && (responses[statusCode] as OpenAPIV3.ResponseObject).content) {
-        return hasJSONContent(responses[statusCode]);
+      if (this.route?.isV2) {
+        return !!(
+          (this.schema as OpenAPIV2.OperationObject).produces?.includes('application/json') &&
+          (responses[statusCode] || responses.default)
+        );
       }
+
+      if (responses[statusCode]) {
+        if ((responses[statusCode] as OpenAPIV3.ResponseObject).content) {
+          return hasJSONContent(responses[statusCode]);
+        }
+      }
+
       if (responses.default && (responses.default as OpenAPIV3.ResponseObject).content) {
         return hasJSONContent(responses.default);
       }
