@@ -173,7 +173,6 @@ describe('bautaJS fastify tests', () => {
         method: 'GET',
         url: '/api/v1/test'
       });
-
       expect(res.statusCode).toStrictEqual(200);
 
       expect(JSON.parse(res.payload)).toStrictEqual([

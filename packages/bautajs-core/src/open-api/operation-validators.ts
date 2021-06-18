@@ -2,7 +2,6 @@ import Ajv from 'ajv';
 import { Dictionary, LocationError, OperationValidators } from '../types';
 import { ValidationError } from '../core/validation-error';
 import {
-  getDefaultStatusCode,
   bodySchema,
   querystringSchema,
   paramsSchema,
