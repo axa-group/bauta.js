@@ -81,7 +81,7 @@ export class AJVOperationValidators implements OperationValidators {
     }
   }
 
-  validateResponseSchema(response: any, statusCode?: number | string): void {
+  validateResponseSchema(response: any, statusCode: number | string): void {
     const context = this.validators as Dictionary<Dictionary<Ajv.ValidateFunction>>;
     const validate = (
       schemaValidators: Dictionary<Ajv.ValidateFunction>
@@ -90,6 +90,7 @@ export class AJVOperationValidators implements OperationValidators {
         return null;
       }
       let validator;
+
       if (statusCode && schemaValidators[statusCode]) {
         validator = schemaValidators[statusCode];
       } else if (schemaValidators.default) {

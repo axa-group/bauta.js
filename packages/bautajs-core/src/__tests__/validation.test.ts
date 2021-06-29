@@ -20,6 +20,8 @@ import nullableSchema from './fixtures/nullable-schema.json';
 import customFormatSchema from './fixtures/schema-with-custom-format.json';
 import schemaTwoOperations from './fixtures/schema-two-operations.json';
 import schemaWithoutDefaultResponse from './fixtures/schema-without-default-response.json';
+import schemaWith200ResponseCode from './fixtures/schema-with-200-response-code.json';
+import schemaWith400ResponseCode from './fixtures/schema-with-400-response-code.json';
 
 describe('validation tests', () => {
   test('should allow the validation of circular schemas', async () => {
@@ -329,6 +331,103 @@ describe('validation tests', () => {
       expect.objectContaining({ message: 'Status code 200 not defined on schema' })
     );
   });
+  test('should validate a success response schema to 200 status code by default', async () => {
+    const config = {
+      endpoint: 'http://google.es'
+    };
+    const bautaJS = new BautaJS({
+      apiDefinition: schemaWith200ResponseCode as Document,
+      resolvers: [
+        resolver(operations => {
+          operations.operation1.validateResponse(true).setup(() => {
+            return [
+              {
+                name: 'pet'
+              }
+            ];
+          });
+        })
+      ],
+      getResponse(rawParam) {
+        return {
+          isResponseFinished: false,
+          statusCode: rawParam.statusCode as number
+        };
+      },
+      staticConfig: config
+    });
+    await bautaJS.bootstrap();
+
+    await expect(
+      bautaJS.operations.operation1.run({
+        req: { query: {}, params: { id: '1' } },
+        res: { statusCode: null }
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        errors: [
+          {
+            path: '/0',
+            location: 'response',
+            message: "must have required property 'id'",
+            errorCode: 'required'
+          }
+        ]
+      })
+    );
+  });
+
+  test('should validate an error response schema if the thrown error has toJSON method', async () => {
+    const config = {
+      endpoint: 'http://google.es'
+    };
+    const bautaJS = new BautaJS({
+      apiDefinition: schemaWith400ResponseCode as Document,
+      resolvers: [
+        resolver(operations => {
+          operations.operation1.validateResponse(true).setup(() => {
+            const err = new Error('some error') as Error & {
+              toJSON: () => any;
+              statusCode: number;
+            };
+            err.toJSON = () => {
+              return {
+                message: 'some error'
+              };
+            };
+            err.statusCode = 400;
+            throw err;
+          });
+        })
+      ],
+      getResponse(rawParam) {
+        return {
+          isResponseFinished: false,
+          statusCode: rawParam.statusCode as number
+        };
+      },
+      staticConfig: config
+    });
+    await bautaJS.bootstrap();
+
+    await expect(
+      bautaJS.operations.operation1.run({
+        req: { query: {}, params: { id: '1' } },
+        res: { statusCode: null }
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        errors: [
+          {
+            path: '',
+            location: 'response',
+            message: "must have required property 'code'",
+            errorCode: 'required'
+          }
+        ]
+      })
+    );
+  });
 });
 
 describe('custom formats', () => {
@@ -455,7 +554,10 @@ describe('custom formats', () => {
         tag: 'fistro'
       }
     ];
-
+    const regex = new RegExp(
+      '^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?$',
+      'g'
+    );
     const bautaJS = new BautaJS({
       apiDefinition: customFormatSchema as Document,
       resolvers: [
@@ -470,8 +572,7 @@ describe('custom formats', () => {
         {
           name: 'customTagFormat',
           type: 'string',
-          validate:
-            /^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?$/
+          validate: regex
         }
       ],
       getRequest(raw: any): any {

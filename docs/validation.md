@@ -70,10 +70,12 @@ Alternative you can also set what is the valid response status that you want to 
 ## Response validation is dependant on the schema response definition and the statusCode
 Knowledge of node's behavior around http status codes is required for understanding this section. Check [this](https://nodejs.org/es/docs/guides/anatomy-of-an-http-transaction/#http-status-code) in order to get a better understanding.
 
+## Success response validation
+
 At the moment of validation, the statusCode is checked that is:
 - set specifically by you using ```res.writeHead(statusCode, ...)``` or similar
 - set by default as 200 if calling ```res.end()```
-- special case: in special situations when bauta is used alone without a server library, statusCode could be undefined, and in this case bauta will use 200 anyways as default
+- special case: in special situations when bauta is used alone without a framework (express, fastify...) library, statusCode could be undefined, and in this case bauta will use 200 anyways as default
 
 After getting the right statusCode, bauta searches in the schema definition for the response content defined for that statusCode to decide if a validation must be used applying always the same logic: bauta only validates response content if it is json. It's done in the following order:
 - If ```responses[statusCode]``` is defined, it is used and validation is done if the defined content is a json.
@@ -81,7 +83,12 @@ After getting the right statusCode, bauta searches in the schema definition for 
 - If not, if ```responses['200']``` is defined, we use it and we do the validation if its content is a json as well.
 - Finally, if no content response definition was defined for none of the previous cases, *no validation is done*.
 
-**Response validation is only performed for successful response.** 
+## Error response validation
+
+Error response validation follow the same rules as success response validation except for two different rules.
+
+- Instead of fallback to 200 statusCode, errors will fallback to error.statusCode if res.statusCode is not set. In case that both are undefined no response validation will be done.
+- Also to be a validated, an error has to have the method toJSON which will return the error as a plain javascript object.
 
 For example, let's assume that we have the following responses definition:
 

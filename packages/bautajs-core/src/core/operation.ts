@@ -120,7 +120,6 @@ export class OperationBuilder implements Operation {
     const responses = this.schema?.responses;
     const hasJSONContent = (response: any) =>
       Object.keys(response.content).some(c => c.includes('application/json'));
-
     if (responses) {
       if (this.route?.isV2) {
         return !!(
@@ -210,6 +209,20 @@ export class OperationBuilder implements Operation {
         context.token.isCanceled = true;
         context.token.cancel();
       });
+      const onError = (e: Error & { toJSON: () => any; statusCode: number }) => {
+        // Only validate errors against the swagger if has toJSON function
+        if (!(e instanceof ValidationError) && this.getResponse && typeof e.toJSON === 'function') {
+          const responseStatus = this.getResponse(raw);
+          const statusCode = OperationBuilder.getStatusCode(responseStatus) || e.statusCode;
+          if (
+            statusCode &&
+            this.shouldValidateResponse(context, responseStatus.isResponseFinished, statusCode)
+          ) {
+            context.validateResponseSchema(e.toJSON(), statusCode);
+          }
+        }
+        throw e;
+      };
 
       try {
         let result = this.handler(undefined, context, this.bautajs);
@@ -218,21 +231,23 @@ export class OperationBuilder implements Operation {
           result = Promise.resolve(result);
         }
 
-        return result.then((finalResult: TOut) => {
-          if (this.getResponse) {
-            const responseStatus = this.getResponse(raw);
-            const statusCode = OperationBuilder.getStatusCode(responseStatus) || 200;
-            if (
-              this.shouldValidateResponse(context, responseStatus.isResponseFinished, statusCode)
-            ) {
-              context.validateResponseSchema(finalResult, responseStatus.statusCode);
+        return result
+          .then((finalResult: TOut) => {
+            if (this.getResponse) {
+              const responseStatus = this.getResponse(raw);
+              const statusCode = OperationBuilder.getStatusCode(responseStatus) || 200;
+              if (
+                this.shouldValidateResponse(context, responseStatus.isResponseFinished, statusCode)
+              ) {
+                context.validateResponseSchema(finalResult, statusCode);
+              }
             }
-          }
 
-          return finalResult;
-        });
+            return finalResult;
+          })
+          .catch(onError);
       } catch (e) {
-        return Promise.reject(e);
+        return Promise.reject(onError(e));
       }
     })(null);
   }
