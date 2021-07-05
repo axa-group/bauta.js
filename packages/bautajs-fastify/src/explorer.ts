@@ -50,4 +50,4 @@ async function explorerPlugin(
   });
 }
 
-export default fp(explorerPlugin);
+export default fp(explorerPlugin, { name: 'explorer' });
