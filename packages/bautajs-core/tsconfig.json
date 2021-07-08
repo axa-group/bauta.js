@@ -2,8 +2,12 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "lib": [
+      "es2020",
+    ],
   },
+
   "include": ["src/**/*", "src/**/*.json"],
   "exclude": ["**/__tests__", "**/__mocks__"]
 }
