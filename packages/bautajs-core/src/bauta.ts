@@ -166,7 +166,7 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
         if (Object.prototype.hasOwnProperty.call(this.operations, route.operationId)) {
           this.operations[route.operationId].addRoute(route);
         } else {
-          this.logger.warn(
+          this.logger.debug(
             `OpenAPI specification operation ID ${route.operationId} don't have a resolver.`
           );
         }

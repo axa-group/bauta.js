@@ -23,6 +23,7 @@ export * from './operators/as-promise';
 export * from './operators/as-value';
 export * from './operators/parallel';
 export * from './operators/parallel-all-settled';
+export * from './operators/iff';
 export * from './utils/create-context';
 export * from './default-logger';
 export * from './utils/request-id-generator';
