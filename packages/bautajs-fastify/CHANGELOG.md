@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.0.3...v4.1.0) (2021-07-09)
+
+
+### Bug Fixes
+
+* **core:** allow open api v2 res validation ([8e152b0](https://github.axa.com/Digital/bauta-nodejs/commit/8e152b067fab041aeb37b40d52fb3ec51c2e6ad7))
+
+
+### Features
+
+* **fastify:** hooks on api endpoints ([#245](https://github.axa.com/Digital/bauta-nodejs/issues/245)) ([b8084ab](https://github.axa.com/Digital/bauta-nodejs/commit/b8084abc97faf528263a1cc5f9bd2ffeccfff8a2))
+
+
+
+
+
 ## [4.0.3](https://github.axa.com/Digital/bauta-nodejs/compare/v4.0.2...v4.0.3) (2021-06-11)
 
 **Note:** Version bump only for package @bautajs/fastify

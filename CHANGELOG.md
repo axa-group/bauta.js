@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.0.3...v4.1.0) (2021-07-09)
+
+
+### Bug Fixes
+
+* **@bautajs/core:** response validation ([#235](https://github.axa.com/Digital/bauta-nodejs/issues/235)) ([b900c55](https://github.axa.com/Digital/bauta-nodejs/commit/b900c55911e89de81b4fc57e914c15df7d1061fd))
+* **core:** allow open api v2 res validation ([8e152b0](https://github.axa.com/Digital/bauta-nodejs/commit/8e152b067fab041aeb37b40d52fb3ec51c2e6ad7))
+* **core:** lint issue ([af32e08](https://github.axa.com/Digital/bauta-nodejs/commit/af32e08e49a13b85bbb5556206f3a32fe106d563))
+
+
+### Features
+
+* **core:** add response err validation ([#237](https://github.axa.com/Digital/bauta-nodejs/issues/237)) ([4953752](https://github.axa.com/Digital/bauta-nodejs/commit/4953752bced924eabfca10e0bc6ce9da077281cc))
+* **decorators:** add parallelAllSettled that uses Promise.allSettled ([#246](https://github.axa.com/Digital/bauta-nodejs/issues/246)) ([8004bc6](https://github.axa.com/Digital/bauta-nodejs/commit/8004bc65690688bdea558e3179cdbe249db3dbe0))
+* **fastify:** hooks on api endpoints ([#245](https://github.axa.com/Digital/bauta-nodejs/issues/245)) ([b8084ab](https://github.axa.com/Digital/bauta-nodejs/commit/b8084abc97faf528263a1cc5f9bd2ffeccfff8a2))
+* **operators:** add iff operator ([#247](https://github.axa.com/Digital/bauta-nodejs/issues/247)) ([f6e6a82](https://github.axa.com/Digital/bauta-nodejs/commit/f6e6a8226e2f0b2f461b07065ae5be1e1b5adb9b))
+
+
+
+
+
 ## [4.0.3](http://github.axa.com/Digital/bauta-nodejs/compare/v4.0.2...v4.0.3) (2021-06-11)
 
 
