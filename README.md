@@ -26,8 +26,8 @@ Install with npm install `@bautajs/<integration>` or `@bautajs/core`
 
 There are two ways to install @bautajs:
 
-  - Standalone: For applications that do not require an existing web framework, use the @bautajs/core package.
-  - Integrations: For applications with a web framework (e.g. express, koa, hapi, etc.), use the appropriate BautaJS integration package.
+- Standalone: For applications that do not require an existing web framework, use the @bautajs/core package.
+- Integrations: For applications with a web framework (e.g. express, koa, hapi, etc.), use the appropriate BautaJS integration package.
 
 ## Usage
 
@@ -52,6 +52,10 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [Debug](./docs/debug.md)
 - [Request cancelation](./docs/request-cancelation.md)
 - [Pipeline.StepFunction and Resolvers](./docs/operator-and-resolver.md)
+  - Some of the available operators
+    - [parallel](./docs/decorators/parallel.md)
+    - [parallelSettled](./docs/decorators/parallelSettled.md)
+    - [iff](./docs/decorators/iff.md)
 - [Validation](./docs/validation.md)
 - [Configuration Options](./docs/configuration-options.md)
 

@@ -214,8 +214,8 @@ export function parallelAllSettled<TIn>(
  * operations.v1.op1.setup(pipelineBuilder(p =>
     p.pipe(
       parallelAllSettled(
-        getCats()
-        getCats()
+        getCats(),
+        getCats(),
         getDogs()
       ),
       ([getCatsResultOne, getCatsResultTwo, getDogsResult]) => {
