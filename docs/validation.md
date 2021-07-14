@@ -28,7 +28,6 @@ Alternative you can also validate inside every resolver by accessing to the cont
   );
 ```
 
-
 # Response Validation
 
 `bautajs` comes with a default response validation using the [openAPI schema v2 or v3][15]. **_BY DEFAULT IT'S SET TO FALSE_**.
@@ -161,3 +160,32 @@ If an user try to call manually the validation for instance `ctx.validateRespons
     })
   );
 ```
+
+## Validation limitations
+
+Validation for request and response body for OPENAPI V3 are done always to the last content type defined on the openapi schema.
+Ex: 
+
+```json
+{
+  "requestBody": {
+    "content":{
+      "text/plain":{
+        "schema": {
+          "type":"string"
+        }
+      },
+      "application/json":{
+        "schema": {
+          "type":"object"
+        }
+      }
+    }
+  }
+}
+```
+
+In the previous example only the "application/json" schema will be pick for validation.
+In case that no content type is defined there won't be any validation over that object.
+
+This behaviour is done like that to align the validation across frameworks, for instance fastify, only allows one schema for the request and the response.

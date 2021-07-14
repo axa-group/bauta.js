@@ -1,4 +1,5 @@
 {
+  "name": "bautajs",
   "repository": {
     "type": "git",
     "url": "git+https://github.axa.com/Digital/bauta-nodejs.git"
@@ -84,22 +85,23 @@
     "typescript": "4.2.4"
   },
   "scripts": {
+    "lerna": "lerna",
     "cm": "git-cz",
     "benchmark-pipeline": "node ./packages/bautajs-core/benchmark/pipeline-builder.js",
     "benchmark-core": "npx concurrently -k -s first \"node ./packages/bautajs-core/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080/v1/api/\"",
     "benchmark-express": "npx concurrently -k -s first \"node ./packages/bautajs-express/benchmark/simple.js\" \"npx autocannon -c 20 -d 5 -p 10 localhost:8080/v1/api/\"",
     "benchmark-fastify": "npx concurrently -k -s first \"node ./packages/bautajs-fastify/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:8080/v1/api/\"",
     "lint": "eslint '*/**/*.{ts,tsx}' ",
-    "bootstrap": "npx lerna bootstrap --no-ci",
-    "postinstall": "husky install && npx lerna bootstrap --no-ci && npm run compile",
-    "clean": "npx lerna clean --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
+    "bootstrap": "npm run lerna bootstrap -- --no-ci",
+    "postinstall": "husky install && npm run lerna bootstrap -- --no-ci && npm run compile",
+    "clean": "npm run lerna clean -- --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
     "release": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "test": "jest --verbose --detectOpenHandles --testTimeout=30000",
     "coverage": "npm test -- --coverage",
     "test:clean": "jest --clearCache --testTimeout=30000",
     "test:watch": "jest --verbose --watchAll --testTimeout=30000",
     "test:ci": "npm run coverage -- --ci --maxWorkers=2  --reporters=default --reporters=jest-junit --testTimeout=30000",
-    "checkDeps": "lerna exec --concurrency 14 -- npm outdated",
+    "checkDeps": "npm run lerna exec -- --concurrency 14 -- npm outdated",
     "compile": "tsc --build tsconfig.build.json",
     "compile:clean": "tsc --build tsconfig.build.json --clean",
     "watch": "tsc --build tsconfig.build.json --watch"
@@ -116,6 +118,5 @@
     "projects": [
       "<rootDir>/packages/*"
     ]
-  },
-  "dependencies": {}
+  }
 }
