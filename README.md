@@ -56,6 +56,7 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
     - [parallel](./docs/decorators/parallel.md)
     - [parallelSettled](./docs/decorators/parallelSettled.md)
     - [iff](./docs/decorators/iff.md)
+    - [match](./docs/operators/match.md)
 - [Validation](./docs/validation.md)
 - [Configuration Options](./docs/configuration-options.md)
 
