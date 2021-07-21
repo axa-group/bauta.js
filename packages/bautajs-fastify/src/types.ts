@@ -1,4 +1,5 @@
 import * as bautaJS from '@bautajs/core';
+import { ValidationError } from '@bautajs/core';
 import {
   onRequestHookHandler,
   preParsingHookHandler,
@@ -9,7 +10,9 @@ import {
   onResponseHookHandler,
   onTimeoutHookHandler,
   onErrorHookHandler,
-  preValidationHookHandler
+  preValidationHookHandler,
+  FastifyRequest,
+  FastifyReply
 } from 'fastify';
 
 export interface ApiHooks {
@@ -24,8 +27,13 @@ export interface ApiHooks {
   onError?: onErrorHookHandler | onErrorHookHandler[];
 }
 
-export interface BautaJSFastifyPluginOptions
-  extends Omit<bautaJS.BautaJSOptions, 'getRequest' | 'getResponse'> {
+export type OnResponseValidationError = (
+  error: ValidationError,
+  req: FastifyRequest,
+  res: FastifyReply
+) => any;
+
+export interface BautaJSFastifyPluginOptions extends bautaJS.BautaJSOptions {
   /**
    * In case an openAPI schema or an schema is provided to the routes, enable this flag will use it to serialize and validate the response.
    * - If this is enabled and response is not complaint with the schema, an error will be returned. Enable it will "IMPROVE THE PERFORMANCE".
@@ -74,4 +82,17 @@ export interface BautaJSFastifyPluginOptions
    * @memberof BautaJSFastifyPluginOptions
    */
   apiHooks?: ApiHooks;
+  /**
+   * Method executed after a response validation throws an error.
+   * Since this happens after the error handler is executed you might need to reformat the validation errors.
+   * Useful to format the errors to the desired error response format.
+   *
+   * @template ErrorFormat
+   * @param {ValidationError} error
+   * @param {ExpressRequest} req
+   * @param {Response} res
+   * @returns {ErrorFormat}
+   * @memberof BautaJSExpressOptions
+   */
+  onResponseValidationError?: OnResponseValidationError;
 }

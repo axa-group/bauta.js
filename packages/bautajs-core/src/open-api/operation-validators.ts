@@ -82,6 +82,12 @@ export class AJVOperationValidators implements OperationValidators {
   }
 
   validateResponseSchema(response: any, statusCode: number | string): void {
+    // Allow to convert the error into a JSON in order to be correctly validated
+    if (response instanceof Error && typeof (response as any).toJSON === 'function') {
+      // eslint-disable-next-line no-param-reassign
+      response = (response as any).toJSON();
+    }
+
     const context = this.validators as Dictionary<Dictionary<Ajv.ValidateFunction>>;
     const validate = (
       schemaValidators: Dictionary<Ajv.ValidateFunction>
@@ -115,6 +121,7 @@ export class AJVOperationValidators implements OperationValidators {
 
       return null;
     };
+
     const error = validate(context[responseSchema.toString()]);
 
     if (error) {

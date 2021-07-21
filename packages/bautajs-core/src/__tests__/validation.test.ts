@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import { BautaJS, resolver } from '../index';
-import { Document } from '../types';
+import { Document, RawContext } from '../types';
 import circularSchema from './fixtures/circular-schema.json';
 import formatSchema from './fixtures/schema-with-format.json';
 import nullableSchema from './fixtures/nullable-schema.json';
@@ -44,21 +44,13 @@ describe('validation tests', () => {
       apiDefinition: circularSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
             return expected;
           });
         })
       ],
-      staticConfig: config,
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      staticConfig: config
     });
     await bautaJS.bootstrap();
     await expect(
@@ -86,21 +78,13 @@ describe('validation tests', () => {
       apiDefinition: circularSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
             return expected;
           });
         })
       ],
-      staticConfig: config,
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      staticConfig: config
     });
     await bautaJS.bootstrap();
     await expect(
@@ -133,21 +117,13 @@ describe('validation tests', () => {
       apiDefinition: formatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
             return expected;
           });
         })
       ],
-      staticConfig: config,
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      staticConfig: config
     });
     await bautaJS.bootstrap();
     await expect(
@@ -169,21 +145,13 @@ describe('validation tests', () => {
       apiDefinition: formatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
             return expected;
           });
         })
       ],
-      staticConfig: config,
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      staticConfig: config
     });
     await bautaJS.bootstrap();
     await expect(
@@ -216,21 +184,13 @@ describe('validation tests', () => {
       apiDefinition: nullableSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.setup(() => {
+          operations.operation1.setup((_, ctx) => {
+            ctx.validateRequestSchema((ctx as RawContext<{ req: any; res: any }>).raw.req);
             return anyResponse;
           });
         })
       ],
-      staticConfig: config,
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      staticConfig: config
     });
     await bautaJS.bootstrap();
     await expect(
@@ -266,24 +226,17 @@ describe('validation tests', () => {
       apiDefinition: schemaTwoOperations as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
             return expected;
           });
-          operations.operation2.validateResponse(true).setup(() => {
+          operations.operation2.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
             return expected;
           });
         })
       ],
-      staticConfig: config,
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      staticConfig: config
     });
     await bautaJS.bootstrap();
 
@@ -302,22 +255,18 @@ describe('validation tests', () => {
       resolvers: [
         resolver(operations => {
           operations.operation1.validateResponse(true).setup((_, ctx) => {
-            (ctx as any).raw.res.statusCode = 200;
-            return [
+            const response = [
               {
                 id: 123,
                 name: 'pet'
               }
             ];
+            ctx.validateResponseSchema(response, 200);
+            return response;
           });
         })
       ],
-      getResponse(rawParam) {
-        return {
-          isResponseFinished: false,
-          statusCode: rawParam.statusCode as number
-        };
-      },
+
       staticConfig: config
     });
     await bautaJS.bootstrap();
@@ -339,21 +288,18 @@ describe('validation tests', () => {
       apiDefinition: schemaWith200ResponseCode as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
-            return [
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            const response = [
               {
                 name: 'pet'
               }
             ];
+            ctx.validateResponseSchema(response);
+            return response;
           });
         })
       ],
-      getResponse(rawParam) {
-        return {
-          isResponseFinished: false,
-          statusCode: rawParam.statusCode as number
-        };
-      },
+
       staticConfig: config
     });
     await bautaJS.bootstrap();
@@ -377,7 +323,7 @@ describe('validation tests', () => {
     );
   });
 
-  test('should validate an error response schema if the thrown error has toJSON method', async () => {
+  test('should validate all custom error response schema if the thrown error has toJSON method', async () => {
     const config = {
       endpoint: 'http://google.es'
     };
@@ -385,27 +331,59 @@ describe('validation tests', () => {
       apiDefinition: schemaWith400ResponseCode as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
             const err = new Error('some error') as Error & {
               toJSON: () => any;
               statusCode: number;
             };
             err.toJSON = () => {
               return {
-                message: 'some error'
+                message: 'some error',
+                code: 3
               };
             };
             err.statusCode = 400;
+            ctx.validateResponseSchema(err, err.statusCode);
             throw err;
           });
         })
       ],
-      getResponse(rawParam) {
-        return {
-          isResponseFinished: false,
-          statusCode: rawParam.statusCode as number
-        };
-      },
+
+      staticConfig: config
+    });
+    await bautaJS.bootstrap();
+
+    await expect(
+      bautaJS.operations.operation1.run({
+        req: { query: {}, params: { id: '1' } },
+        res: { statusCode: null }
+      })
+    ).rejects.toThrow(
+      expect.objectContaining({
+        message: 'some error'
+      })
+    );
+  });
+
+  test('should fail on error validation for custom fields if toJSON is not specified', async () => {
+    const config = {
+      endpoint: 'http://google.es'
+    };
+    const bautaJS = new BautaJS({
+      apiDefinition: schemaWith400ResponseCode as Document,
+      resolvers: [
+        resolver(operations => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            const err = new Error('some error') as Error & {
+              statusCode: number;
+            };
+            err.statusCode = 400;
+            ctx.validateResponseSchema(err, err.statusCode);
+            throw err;
+          });
+        })
+      ],
+
       staticConfig: config
     });
     await bautaJS.bootstrap();
@@ -451,21 +429,14 @@ describe('custom formats', () => {
       apiDefinition: customFormatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
+
             return expected;
           });
         })
       ],
       staticConfig: config,
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      },
       validatorOptions: {
         logger
       }
@@ -498,7 +469,9 @@ describe('custom formats', () => {
       apiDefinition: customFormatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
+
             return expected;
           });
         })
@@ -508,18 +481,9 @@ describe('custom formats', () => {
         {
           name: 'customIdFormat',
           type: 'number',
-          validate: n => Number.isInteger(0) && n > 0
+          validate: (n: any) => Number.isInteger(n) && n > 0
         }
-      ],
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      ]
     });
 
     await bautaJS.bootstrap();
@@ -562,7 +526,9 @@ describe('custom formats', () => {
       apiDefinition: customFormatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
+
             return expected;
           });
         })
@@ -574,16 +540,7 @@ describe('custom formats', () => {
           type: 'string',
           validate: regex
         }
-      ],
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      ]
     });
 
     await bautaJS.bootstrap();
@@ -623,7 +580,9 @@ describe('custom formats', () => {
       apiDefinition: customFormatSchema as Document,
       resolvers: [
         resolver(operations => {
-          operations.operation1.validateResponse(true).setup(() => {
+          operations.operation1.validateResponse(true).setup((_, ctx) => {
+            ctx.validateResponseSchema(expected);
+
             return expected;
           });
         })
@@ -637,16 +596,7 @@ describe('custom formats', () => {
             '^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9]) (2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?$'
           )
         }
-      ],
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
+      ]
     });
 
     await bautaJS.bootstrap();

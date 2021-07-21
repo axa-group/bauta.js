@@ -17,7 +17,7 @@ import * as express from 'express';
 import bodyParser from 'body-parser';
 import { CorsOptions } from 'cors';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-import { Operation, GenericError, Logger, BautaJSOptions } from '@bautajs/core';
+import { Operation, GenericError, Logger, BautaJSOptions, ValidationError } from '@bautajs/core';
 import P from 'pino';
 
 export interface ICallback {
@@ -80,7 +80,26 @@ export interface RouterOptions {
 
 export type ExpressRequest = express.Request & { id: string; log: Logger };
 
+export type OnResponseValidationError = (
+  error: ValidationError,
+  req: ExpressRequest,
+  res: express.Response
+) => any;
+
 // Since the request logger is express-pino, force the logger on options to be Pino
-export interface BautaJSExpressOptions extends Omit<BautaJSOptions, 'getRequest' | 'getResponse'> {
+export interface BautaJSExpressOptions extends BautaJSOptions {
   logger?: P.Logger;
+  /**
+   * Method executed after a response validation throws an error.
+   * Since this happens after the error handler is executed you might need to reformat the validation errors.
+   * Useful to format the errors to the desired error response format.
+   *
+   * @template ErrorFormat
+   * @param {ValidationError} error
+   * @param {ExpressRequest} req
+   * @param {Response} res
+   * @returns {ErrorFormat}
+   * @memberof BautaJSExpressOptions
+   */
+  onResponseValidationError?: OnResponseValidationError;
 }

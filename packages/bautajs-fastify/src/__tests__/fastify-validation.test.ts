@@ -75,15 +75,7 @@ describe('bautaJS fastify tests', () => {
     });
     const body = JSON.parse(res.body);
     expect(res.statusCode).toStrictEqual(500);
-    expect(body.message).toStrictEqual('Internal error');
-    expect(body.errors).toStrictEqual([
-      {
-        path: '/0/id',
-        location: 'response',
-        message: 'must be integer',
-        errorCode: 'type'
-      }
-    ]);
+    expect(body.message).toStrictEqual('"code" is required!');
   });
   test('response validation should be disabled by default', async () => {
     fastifyInstance.register(bautajsFastify, {
@@ -104,5 +96,83 @@ describe('bautaJS fastify tests', () => {
     });
 
     expect(res.statusCode).toStrictEqual(200);
+  });
+
+  test('should allow modify the response validation error format', async () => {
+    fastifyInstance.register(bautajsFastify, {
+      apiBasePath: '/api/',
+      prefix: '/v1/',
+      customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
+      apiDefinition: apiDefinitionCustomValidation,
+      resolversPath: path.resolve(
+        __dirname,
+        './fixtures/test-resolvers/operation-resolver-invalid.js'
+      ),
+      enableResponseValidation: true,
+      strictResponseSerialization: false,
+      onResponseValidationError: err => ({
+        message: err.message,
+        code: 'Error code',
+        customField: true
+      })
+    });
+
+    const res = await fastifyInstance.inject({
+      method: 'GET',
+      url: '/v1/api/test'
+    });
+
+    expect(res.statusCode).toStrictEqual(500);
+    expect(JSON.parse(res.body)).toStrictEqual({
+      message: `Internal error`,
+      code: 'Error code',
+      customField: true
+    });
+  });
+  test('response validation should be performed after the error handler', async () => {
+    fastifyInstance.register(bautajsFastify, {
+      apiBasePath: '/api/',
+      prefix: '/v1/',
+      apiDefinition: apiDefinitionCustomValidation,
+      resolvers: [
+        operations => {
+          operations.operation1.setup(() => {
+            const error = new Error('test') as any;
+            error.statusCode = 400;
+
+            throw error;
+          });
+        }
+      ],
+      enableResponseValidation: true,
+      strictResponseSerialization: false,
+      onResponseValidationError: err => ({
+        message: err.message,
+        code: err.name,
+        customField: true
+      })
+    });
+
+    fastifyInstance.setErrorHandler((err: any, _request, reply) => {
+      reply.status(err.statusCode).send({
+        // "code" is missing on the final error. A validation error will be thrown because of that.
+        message: err.message,
+        status: reply.statusCode,
+        errors: err.errors,
+        fromErrorHandler: true
+      });
+    });
+
+    const res = await fastifyInstance.inject({
+      method: 'GET',
+      url: '/v1/api/test'
+    });
+
+    expect(res.statusCode).toStrictEqual(500);
+    expect(JSON.parse(res.body)).toStrictEqual({
+      message: `Internal error`,
+      code: 'Validation Error',
+      customField: true
+    });
   });
 });

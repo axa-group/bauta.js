@@ -155,31 +155,8 @@ export interface Logger {
   child: (bindings: Bindings) => Logger;
 }
 
-export interface Options<TRaw = any> {
-  /**
-   * Get the request object from the passed data on the Operation.run method.
-   * It's used to get the data for the request validation.
-   *
-   * @template TRaw object send on operation.run method
-   * @param {RawData<TRaw>} data
-   * @return {Request}
-   * @memberof Options
-   */
-  getRequest?(raw: RawData<TRaw>): Request;
-  /**
-   * Get the response object from the passed data on the Operation.run method.
-   * It's used to get the request status and statusCode to determine the response validation.
-   *
-   * @template TRaw object send on operation.run method
-   * @param {RawData<TRaw>} data
-   * @return { isResponseFinished: boolean; statusCode: number }
-   * @memberof Options
-   */
-  getResponse?(raw: RawData<TRaw>): { isResponseFinished: boolean; statusCode: number };
-}
-
 // BautaJS
-export interface BautaJSOptions<TRaw = any> {
+export interface BautaJSOptions {
   /**
    * An API OpenAPI 2.x or 3.x specification
    *
@@ -187,26 +164,6 @@ export interface BautaJSOptions<TRaw = any> {
    * @memberof BautaJSOptions
    */
   apiDefinition?: Document;
-  /**
-   * Get the request object from the passed data on the Operation.run method.
-   * It's used to get the data for the request validation.
-   *
-   * @template TRaw object send on operation.run method
-   * @param {RawData<TRaw>} data
-   * @return {Request}
-   * @memberof BautaJSOptions
-   */
-  getRequest?(raw: RawData<TRaw>): Request;
-  /**
-   * Get the response object from the passed data on the Operation.run method.
-   * It's used to get the request status and statusCode to determine the response validation.
-   *
-   * @template TRaw object send on operation.run method
-   * @param {RawData<TRaw>} data
-   * @return { isResponseFinished: boolean; statusCode: number }
-   * @memberof BautaJSOptions
-   */
-  getResponse?(raw: RawData<TRaw>): { isResponseFinished: boolean; statusCode: number };
   /**
    *
    * An array of resolvers to include into the bautajs core.
@@ -298,15 +255,6 @@ export interface BautaJSInstance {
    * @memberof BautaJSInstance
    */
   readonly staticConfig: any;
-
-  /**
-   * Test
-   *
-   * @type {BautaJSOptions}
-   * @memberof BautaJSInstance
-   */
-  readonly options: BautaJSOptions;
-
   /**
    * Run all async process such dereference the api definitions and build the operation validators. You can still use the bautaJS instance
    * without execute this method, but take in account that OpenAPI features such request or response validation won't be available.
@@ -345,7 +293,46 @@ export interface Operation extends BasicOperation {
   schema?: OpenAPI.Operation;
   requestValidationEnabled: Boolean;
   responseValidationEnabled: Boolean;
+
+  /**
+   * Validate the given request object with the operation schema.
+   *
+   * @param {Request} request
+   * @memberof Operation
+   */
+  validateRequestSchema(request: Request): void;
+
+  /**
+   * Validate the response object with the given operation response schema for that status code
+   *
+   * @param {*} response
+   * @param {(string | number)} statusCode
+   * @memberof Operation
+   */
+  validateResponseSchema(response: any, statusCode: string | number): void;
+  /**
+   * Adds a operation route definition for this operation.
+   *
+   * @param {Route} route
+   * @memberof Operation
+   */
   addRoute(route: Route): void;
+
+  /**
+   *
+   *
+   * @returns {boolean}
+   * @memberof Operation
+   */
+  shouldValidateRequest(): boolean;
+  /**
+   * Checks wherever of not the response should be validated in this operation
+   *
+   * @param {number} statusCode
+   * @returns {boolean}
+   * @memberof Operation
+   */
+  shouldValidateResponse(statusCode: number): boolean;
   /**
    * Set the operation as deprecated. If the operation is deprecated the link between
    * the operations version will be broken, meaning that operations from new version won't
@@ -365,7 +352,7 @@ export interface Operation extends BasicOperation {
    */
   validateRequest(toggle: boolean): Operation;
   /**
-   * Set the response validation to true. This will validate the operation result againts the operation responses schemas.
+   * Set the response validation to true. This will validate the operation result against the operation responses schemas.
    * @memberof Operation
    */
   validateResponse(toggle: boolean): Operation;

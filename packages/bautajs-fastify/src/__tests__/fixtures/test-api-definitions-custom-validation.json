@@ -208,7 +208,8 @@
         },
         "Error": {
           "required": [
-            "message"
+            "message",
+            "code"
           ],
           "properties": {
             "code": {

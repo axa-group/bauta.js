@@ -53,20 +53,8 @@ export class OperationBuilder implements Operation {
 
   private validator?: OperationValidators;
 
-  private getRequest?: Function;
-
-  private getResponse?: Function;
-
   constructor(public readonly id: string, private readonly bautajs: BautaJSInstance) {
     this.handler = buildDefaultStep();
-    this.getRequest =
-      typeof this.bautajs.options.getRequest === 'function'
-        ? this.bautajs.options.getRequest.bind(this)
-        : undefined;
-    this.getResponse =
-      typeof this.bautajs.options.getResponse === 'function'
-        ? this.bautajs.options.getResponse.bind(this)
-        : undefined;
   }
 
   public isSetup() {
@@ -89,12 +77,6 @@ export class OperationBuilder implements Operation {
     return this;
   }
 
-  public validateRequests(toggle: boolean): Operation {
-    this.requestValidationEnabled = toggle;
-
-    return this;
-  }
-
   public validateRequest(toggle: boolean): Operation {
     this.requestValidationEnabled = toggle;
 
@@ -105,6 +87,14 @@ export class OperationBuilder implements Operation {
     this.responseValidationEnabled = toggle;
 
     return this;
+  }
+
+  public validateRequestSchema(request: Request): void {
+    this.validator?.validateRequest(request);
+  }
+
+  public validateResponseSchema(response: any, statusCode: number | string = 200): void {
+    this.validator?.validateResponseSchema(response, statusCode);
   }
 
   public addRoute(route: Route) {
@@ -148,27 +138,18 @@ export class OperationBuilder implements Operation {
     return false;
   }
 
-  private static getStatusCode(res: any): number | undefined {
-    return res.statusCode !== null &&
-      res.statusCode !== undefined &&
-      Number.isInteger(res.statusCode)
-      ? res.statusCode
-      : undefined;
+  public shouldValidateRequest(): boolean {
+    return this.requestValidationEnabled === true && !!this.validator?.validateRequest;
   }
 
-  private shouldValidateResponse(
-    ctx: Context,
-    isResponseFinished: boolean,
-    statusCode: number
-  ): boolean {
+  public shouldValidateResponse(statusCode: string | number = 200): boolean {
     // If we have a stream, the headers and finished flags are true as soon as the response
     // is piped and thus we cannot use those flags to determine if validation is required
-    if (!this.isResponseJson(statusCode)) {
-      return false; // No validation for streams
-    }
-    const isValidationFunctionSet =
-      this.responseValidationEnabled === true && !!ctx.validateResponseSchema;
-    return isValidationFunctionSet && !isResponseFinished;
+    return (
+      this.responseValidationEnabled === true &&
+      !!this.validator?.validateResponseSchema &&
+      this.isResponseJson(Number(statusCode))
+    );
   }
 
   public run<TRaw, TOut>(raw: RawData<TRaw>): PCancelable<TOut> {
@@ -177,52 +158,18 @@ export class OperationBuilder implements Operation {
       log: raw.log || this.bautajs.logger
     });
 
-    if (this.requestValidationEnabled) {
-      Object.assign(context, {
-        validateRequestSchema: (request: Request) =>
-          this.validator && this.validator.validateRequest(request)
-      });
-    }
-
-    if (this.responseValidationEnabled) {
-      Object.assign(context, {
-        validateResponseSchema: (response: any, statusCode?: number | string) =>
-          this.validator && this.validator.validateResponseSchema(response, statusCode)
-      });
-    }
-    if (
-      this.getRequest &&
-      context.validateRequestSchema &&
-      this.requestValidationEnabled === true
-    ) {
-      try {
-        context.validateRequestSchema(this.getRequest(raw));
-      } catch (e) {
-        return new PCancelable((_, reject) => {
-          reject(e);
-        });
-      }
-    }
-
+    Object.assign(context, {
+      validateResponseSchema: (response: any, statusCode?: string | number) =>
+        this.shouldValidateResponse(statusCode) &&
+        this.validateResponseSchema(response, statusCode),
+      validateRequestSchema: (request: Request) =>
+        this.shouldValidateRequest() && this.validateRequestSchema(request)
+    });
     return PCancelable.fn<any, TOut>((_: any, onCancel: PCancelable.OnCancelFunction) => {
       onCancel(() => {
         context.token.isCanceled = true;
         context.token.cancel();
       });
-      const onError = (e: Error & { toJSON: () => any; statusCode: number }) => {
-        // Only validate errors against the swagger if has toJSON function
-        if (!(e instanceof ValidationError) && this.getResponse && typeof e.toJSON === 'function') {
-          const responseStatus = this.getResponse(raw);
-          const statusCode = OperationBuilder.getStatusCode(responseStatus) || e.statusCode;
-          if (
-            statusCode &&
-            this.shouldValidateResponse(context, responseStatus.isResponseFinished, statusCode)
-          ) {
-            context.validateResponseSchema(e.toJSON(), statusCode);
-          }
-        }
-        throw e;
-      };
 
       try {
         let result = this.handler(undefined, context, this.bautajs);
@@ -231,23 +178,9 @@ export class OperationBuilder implements Operation {
           result = Promise.resolve(result);
         }
 
-        return result
-          .then((finalResult: TOut) => {
-            if (this.getResponse) {
-              const responseStatus = this.getResponse(raw);
-              const statusCode = OperationBuilder.getStatusCode(responseStatus) || 200;
-              if (
-                this.shouldValidateResponse(context, responseStatus.isResponseFinished, statusCode)
-              ) {
-                context.validateResponseSchema(finalResult, statusCode);
-              }
-            }
-
-            return finalResult;
-          })
-          .catch(onError);
+        return result;
       } catch (e) {
-        return Promise.reject(onError(e));
+        return Promise.reject(e);
       }
     })(null);
   }

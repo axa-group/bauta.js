@@ -29,17 +29,7 @@ describe('operation class tests', () => {
   let bautaJS: BautaJSInstance;
 
   beforeEach(async () => {
-    bautaJS = new BautaJS({
-      getRequest(raw: any): any {
-        return raw.req;
-      },
-      getResponse(raw: any) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
-    });
+    bautaJS = new BautaJS({});
     const parser = new Parser(bautaJS.logger);
     const document = await parser.asyncParse(testApiDefinitionsJson as OpenAPIV3Document);
     [route] = document.routes;
@@ -55,49 +45,22 @@ describe('operation class tests', () => {
 
     test('should build the request validator from the schema parameters', async () => {
       const operationTest = OperationBuilder.create(route.operationId, bautaJS);
-      const req = {
-        query: {
-          limit: 'string'
-        }
-      };
-      const res = {};
-      const expected = [
-        {
-          path: '/limit',
-          location: 'query',
-          message: 'must be integer',
-          errorCode: 'type'
-        }
-      ];
-      const data = { req, res };
+
       operationTest.setup(() => 'new');
       operationTest.addRoute(route);
-      await expect(operationTest.run(data)).rejects.toThrow(
-        expect.objectContaining({ errors: expected })
-      );
+      operationTest.validateRequest(true);
+      // If the operation allow request validation the validator is set for the schema correctly
+      expect(operationTest.shouldValidateRequest()).toStrictEqual(true);
     });
 
     test('should build the response validator from the schema response', async () => {
       const operationTest = OperationBuilder.create(route.operationId, bautaJS);
-      const req = {
-        prop: 1,
-        query: {}
-      };
-      const res = {};
-      const expected = [
-        {
-          path: '',
-          location: 'response',
-          message: 'must be array',
-          errorCode: 'type'
-        }
-      ];
-      const ctx = { req, res };
+
       operationTest.validateResponse(true).setup(() => 1);
       operationTest.addRoute(route);
-      await expect(operationTest.run(ctx)).rejects.toThrow(
-        expect.objectContaining({ errors: expected })
-      );
+      operationTest.validateResponse(true);
+      // If the operation allow response validation the validator is set for the schema correctly
+      expect(operationTest.shouldValidateResponse(200)).toStrictEqual(true);
     });
 
     test('the default error handler should be a promise reject of the given error', async () => {
@@ -167,38 +130,6 @@ describe('operation class tests', () => {
     beforeEach(async () => {
       operationTest = OperationBuilder.create(route.operationId, bautaJS);
     });
-
-    test('should allow to run without getRequest', async () => {
-      const op = OperationBuilder.create(route.operationId, {
-        ...bautaJS,
-        options: {
-          getResponse(raw: any) {
-            return {
-              statusCode: raw.res.statusCode,
-              isResponseFinished: raw.res.headersSent || raw.res.finished
-            };
-          }
-        }
-      });
-      op.validateRequest(false).setup(() => 'good');
-      op.addRoute(route);
-      await expect(op.run({ res: {} })).resolves.toStrictEqual('good');
-    });
-
-    test('should allow to run without getResponse', async () => {
-      const op = OperationBuilder.create(route.operationId, {
-        ...bautaJS,
-        options: {
-          getRequest(raw: any): any {
-            return raw.req;
-          }
-        }
-      });
-      op.validateRequest(false).setup(() => 'good');
-      op.addRoute(route);
-      await expect(op.run({ res: {} })).resolves.toStrictEqual('good');
-    });
-
     test('should return a promise if there is some promise on some of the steps', async () => {
       operationTest.validateRequest(false).setup(
         pipe(
@@ -229,7 +160,7 @@ describe('operation class tests', () => {
       expect(await result).toStrictEqual('good');
     });
   });
-  describe('operation ctx.validateRequest tests', () => {
+  describe('operation ctx.validateRequestSchema tests', () => {
     let operationTest: Operation;
     let document: any;
 
@@ -239,7 +170,7 @@ describe('operation class tests', () => {
       operationTest = OperationBuilder.create(document.routes[0].operationId, bautaJS);
     });
 
-    test('should validate the request by default', async () => {
+    test('should validate the request', async () => {
       operationTest.setup(
         pipe(() => [
           {
@@ -261,12 +192,12 @@ describe('operation class tests', () => {
         }
       ];
       const body = null;
-      await expect(
-        operationTest.run({
-          req: { body, headers: { 'content-type': 'application/json' } },
-          res: {}
+      expect(() =>
+        operationTest.validateRequestSchema({
+          body,
+          headers: { 'content-type': 'application/json' }
         })
-      ).rejects.toThrow(expect.objectContaining({ statusCode: 400, errors: expected }));
+      ).toThrow(expect.objectContaining({ statusCode: 400, errors: expected }));
     });
 
     test('should validate an empty body', async () => {
@@ -291,12 +222,12 @@ describe('operation class tests', () => {
       ];
       const body = {};
 
-      await expect(
-        operationTest.run({
-          req: { body, headers: { 'content-type': 'application/json' } },
-          res: {}
+      expect(() =>
+        operationTest.validateRequestSchema({
+          body,
+          headers: { 'content-type': 'application/json' }
         })
-      ).rejects.toThrow(expect.objectContaining({ statusCode: 400, errors: expected }));
+      ).toThrow(expect.objectContaining({ statusCode: 400, errors: expected }));
     });
 
     test('should validate against the operation schema', async () => {
@@ -325,7 +256,7 @@ describe('operation class tests', () => {
         password: 'pass'
       };
 
-      await expect(operationTest.run({ req: { body }, res: {} })).rejects.toThrow(
+      expect(() => operationTest.validateRequestSchema({ body })).toThrow(
         expect.objectContaining({ statusCode: 400, errors: expected })
       );
     });
@@ -369,7 +300,7 @@ describe('operation class tests', () => {
     });
   });
 
-  describe('operation ctx.validateResponse tests', () => {
+  describe('operation ctx.validateResponseSchema tests', () => {
     let operationTest: Operation;
     let streamOperationTest: Operation;
     let emptyResponseContentTest: Operation;
@@ -486,54 +417,6 @@ describe('operation class tests', () => {
       expect(result).toStrictEqual(expected);
     });
 
-    test('should not validate the response if the res.send has been called', async () => {
-      operationTest.setup(
-        pipe(
-          () => [
-            {
-              code: 'boo'
-            },
-            {
-              code: 'foo'
-            }
-          ],
-          (response, ctx) => {
-            (ctx as RawContext<{ req: any; res: any }>).raw.res?.send(response);
-
-            return response;
-          }
-        )
-      );
-      operationTest.addRoute(document.routes[0]);
-      const body = {
-        grant_type: 'password',
-        username: 'user',
-        password: 'pass'
-      };
-      const res = {
-        data: null,
-        headersSent: false,
-        send(data: any) {
-          this.headersSent = true;
-          this.data = data;
-        }
-      };
-
-      await operationTest.run({
-        req: { query: {}, body, headers: { 'content-type': 'application/json' } },
-        res
-      });
-
-      expect(res.data).toStrictEqual([
-        {
-          code: 'boo'
-        },
-        {
-          code: 'foo'
-        }
-      ]);
-    });
-
     test('should validate that the response when there is no content response in the schema definition', async () => {
       emptyResponseContentTest.setup(() => {
         return null;
@@ -567,7 +450,10 @@ describe('operation class tests', () => {
             fileStream.pipe((ctx as RawContext<{ req: any; res: any }>).raw.res as Writable);
             fileStream.on('end', promiseDone);
             fileStream.on('error', promiseDone);
-          })
+          }),
+          (prev, ctx) => {
+            ctx.validateResponseSchema(prev, 200);
+          }
         )
       );
 

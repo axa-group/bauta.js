@@ -17,7 +17,12 @@ import express, { Response, IRoute } from 'express';
 import routeOrder from 'route-order';
 import * as bautajs from '@bautajs/core';
 import P from 'pino';
-import { RouterOptions, ExpressRequest, BautaJSExpressOptions } from './types';
+import {
+  RouterOptions,
+  ExpressRequest,
+  BautaJSExpressOptions,
+  OnResponseValidationError
+} from './types';
 import {
   initReqIdGenerator,
   initExpressPino,
@@ -50,20 +55,13 @@ import { getContentType } from './utils';
  *   console.info('Server listening on localhost: 3000');
  * });
  */
-export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: Response }> {
+export class BautaJSExpress extends bautajs.BautaJS {
+  private onResponseValidationError?: OnResponseValidationError;
+
   constructor(options: BautaJSExpressOptions) {
-    super({
-      ...options,
-      getRequest(raw) {
-        return raw.req;
-      },
-      getResponse(raw) {
-        return {
-          statusCode: raw.res.statusCode,
-          isResponseFinished: raw.res.headersSent || raw.res.finished
-        };
-      }
-    });
+    super(options);
+
+    this.onResponseValidationError = options.onResponseValidationError;
   }
 
   private addRoute(
@@ -76,6 +74,26 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
     const { url = '' } = operation.route || {};
     const route = (apiBasePath + url).replace(/\/\//, '/');
     router[method](route, (req, res, next) => {
+      const sendResponse = res.json.bind(res);
+
+      // Validate the response before sending it to the user.
+      res.json = body => {
+        if (
+          !(res.headersSent || res.finished) &&
+          operation.shouldValidateResponse(res.statusCode)
+        ) {
+          try {
+            operation.validateResponseSchema(body, res.statusCode);
+          } catch (e) {
+            // On validation error of the response automatically send 500 status code and format the error.
+            // eslint-disable-next-line no-param-reassign
+            body = this.onResponseValidationError?.(e, req as ExpressRequest, res) || e;
+            res.status(500);
+          }
+        }
+
+        return sendResponse(body);
+      };
       const resolverWrapper = (response: any) => {
         if (res.headersSent || res.finished) {
           return null;
@@ -129,6 +147,17 @@ export class BautaJSExpress extends bautajs.BautaJS<{ req: ExpressRequest; res: 
 
         return next(response);
       };
+      if (operation.shouldValidateRequest()) {
+        try {
+          operation.validateRequestSchema(req);
+        } catch (e) {
+          res.status(e.statusCode);
+          next(e);
+
+          return;
+        }
+      }
+
       const op = operation.run<{ req: ExpressRequest; res: Response }, any>({
         req: req as ExpressRequest,
         res,

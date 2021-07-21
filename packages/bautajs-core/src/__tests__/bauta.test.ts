@@ -25,21 +25,9 @@ describe('bauta core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        },
         resolvers: [
           operations => {
             operations.operation1.setup(() => 'ok');
@@ -57,10 +45,7 @@ describe('bauta core tests', () => {
 
       expect(
         () =>
-          new BautaJS<{
-            req: any;
-            res: { statusCode: number; headersSent: boolean; finished: boolean };
-          }>({
+          new BautaJS({
             // @ts-ignore
             apiDefinition: {},
             staticConfig: config
@@ -75,20 +60,9 @@ describe('bauta core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        },
+
         resolvers: [
           operations => {
             operations.operation1.setup(() => 'ok');
@@ -103,21 +77,10 @@ describe('bauta core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        },
+
         resolvers: [
           operations => {
             operations.operation1.setup(() => 'ok');
@@ -131,7 +94,7 @@ describe('bauta core tests', () => {
   });
 
   describe('validate request globally', () => {
-    test('should validate the request by ./fixtures', async () => {
+    test('should validate the given request', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -140,29 +103,16 @@ describe('bauta core tests', () => {
           limit: 'string'
         }
       };
-      const res = {};
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
 
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.operation1.run({ req, res })).rejects.toThrow(
+      expect(() => bautaJS.operations.operation1.validateRequestSchema(req)).toThrow(
         expect.objectContaining({
           message: 'The request was not valid',
           errors: [
@@ -177,90 +127,37 @@ describe('bauta core tests', () => {
       );
     });
 
-    test('should not validate the request if validateRequest is set to false globally', async () => {
+    test('should not suggest validate the request if validateRequest is set to false globally', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const req = {
-        query: {
-          limit: 'string'
-        }
-      };
-      const res = {};
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         enableRequestValidation: false,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
       });
       await bautaJS.bootstrap();
 
-      expect(await bautaJS.operations.operation1.run({ req, res })).toStrictEqual([
-        {
-          id: 134,
-          name: 'pet2'
-        }
-      ]);
+      expect(bautaJS.operations.operation1.shouldValidateRequest()).toStrictEqual(false);
     });
 
-    test('should priorize the local operation toggle over the global one', async () => {
+    test('should use the local operation request validation toggle over the global one', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const req = {
-        query: {
-          limit: 'string'
-        }
-      };
-      const res = {};
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        enableRequestValidation: false,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        enableRequestValidation: false
       });
       bautaJS.operations.operation1.validateRequest(true);
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.operation1.run({ req, res })).rejects.toThrow(
-        expect.objectContaining({
-          message: 'The request was not valid',
-          errors: [
-            {
-              path: '/limit',
-              location: 'query',
-              message: 'must be integer',
-              errorCode: 'type'
-            }
-          ]
-        })
-      );
+      expect(bautaJS.operations.operation1.shouldValidateRequest()).toStrictEqual(true);
     });
   });
 
@@ -276,26 +173,20 @@ describe('bauta core tests', () => {
       };
       const res = {};
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        resolvers: [
+          operations => {
+            operations.operation1.validateResponse(true).setup((_, ctx) => {
+              const response = [{ id: '22' }];
+              ctx.validateResponseSchema(response, 200);
+
+              return response;
+            });
+          }
+        ],
+        staticConfig: config
       });
-
-      bautaJS.operations.operation1.validateResponse(true).setup(() => [{ id: '22' }]);
-
       await bautaJS.bootstrap();
 
       expect.assertions(1);
@@ -320,22 +211,10 @@ describe('bauta core tests', () => {
       };
       const res = {};
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       bautaJS.operations.operation1.setup(() => ({
         id: 1,
@@ -349,33 +228,15 @@ describe('bauta core tests', () => {
       });
     });
 
-    test('should validate the response if is set true globally', async () => {
+    test('should suggest response validation if is set true globally', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const req = {
-        query: {
-          limit: 123
-        }
-      };
-      const res = {};
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        enableResponseValidation: true,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        enableResponseValidation: true
       });
 
       bautaJS.operations.operation1.setup(() => ({
@@ -385,54 +246,17 @@ describe('bauta core tests', () => {
 
       await bautaJS.bootstrap();
 
-      await expect(() => bautaJS.operations.operation1.run({ req, res })).rejects.toThrow(
-        expect.objectContaining({
-          name: 'Validation Error',
-          errors: [
-            {
-              path: '',
-              location: 'response',
-              message: 'must be array',
-              errorCode: 'type'
-            }
-          ],
-          statusCode: 500,
-          response: {
-            id: 1,
-            name: 'pety'
-          },
-          message: 'Internal error'
-        })
-      );
+      expect(bautaJS.operations.operation1.shouldValidateResponse(200)).toStrictEqual(true);
     });
 
     test('should prioritize the local operation toggle over the global one', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const req = {
-        query: {
-          limit: 123
-        }
-      };
-      const res = {};
-
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        enableResponseValidation: false,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        enableResponseValidation: false
       });
 
       bautaJS.operations.operation1.validateResponse(true).setup(() => ({
@@ -441,26 +265,7 @@ describe('bauta core tests', () => {
       }));
 
       await bautaJS.bootstrap();
-
-      await expect(() => bautaJS.operations.operation1.run({ req, res })).rejects.toThrow(
-        expect.objectContaining({
-          name: 'Validation Error',
-          errors: [
-            {
-              path: '',
-              location: 'response',
-              message: 'must be array',
-              errorCode: 'type'
-            }
-          ],
-          statusCode: 500,
-          response: {
-            id: 1,
-            name: 'pety'
-          },
-          message: 'Internal error'
-        })
-      );
+      expect(bautaJS.operations.operation1.shouldValidateResponse(200)).toStrictEqual(true);
     });
   });
 
@@ -470,22 +275,10 @@ describe('bauta core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
 
       expect(
@@ -503,25 +296,13 @@ describe('bauta core tests', () => {
         endpoint: 'http://google.es'
       };
 
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: [
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
           path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver-1.js')
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJS.bootstrap();
 
@@ -541,10 +322,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -557,16 +335,7 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJS.bootstrap();
       const request1 = bautaJS.operations.operation1.run({
@@ -591,10 +360,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -613,16 +379,7 @@ describe('bauta core tests', () => {
             );
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJS.bootstrap();
       const request1 = bautaJS.operations.operation1.run({
@@ -643,10 +400,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -659,16 +413,7 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJS.bootstrap();
       const request1 = bautaJS.operations.operation1.run({
@@ -690,10 +435,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -719,16 +461,7 @@ describe('bauta core tests', () => {
             );
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJS.bootstrap();
       const request1 = bautaJS.operations.operation1.run({
@@ -751,10 +484,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -779,16 +509,7 @@ describe('bauta core tests', () => {
             );
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJS.bootstrap();
       const request1 = bautaJS.operations.operation1.run({
@@ -822,22 +543,10 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJSV2 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       // @ts-ignore
       expect(() => bautaJSV2.inheritOperationsFrom({})).toThrow(
@@ -848,10 +557,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJSV1 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV1 = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -860,33 +566,12 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
-      const bautaJSV2 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       bautaJSV2.inheritOperationsFrom(bautaJSV1);
       await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
@@ -905,10 +590,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJSV1 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV1 = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -920,21 +602,9 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
-      const bautaJSV2 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -943,16 +613,7 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       bautaJSV2.inheritOperationsFrom(bautaJSV1);
       await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
@@ -976,10 +637,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJSV1 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV1 = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -994,33 +652,12 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
-      const bautaJSV2 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       bautaJSV2.inheritOperationsFrom(bautaJSV1);
       await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
@@ -1036,10 +673,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJSV1 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV1 = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -1054,33 +688,12 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
-      const bautaJSV2 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJSV2.bootstrap();
 
@@ -1093,10 +706,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJSV1 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV1 = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -1105,33 +715,12 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
-      const bautaJSV2 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJSV1.bootstrap();
       bautaJSV2.inheritOperationsFrom(bautaJSV1);
@@ -1144,10 +733,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJSV1 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV1 = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -1156,33 +742,12 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
-      const bautaJSV2 = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       bautaJSV2.inheritOperationsFrom(bautaJSV1);
       await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
@@ -1197,22 +762,10 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
 
       expect.assertions(1);
@@ -1223,10 +776,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -1235,16 +785,7 @@ describe('bauta core tests', () => {
             });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJS.bootstrap();
       expect(bautaJS.operations.operation1.isPrivate()).toStrictEqual(false);
@@ -1254,10 +795,7 @@ describe('bauta core tests', () => {
       const config = {
         endpoint: 'http://google.es'
       };
-      const bautaJS = new BautaJS<{
-        req: any;
-        res: { statusCode: number; headersSent: boolean; finished: boolean };
-      }>({
+      const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [
           resolver(operations => {
@@ -1269,16 +807,7 @@ describe('bauta core tests', () => {
               });
           })
         ],
-        staticConfig: config,
-        getRequest(raw): any {
-          return raw.req;
-        },
-        getResponse(raw) {
-          return {
-            statusCode: raw.res.statusCode,
-            isResponseFinished: raw.res.headersSent || raw.res.finished
-          };
-        }
+        staticConfig: config
       });
       await bautaJS.bootstrap();
       expect(bautaJS.operations.operation1.isPrivate()).toStrictEqual(true);

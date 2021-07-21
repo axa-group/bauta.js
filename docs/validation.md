@@ -1,7 +1,7 @@
 # Request Validation
 
 `bautajs` comes with a default request validation using the [openAPI schema v2 or v3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). **_BY DEFAULT IT'S SET TO TRUE_**.
-This feature is always enabled while you have a valid openAPI schema inputs and getRequest is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided.
+This feature is always enabled while you have a valid openAPI schema inputs and getRequest is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided. But using [@bautajs/core](../packages/bautajs-core) directly, you must call the method of `.validateRequestSchema()` before run an operation or during an operation run, to validate the request.
 You can disable it locally for every operation using `operations.operation1.validateRequest(false);`
 
 **_It's recommended to have an error handler since this will throw a [AJV error](https://www.npmjs.com/package/ajv#validation-errors**
@@ -31,10 +31,10 @@ Alternative you can also validate inside every resolver by accessing to the cont
 # Response Validation
 
 `bautajs` comes with a default response validation using the [openAPI schema v2 or v3][15]. **_BY DEFAULT IT'S SET TO FALSE_**.
-This feature is always enabled while you have a valid openAPI schema response and getResponse is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided.
-using `operations.v1.operation1.validateResponse(true);`
-s
-**_It's recomended to have an error handler since this will throw a [ValidationError](../packages/bautajs/src/core/validation-error.ts), error status code thrown is a 400_**
+This feature is always available while you have a valid openAPI schema response and getResponse is provided on `bautaJS` constructor (If you are using a plugin such [@bautajs/express](../packages/bautajs-express) or [@bautajs/fastify](../packages/bautajs-fastify) you don't have to worry about that it will be automatically provided. But using [@bautajs/core](../packages/bautajs-core) directly, you must call the method of `.validateResponseSchema()` after run an operation or during an operation run, to validate the response.
+You can disable it locally for every operation using `operations.operation1.validateResponse(false);`
+
+**_It's recommended to have an error handler since this will throw a [ValidationError](../packages/bautajs/src/core/validation-error.ts), error status code thrown is a 400_**
 
 The response validation can be globally enabled by set it on the `bautajs` initialization:
 
@@ -79,7 +79,7 @@ At the moment of validation, the statusCode is checked that is:
 After getting the right statusCode, bauta searches in the schema definition for the response content defined for that statusCode to decide if a validation must be used applying always the same logic: bauta only validates response content if it is json. It's done in the following order:
 - If ```responses[statusCode]``` is defined, it is used and validation is done if the defined content is a json.
 - If not, if ```responses.default``` is defined, that is used to determine the content, applying the same logic.
-- If not, if ```responses['200']``` is defined, we use it and we do the validation if its content is a json as well.
+- If not, if ```responses['200']``` is defined, it's used for the validation if its content is a json as well.
 - Finally, if no content response definition was defined for none of the previous cases, *no validation is done*.
 
 ## Error response validation
@@ -87,44 +87,7 @@ After getting the right statusCode, bauta searches in the schema definition for 
 Error response validation follow the same rules as success response validation except for two different rules.
 
 - Instead of fallback to 200 statusCode, errors will fallback to error.statusCode if res.statusCode is not set. In case that both are undefined no response validation will be done.
-- Also to be a validated, an error has to have the method toJSON which will return the error as a plain javascript object.
-
-For example, let's assume that we have the following responses definition:
-
-```json
-...
-      "responses": {
-        "200": {
-          "description": "The requested file.",
-          "content": {
-            "application/octet-stream": {
-              "schema": {
-                "type": "string",
-                "format": "binary"
-              }
-            }
-          }
-        },
-        "default": {
-          "description": "Some other request",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SomeResponse"
-              }
-            }
-          }
-        }
-      }
- ...     
-```
-- if you pipe a response stream file, which generates a 200 http status code, then there will be no validation.
-
-- if instead you force a 201 http status code when piping a response stream file, the default definition will be used, and thus you may an error because the validation will expect a json.
-
-### Response Error validation
-
-Since it is not `bautaJS` responsibility to do the response serialization, no validation is being done by default. Also, error handler occurs outside `bautaJS` scope, as this can change the error format itself, the error response validation falls under the framework used.
+- Also to validated an error which do not consist only on a message, an error has to have the method toJSON which will return the error as a plain javascript object.
 
 ## Custom format validation
 
@@ -163,7 +126,7 @@ If an user try to call manually the validation for instance `ctx.validateRespons
 
 ## Validation limitations
 
-Validation for request and response body for OPENAPI V3 are done always to the last content type defined on the openapi schema.
+### Validation for request and response body for OPENAPI V3 are done always to the last content type defined on the openapi schema.
 Ex: 
 
 ```json
@@ -189,3 +152,22 @@ In the previous example only the "application/json" schema will be pick for vali
 In case that no content type is defined there won't be any validation over that object.
 
 This behaviour is done like that to align the validation across frameworks, for instance fastify, only allows one schema for the request and the response.
+
+### Response validation error formatter
+
+As the response validation is done at the last stage of the request, just before it will be send on plugin frameworks like [@bautajs/express](../packages/bautajs-express), to format the validation response to the desired error format you must supply the method `onResponseValidationError` on initialize the plugin.
+
+```js
+    const bautajs = new BautaJSExpress({
+      apiDefinition: apiDefinition,
+      onResponseValidationError: err => ({
+        message: err.message,
+        code: 'Error code',
+        customField: true
+      })
+    });
+```
+
+### Response validation on @bautajs/express
+
+On express the only way that response validation happens is using the function [res.json](https://expressjs.com/es/api.html#res.json) to send the response to the user.

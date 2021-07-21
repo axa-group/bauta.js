@@ -18,7 +18,6 @@ import { OpenAPIV2 } from 'openapi-types';
 import { OperationBuilder } from './core/operation';
 import { defaultLogger } from './default-logger';
 import {
-  Options,
   BautaJSInstance,
   BautaJSOptions,
   Document,
@@ -71,7 +70,7 @@ function prebuildApi(apiDefinition: Document): API {
  * @implements {BautaJSBuilder}
  * @template TRaw Initial data sent to the operation.run method
  * @param {Document[]} apiDefinitions
- * @param {BautaJSOptions<TRaw>} [options={}]
+ * @param {BautaJSOptions} [options={}]
  * @example
  * const BautaJS = require('@bautajs/core');
  * const apiDefinition = require('./open-api-definition.json');
@@ -88,7 +87,7 @@ function prebuildApi(apiDefinition: Document): API {
  * // Assuming we setup an operationId called 'find' we can run the following code:
  * await bautaJS.operations.find.run({});
  */
-export class BautaJS<TRaw = any> implements BautaJSInstance {
+export class BautaJS implements BautaJSInstance {
   public readonly apiDefinition?: Document;
 
   public operations: Operations = {};
@@ -96,8 +95,6 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
   public readonly staticConfig: any;
 
   public readonly logger: Logger;
-
-  public readonly options: Options<TRaw>;
 
   public readonly validator: Validator<any>;
 
@@ -112,16 +109,14 @@ export class BautaJS<TRaw = any> implements BautaJSInstance {
     customValidationFormats,
     resolversPath,
     resolvers,
-    validatorOptions,
-    ...options
-  }: BautaJSOptions<TRaw> = {}) {
+    validatorOptions
+  }: BautaJSOptions = {}) {
     const api = apiDefinition ? prebuildApi(apiDefinition) : undefined;
     let responseValidation = false;
     let requestValidation = true;
 
     this.apiDefinition = apiDefinition;
     this.staticConfig = staticConfig;
-    this.options = options;
 
     this.logger = logger || defaultLogger();
     if (!isLoggerValid(this.logger)) {

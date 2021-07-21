@@ -40,16 +40,7 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: BautaJSFast
   const bautajs = new bautaJS.BautaJS({
     // Cast should be done because interface of fastify is wrong https://github.com/fastify/fastify/issues/1715
     logger: fastify.log as bautaJS.Logger,
-    ...opts,
-    getRequest(raw) {
-      return raw.req;
-    },
-    getResponse(raw) {
-      return {
-        statusCode: raw.res.statusCode,
-        isResponseFinished: raw.res.sent
-      };
-    }
+    ...opts
   });
 
   await bautajs.bootstrap();
@@ -72,7 +63,8 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: BautaJSFast
       routes,
       strictResponseSerialization: opts.strictResponseSerialization,
       validator: bautajs.validator,
-      prefix: path.join(opts.prefix || '', opts.apiBasePath || '/api')
+      prefix: path.join(opts.prefix || '', opts.apiBasePath || '/api'),
+      onResponseValidationError: opts.onResponseValidationError
     });
   }
 

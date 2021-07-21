@@ -1,7 +1,7 @@
 import * as fastify from 'fastify';
 import { Operation, ValidationError, Validator, LocationError } from '@bautajs/core';
 import routeOrder from 'route-order';
-import { ApiHooks } from './types';
+import { ApiHooks, OnResponseValidationError } from './types';
 
 export interface ValidationResult {
   validation: fastify.ValidationResult[];
@@ -25,7 +25,6 @@ function createHandler(operation: Operation) {
   return async (request: fastify.FastifyRequest, reply: fastify.FastifyReply) => {
     let response;
     // Convert the fastify validation error to the bautajs validation error format
-    // @ts-ignore
     if (request.validationError) {
       return reply.status(400).send(
         new ValidationError(
@@ -100,6 +99,7 @@ async function exposeRoutes(
     validator: Validator<any>;
     strictResponseSerialization?: boolean;
     apiHooks?: ApiHooks;
+    onResponseValidationError?: OnResponseValidationError;
   }
 ) {
   function addRoute(operation: Operation, validator: Validator<any>) {
@@ -115,24 +115,51 @@ async function exposeRoutes(
             querystring: operation.route?.schema.querystring
           }
         : {};
-
     const responseSchema = operation.route?.schema
       ? { response: operation.route?.schema.response }
       : {};
+    const validateResponseHook = (
+      req: fastify.FastifyRequest,
+      reply: fastify.FastifyReply,
+      payload: any,
+      done: any
+    ) => {
+      if (!reply.sent && operation.shouldValidateResponse(reply.statusCode)) {
+        try {
+          operation.validateResponseSchema(payload, reply.statusCode);
+        } catch (e) {
+          // On validation error of the response automatically send 500 status code and format the error.
+          const error = opts.onResponseValidationError?.(e, req, reply) || e;
+          reply.status(500);
+          return done(null, error);
+        }
+      }
+      return done(null, payload);
+    };
 
     if (opts.apiHooks) {
       Object.entries(opts.apiHooks).forEach(([hook, fn]) => {
         fastifyInstance.addHook(hook as any, fn);
       });
     }
-    // Use fastify Request validation.
-    operation.validateRequest(false);
     const route = (opts.prefix + url).replace(/\/\//, '/');
+    const preSerializationHooks = [];
+    if (opts.apiHooks) {
+      if (Array.isArray(opts.apiHooks.preSerialization)) {
+        preSerializationHooks.push(...opts.apiHooks.preSerialization);
+      } else if (opts.apiHooks.preSerialization) {
+        preSerializationHooks.push(opts.apiHooks.preSerialization);
+      }
+    }
+    // Response validation should be the final one
+    preSerializationHooks.push(validateResponseHook);
+
     fastifyInstance.route({
       validatorCompiler: ({ schema }) => validator.buildSchemaCompiler(schema),
       attachValidation: true,
       method,
       url,
+      preSerialization: preSerializationHooks,
       handler: createHandler(operation),
       schema: {
         ...requestSchema,
