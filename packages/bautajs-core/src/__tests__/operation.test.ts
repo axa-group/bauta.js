@@ -22,7 +22,7 @@ import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
 import { pipe, BautaJS } from '../index';
 import Parser from '../open-api/parser';
-import { asPromise } from '../operators/as-promise';
+import { asPromise } from '../decorators/as-promise';
 
 describe('operation class tests', () => {
   let route: Route;

@@ -1,4 +1,4 @@
-# parallel operator
+# parallel decorator
 
 The `parallel` decorator allows you to execute given Pipeline.StepFunctions in parallel. Under the hood it uses [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all), which means that
 
@@ -6,9 +6,9 @@ The `parallel` decorator allows you to execute given Pipeline.StepFunctions in p
 > It rejects immediately upon any of the input promises rejecting or non-promises throwing an error,
 > and will reject with this first rejection message / error.
 
-If your use case involves further execution depending on each of provided promises status or you don't want blocking requests you can use [parallelAllSettled](./parallelSettled.md) operator.
+If your use case involves further execution depending on each of provided promises status or you don't want blocking requests you can use [parallelAllSettled](./parallelSettled.md) decorator.
 
-You can explore the source code [here](https://github.axa.com/Digital/bauta-nodejs/blob/master/packages/bautajs-core/src/operators/parallel.ts).
+You can explore the source code [here](https://github.axa.com/Digital/bauta-nodejs/blob/master/packages/bautajs-core/src/decorators/parallel.ts).
 
 ## Example
 

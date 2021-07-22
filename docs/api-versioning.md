@@ -35,7 +35,7 @@ module.exports = resolver((operations) => {
 })
 ```
 
-- To find out how to use pipe, take a look to its [documentation](./operators-and-resolver.md)
+- To find out how to use pipe, take a look to its [documentation](./decorators-and-resolver.md)
 
 ### Example
 

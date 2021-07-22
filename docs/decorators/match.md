@@ -1,6 +1,6 @@
-# match operator
+# match decorator
 
-It allows you to set a pair (or sets of pairs) of step functions that will be executed conditionally. We call a first function a predicate (it returns a boolean) and a second one a statement step function. The latter will be executed only if the former evaluates to `true`. In this sense this operator is similar to [iff](iff.md), however `match` operator allows you to set a default statement function, that will be executed if predicate evaluates to `false'. In addition, you can "pipe" multiple pairs (predicate and statement) and have just one default statement step function for all of them. You can explore the source code [here](https://github.axa.com/Digital/bauta-nodejs/blob/master/packages/bautajs-core/src/operators/match.ts).
+It allows you to set a pair (or sets of pairs) of step functions that will be executed conditionally. We call a first function a predicate (it returns a boolean) and a second one a statement step function. The latter will be executed only if the former evaluates to `true`. In this sense this decorator is similar to [iff](iff.md), however `match` decorator allows you to set a default statement function, that will be executed if predicate evaluates to `false'. In addition, you can "pipe" multiple pairs (predicate and statement) and have just one default statement step function for all of them. You can explore the source code [here](https://github.axa.com/Digital/bauta-nodejs/blob/master/packages/bautajs-core/src/decorators/match.ts).
 
 ## Example usage
 

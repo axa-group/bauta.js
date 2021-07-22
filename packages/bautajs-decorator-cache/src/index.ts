@@ -37,7 +37,7 @@ const objectHash = nodeObjectHash({
  * @param {Options} options
  * @param {Number} [options.maxAge=0] Milliseconds an item will remain in cache; lazy expiration upon next get() of an item. With 0 items never expires.
  * @param {Number} options.maxSize=500 Max number of items on cache.
- * @return {CacheOperatorFunction<TIn, TOut>} An operation function that you can plug in on a `bautajs` pipeline.
+ * @return {CacheDecoratorFunction<TIn, TOut>} An operation function that you can plug in on a `bautajs` pipeline.
  * @example
  * import { pipe, createContext } from '@bautajs/core';
  * import { cache } from '@bautajs/decorator-cache';
@@ -72,7 +72,7 @@ export function cache<TIn, TOut, CacheKey = string>(
 ): CacheStepFunction<TIn, TOut, CacheKey> {
   const store = new QuickLRU<CacheKey, TOut>(options);
 
-  const operatorFunction: Pipeline.StepFunction<TIn, TOut> = (
+  const stepFunction: Pipeline.StepFunction<TIn, TOut> = (
     prev: TIn,
     ctx: Context,
     bautajs: BautaJSInstance
@@ -96,12 +96,12 @@ export function cache<TIn, TOut, CacheKey = string>(
     return value as TOut;
   };
 
-  return Object.defineProperty(operatorFunction, 'store', {
+  return Object.defineProperty(stepFunction, 'store', {
     value: store,
     enumerable: false,
     configurable: false,
     writable: false
-  });
+  }) as CacheStepFunction<TIn, TOut, CacheKey>;
 }
 
 export default cache;

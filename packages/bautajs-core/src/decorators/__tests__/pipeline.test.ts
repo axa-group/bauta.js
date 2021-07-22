@@ -17,7 +17,7 @@ import { createContext, BautaJSInstance, GenericError } from '../../index';
 import { pipe } from '../pipeline';
 
 describe('pipe tests', () => {
-  test('should throw an error on pipe 0 OperatorFunctions', () => {
+  test('should throw an error on pipe 0 StepFunctions', () => {
     const expected = new Error('A Pipeline.StepFunction must be a function.');
 
     // @ts-ignore

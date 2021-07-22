@@ -1,6 +1,6 @@
-# iff operator
+# iff decorator
 
-The `iff` decorator allows you to execute given Pipeline.StepFunction conditionally or acts as a pass-through if the provided condition is not satisfied. You can explore the source code [here](https://github.axa.com/Digital/bauta-nodejs/blob/master/packages/bautajs-core/src/operators/iff.ts).
+The `iff` decorator allows you to execute given Pipeline.StepFunction conditionally or acts as a pass-through if the provided condition is not satisfied. You can explore the source code [here](https://github.axa.com/Digital/bauta-nodejs/blob/master/packages/bautajs-core/src/decorators/iff.ts).
 
 ## Example usage
 

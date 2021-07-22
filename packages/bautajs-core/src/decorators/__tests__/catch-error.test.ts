@@ -2,7 +2,7 @@ import { pipe } from '../pipeline';
 import { createContext } from '../../utils/create-context';
 import { BautaJSInstance } from '../../types';
 
-describe('catchError operator tests', () => {
+describe('catchError pipeline tests', () => {
   test('should set the given error handler', () => {
     const errorHandler = () => {
       throw new Error('error');

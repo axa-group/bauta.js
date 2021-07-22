@@ -119,7 +119,7 @@ function addRequestIdHook(id?: string | number) {
     }
   };
 }
-function operatorFn<TOut>(
+function stepFn<TOut>(
   client: Got,
   fn: ProviderOperation<TOut>,
   restProviderOptions: RestProviderOptions = {}
@@ -187,7 +187,7 @@ function create(globalGotOptions?: ExtendOptions) {
     return (options?: ExtendOptions) => {
       const client =
         options && Object.keys(options).length > 0 ? defaultClient.extend(options) : defaultClient;
-      return operatorFn(client, fn, restProviderOptions);
+      return stepFn(client, fn, restProviderOptions);
     };
   };
 

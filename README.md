@@ -51,12 +51,12 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [Datasources](./docs/datasources.md)
 - [Debug](./docs/debug.md)
 - [Request cancelation](./docs/request-cancelation.md)
-- [Pipeline.StepFunction and Resolvers](./docs/operator-and-resolver.md)
-  - Some of the available operators
+- [Pipeline.StepFunction and Resolvers](./docs/decorators-and-resolver.md)
+  - Some of the available decorators
     - [parallel](./docs/decorators/parallel.md)
     - [parallelSettled](./docs/decorators/parallelSettled.md)
     - [iff](./docs/decorators/iff.md)
-    - [match](./docs/operators/match.md)
+    - [match](./docs/decorators/match.md)
 - [Validation](./docs/validation.md)
 - [Configuration Options](./docs/configuration-options.md)
 

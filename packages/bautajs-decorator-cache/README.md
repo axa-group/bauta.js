@@ -112,7 +112,7 @@ To use the object as a key in the cache normalizer, this object needs to be set 
         );
 ```
 
-In here you can see that we have an operator function that returns an object with a key iAmTheKey that is passed to normalizer previous to the operator function of the cache.
+In here you can see that we have an decorator function that returns an object with a key iAmTheKey that is passed to normalizer previous to the decorator function of the cache.
 
 
 ## Options

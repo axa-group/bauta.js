@@ -180,16 +180,16 @@ An Pipeline.StepFunction have three input parameters:
 
 It's recommended but not mandatory to wrap all the related Pipeline.StepFunction's using the 'step' decorator provided by `@bautajs/core`.
 
-my-operator-functions-helpers.js
+my-step-functions-helpers.js
 ```js
   const { getRequest } = require('@bautajs/express');
   const { step } = require('@bautajs/core');
 
-  const operatorHelper1 = step((value, ctx) => {
+  const stepHelper1 = step((value, ctx) => {
     ctx.data.something = 'something';
   });
 
-  const operatorHelper2 = step((val, ctx) => {
+  const stepHelper2 = step((val, ctx) => {
     const req = getRequest(ctx);
     return {
       headers: req.headers,
@@ -198,8 +198,8 @@ my-operator-functions-helpers.js
   });
 
   module.exports = {
-    operatorHelper1,
-    operatorHelper2,
+    stepHelper1,
+    stepHelper2,
   }
 ```
 
@@ -213,12 +213,12 @@ Inside the ctx object a logger function resides, using this logging will help yo
 
 ```js
   const { step } = require('@bautajs/core');
-  const operatorHelper1 = step((value, ctx) => {
+  const stepHelper1 = step((value, ctx) => {
     ctx.logger.info('Some log for this session');
   });
 
   module.exports = {
-    operatorHelper1,
+    stepHelper1,
   }
 ```
 
@@ -228,13 +228,13 @@ We strongly recommend to not save data into the ctx directly, for that purposes 
 
 ```js
   const { step } = require('@bautajs/core');
-  const operatorHelper1 = step((value, ctx) => {
+  const stepHelper1 = step((value, ctx) => {
     ctx.data.customData = {
       id:'1'
     }
   });
 
   module.exports = {
-    operatorHelper1,
+    stepHelper1,
   }
 ```

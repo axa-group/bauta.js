@@ -15,9 +15,9 @@
 
 import { Pipeline } from '../types';
 /**
- * Operator that allows to execute given pipeline conditionally. It accepts the condition step function and pipeline.
+ * Decorator that allows to execute given pipeline conditionally. It accepts the condition step function and pipeline.
  * If the condition step function will be evaluated to truthy value the pipeline will be executed.
- * If the condition step function will be evaluated to falsy value the operator will work as a pass through and will return value
+ * If the condition step function will be evaluated to falsy value the decorator will work as a pass through and will return value
  * received as prev in condition step function
  *
  * @param {Pipeline.StepFunction<TIn, Boolean>} condition - boolean that determines if the pipeline is going to be executed
