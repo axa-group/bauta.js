@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.1.0...v5.0.0) (2021-07-23)
+
+
+### Features
+
+* **core:** rename operator to decorator ([34739f2](https://github.axa.com/Digital/bauta-nodejs/commit/34739f22066182f959fde0dcbc737a29dc8aed30))
+
+
+
+
+
 # [4.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.0.3...v4.1.0) (2021-07-09)
 
 **Note:** Version bump only for package @bautajs/datasource-rest

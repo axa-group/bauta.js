@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.1.0...v5.0.0) (2021-07-23)
+
+
+### Bug Fixes
+
+* **bautajs-core:** add docs with examples for match operator ([#251](https://github.axa.com/Digital/bauta-nodejs/issues/251)) ([c4a570a](https://github.axa.com/Digital/bauta-nodejs/commit/c4a570a6218da0297a7e740a7dd30e3d8ed88e7c))
+
+
+### Features
+
+* **core:** rename operator to decorator ([34739f2](https://github.axa.com/Digital/bauta-nodejs/commit/34739f22066182f959fde0dcbc737a29dc8aed30))
+* **fastify,express,core:** Improve response/request validation ([#253](https://github.axa.com/Digital/bauta-nodejs/issues/253)) ([d6d1c4e](https://github.axa.com/Digital/bauta-nodejs/commit/d6d1c4ee2b76d0cf30b7c82161f095e68e1dc829))
+
+
+### BREAKING CHANGES
+
+* **fastify,express,core:** response/request validation is not performed out of the box on @bautajs/core
+* **fastify,express,core:** response validation is done on the final request stage on @bautajs/fastify and @bautajs/express instead of after run an operation
+* **fastify,express,core:** response validation is performed over error handler thrown errors
+* **fastify,express,core:** getRequest, getResponse has been removed from @bautajs/core constructor
+
+
+
+
+
 # [4.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.0.3...v4.1.0) (2021-07-09)
 
 

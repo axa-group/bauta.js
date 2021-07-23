@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.1.0...v5.0.0) (2021-07-23)
+
+
+### Features
+
+* **fastify,express,core:** Improve response/request validation ([#253](https://github.axa.com/Digital/bauta-nodejs/issues/253)) ([d6d1c4e](https://github.axa.com/Digital/bauta-nodejs/commit/d6d1c4ee2b76d0cf30b7c82161f095e68e1dc829))
+
+
+### BREAKING CHANGES
+
+* **fastify,express,core:** response/request validation is not performed out of the box on @bautajs/core
+* **fastify,express,core:** response validation is done on the final request stage on @bautajs/fastify and @bautajs/express instead of after run an operation
+* **fastify,express,core:** response validation is performed over error handler thrown errors
+* **fastify,express,core:** getRequest, getResponse has been removed from @bautajs/core constructor
+
+
+
+
+
 # [4.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.0.3...v4.1.0) (2021-07-09)
 
 
