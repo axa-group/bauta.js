@@ -63,7 +63,7 @@ export function resSerializer(
     if (response.headers) {
       res.headers = response.headers;
     }
-    if (response.body) {
+    if (restProviderOptions.logResponseBody === true && response.body) {
       if (is.nodeStream(response.body)) {
         res.body = {
           file: {

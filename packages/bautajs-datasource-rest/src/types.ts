@@ -38,6 +38,22 @@ export interface RestProviderOptions {
    * @memberof RestProviderOptions
    */
   disableBodyTruncateLog?: boolean;
+  /**
+   * Indicates if the request body should be printed on logs on debug mode. If ignoreLogLevel is set to true body logs can be controlled with this flag ashwell.
+   *
+   * @default true
+   * @type {boolean}
+   * @memberof RestProviderOptions
+   */
+  logRequestBody?: boolean;
+  /**
+   * Indicates if the response body should be printed on logs on debug mode. If ignoreLogLevel is set to true body logs can be controlled with this flag ashwell.
+   *
+   * @default true
+   * @type {boolean}
+   * @memberof RestProviderOptions
+   */
+  logResponseBody?: boolean;
 }
 export type ProviderOperation<TOut> = (
   client: Got,

@@ -77,7 +77,7 @@ export function reqSerializer(
     if (options.headers) {
       req.headers = options.headers;
     }
-    if (options.body || options.json) {
+    if (restProviderOptions.logRequestBody === true && (options.body || options.json)) {
       if (is.nodeStream(options.body)) {
         req.body = {
           file: {
