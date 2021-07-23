@@ -20,6 +20,8 @@ You can also specify resolvers directly on the bautajs.operations instance **bef
 
 `You can define the resolver without wrap it into the resolver function, resolver function only gives you intellisense`
 
+**Resolvers imported automatically or specified with the parameter `resolversPath` must be javascript files in case that you are using typescript, the resolvers path should be pointing to the `dist` directory**
+
 # Pipeline
 
 A pipeline is an chain of Pipeline.StepFunctions for the given operation.
