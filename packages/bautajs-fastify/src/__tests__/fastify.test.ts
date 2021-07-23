@@ -171,10 +171,19 @@ describe('bautaJS fastify tests', () => {
     test('should not send the response again if already has been sent', async () => {
       fastifyInstance.register(bautajsFastify, {
         apiDefinition,
-        resolversPath: path.resolve(
-          __dirname,
-          './fixtures/test-resolvers/operation-resolver-send-response.js'
-        ),
+        resolvers: [
+          operations => {
+            operations.operation1.setup((_, ctx) => {
+              const res = getResponse(ctx);
+              res.send([
+                {
+                  id: 134,
+                  name: 'pet2'
+                }
+              ]);
+            });
+          }
+        ],
         apiBasePath: '/api/',
         prefix: '/v1/'
       });

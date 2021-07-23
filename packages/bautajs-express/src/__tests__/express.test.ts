@@ -111,10 +111,14 @@ describe('bautaJS express', () => {
     test('should not send the response again if already has been sent', async () => {
       const bautajs = new BautaJSExpress({
         apiDefinition,
-        resolversPath: path.resolve(
-          __dirname,
-          './fixtures/test-resolvers/operation-resolver-send-response.js'
-        )
+        resolvers: [
+          operations => {
+            operations.operation1.setup((_, ctx) => {
+              const res = getResponse(ctx);
+              res.json({ ok: 'finished early' });
+            });
+          }
+        ]
       });
       const router = await bautajs.buildRouter();
 

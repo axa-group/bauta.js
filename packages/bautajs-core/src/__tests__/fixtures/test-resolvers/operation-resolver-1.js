@@ -12,9 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const { resolver } = require('../../../../dist/operators/resolver');
-
-module.exports = resolver(operations => {
+module.exports = operations => {
   operations.operation1.setup(() => {
     return [
       {
@@ -23,4 +21,4 @@ module.exports = resolver(operations => {
       }
     ];
   });
-});
+};
