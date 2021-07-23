@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.axa.com/Digital/bauta-nodejs/compare/v5.0.0...v5.0.1) (2021-07-23)
+
+
+### Bug Fixes
+
+* **fastify:** request validation ([#254](https://github.axa.com/Digital/bauta-nodejs/issues/254)) ([882696b](https://github.axa.com/Digital/bauta-nodejs/commit/882696b279f1c0626aaea4d572b60a2bf6dd3c6e))
+
+
+
+
+
 # [5.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.1.0...v5.0.0) (2021-07-23)
 
 
