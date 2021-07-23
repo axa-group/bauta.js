@@ -26,13 +26,11 @@ function createHandler(operation: Operation) {
     let response;
     // Convert the fastify validation error to the bautajs validation error format
     if (request.validationError) {
-      return reply.status(400).send(
-        new ValidationError(
-          'The request was not valid',
-          // @ts-ignore
-          mapFsValidationToLocationErrors(request.validationError) || [],
-          400
-        ).toJSON()
+      reply.status(400);
+      throw new ValidationError(
+        'The request was not valid',
+        mapFsValidationToLocationErrors(request.validationError) || [],
+        400
       );
     }
     const op = operation.run<{ req: fastify.FastifyRequest; res: fastify.FastifyReply }, any>({

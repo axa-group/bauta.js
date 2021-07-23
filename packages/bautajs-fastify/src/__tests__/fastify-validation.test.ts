@@ -15,6 +15,7 @@
 // eslint-disable-next-line no-unused-vars
 import path from 'path';
 import fastify, { FastifyInstance } from 'fastify';
+import { ValidationError } from '@bautajs/core';
 import { bautajsFastify } from '../index';
 
 const apiDefinitionCustomValidation = require('./fixtures/test-api-definitions-custom-validation.json');
@@ -37,6 +38,11 @@ describe('bautaJS fastify tests', () => {
       resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
     });
 
+    fastifyInstance.setErrorHandler((err: ValidationError, _req, reply) => {
+      reply.status(err.statusCode || 500);
+      reply.send(err.toJSON());
+    });
+
     const res = await fastifyInstance.inject({
       method: 'GET',
       url: '/v1/api/test',
@@ -54,6 +60,43 @@ describe('bautaJS fastify tests', () => {
       message: 'must match format "test"',
       errorCode: 'format'
     });
+  });
+
+  test('request validation errors should pass through the error handler', async () => {
+    const spy = jest.fn();
+    fastifyInstance.register(bautajsFastify, {
+      apiBasePath: '/api/',
+      prefix: '/v1/',
+      customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
+      apiDefinition: apiDefinitionCustomValidation,
+      resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+    });
+
+    fastifyInstance.setErrorHandler((err: ValidationError, _req, reply) => {
+      spy(null);
+
+      reply.status(err.statusCode || 500);
+      reply.send(err.toJSON());
+    });
+
+    const res = await fastifyInstance.inject({
+      method: 'GET',
+      url: '/v1/api/test',
+      query: {
+        // @ts-ignore
+        limit: 123
+      }
+    });
+
+    const body = JSON.parse(res.body);
+    expect(res.statusCode).toStrictEqual(400);
+    expect(body.message).toStrictEqual(`The request was not valid`);
+    expect(body.errors[0]).toStrictEqual({
+      location: 'querystring',
+      message: 'must match format "test"',
+      errorCode: 'format'
+    });
+    expect(spy).toHaveBeenCalledWith(null);
   });
 
   test('should validate the response with bautajs validator', async () => {
