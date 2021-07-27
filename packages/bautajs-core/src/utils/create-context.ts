@@ -17,6 +17,23 @@ import { CancelableTokenBuilder } from '../core/cancelable-token';
 import { idGenerator } from './request-id-generator';
 import { defaultLogger } from '../default-logger';
 
+type URLParam = { [key: string]: string | string[] };
+
+function searchParamsToObject(searchParams: URLSearchParams): URLParam {
+  const query: URLParam = {};
+  searchParams.forEach((val, key) => {
+    if (Array.isArray(query[key])) {
+      query[key] = [...query[key], val];
+    } else if (query[key]) {
+      query[key] = [query[key] as string, val];
+    } else {
+      query[key] = val;
+    }
+  });
+
+  return query;
+}
+
 /**
  * Create a BautaJS context object. Useful for doing testing.
  *
@@ -28,36 +45,69 @@ import { defaultLogger } from '../default-logger';
  * @param {Logger} [logger=defaultLogger('@bautajs/core')]
  * @returns {Context}
  */
-export function createContext<TRaw>(raw: RawData<TRaw>): RawContext<TRaw> {
+export function createContext<TRaw>(
+  raw: RawData<TRaw>,
+  logger: Logger = defaultLogger('@bautajs/core')
+): RawContext<TRaw> {
   const token = new CancelableTokenBuilder();
   const id = !raw.id ? idGenerator() : raw.id;
   let ctxLogger: Logger;
   if (!raw.log) {
-    ctxLogger = defaultLogger('@bautajs/core').child({
-      url: raw.url,
+    const url: URL | undefined = raw.url ? new URL(`http://dummy.com${raw.url}`) : undefined;
+    const query = url?.searchParams && searchParamsToObject(url?.searchParams);
+    ctxLogger = logger.child({
+      query,
+      url: url?.pathname,
       reqId: raw.id
     });
   } else {
     ctxLogger = raw.log;
   }
 
-  return Object.defineProperty(
-    {
-      id,
-      validateRequestSchema: () => null,
-      validateResponseSchema: () => null,
-      data: raw.data || {},
-      token,
-      log: ctxLogger
+  return Object.create(Object.prototype, {
+    id: {
+      value: id,
+      enumerable: true,
+      configurable: false,
+      writable: false
     },
-    'raw',
-    {
+    validateRequestSchema: {
+      value: () => null,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    },
+    validateResponseSchema: {
+      value: () => null,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    },
+    data: {
+      value: raw.data || {},
+      enumerable: true,
+      configurable: true,
+      writable: true
+    },
+    token: {
+      value: token,
+      enumerable: true,
+      configurable: false,
+      writable: false
+    },
+    log: {
+      value: ctxLogger,
+      enumerable: true,
+      configurable: false,
+      writable: false
+    },
+    raw: {
       value: raw,
       enumerable: false,
       configurable: false,
       writable: false
     }
-  );
+  });
 }
 
 export default createContext;

@@ -118,7 +118,7 @@ export class BautaJS implements BautaJSInstance {
     this.apiDefinition = apiDefinition;
     this.staticConfig = staticConfig;
 
-    this.logger = logger || defaultLogger();
+    this.logger = logger || defaultLogger('@bautajs/core');
     if (!isLoggerValid(this.logger)) {
       throw new Error(
         'Logger is not valid. Must be compliant with basic logging levels(trace, debug, info, warn, error, fatal)'

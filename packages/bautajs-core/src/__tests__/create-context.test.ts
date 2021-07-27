@@ -29,12 +29,12 @@ describe('create context tests', () => {
     expect(result.id).toStrictEqual('1234');
   });
 
-  test('should generate a logger', () => {
+  test('should generate a logger by default', () => {
     const result = createContext({});
     expect(typeof result.log.info).toStrictEqual('function');
   });
 
-  test('should use the logger passed by parameter', () => {
+  test('should use the child logger passed as raw data', () => {
     const logger = defaultLogger('test-logger');
     logger.levels = { labels: { 1: 'test' }, values: { test: 1 } };
     const req = {
@@ -42,6 +42,14 @@ describe('create context tests', () => {
     };
     const result = createContext({ req, id: req.id, log: logger });
     expect(result.raw.log.levels).toStrictEqual(logger.levels);
+  });
+
+  test('should create a child using the logger passed to the function', () => {
+    const logger = defaultLogger('test-logger');
+    const childLogger = jest.fn();
+    logger.child = () => childLogger as any;
+    const result = createContext({}, logger);
+    expect(result.log).toStrictEqual(childLogger);
   });
 
   test('should propagate custom properties', () => {
@@ -54,5 +62,29 @@ describe('create context tests', () => {
     const data = { test: 1 };
     const result = createContext({ data });
     expect(result.data.test).toStrictEqual(1);
+  });
+
+  test('should set the log child url and query params', () => {
+    const logger = defaultLogger('test-logger');
+
+    const spy = jest.spyOn(logger, 'child');
+    createContext({ id: '1', url: '/path/to/url?test=1' }, logger);
+    expect(spy).toHaveBeenCalledWith({
+      query: { test: '1' },
+      url: '/path/to/url',
+      reqId: '1'
+    });
+  });
+
+  test('should transform multiple query parameters in to an array', () => {
+    const logger = defaultLogger('test-logger');
+
+    const spy = jest.spyOn(logger, 'child');
+    createContext({ id: '1', url: '/path/to/url?test=1&test=2&another=param' }, logger);
+    expect(spy).toHaveBeenCalledWith({
+      query: { test: ['1', '2'], another: 'param' },
+      url: '/path/to/url',
+      reqId: '1'
+    });
   });
 });

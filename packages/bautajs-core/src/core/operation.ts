@@ -153,10 +153,13 @@ export class OperationBuilder implements Operation {
   }
 
   public run<TRaw, TOut>(raw: RawData<TRaw>): PCancelable<TOut> {
-    const context: Context = createContext({
-      ...raw,
-      log: raw.log || this.bautajs.logger
-    });
+    const context: Context = createContext(
+      {
+        ...raw,
+        log: raw.log
+      },
+      this.bautajs.logger
+    );
 
     Object.assign(context, {
       validateResponseSchema: (response: any, statusCode?: string | number) =>
