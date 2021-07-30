@@ -478,9 +478,7 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/api/test'
       });
 
-      expect(logger.error).toHaveBeenCalledWith(
-        'The request to /v1/api/test was canceled by the requester'
-      );
+      expect(logger.error).toHaveBeenCalledWith('The request was canceled by the requester.');
     });
   });
 
