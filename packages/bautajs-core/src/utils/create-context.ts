@@ -16,24 +16,6 @@ import { RawData, Logger, RawContext } from '../types';
 import { CancelableTokenBuilder } from '../core/cancelable-token';
 import { idGenerator } from './request-id-generator';
 import { defaultLogger } from '../default-logger';
-
-type URLParam = { [key: string]: string | string[] };
-
-function searchParamsToObject(searchParams: URLSearchParams): URLParam {
-  const query: URLParam = {};
-  searchParams.forEach((val, key) => {
-    if (Array.isArray(query[key])) {
-      query[key] = [...query[key], val];
-    } else if (query[key]) {
-      query[key] = [query[key] as string, val];
-    } else {
-      query[key] = val;
-    }
-  });
-
-  return query;
-}
-
 /**
  * Create a BautaJS context object. Useful for doing testing.
  *
@@ -53,11 +35,7 @@ export function createContext<TRaw>(
   const id = !raw.id ? idGenerator() : raw.id;
   let ctxLogger: Logger;
   if (!raw.log) {
-    const url: URL | undefined = raw.url ? new URL(`http://dummy.com${raw.url}`) : undefined;
-    const query = url?.searchParams && searchParamsToObject(url?.searchParams);
     ctxLogger = logger.child({
-      query,
-      url: url?.pathname,
       reqId: raw.id
     });
   } else {

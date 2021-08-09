@@ -63,11 +63,7 @@ export function initReqIdGenerator(
       // The request logger will be provided by express-pino if it's not disabled
       if (expressPinoOpt?.enabled === false) {
         req.log = logger.child({
-          reqId: req.id,
-          req: {
-            url: req.url,
-            method: req.method
-          }
+          reqId: req.id
         });
       }
       next();

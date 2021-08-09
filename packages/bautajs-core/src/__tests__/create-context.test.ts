@@ -64,26 +64,12 @@ describe('create context tests', () => {
     expect(result.data.test).toStrictEqual(1);
   });
 
-  test('should set the log child url and query params', () => {
+  test('should set the log child reqId', () => {
     const logger = defaultLogger('test-logger');
 
     const spy = jest.spyOn(logger, 'child');
     createContext({ id: '1', url: '/path/to/url?test=1' }, logger);
     expect(spy).toHaveBeenCalledWith({
-      query: { test: '1' },
-      url: '/path/to/url',
-      reqId: '1'
-    });
-  });
-
-  test('should transform multiple query parameters in to an array', () => {
-    const logger = defaultLogger('test-logger');
-
-    const spy = jest.spyOn(logger, 'child');
-    createContext({ id: '1', url: '/path/to/url?test=1&test=2&another=param' }, logger);
-    expect(spy).toHaveBeenCalledWith({
-      query: { test: ['1', '2'], another: 'param' },
-      url: '/path/to/url',
       reqId: '1'
     });
   });
