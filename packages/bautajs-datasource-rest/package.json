@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/datasource-rest",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "A bautaJS cache decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -43,7 +43,7 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@bautajs/core": "5.0.0",
+    "@bautajs/core": "5.1.0",
     "@sindresorhus/is": "4.0.1",
     "got": "^11.8.0",
     "native-proxy-agent": "^2.5.0"

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.0.1...v5.1.0) (2021-08-09)
+
+
+### Bug Fixes
+
+* duplicated req object on incoming request log ([8dc448f](https://github.axa.com/Digital/bauta-nodejs/commit/8dc448f9658aa33e22650f5c621a6fc55b655392)), closes [#257](https://github.axa.com/Digital/bauta-nodejs/issues/257)
+* **fastify,express:** do not log the req URL ([df43706](https://github.axa.com/Digital/bauta-nodejs/commit/df43706e69e5db942ff413028c6ba38b94ec0fe3))
+
+
+
+
+
 # [5.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.1.0...v5.0.0) (2021-07-23)
 
 

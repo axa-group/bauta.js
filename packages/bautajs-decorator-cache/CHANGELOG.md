@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.0.1...v5.1.0) (2021-08-09)
+
+**Note:** Version bump only for package @bautajs/decorator-cache
+
+
+
+
+
 # [5.0.0](https://github.axa.com/Digital/bauta-nodejs/compare/v4.1.0...v5.0.0) (2021-07-23)
 
 
