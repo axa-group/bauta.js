@@ -12,10 +12,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ExtendOptions, Got } from 'got';
-import { Context, BautaJSInstance, Pipeline } from '@bautajs/core';
+import { ExtendOptions, Got, BeforeRequestHook, AfterResponseHook, BeforeErrorHook } from 'got';
+import { Context, BautaJSInstance, Pipeline, Logger } from '@bautajs/core';
+
+export interface LogHooks {
+  logRequestHook?: (
+    /**
+     * Recommended logger to be used.
+     */
+    log: (...args: any[]) => void,
+    restProviderOptions: RestProviderOptions,
+    /**
+     * Log all ignoring the log level.
+     */
+    logAll: boolean,
+    /**
+     * Current request logger.
+     */
+    logger: Logger
+  ) => BeforeRequestHook;
+  logResponseHook?: (
+    /**
+     * Recommended logger to be used.
+     */
+    log: (...args: any[]) => void,
+    restProviderOptions: RestProviderOptions,
+    /**
+     * Log all ignoring the log level.
+     */
+    logAll: boolean,
+    /**
+     * Current request logger.
+     */
+    logger: Logger
+  ) => AfterResponseHook;
+  logErrorsHook?: (
+    /**
+     * Recommended logger to be used.
+     */
+    log: (...args: any[]) => void,
+    restProviderOptions: RestProviderOptions,
+    /**
+     * Log all ignoring the log level.
+     */
+    logAll: boolean,
+    /**
+     * Current request logger.
+     */
+    logger: Logger
+  ) => BeforeErrorHook;
+}
 
 export interface RestProviderOptions {
+  /**
+   * Override the internal logger hooks
+   *
+   * @type {LogHooks}
+   * @memberof RestProviderOptions
+   */
+  logHooks?: LogHooks;
   /**
    * Ignore the process.env.LOG_LEVEL and log all data (body, headers...)
    *

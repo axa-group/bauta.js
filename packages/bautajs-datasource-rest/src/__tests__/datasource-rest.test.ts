@@ -15,7 +15,7 @@
  */
 import nock from 'nock';
 import { BautaJS, BautaJSInstance, createContext, defaultLogger, pipe } from '@bautajs/core';
-import { CancelableRequest } from 'got';
+import { CancelableRequest, RequestError } from 'got';
 import { Readable } from 'stream';
 
 describe('provider rest', () => {
@@ -197,7 +197,7 @@ describe('provider rest', () => {
     });
   });
 
-  describe('logs on happy path', () => {
+  describe('logger tests', () => {
     beforeEach(() => {
       jest.resetModules();
     });
@@ -639,6 +639,107 @@ describe('provider rest', () => {
         },
         'outgoing request completed'
       );
+    });
+
+    test('should override the logger hooks for response and request', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      const logResponseHook = () => {
+        return (response: any) => {
+          logger.debug('logResponseHook');
+
+          return response;
+        };
+      };
+      const logRequestHook = () => {
+        return () => {
+          logger.debug('logRequestHook');
+        };
+      };
+
+      nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(200, { bender: 'ok' });
+
+      const provider = restProvider(
+        client => {
+          return client.post('https://pets.com/v1/policies', {
+            json: {
+              test: '1234'
+            },
+            responseType: 'json'
+          });
+        },
+        {
+          logHooks: {
+            logRequestHook,
+            logResponseHook
+          }
+        }
+      );
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, bautajs);
+
+      expect(logger.debug).toHaveBeenCalledWith('logRequestHook');
+      expect(logger.debug).toHaveBeenCalledWith('logResponseHook');
+    });
+
+    test('should override the logger hooks for errors', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      const logErrorsHook = () => {
+        return (error: RequestError) => {
+          logger.debug('logErrorHook');
+
+          throw error;
+        };
+      };
+
+      nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(404, { bender: 'ok' });
+
+      const provider = restProvider(
+        client => {
+          return client.post('https://pets.com/v1/policies', {
+            json: {
+              test: '1234'
+            },
+            responseType: 'json'
+          });
+        },
+        {
+          logHooks: {
+            logErrorsHook
+          }
+        }
+      );
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await expect(provider()(null, ctx, bautajs)).rejects.toStrictEqual(
+        expect.objectContaining({ message: 'Response code 404 (Not Found)' })
+      );
+
+      expect(logger.debug).toHaveBeenNthCalledWith(2, 'logErrorHook');
     });
   });
 

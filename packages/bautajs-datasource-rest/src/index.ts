@@ -135,11 +135,34 @@ function stepFn<TOut>(
         hooks: {
           beforeRequest: [
             addRequestIdHook(ctx.id),
-            logRequestHook(log, restProviderOptions, logAll)
+            typeof restProviderOptions.logHooks?.logRequestHook === 'function'
+              ? restProviderOptions.logHooks?.logRequestHook(
+                  log,
+                  restProviderOptions,
+                  logAll,
+                  logger
+                )
+              : logRequestHook(log, restProviderOptions, logAll)
           ],
-          afterResponse: [logResponseHook(log, restProviderOptions, logAll)],
+          afterResponse: [
+            typeof restProviderOptions.logHooks?.logResponseHook === 'function'
+              ? restProviderOptions.logHooks?.logResponseHook(
+                  log,
+                  restProviderOptions,
+                  logAll,
+                  logger
+                )
+              : logResponseHook(log, restProviderOptions, logAll)
+          ],
           beforeError: [
-            logErrorsHook(logger.error.bind(logger), restProviderOptions, logAll),
+            typeof restProviderOptions.logHooks?.logErrorsHook === 'function'
+              ? restProviderOptions.logHooks?.logErrorsHook(
+                  logger.error.bind(logger),
+                  restProviderOptions,
+                  logAll,
+                  logger
+                )
+              : logErrorsHook(logger.error.bind(logger), restProviderOptions, logAll),
             addErrorStatusCodeHook
           ]
         }
