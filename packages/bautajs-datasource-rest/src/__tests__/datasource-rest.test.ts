@@ -251,6 +251,57 @@ describe('provider rest', () => {
       );
     });
 
+    test('should log the url port if specified', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com:3000')
+        .post('/v1/policies', { test: '1234' })
+        .reply(200, { bender: 'ok' });
+
+      const provider = restProvider(client => {
+        return client.post('https://pets.com:3000/v1/policies', {
+          json: {
+            test: '1234'
+          },
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, bautajs);
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: '{"test":"1234"}',
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-type': 'application/json',
+              'content-length': '15',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            query: {},
+            method: 'POST',
+            url: 'https://pets.com:3000/v1/policies'
+          }
+        },
+        'outgoing request'
+      );
+    });
+
     test('should not log headers and body if the log level is set to info', async () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'debug').mockImplementation();

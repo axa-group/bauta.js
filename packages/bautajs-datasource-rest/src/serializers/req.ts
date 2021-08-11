@@ -49,7 +49,7 @@ const outgoingReqProto = Object.create(
 );
 
 function buildURL(url: URL) {
-  return `${url.origin}${url.port ? `:${url.port}` : ''}${url.pathname}`;
+  return `${url.origin}${url.pathname}`;
 }
 /**
  * Source code https://github.com/pinojs/pino-std-serializers
