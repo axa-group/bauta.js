@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.0...v5.1.1) (2021-08-11)
+
+
+### Bug Fixes
+
+* **datasource-rest:** duplicated port log ([#260](https://github.axa.com/Digital/bauta-nodejs/issues/260)) ([4657c03](https://github.axa.com/Digital/bauta-nodejs/commit/4657c03934b2d8b4487b8a2e139688e48b77614a)), closes [#259](https://github.axa.com/Digital/bauta-nodejs/issues/259)
+
+
+
+
+
 # [5.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.0.1...v5.1.0) (2021-08-09)
 
 
