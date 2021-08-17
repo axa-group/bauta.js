@@ -9,19 +9,17 @@ It allows you to set a pair (or sets of pairs) of step functions that will be ex
 In this example the first argument of the m.on() method (our predicate function) will evaluate to `false`, hence the `otherwise()` function will be invoked. 
 
 ```javascript
-const { match, pipelineBuilder } = require('@batuajs/core');
+const { match, pipe } = require('@batuajs/core');
 
 bautajsInstance.operations.v1.randomOperation.setup(
-  pipelineBuilder(p =>
-    p.pipe( 
+  pipe( 
       () => console.log('nighter a predicate nor a statement step function'),
       match(m =>
         m
         .on((prev)=> typeof prev === 'number', () => console.log('Only meat lovers'))
         .otherwise(() => console.log('You can always eat veggies!'))
       )
-    ))
-  );  
+    ));
 
 // => return value of the pipeline will be an array (we piped two step functions):
 // ['nighter a predicate nor a statement step function', 'You can always eat veggies!']
@@ -36,8 +34,7 @@ so the string `'I love and care about our oceans'` will be logged to the console
 const { match, pipelineBuilder } = require('@batuajs/core');
 
 bautajsInstance.operations.v1.randomOperation.setup(
-  pipelineBuilder(p => 
-    p.pipe(
+  pipe(
       () => return true,
       match(
         m
@@ -46,7 +43,6 @@ bautajsInstance.operations.v1.randomOperation.setup(
           .otherwise(() => null)
       )
     )
-  )
 );
 
 // => 'I love and care about our oceans'
