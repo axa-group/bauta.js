@@ -60,6 +60,10 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [Validation](./docs/validation.md)
 - [Configuration Options](./docs/configuration-options.md)
 
+## Testing
+
+Check - [Testing](./docs/testing.md)
+
 ## Benchmark
 
 See [Benchmark](./docs/benchmark.md)
