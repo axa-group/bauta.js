@@ -54,7 +54,10 @@ function createHandler(operation: Operation) {
       response = await op;
 
       // In case the response is already sent to the user don't send it again.
-      if (reply.sent) {
+      if (reply.sent || reply.raw.headersSent || reply.raw.finished) {
+        // In case reply was sent by reply.raw
+        // eslint-disable-next-line no-param-reassign
+        reply.sent = true;
         return {};
       }
 
@@ -70,7 +73,7 @@ function createHandler(operation: Operation) {
         return {};
       }
 
-      if (reply.sent) {
+      if (reply.sent || reply.raw.headersSent || reply.raw.finished) {
         request.log.error(
           {
             error: {
@@ -81,6 +84,9 @@ function createHandler(operation: Operation) {
           },
           `Response has been sent to the requester, but the promise threw an error`
         );
+        // In case reply was sent by reply.raw
+        // eslint-disable-next-line no-param-reassign
+        reply.sent = true;
         return {};
       }
       reply.status(error.statusCode || 500);

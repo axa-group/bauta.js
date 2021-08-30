@@ -16,7 +16,7 @@
 import path from 'path';
 import FormData from 'form-data';
 import { Readable } from 'stream';
-import { resolver, defaultLogger, pipe } from '@bautajs/core';
+import { resolver, defaultLogger, pipe, asPromise } from '@bautajs/core';
 import fastify, { FastifyInstance } from 'fastify';
 import { bautajsFastify } from '../index';
 import { getRequest, getResponse } from '../operators';
@@ -236,6 +236,49 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/api/test-stream'
       });
 
+      expect(res.statusCode).toStrictEqual(200);
+      expect(res.headers['content-disposition']).toStrictEqual('attachment; filename="file.pdf');
+      expect(res.payload).toStrictEqual('132');
+    });
+
+    test('should not send the response again if already has been sent on the res raw', async () => {
+      fastifyInstance.register(bautajsFastify, {
+        apiBasePath: '/api/',
+        prefix: '/v1/',
+        apiDefinition,
+        resolvers: [
+          resolver(operations => {
+            operations.operationStream.setup(
+              asPromise((_, ctx, _bautajs, done) => {
+                const res = getResponse(ctx);
+                // Create a buffer to hold the response chunks
+                const s = new Readable();
+                // eslint-disable-next-line no-underscore-dangle
+                s._read = () => {};
+
+                res.raw.setHeader('Content-disposition', 'attachment; filename="file.pdf');
+                res.raw.setHeader('Content-type', 'application/octet-stream');
+                s.push('1');
+                setTimeout(() => {
+                  s.push('2');
+                  s.push(null);
+                }, 500);
+                s.push('3');
+
+                s.pipe(res.raw);
+
+                s.on('end', done);
+                s.on('error', done);
+              })
+            );
+          })
+        ]
+      });
+
+      const res = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/api/test-stream'
+      });
       expect(res.statusCode).toStrictEqual(200);
       expect(res.headers['content-disposition']).toStrictEqual('attachment; filename="file.pdf');
       expect(res.payload).toStrictEqual('132');
