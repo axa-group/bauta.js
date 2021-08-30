@@ -1,6 +1,6 @@
 {
   "name": "@bautajs/fastify",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "A bautaJS fastify plugin. Allows auto exposing the bautaJS operations.",
   "main": "dist",
   "types": "dist",
@@ -51,6 +51,6 @@
     "route-order": "^0.1.0"
   },
   "devDependencies": {
-    "@bautajs/datasource-rest": "5.1.1"
+    "@bautajs/datasource-rest": "5.1.2"
   }
 }

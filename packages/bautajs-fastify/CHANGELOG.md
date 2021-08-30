@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.2](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.1...v5.1.2) (2021-08-30)
+
+
+### Bug Fixes
+
+* **fastify:** response already sent ([#263](https://github.axa.com/Digital/bauta-nodejs/issues/263)) ([c20513e](https://github.axa.com/Digital/bauta-nodejs/commit/c20513ecb77024a2dc8afa6febbf3052ea762351))
+
+
+
+
+
 ## [5.1.1](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.0...v5.1.1) (2021-08-11)
 
 **Note:** Version bump only for package @bautajs/fastify
