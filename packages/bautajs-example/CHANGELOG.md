@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.3](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.2...v5.1.3) (2021-09-07)
+
+
+### Bug Fixes
+
+* update dependencies and deprecate ([#264](https://github.axa.com/Digital/bauta-nodejs/issues/264)) ([f4164c6](https://github.axa.com/Digital/bauta-nodejs/commit/f4164c607fccb12ca62605247698bdc9613c8bec))
+
+
+
+
+
 ## [5.1.2](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.1...v5.1.2) (2021-08-30)
 
 **Note:** Version bump only for package bautajs-example

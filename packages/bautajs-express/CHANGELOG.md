@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.3](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.2...v5.1.3) (2021-09-07)
+
+
+### Bug Fixes
+
+* **express:** typo on typescript ([3ac8b2b](https://github.axa.com/Digital/bauta-nodejs/commit/3ac8b2b41907252eef66617383f141541a99f7c2))
+* update dependencies and deprecate ([#264](https://github.axa.com/Digital/bauta-nodejs/issues/264)) ([f4164c6](https://github.axa.com/Digital/bauta-nodejs/commit/f4164c607fccb12ca62605247698bdc9613c8bec))
+
+
+
+
+
 # [5.1.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.0.1...v5.1.0) (2021-08-09)
 
 
