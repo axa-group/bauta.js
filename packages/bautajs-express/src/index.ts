@@ -84,7 +84,7 @@ export class BautaJSExpress extends bautajs.BautaJS {
         ) {
           try {
             operation.validateResponseSchema(body, res.statusCode);
-          } catch (e) {
+          } catch (e: any) {
             // On validation error of the response automatically send 500 status code and format the error.
             // eslint-disable-next-line no-param-reassign
             body = this.onResponseValidationError?.(e, req as ExpressRequest, res) || e;
@@ -148,7 +148,7 @@ export class BautaJSExpress extends bautajs.BautaJS {
       if (operation.shouldValidateRequest()) {
         try {
           operation.validateRequestSchema(req);
-        } catch (e) {
+        } catch (e: any) {
           res.status(e.statusCode);
           next(e);
 
