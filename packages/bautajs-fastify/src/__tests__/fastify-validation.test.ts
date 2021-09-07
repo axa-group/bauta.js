@@ -58,7 +58,8 @@ describe('bautaJS fastify tests', () => {
     expect(body.errors[0]).toStrictEqual({
       location: 'querystring',
       message: 'must match format "test"',
-      errorCode: 'format'
+      errorCode: 'format',
+      path: '/limit'
     });
   });
 
@@ -94,7 +95,8 @@ describe('bautaJS fastify tests', () => {
     expect(body.errors[0]).toStrictEqual({
       location: 'querystring',
       message: 'must match format "test"',
-      errorCode: 'format'
+      errorCode: 'format',
+      path: '/limit'
     });
     expect(spy).toHaveBeenCalledWith(null);
   });

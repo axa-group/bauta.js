@@ -3,8 +3,13 @@ import { Operation, ValidationError, Validator, LocationError } from '@bautajs/c
 import routeOrder from 'route-order';
 import { ApiHooks, OnResponseValidationError } from './types';
 
+// We are using ajv 8 and dataPath is moved to instancePath
+export interface ValidateError extends fastify.ValidationResult {
+  instancePath: string;
+}
+
 export interface ValidationResult {
-  validation: fastify.ValidationResult[];
+  validation: ValidateError[];
   validationContext: string;
 }
 
@@ -13,7 +18,7 @@ function mapFsValidationToLocationErrors(
 ): LocationError[] | undefined {
   return Array.isArray(validation.validation)
     ? validation.validation.map(error => ({
-        path: error.dataPath,
+        path: error.dataPath || error.instancePath,
         location: validation.validationContext || '',
         message: error.message || '',
         errorCode: error.keyword
@@ -67,7 +72,7 @@ function createHandler(operation: Operation) {
       }
 
       return response;
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'CancelError') {
         request.log.error(`The request was canceled by the requester.`);
         return {};
@@ -131,7 +136,7 @@ async function exposeRoutes(
       if (!reply.sent && operation.shouldValidateResponse(reply.statusCode)) {
         try {
           operation.validateResponseSchema(payload, reply.statusCode);
-        } catch (e) {
+        } catch (e: any) {
           // On validation error of the response automatically send 500 status code and format the error.
           const error = opts.onResponseValidationError?.(e, req, reply) || e;
           reply.status(500);
