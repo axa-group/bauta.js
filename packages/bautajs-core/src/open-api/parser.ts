@@ -56,7 +56,7 @@ class Parser {
       const copy = JSON.parse(JSON.stringify(data, null, 2));
       // and validate
       spec = await SwaggerParser.validate(copy);
-    } catch (e) {
+    } catch (e: any) {
       this.logger.error(
         { error: e },
         `Error on validate and parser the current openAPI definition; ${e.message}`

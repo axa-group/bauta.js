@@ -41,8 +41,8 @@ function buildOpenAPIPaths(operations: Operations) {
       }
       const pathItem = paths[operation.route.path];
       if (pathItem) {
-        pathItem[operation.route.method.toLowerCase() as OpenAPIV2.HttpMethods] =
-          operation.route.openapiSource;
+        pathItem[operation.route.method.toLowerCase() as OpenAPIV2.HttpMethods] = operation.route
+          .openapiSource as OpenAPIV2.OperationObject;
       }
     }
   });

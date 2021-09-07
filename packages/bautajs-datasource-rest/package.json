@@ -44,8 +44,8 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "5.1.0",
-    "@sindresorhus/is": "4.0.1",
-    "got": "^11.8.0",
+    "@sindresorhus/is": "^4.0.1",
+    "got": "^11.8.2",
     "native-proxy-agent": "^2.5.0"
   }
 }

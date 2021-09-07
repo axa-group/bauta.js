@@ -43,7 +43,7 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@bautajs/core": "5.1.0",
-    "node-object-hash": "^2.0.0",
-    "quick-lru-cjs": "^5.2.0"
+    "node-object-hash": "^2.3.9",
+    "quick-lru-cjs": "^5.2.1"
   }
 }

@@ -192,7 +192,7 @@ describe('bauta core tests', () => {
       expect.assertions(1);
       try {
         await bautaJS.operations.operation1.run({ req, res });
-      } catch (e) {
+      } catch (e: any) {
         // eslint-disable-next-line jest/no-conditional-expect
         expect(e.stack).toStrictEqual(
           `${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`
@@ -355,8 +355,7 @@ describe('bauta core tests', () => {
       expect.assertions(1);
     });
 
-    // eslint-disable-next-line jest/no-done-callback
-    test('should set the token variable isCanceled to true if the chain is canceled', async done => {
+    test('should set the token variable isCanceled to true if the chain is canceled', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -368,7 +367,6 @@ describe('bauta core tests', () => {
               pipe(async (_, ctx) => {
                 ctx.token.onCancel(() => {
                   expect(ctx.token.isCanceled).toStrictEqual(true);
-                  done();
                 });
                 await new Promise(resolve =>
                   setTimeout(() => {
@@ -387,13 +385,12 @@ describe('bauta core tests', () => {
         res: {}
       }) as CancelablePromise<any>;
 
-      expect.assertions(1);
+      expect.assertions(2);
       request1.cancel();
-      try {
-        await request1;
-      } catch (e) {
-        // No need to control error
-      }
+
+      await expect(request1).rejects.toThrow(
+        expect.objectContaining({ message: 'Promise was canceled' })
+      );
     });
 
     test('should allow custom cancel reason', async () => {
@@ -471,11 +468,9 @@ describe('bauta core tests', () => {
 
       request1.cancel();
 
-      try {
-        await request1;
-      } catch (error) {
-        // Not interested on the error
-      }
+      await expect(request1).rejects.toThrow(
+        expect.objectContaining({ message: 'Promise was canceled' })
+      );
       expect(onCancel).toHaveBeenCalledTimes(3);
     });
 
@@ -525,7 +520,7 @@ describe('bauta core tests', () => {
 
       // eslint-disable-next-line jest/valid-expect-in-promise
       const [, req2] = await Promise.all([
-        request1.catch(e => {
+        request1.catch((e: any) => {
           // eslint-disable-next-line jest/no-conditional-expect
           expect(e).toStrictEqual(expect.objectContaining({ message: 'Promise was canceled' }));
           return Promise.resolve({});

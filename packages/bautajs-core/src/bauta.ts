@@ -58,7 +58,7 @@ function prebuildApi(apiDefinition: Document): API {
         })
         .flat(1)
     };
-  } catch (e) {
+  } catch (e: any) {
     throw new Error(`The OpenAPI API definition provided is not valid. Error ${e.message}`);
   }
 }

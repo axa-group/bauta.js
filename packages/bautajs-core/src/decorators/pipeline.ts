@@ -184,7 +184,7 @@ export function pipe<T, R>(
         });
       }
       return result;
-    } catch (e) {
+    } catch (e: any) {
       // In case is not a promise the execution will simply throw and it has to be controlled by a try catch and send it to the error handler function if there is any.
       if (errorHandler) {
         return errorHandler(e, ctx, bautaJS) as any;

@@ -1,5 +1,6 @@
 {
   "extends": [
+    "airbnb-base",
     "airbnb-typescript/base",
     "plugin:jest/all",
     "plugin:prettier/recommended",
