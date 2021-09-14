@@ -58,5 +58,6 @@
     "openapi-types": "^9.3.0",
     "p-cancelable": "2.1.1",
     "pino": "^6.13.2"
-  }
+  },
+  "devDependencies": {}
 }

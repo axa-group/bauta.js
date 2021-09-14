@@ -140,3 +140,12 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Third party dependencies licenses
+
+### Production
+ - [@bautajs/core@5.1.0](git+https://github.axa.com/Digital/bauta-nodejs) - MIT*
+ - [node-object-hash@2.3.9](https://github.com/SkeLLLa/node-object-hash) - MIT
+ - [quick-lru-cjs@5.2.1](https://github.com/javi11/quick-lru-cjs) - MIT
+
+### Development

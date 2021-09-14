@@ -43,5 +43,6 @@
     "express": "4.x",
     "pino": "^6.13.2",
     "pino-pretty": "^6.0.0"
-  }
+  },
+  "devDependencies": {}
 }

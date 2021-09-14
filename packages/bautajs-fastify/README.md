@@ -78,3 +78,16 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Third party dependencies licenses
+
+### Production
+ - [@bautajs/core@5.1.0](git+https://github.axa.com/Digital/bauta-nodejs) - MIT*
+ - [fastify@3.21.0](https://github.com/fastify/fastify) - MIT
+ - [fastify-openapi-docs@0.4.0](https://github.com/ShogunPanda/fastify-openapi-docs) - ISC
+ - [fastify-plugin@3.0.0](https://github.com/fastify/fastify-plugin) - MIT
+ - [fastify-x-request-id@2.0.0](https://github.com/dimonnwc3/fastify-x-request-id) - MIT
+ - [route-order@0.1.0](https://github.com/sfrdmn/node-route-order) - MIT
+
+### Development
+ - [@bautajs/datasource-rest@5.1.2](https://github.axa.com/Digital/bauta-nodejs) - MIT*

@@ -47,5 +47,6 @@
     "@sindresorhus/is": "^4.0.1",
     "got": "^11.8.2",
     "native-proxy-agent": "^2.5.0"
-  }
+  },
+  "devDependencies": {}
 }
