@@ -24,7 +24,7 @@ You can also specify resolvers directly on the bautajs.operations instance **bef
 
 # Pipeline
 
-A pipeline is an chain of Pipeline.StepFunctions for the given operation.
+A pipeline is a chain of Pipeline.StepFunctions.
 
 ```js
 // resolvers/my-pipeline.js

@@ -54,9 +54,11 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
 - [Pipeline.StepFunction and Resolvers](./docs/decorators-and-resolver.md)
   - Some of the available decorators
     - [parallel](./docs/decorators/parallel.md)
-    - [parallelSettled](./docs/decorators/parallelSettled.md)
+    - [parallelSettled](./docs/decorators/parallel-all-settled.md)
     - [iff](./docs/decorators/iff.md)
     - [match](./docs/decorators/match.md)
+    - [map](./docs/decorators/map.md)
+    - [parallelMap](./docs/decorators/parallelMap.md)
 - [Validation](./docs/validation.md)
 - [Configuration Options](./docs/configuration-options.md)
 

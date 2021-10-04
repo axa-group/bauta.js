@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { Pipeline } from '../types';
+import { BautaJSInstance, Context, Pipeline } from '../types';
 /**
  * Decorator that allows to execute given pipeline conditionally. It accepts the condition step function and pipeline.
  * If the condition step function will be evaluated to truthy value the pipeline will be executed.
@@ -26,10 +26,10 @@ import { Pipeline } from '../types';
  *
  * @example
  * 
- * import { iff, pipeline } from @bautajs/core
+ * import { iff, pipe, step } from @bautajs/core
  * 
- * const randomPreviousPipeline = pipe(() => 'I am so random!');
- * const manageOnlyStringsPipeline = pipe(() => 'I can manage only strings, otherwise I crash');
+ * const randomPreviousPipeline = step(() => 'I am so random!');
+ * const manageOnlyStringsPipeline = step(() => 'I can manage only strings, otherwise I crash');
 
  *  const pipeline = pipe(
  *    randomPreviousPipeline,
@@ -38,7 +38,7 @@ import { Pipeline } from '../types';
  * 
  */
 export function iff<TIn, TOut>(
-  condition: Pipeline.StepFunction<TIn, Boolean>,
+  condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
   pipeline: Pipeline.StepFunction<TIn, TOut>
 ): Pipeline.StepFunction<TIn, TOut> {
   return (prev, ctx, bautajs) => {

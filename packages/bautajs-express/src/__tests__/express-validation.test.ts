@@ -76,7 +76,7 @@ describe('bautaJS express validation tests', () => {
     const res = await supertest(app).get('/v1/api/test').expect('Content-Type', /json/).expect(500);
 
     expect(res.body.message).toStrictEqual(`Internal error`);
-    expect(Array.isArray(res.body.errors)).toStrictEqual(true);
+    expect(Array.isArray(res.body.errors)).toBe(true);
     expect(res.body.errors).toStrictEqual([
       {
         path: '/0/id',

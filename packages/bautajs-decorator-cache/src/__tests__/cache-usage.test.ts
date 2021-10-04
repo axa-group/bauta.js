@@ -100,7 +100,7 @@ describe('cache decorator usage', () => {
 
       myCachePipeline.store.clear();
 
-      expect(myCachePipeline.store.size).toStrictEqual(0);
+      expect(myCachePipeline.store.size).toBe(0);
 
       myCachePipeline(
         null,

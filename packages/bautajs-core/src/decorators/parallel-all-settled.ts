@@ -208,11 +208,10 @@ export function parallelAllSettled<TIn>(
  * @returns {Pipeline.StepFunction<TIn, any[]>}
  * @example
  *
- * const { parallelAllSettled } = require('@batuajs/core');
+ * const { parallelAllSettled, pipe } = require('@batuajs/core');
  * const { getCats, getDogs, playWithAnimals } = require('./my-datasource');
  *
- * operations.v1.op1.setup(pipelineBuilder(p =>
-    p.pipe(
+ * operations.op1.setup(pipe(
       parallelAllSettled(
         getCats(),
         getCats(),
@@ -224,7 +223,7 @@ export function parallelAllSettled<TIn>(
         }
         playWithAnimals(getDogsResult.value)
       })
-    ));
+    );
  */
 export function parallelAllSettled(...functions: any): Pipeline.StepFunction<any, any> {
   return async function parallelPiped(prev: any, ctx, bautajs): Promise<any> {

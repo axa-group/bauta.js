@@ -24,7 +24,7 @@ describe('parallel decorator', () => {
       )
     );
 
-    expect(await pipeline({}, createContext({}), {} as BautaJSInstance)).toStrictEqual([
+    await expect(pipeline({}, createContext({}), {} as BautaJSInstance)).resolves.toStrictEqual([
       { id: 3, name: 'pet3' },
       { id: 1, name: 'pet' }
     ]);

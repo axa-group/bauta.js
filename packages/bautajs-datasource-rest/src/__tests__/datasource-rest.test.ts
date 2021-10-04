@@ -52,7 +52,7 @@ describe('provider rest', () => {
         bautajs
       );
 
-      expect(response).toStrictEqual('text');
+      expect(response).toBe('text');
     });
   });
 
@@ -178,7 +178,7 @@ describe('provider rest', () => {
       await expect(request1).rejects.toThrow(
         expect.objectContaining({ message: 'Promise was canceled' })
       );
-      expect((request1 as CancelableRequest<any>).isCanceled).toStrictEqual(true);
+      expect((request1 as CancelableRequest<any>).isCanceled).toBe(true);
     });
 
     test('should cancel the request if the a cancel is executed and the request is an stream', async () => {
@@ -193,7 +193,7 @@ describe('provider rest', () => {
 
       myContext.token.cancel();
       await request1;
-      expect((request1 as any).destroyed).toStrictEqual(true);
+      expect((request1 as any).destroyed).toBe(true);
     });
   });
 

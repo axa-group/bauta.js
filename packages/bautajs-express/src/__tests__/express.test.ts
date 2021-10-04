@@ -103,7 +103,7 @@ describe('bautaJS express', () => {
 
       const res = await supertest(app).get('/v1/api/test');
 
-      expect(res.status).toStrictEqual(404);
+      expect(res.status).toBe(404);
     });
 
     test('should not send the response again if already has been sent', async () => {
@@ -258,7 +258,7 @@ describe('bautaJS express', () => {
 
       const res = await supertest(app).get('/v1/openapi.json').expect(200);
 
-      expect(res.status).toStrictEqual(200);
+      expect(res.status).toBe(200);
     });
 
     test('should not expose the swagger if explorer is set to false', async () => {
@@ -274,7 +274,7 @@ describe('bautaJS express', () => {
 
       const res = await supertest(app).get('/v1/explorer').expect(404);
 
-      expect(res.status).toStrictEqual(404);
+      expect(res.status).toBe(404);
     });
 
     test('should left error handling to express error handler', async () => {

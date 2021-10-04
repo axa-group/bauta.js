@@ -9,7 +9,7 @@ The `iff` decorator allows you to execute given Pipeline.StepFunction conditiona
 Here `iff` works as a pass-through, since the first argument will evaluate to false.
 
 ```javascript
-import { iff, pipeline } from @bautajs/core
+const { iff, pipe } = require('@bautajs/core')
 
 
 const pipeline = pipe(
@@ -29,7 +29,7 @@ const pipeline = pipe(
 Here the `manageOnlyStringsPipeline` will be executed since the first argument of `iff` evaluates to true.
 
 ```javascript
-import { iff, pipeline } from @bautajs/core
+import { iff, pipeline } from '@bautajs/core'
 
 const randomPreviousPipeline = pipe(() => 'I am so random!');
 const manageOnlyStringsPipeline = pipe(() => 'I can manage only strings');

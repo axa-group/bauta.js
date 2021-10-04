@@ -28,7 +28,7 @@ describe('parallel-all-settled decorator', () => {
       )
     );
 
-    expect(await pipeline({}, createContext({}), {} as BautaJSInstance)).toStrictEqual([
+    await expect(pipeline({}, createContext({}), {} as BautaJSInstance)).resolves.toStrictEqual([
       { status: 'fulfilled', value: { id: 1, name: 'pet1' } },
       { status: 'fulfilled', value: { id: 2, name: 'pet2' } },
       { status: 'fulfilled', value: { id: 3, name: 'pet3' } },

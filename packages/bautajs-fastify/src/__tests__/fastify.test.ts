@@ -57,7 +57,7 @@ describe('bautaJS fastify tests', () => {
         method: 'GET',
         url: '/v1/api/test'
       });
-      expect(res.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(res.headers['content-type']).toBe('application/json; charset=utf-8');
       expect(JSON.parse(res.payload)).toStrictEqual([expected]);
     });
 
@@ -89,7 +89,7 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/api/test'
       });
 
-      expect(res.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(res.headers['content-type']).toBe('application/json; charset=utf-8');
       expect(JSON.parse(res.payload)).toStrictEqual([expected]);
     });
 
@@ -106,7 +106,7 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/api/test'
       });
 
-      expect(res.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(res.headers['content-type']).toBe('application/json; charset=utf-8');
       expect(JSON.parse(res.payload)).toStrictEqual([
         {
           id: 134,
@@ -146,7 +146,7 @@ describe('bautaJS fastify tests', () => {
       });
 
       // 301 is returned by the swagger explorer
-      expect(res.statusCode).toStrictEqual(301);
+      expect(res.statusCode).toBe(301);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith('preValidation');
     });
@@ -165,7 +165,7 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/api/test'
       });
 
-      expect(res.statusCode).toStrictEqual(404);
+      expect(res.statusCode).toBe(404);
     });
 
     test('should not send the response again if already has been sent', async () => {
@@ -193,7 +193,7 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/api/test'
       });
 
-      expect(res.statusCode).toStrictEqual(200);
+      expect(res.statusCode).toBe(200);
       expect(JSON.parse(res.payload)).toStrictEqual([
         {
           id: 134,
@@ -236,9 +236,9 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/api/test-stream'
       });
 
-      expect(res.statusCode).toStrictEqual(200);
-      expect(res.headers['content-disposition']).toStrictEqual('attachment; filename="file.pdf');
-      expect(res.payload).toStrictEqual('132');
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-disposition']).toBe('attachment; filename="file.pdf');
+      expect(res.payload).toBe('132');
     });
 
     test('should not send the response again if already has been sent on the res raw', async () => {
@@ -279,9 +279,9 @@ describe('bautaJS fastify tests', () => {
         method: 'GET',
         url: '/v1/api/test-stream'
       });
-      expect(res.statusCode).toStrictEqual(200);
-      expect(res.headers['content-disposition']).toStrictEqual('attachment; filename="file.pdf');
-      expect(res.payload).toStrictEqual('132');
+      expect(res.statusCode).toBe(200);
+      expect(res.headers['content-disposition']).toBe('attachment; filename="file.pdf');
+      expect(res.payload).toBe('132');
     });
 
     test('should allow set custom headers', async () => {
@@ -309,7 +309,7 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/api/test-stream'
       });
 
-      expect(res.statusCode).toStrictEqual(200);
+      expect(res.statusCode).toBe(200);
       expect(res.headers['content-type']).toStrictEqual(
         `multipart/form-data; boundary=${form.getBoundary()}`
       );
@@ -327,7 +327,7 @@ describe('bautaJS fastify tests', () => {
         method: 'GET',
         url: '/v1/api/test'
       });
-      expect(res.statusCode).toStrictEqual(200);
+      expect(res.statusCode).toBe(200);
 
       expect(JSON.parse(res.payload)).toStrictEqual([
         {
@@ -351,7 +351,7 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/openapi.json'
       });
 
-      expect(res.statusCode).toStrictEqual(404);
+      expect(res.statusCode).toBe(404);
     });
 
     test('should expose the swagger by default', async () => {
@@ -372,8 +372,8 @@ describe('bautaJS fastify tests', () => {
         url: '/v1'
       });
 
-      expect(res.statusCode).toStrictEqual(200);
-      expect(res2.statusCode).toStrictEqual(301);
+      expect(res.statusCode).toBe(200);
+      expect(res2.statusCode).toBe(301);
     });
 
     test('should only show the tags that are in the exposed routes', async () => {
@@ -405,7 +405,7 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/openapi.json'
       });
 
-      expect(res.statusCode).toStrictEqual(200);
+      expect(res.statusCode).toBe(200);
     });
     test('should return a 204 empty response if the pipeline do not return anything', async () => {
       const fs = fastify();
@@ -429,7 +429,7 @@ describe('bautaJS fastify tests', () => {
       });
       fs.close();
 
-      expect(res.body).toStrictEqual('');
+      expect(res.body).toBe('');
     });
   });
 
@@ -458,7 +458,7 @@ describe('bautaJS fastify tests', () => {
       });
       fs.close();
 
-      expect(res.headers['x-request-id']).toStrictEqual('2');
+      expect(res.headers['x-request-id']).toBe('2');
     });
 
     test('should allow override the error handler', async () => {
@@ -482,7 +482,7 @@ describe('bautaJS fastify tests', () => {
       });
       fs.close();
 
-      expect(res.statusCode).toStrictEqual(500);
+      expect(res.statusCode).toBe(500);
       expect(JSON.parse(res.payload)).toStrictEqual({
         message: 'some error'
       });
@@ -557,14 +557,14 @@ describe('bautaJS fastify tests', () => {
         url: '/v2/api/test'
       });
 
-      expect(res.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(res.headers['content-type']).toBe('application/json; charset=utf-8');
       expect(JSON.parse(res.payload)).toStrictEqual([
         {
           id: 134,
           name: 'pet2'
         }
       ]);
-      expect(res2.headers['content-type']).toStrictEqual('application/json; charset=utf-8');
+      expect(res2.headers['content-type']).toBe('application/json; charset=utf-8');
       expect(JSON.parse(res2.payload)).toStrictEqual([
         {
           id: 134,

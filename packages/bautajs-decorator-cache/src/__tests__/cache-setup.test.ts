@@ -30,7 +30,7 @@ describe('cache setup', () => {
 
     await myCachePipeline(null, createContext({}), {} as BautaJSInstance);
 
-    expect(myCachePipeline.store.size).toStrictEqual(1);
+    expect(myCachePipeline.store.size).toBe(1);
   });
 
   test('should create a cache with ttl if maxAge is passed', async () => {

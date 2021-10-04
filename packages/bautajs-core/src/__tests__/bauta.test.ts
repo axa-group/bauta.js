@@ -89,7 +89,7 @@ describe('bauta core tests', () => {
       });
       await bautaJS.bootstrap();
       expect(bautaJS.operations.operation1).toBeDefined();
-      expect(bautaJS.operations.operation2).not.toBeDefined();
+      expect(bautaJS.operations.operation2).toBeUndefined();
     });
   });
 
@@ -140,7 +140,7 @@ describe('bauta core tests', () => {
       });
       await bautaJS.bootstrap();
 
-      expect(bautaJS.operations.operation1.shouldValidateRequest()).toStrictEqual(false);
+      expect(bautaJS.operations.operation1.shouldValidateRequest()).toBe(false);
     });
 
     test('should use the local operation request validation toggle over the global one', async () => {
@@ -157,7 +157,7 @@ describe('bauta core tests', () => {
       bautaJS.operations.operation1.validateRequest(true);
       await bautaJS.bootstrap();
 
-      expect(bautaJS.operations.operation1.shouldValidateRequest()).toStrictEqual(true);
+      expect(bautaJS.operations.operation1.shouldValidateRequest()).toBe(true);
     });
   });
 
@@ -222,7 +222,7 @@ describe('bauta core tests', () => {
       }));
       await bautaJS.bootstrap();
 
-      expect(await bautaJS.operations.operation1.run({ req, res })).toStrictEqual({
+      await expect(bautaJS.operations.operation1.run({ req, res })).resolves.toStrictEqual({
         id: 1,
         name: 'pety'
       });
@@ -246,7 +246,7 @@ describe('bauta core tests', () => {
 
       await bautaJS.bootstrap();
 
-      expect(bautaJS.operations.operation1.shouldValidateResponse(200)).toStrictEqual(true);
+      expect(bautaJS.operations.operation1.shouldValidateResponse(200)).toBe(true);
     });
 
     test('should prioritize the local operation toggle over the global one', async () => {
@@ -265,7 +265,7 @@ describe('bauta core tests', () => {
       }));
 
       await bautaJS.bootstrap();
-      expect(bautaJS.operations.operation1.shouldValidateResponse(200)).toStrictEqual(true);
+      expect(bautaJS.operations.operation1.shouldValidateResponse(200)).toBe(true);
     });
   });
 
@@ -281,9 +281,9 @@ describe('bauta core tests', () => {
         staticConfig: config
       });
 
-      expect(
-        await bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
-      ).toStrictEqual([
+      await expect(
+        bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
+      ).resolves.toStrictEqual([
         {
           id: 134,
           name: 'pet2'
@@ -306,9 +306,9 @@ describe('bauta core tests', () => {
       });
       await bautaJS.bootstrap();
 
-      expect(
-        await bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
-      ).toStrictEqual([
+      await expect(
+        bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
+      ).resolves.toStrictEqual([
         {
           id: 132,
           name: 'pet1'
@@ -366,7 +366,7 @@ describe('bauta core tests', () => {
             operations.operation1.setup(
               pipe(async (_, ctx) => {
                 ctx.token.onCancel(() => {
-                  expect(ctx.token.isCanceled).toStrictEqual(true);
+                  expect(ctx.token.isCanceled).toBe(true);
                 });
                 await new Promise(resolve =>
                   setTimeout(() => {
@@ -529,7 +529,7 @@ describe('bauta core tests', () => {
       ]);
 
       expect(onCancel).toHaveBeenCalledTimes(1);
-      expect(req2).toStrictEqual('ok');
+      expect(req2).toBe('ok');
     });
   });
 
@@ -626,7 +626,7 @@ describe('bauta core tests', () => {
       })) as CancelablePromise<any>;
 
       expect(request1).not.toStrictEqual(request2);
-      expect(request3).toStrictEqual('okoperationInherited');
+      expect(request3).toBe('okoperationInherited');
     });
     test('should not inherit deprecated operations on use inheritOperationsFrom', async () => {
       const config = {
@@ -662,7 +662,7 @@ describe('bauta core tests', () => {
       })) as CancelablePromise<any>;
 
       expect(Object.prototype.hasOwnProperty.call(bautaJSV2.operations, 'operation1')).toBeFalsy();
-      expect(request3).toStrictEqual('okoperationInherited');
+      expect(request3).toBe('okoperationInherited');
     });
     test('operations can not be inherit after bootstrap', async () => {
       const config = {
@@ -764,7 +764,7 @@ describe('bauta core tests', () => {
       });
 
       expect.assertions(1);
-      expect(bautaJS.operations.operation1.isPrivate()).toStrictEqual(true);
+      expect(bautaJS.operations.operation1.isPrivate()).toBe(true);
     });
 
     test('should set as public automatically if the setup is done for the operation', async () => {
@@ -783,7 +783,7 @@ describe('bauta core tests', () => {
         staticConfig: config
       });
       await bautaJS.bootstrap();
-      expect(bautaJS.operations.operation1.isPrivate()).toStrictEqual(false);
+      expect(bautaJS.operations.operation1.isPrivate()).toBe(false);
     });
 
     test('should set as private if we specified even thought we did setup the operation', async () => {
@@ -805,7 +805,7 @@ describe('bauta core tests', () => {
         staticConfig: config
       });
       await bautaJS.bootstrap();
-      expect(bautaJS.operations.operation1.isPrivate()).toStrictEqual(true);
+      expect(bautaJS.operations.operation1.isPrivate()).toBe(true);
     });
   });
 });

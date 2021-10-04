@@ -53,7 +53,7 @@ describe('bautaJS fastify tests', () => {
     });
 
     const body = JSON.parse(res.body);
-    expect(res.statusCode).toStrictEqual(400);
+    expect(res.statusCode).toBe(400);
     expect(body.message).toStrictEqual(`The request was not valid`);
     expect(body.errors[0]).toStrictEqual({
       location: 'querystring',
@@ -90,7 +90,7 @@ describe('bautaJS fastify tests', () => {
     });
 
     const body = JSON.parse(res.body);
-    expect(res.statusCode).toStrictEqual(400);
+    expect(res.statusCode).toBe(400);
     expect(body.message).toStrictEqual(`The request was not valid`);
     expect(body.errors[0]).toStrictEqual({
       location: 'querystring',
@@ -119,8 +119,8 @@ describe('bautaJS fastify tests', () => {
       url: '/v1/api/test'
     });
     const body = JSON.parse(res.body);
-    expect(res.statusCode).toStrictEqual(500);
-    expect(body.message).toStrictEqual('"code" is required!');
+    expect(res.statusCode).toBe(500);
+    expect(body.message).toBe('"code" is required!');
   });
   test('response validation should be disabled by default', async () => {
     fastifyInstance.register(bautajsFastify, {
@@ -140,7 +140,7 @@ describe('bautaJS fastify tests', () => {
       url: '/v1/api/test'
     });
 
-    expect(res.statusCode).toStrictEqual(200);
+    expect(res.statusCode).toBe(200);
   });
 
   test('should allow modify the response validation error format', async () => {
@@ -167,7 +167,7 @@ describe('bautaJS fastify tests', () => {
       url: '/v1/api/test'
     });
 
-    expect(res.statusCode).toStrictEqual(500);
+    expect(res.statusCode).toBe(500);
     expect(JSON.parse(res.body)).toStrictEqual({
       message: `Internal error`,
       code: 'Error code',
@@ -213,7 +213,7 @@ describe('bautaJS fastify tests', () => {
       url: '/v1/api/test'
     });
 
-    expect(res.statusCode).toStrictEqual(500);
+    expect(res.statusCode).toBe(500);
     expect(JSON.parse(res.body)).toStrictEqual({
       message: `Internal error`,
       code: 'Validation Error',

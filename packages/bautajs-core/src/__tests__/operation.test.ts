@@ -50,7 +50,7 @@ describe('operation class tests', () => {
       operationTest.addRoute(route);
       operationTest.validateRequest(true);
       // If the operation allow request validation the validator is set for the schema correctly
-      expect(operationTest.shouldValidateRequest()).toStrictEqual(true);
+      expect(operationTest.shouldValidateRequest()).toBe(true);
     });
 
     test('should build the response validator from the schema response', async () => {
@@ -60,7 +60,7 @@ describe('operation class tests', () => {
       operationTest.addRoute(route);
       operationTest.validateResponse(true);
       // If the operation allow response validation the validator is set for the schema correctly
-      expect(operationTest.shouldValidateResponse(200)).toStrictEqual(true);
+      expect(operationTest.shouldValidateResponse(200)).toBe(true);
     });
 
     test('the default error handler should be a promise reject of the given error', async () => {
@@ -149,7 +149,7 @@ describe('operation class tests', () => {
         }
       });
       expect(result).toBeInstanceOf(Promise);
-      expect(await result).toStrictEqual('sounds good');
+      await expect(result).resolves.toBe('sounds good');
     });
 
     test('should return a value as a promise even if there is no promise as part of the pipeline', async () => {
@@ -157,7 +157,7 @@ describe('operation class tests', () => {
       operationTest.addRoute(route);
       const result = operationTest.run({ req: {}, res: {} });
       expect(result).toBeInstanceOf(Promise);
-      expect(await result).toStrictEqual('good');
+      await expect(result).resolves.toBe('good');
     });
   });
   describe('operation ctx.validateRequestSchema tests', () => {

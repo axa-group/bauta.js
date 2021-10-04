@@ -67,7 +67,7 @@ describe('pipe tests', () => {
     const pipeline = pipe(() => Promise.resolve('next3'));
     const ctx = createContext({});
 
-    expect(await pipeline(null, ctx, {} as BautaJSInstance)).toStrictEqual(expected);
+    await expect(pipeline(null, ctx, {} as BautaJSInstance)).resolves.toStrictEqual(expected);
   });
 
   test('should execute the pipeline but go to the error handler if step is not a promise', async () => {

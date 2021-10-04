@@ -26,7 +26,7 @@ describe('iff decorator', () => {
       iff(prev => typeof prev === 'string', manageOnlyStringsPipeline)
     );
 
-    expect(await pipeline({}, createContext({}), {} as BautaJSInstance)).toStrictEqual(
+    expect(pipeline({}, createContext({}), {} as BautaJSInstance)).toBe(
       'I can manage only strings, otherwise I crash'
     );
   });
@@ -40,7 +40,7 @@ describe('iff decorator', () => {
       iff((prev: any) => prev.includes('Plastic is fantastic!'), plasticLoversPipeline)
     );
 
-    expect(await pipeline({}, createContext({}), {} as BautaJSInstance)).toStrictEqual(
+    expect(pipeline({}, createContext({}), {} as BautaJSInstance)).toBe(
       'Plastic is not fantastic!'
     );
   });

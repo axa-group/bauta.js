@@ -18,7 +18,7 @@ import { createContext } from '../utils/create-context';
 describe('create context tests', () => {
   test('should generate a request id', () => {
     const result = createContext({});
-    expect(typeof result.id).toStrictEqual('string');
+    expect(typeof result.id).toBe('string');
   });
 
   test('should propagate the request id', () => {
@@ -26,12 +26,12 @@ describe('create context tests', () => {
       id: '1234'
     };
     const result = createContext({ req, id: req.id });
-    expect(result.id).toStrictEqual('1234');
+    expect(result.id).toBe('1234');
   });
 
   test('should generate a logger by default', () => {
     const result = createContext({});
-    expect(typeof result.log.info).toStrictEqual('function');
+    expect(typeof result.log.info).toBe('function');
   });
 
   test('should use the child logger passed as raw data', () => {
@@ -55,13 +55,13 @@ describe('create context tests', () => {
   test('should propagate custom properties', () => {
     const req = { test: 1 };
     const result = createContext({ req });
-    expect(result.raw.req.test).toStrictEqual(1);
+    expect(result.raw.req.test).toBe(1);
   });
 
   test('should propagate the data object', () => {
     const data = { test: 1 };
     const result = createContext({ data });
-    expect(result.data.test).toStrictEqual(1);
+    expect(result.data.test).toBe(1);
   });
 
   test('should set the log child reqId', () => {

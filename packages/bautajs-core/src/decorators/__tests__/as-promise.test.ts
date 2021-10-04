@@ -23,8 +23,8 @@ describe('callback decorator', () => {
       )
     );
 
-    expect(
-      await pipeline({}, createContext({ data: { id: 1 } }), {} as BautaJSInstance)
-    ).toStrictEqual([{ id: 1, name: 'pet' }]);
+    await expect(
+      pipeline({}, createContext({ data: { id: 1 } }), {} as BautaJSInstance)
+    ).resolves.toStrictEqual([{ id: 1, name: 'pet' }]);
   });
 });
