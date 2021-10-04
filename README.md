@@ -59,6 +59,7 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
     - [match](./docs/decorators/match.md)
     - [map](./docs/decorators/map.md)
     - [parallelMap](./docs/decorators/parallelMap.md)
+    - [pairwise](./docs/decorators/pairwise.md)
 - [Validation](./docs/validation.md)
 - [Configuration Options](./docs/configuration-options.md)
 
