@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.3...v5.2.0) (2021-10-04)
+
+
+### Features
+
+* **core:** add two new decorators ([#265](https://github.axa.com/Digital/bauta-nodejs/issues/265)) ([792fdbb](https://github.axa.com/Digital/bauta-nodejs/commit/792fdbb44448320200de7c91d9e7c2600363ee12)), closes [#266](https://github.axa.com/Digital/bauta-nodejs/issues/266) [#267](https://github.axa.com/Digital/bauta-nodejs/issues/267)
+* **core:** pairwise decorator ([#269](https://github.axa.com/Digital/bauta-nodejs/issues/269)) ([c18c276](https://github.axa.com/Digital/bauta-nodejs/commit/c18c276b6ecdf9d8c950b90df342af43d29b4c7f)), closes [#268](https://github.axa.com/Digital/bauta-nodejs/issues/268)
+
+
+
+
+
 ## [5.1.3](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.2...v5.1.3) (2021-09-07)
 
 
