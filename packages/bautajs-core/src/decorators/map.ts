@@ -23,7 +23,7 @@ import { BautaJSInstance, Context } from '../types';
  *
  * @example
  * 
- * import { map, pipe, step } from @bautajs/core
+ * const { map, pipe, step } =  require('@bautajs/core');
  * 
  * const getMovies = step(() => [{name: 'star wars'},{ name: 'petter' }]);
  * const addGenresNamesToMovie = step((movie) => ({...movie, genre:'action'}));
