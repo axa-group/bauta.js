@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.1](https://github.axa.com/Digital/bauta-nodejs/compare/v5.2.0...v5.2.1) (2021-10-04)
+
+
+### Bug Fixes
+
+* **core:** expose parallelMap, map and pairwise ([84712ad](https://github.axa.com/Digital/bauta-nodejs/commit/84712ad85c7dcaeacb08d34ba648a0b6e2ac5958))
+
+
+
+
+
 # [5.2.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.1.3...v5.2.0) (2021-10-04)
 
 
