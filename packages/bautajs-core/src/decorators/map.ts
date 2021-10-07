@@ -35,7 +35,7 @@ import { BautaJSInstance, Context } from '../types';
  *  );
  * 
  */
-export function map<TIn, TIn1, TOut>(
+export function map<TIn, TOut, TIn1>(
   selector: (prev: TIn, ctx: Context, batuaJS: BautaJSInstance) => TIn1[],
   mapFn: (value: TIn1, ctx: Context, batuaJS: BautaJSInstance) => TOut
 ): (value: TIn, ctx: Context, batuaJS: BautaJSInstance) => TOut[] {

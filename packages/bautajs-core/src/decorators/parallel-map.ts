@@ -34,13 +34,13 @@ import { map } from './map';
  *  movies => movies.filter(m => !!m.imdb_id)
  * );
  */
-export function parallelMap<TIn, TIn1, TOut>(
+export function parallelMap<TIn, TOut, TIn1>(
   selector: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => TIn1[],
   mapFn: Pipeline.StepFunction<TIn1, TOut>
 ): Pipeline.StepFunction<TIn, TOut[]> {
   return async function parallelPiped(prev: TIn, ctx, bautajs): Promise<TOut[]> {
     return Promise.all(
-      map<TIn, TIn1, TOut>(
+      map<TIn, TOut, TIn1>(
         selector,
         mapFn as (prev: TIn1, ctx: Context, bautajs: BautaJSInstance) => TOut
       )(prev, ctx, bautajs) as TOut[]
