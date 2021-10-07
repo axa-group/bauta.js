@@ -1,0 +1,20 @@
+{
+  "name": "bautajs-workshop",
+  "version": "1.0.0",
+  "description": "A movies API middleware",
+  "main": "index.js",
+  "scripts": {
+    "start": "LOG_LEVEL=debug fastify start server.js -l debug",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@bautajs/core": "^5.2.1",
+    "@bautajs/datasource-rest": "^5.2.1",
+    "@bautajs/decorator-cache": "^5.2.1",
+    "@bautajs/fastify": "^5.2.1",
+    "fastify": "^3.21.6",
+    "fastify-cli": "^2.13.0"
+  }
+}

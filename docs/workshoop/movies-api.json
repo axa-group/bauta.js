@@ -1,0 +1,574 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "description": "Movies API.",
+      "version": "1.0.0",
+      "title": "Movies",
+      "termsOfService": "http://www.test.com",
+      "contact": {
+        "email": "test@bautajs.com"
+      }
+    },
+    "servers": [
+      {
+        "url": "/api"
+      }
+    ],
+    "paths": {
+      "/movies/top-rated": {
+        "get": {
+          "tags": [
+            "movies"
+          ],
+          "summary": "get a list of movies",
+          "operationId": "getMovies",
+          "responses": {
+            "200": {
+              "description": "Successful operation",
+              "headers": {
+                "Content-Type": {
+                  "$ref": "#/components/headers/Content-Type"
+                },
+                "Cache-Control": {
+                  "$ref": "#/components/headers/Cache-Control"
+                },
+                "expires": {
+                  "$ref": "#/components/headers/expires"
+                },
+                "etag": {
+                  "$ref": "#/components/headers/etag"
+                }
+              },
+              "content": {
+                "application/json; charset=utf-8": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "tmdb_id",
+                        "title",
+                        "imdb_id"
+                      ],
+                      "properties": {
+                        "poster_path": {
+                          "type": "string"
+                        },
+                        "imdb_id": {
+                          "type": "string"
+                        },
+                        "release_date": {
+                          "type": "string",
+                          "format": "date"
+                        },
+                        "genres": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "format": "int32"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "tmdb_id": {
+                          "type": "integer",
+                          "format": "int32"
+                        },
+                        "original_title": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "backdrop_path": {
+                          "type": "string"
+                        },
+                        "popularity": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "403": {
+              "$ref": "#/components/responses/403"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            },
+            "503": {
+              "$ref": "#/components/responses/503"
+            }
+          }
+        }
+      },
+      "/movies/{imdbId}": {
+        "get": {
+          "tags": [
+            "movies"
+          ],
+          "summary": "get movie by imdb id",
+          "operationId": "getMovieById",
+          "parameters": [
+            {
+              "name": "imdbId",
+              "in": "path",
+              "description": "imdb id of the movie.",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful operation",
+              "headers": {
+                "Content-Type": {
+                  "$ref": "#/components/headers/Content-Type"
+                },
+                "Cache-Control": {
+                  "$ref": "#/components/headers/Cache-Control"
+                },
+                "expires": {
+                  "$ref": "#/components/headers/expires"
+                },
+                "etag": {
+                  "$ref": "#/components/headers/etag"
+                }
+              },
+              "content": {
+                "application/json; charset=utf-8": {
+                  "schema": {
+                    "type": "object",
+                    "required": [
+                      "tmdb_id",
+                      "imdb_id",
+                      "title"
+                    ],
+                    "properties": {
+                      "backdrop_path": {
+                        "type": "string"
+                      },
+                      "genres": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "tmdb_id": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "imdb_id": {
+                        "type": "string"
+                      },
+                      "original_language": {
+                        "type": "string"
+                      },
+                      "original_title": {
+                        "type": "string"
+                      },
+                      "overview": {
+                        "type": "string"
+                      },
+                      "popularity": {
+                        "type": "number"
+                      },
+                      "poster_path": {
+                        "type": "string",
+                        "format": "nullable"
+                      },
+                      "release_date": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "runtime": {
+                        "type": "integer",
+                        "format": "int32"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "recommendations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "format": "int32"
+                            },
+                            "original_title": {
+                              "type": "string"
+                            },
+                            "overview": {
+                              "type": "string"
+                            },
+                            "poster_path": {
+                              "type": "string",
+                              "format": "nullable"
+                            },
+                            "popularity": {
+                              "type": "number"
+                            },
+                            "title": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "reviews": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                            "properties": {
+                              "author": {
+                                "type": "string"
+                              },
+                              "content": {
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "string"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "403": {
+              "$ref": "#/components/responses/403"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            },
+            "503": {
+              "$ref": "#/components/responses/503"
+            }
+          }
+        }
+      },
+      "/movies/{imdbId}/rate": {
+        "post": {
+          "tags": [
+            "movies"
+          ],
+          "summary": "rate a movie",
+          "operationId": "rateMovie",
+          "parameters": [
+            {
+              "name": "imdbId",
+              "in": "path",
+              "description": "imdb id of the movie.",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "authorization",
+              "in": "header",
+              "description": "the guess session id to perform the request.",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required":["stars"],
+                  "properties": {
+                    "stars": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": "Successful operation"
+            },
+            "401": {
+              "$ref": "#/components/responses/401"
+            },
+            "403": {
+              "$ref": "#/components/responses/403"
+            },
+            "500": {
+              "$ref": "#/components/responses/500"
+            },
+            "503": {
+              "$ref": "#/components/responses/503"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "headers": {
+        "Content-Language": {
+          "schema": {
+            "type": "string"
+          },
+          "description": "Indicates the language of the content of the response. Notice that this is not aligned with the RFC 7231 exact intended meaning, but aligned with the common usage. Format only support a single language, it does not support local variation. It is important that the API Client cache use this header as a differentiator as indicated by the vary header. If may or may not be the one requested using the Accept-Language header. Example 'Content-Language: fr'"
+        },
+        "Content-Type": {
+          "schema": {
+            "type": "string"
+          },
+          "description": "Indicates the media type of the resource. Example 'Content-Type: application/json;charset=utf-8'",
+          "example": "application/json;charset=utf-8"
+        },
+        "Content-Disposition": {
+          "schema": {
+            "type": "string"
+          },
+          "description": "Indicates if the response is meant to be downloaded or display on screen. A sub set of RFC 6266. Used for file content. The filename should be the same as the one returned by the GET / documents/{id}. Example 'Content-Disposition: attachment; filename=\"filename.jpg\""
+        },
+        "Cache-Control": {
+          "schema": {
+            "type": "string"
+          },
+          "description": "Optional. For Caching. Indicates instructions for caching. In particular, 'private' prevent the different actor in the networks stack to cache and serve the response across API Client. May also contains a 'max-age'. Example 'Cache-Control: private'"
+        },
+        "Vary": {
+          "schema": {
+            "type": "string"
+          },
+          "description": "Optional. For Caching. Indicates how to match future request headers to decide whether a cached response can be used rather than requesting a fresh one from the origin server. It is used by the server to indicate which headers it used when selecting a representation of a resource in a content negotiation algorithm. Example 'Vary: Content-Language'"
+        },
+        "expires": {
+          "schema": {
+            "type": "string"
+          },
+          "description": "Optional. For Caching. Inidcates the date/time after which the response is considered stale. Example 'expires: Wed, 21 Oct 2015 07:28:00 GMT'"
+        },
+        "etag": {
+          "schema": {
+            "type": "string"
+          },
+          "description": "Optional. For Caching. Identifier for a specific version of a resource. The etag is then passed in futur GET operation in the header 'if-none-match'.  Example 'etag: \"63616368696e6720726f636b73\"'"
+        },
+        "Retry-After": {
+          "schema": {
+            "type": "string"
+          },
+          "description": "Optional. Indicates how long the user agent should wait before making a follow-up request.  Example 'Retry-After: 120'"
+        }
+      },
+      "responses": {
+        "304": {
+          "description": "Not modified",
+          "content": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request. The request format does not match the API definition.",
+          "headers": {
+            "Content-Type": {
+              "$ref": "#/components/headers/Content-Type"
+            }
+          },
+          "content": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Invalid credentials",
+          "headers": {
+            "Content-Type": {
+              "$ref": "#/components/headers/Content-Type"
+            }
+          },
+          "content": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "headers": {
+            "Content-Type": {
+              "$ref": "#/components/headers/Content-Type"
+            }
+          },
+          "content": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not found. The URL (or resource ID present in the path) is not found.",
+          "headers": {
+            "Content-Type": {
+              "$ref": "#/components/headers/Content-Type"
+            }
+          },
+          "content": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unproccesable Entity. A provided value don't respect the business rules.",
+          "headers": {
+            "Content-Type": {
+              "$ref": "#/components/headers/Content-Type"
+            }
+          },
+          "content": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error.",
+          "headers": {
+            "Content-Type": {
+              "$ref": "#/components/headers/Content-Type"
+            }
+          },
+          "content": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Service Unavailable",
+          "headers": {
+            "Content-Type": {
+              "$ref": "#/components/headers/Content-Type"
+            },
+            "Retry-After": {
+              "$ref": "#/components/headers/Retry-After"
+            }
+          },
+          "content": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        },
+        "unexpected": {
+          "description": "Unexpected error",
+          "headers": {
+            "Content-Type": {
+              "$ref": "#/components/headers/Content-Type"
+            }
+          },
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          }
+        }
+      },
+      "schemas": {
+        "BaseObject": {
+          "type": "object",
+          "description": "Internal base schema used for API input and output"
+        },
+        "OutputObject": {
+          "type": "object",
+          "description": "Internal base schema used for API output"
+        },
+        "Error": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/BaseObject"
+            },
+            {
+              "required": [
+                "statusCode"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "The error message.",
+                  "example": "Cannot validate your request. Some fields are mandatory."
+                },
+                "statusCode": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "NOT RETURNED ON PRODUCTION ENVIRONMENT. Exception and stack. Technical error message destined at application developers."
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }

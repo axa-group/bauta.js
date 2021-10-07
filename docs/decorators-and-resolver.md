@@ -240,3 +240,28 @@ We strongly recommend to not save data into the ctx directly, for that purposes 
     stepHelper1,
   }
 ```
+
+### Get request and response from context
+
+Since the request and response objects are specific from the framework used on the project, those parameters can only be get it using the `getRequest` and `getResponse` helper methods from the specific framework.
+
+For example, in case of the usage of `@bautajs/fastify` you can use both methods as follow:
+
+```js
+  const { step } = require('@bautajs/core');
+  const { getRequest, getResponse } = require('@bautajs/fastify');
+  const stepHelper1 = step((value, ctx) => {
+    const req = getRequest(ctx);
+    const res = getResponse(ctx);
+
+    res.setStatus(200);
+
+    return {
+      param1: req.params.param1
+    }
+  });
+
+  module.exports = {
+    stepHelper1,
+  }
+```
