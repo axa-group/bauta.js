@@ -19,6 +19,7 @@ export * from './decorators/match';
 export * from './decorators/resolver';
 export * from './decorators/step';
 export * from './decorators/pipeline';
+export * from './decorators/iff';
 export * from './decorators/as-promise';
 export * from './decorators/as-value';
 export * from './decorators/parallel';
