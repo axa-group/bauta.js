@@ -222,3 +222,43 @@ module.exports.testProvider = myTextProvider((client, _, ctx, bautajs) => {
   })
 });
 ```
+
+## Logger
+
+Request and response are logged out of the box in the following format:
+
+```json
+   datasourceReq: {
+      "url": "https://test.com",
+      "method": "GET",
+      "query": {}
+    }
+    datasourceRes: {
+      "responseTime": 362,
+      "statusCode": 200,
+      "headers": {
+        "server-timing": "dtRpid;desc=\"1417506222\"",
+        "x-oneagent-js-injection": "true",
+        "cache-control": "no-transform, max-age=86400",
+        "x-powered-by": "bar",
+        "etag": "\"1621925860000-10749\"",
+        "last-modified": "Tue, 25 May 2021 06:57:40 GMT",
+        "referer": "",
+        "content-encoding": "gzip",
+        "content-type": "application/json",
+        "content-length": "2923",
+        "date": "Tue, 26 Oct 2021 11:55:13 GMT",
+        "connection": "close",
+        "server": "server"
+      },
+      "body": {
+        "type": "json",
+        "byteLength": 10749,
+        "reason": "Body exceeds the limit of 1024 bytes.",
+      }
+    }
+    reqId: "req-1"
+    module: "@bautajs/datasource"
+```
+
+**Request and response body are automatically hidden if they exceeds the maxBodyLogSize that by default is 1024 bytes.**

@@ -15,6 +15,7 @@
 import { RequestError } from 'got';
 import { utils } from '@bautajs/core';
 import is from '@sindresorhus/is';
+import fastSafeStringify from 'fast-safe-stringify';
 import { RestProviderOptions } from '../types';
 
 const outgoingErrProto = Object.create(
@@ -96,12 +97,32 @@ export function errSerializer(
           byteLength: error.response.body.length
         }
       };
-    } else {
+    } else if (
+      // deprecate option
+      restProviderOptions.truncateBodyLogSize ||
+      restProviderOptions.disableBodyTruncateLog
+    ) {
       err.body = utils.prepareToLog(
         error.response.body,
         restProviderOptions.truncateBodyLogSize,
         restProviderOptions.disableBodyTruncateLog
       );
+    } else {
+      const bodyString =
+        typeof error.response.body === 'object'
+          ? fastSafeStringify(error.response.body)
+          : (error.response.body as string) || '';
+      const size = Buffer.byteLength(bodyString);
+      const maxSize = restProviderOptions.maxBodyLogSize || 1024;
+      if (size > maxSize) {
+        err.body = {
+          reason: `Body exceeds the limit of ${maxSize} bytes.`,
+          type: 'JSON',
+          byteLength: size
+        };
+      } else {
+        err.body = bodyString;
+      }
     }
   }
   return err;

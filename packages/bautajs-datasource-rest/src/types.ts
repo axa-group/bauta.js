@@ -83,6 +83,7 @@ export interface RestProviderOptions {
    *
    * @type {number}
    * @memberof RestProviderOptions
+   * @deprecated use maxBodyLogSize instead
    */
   truncateBodyLogSize?: number;
 
@@ -91,8 +92,17 @@ export interface RestProviderOptions {
    *
    * @type {boolean}
    * @memberof RestProviderOptions
+   * @deprecated use maxBodyLogSize instead
    */
   disableBodyTruncateLog?: boolean;
+  /**
+   * Indicates the max request and response body length in bytes that is permitted to log.
+   *
+   * @default 1024
+   * @type {number}
+   * @memberof RestProviderOptions
+   */
+  maxBodyLogSize?: number;
 }
 export type ProviderOperation<TOut> = (
   client: Got,

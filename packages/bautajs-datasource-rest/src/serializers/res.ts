@@ -15,6 +15,7 @@
 import { Response as GOTResponse } from 'got';
 import { utils } from '@bautajs/core';
 import is from '@sindresorhus/is';
+import fastSafeStringify from 'fast-safe-stringify';
 import { RestProviderOptions } from '../types';
 
 const outgoingResProto = Object.create(
@@ -77,12 +78,32 @@ export function resSerializer(
             byteLength: response.body.length
           }
         };
-      } else {
+      } else if (
+        // deprecate option
+        restProviderOptions.truncateBodyLogSize ||
+        restProviderOptions.disableBodyTruncateLog
+      ) {
         res.body = utils.prepareToLog(
           response.body,
           restProviderOptions.truncateBodyLogSize,
           restProviderOptions.disableBodyTruncateLog
         );
+      } else {
+        const bodyString =
+          typeof response.body === 'object'
+            ? fastSafeStringify(response.body)
+            : (response.body as string) || '';
+        const size = Buffer.byteLength(bodyString);
+        const maxSize = restProviderOptions.maxBodyLogSize || 1024;
+        if (size > maxSize) {
+          res.body = {
+            reason: `Body exceeds the limit of ${maxSize} bytes.`,
+            type: 'JSON',
+            byteLength: size
+          };
+        } else {
+          res.body = bodyString;
+        }
       }
     }
   }

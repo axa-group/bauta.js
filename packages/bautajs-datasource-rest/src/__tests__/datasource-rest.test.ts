@@ -490,6 +490,80 @@ describe('provider rest', () => {
       );
     });
 
+    test('should not print the response body if the size in bytes exceed the maxBodyLogSize', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com')
+        .post('/v1/policies', 'someString')
+        .reply(200, { bender: 'ok', bender2: 'ok2', foo: 'boo' });
+
+      const provider = restProvider(
+        client => {
+          return client.post('https://pets.com/v1/policies', {
+            body: 'someString',
+            headers: {
+              accept: 'application/json'
+            },
+            responseType: 'json'
+          });
+        },
+        { maxBodyLogSize: 15 }
+      );
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, bautajs);
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: 'someString',
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-length': '10',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'outgoing request'
+      );
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200,
+            headers: { 'content-type': 'application/json' },
+            body: {
+              reason: 'Body exceeds the limit of 15 bytes.',
+              type: 'JSON',
+              byteLength: 43
+            }
+          })
+        },
+        'outgoing request completed'
+      );
+    });
+
     test('should truncate the body to the specified size', async () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'debug').mockImplementation();
@@ -791,6 +865,137 @@ describe('provider rest', () => {
       );
 
       expect(logger.debug).toHaveBeenNthCalledWith(2, 'logErrorHook');
+    });
+
+    test('should not print the request body if the size in bytes exceed the maxBodyLogSize', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com')
+        .post('/v1/policies', "{ bender: 'ok', bender2: 'ok2', foo: 'boo' }")
+        .reply(200, { bender: 'ok' });
+
+      const provider = restProvider(
+        client => {
+          return client.post('https://pets.com/v1/policies', {
+            body: "{ bender: 'ok', bender2: 'ok2', foo: 'boo' }",
+            headers: {
+              accept: 'application/json'
+            },
+            responseType: 'json'
+          });
+        },
+        { maxBodyLogSize: 15 }
+      );
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, bautajs);
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: {
+              reason: 'Body exceeds the limit of 15 bytes.',
+              type: 'JSON',
+              byteLength: 44
+            },
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-length': '44',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'outgoing request'
+      );
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200,
+            headers: { 'content-type': 'application/json' },
+            body: '{"bender":"ok"}'
+          })
+        },
+        'outgoing request completed'
+      );
+    });
+
+    test('should not print the error body if the size in bytes exceed the maxBodyLogSize', async () => {
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'error').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com')
+        .post('/v1/policies', "{ bender: 'ok', bender2: 'ok2', foo: 'boo' }")
+        .reply(400, { message: 'error', message1: 'error1', message2: 'error2' });
+
+      const provider = restProvider(
+        client => {
+          return client.post('https://pets.com/v1/policies', {
+            body: "{ bender: 'ok', bender2: 'ok2', foo: 'boo' }",
+            headers: {
+              accept: 'application/json'
+            },
+            responseType: 'json'
+          });
+        },
+        { maxBodyLogSize: 10 }
+      );
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await expect(provider()(null, ctx, bautajs)).rejects.toThrow(
+        expect.objectContaining({ statusCode: 400 })
+      );
+
+      expect(logger.error).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceErr: expect.objectContaining({
+            message: 'Response code 400 (Bad Request)',
+            headers: { 'content-type': 'application/json' },
+            body: {
+              reason: 'Body exceeds the limit of 10 bytes.',
+              type: 'JSON',
+              byteLength: 59
+            }
+          })
+        },
+        'outgoing request failed'
+      );
     });
   });
 
