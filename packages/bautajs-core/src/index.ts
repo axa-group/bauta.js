@@ -26,6 +26,7 @@ export * from './decorators/parallel';
 export * from './decorators/parallel-all-settled';
 export * from './decorators/pairwise';
 export * from './decorators/map';
+export * from './decorators/tap';
 export * from './decorators/parallel-map';
 export * from './utils/create-context';
 export * from './default-logger';

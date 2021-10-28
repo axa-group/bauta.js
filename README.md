@@ -60,6 +60,7 @@ See more complex example at [bautajs-example](./packages/bautajs-example)
     - [map](./docs/decorators/map.md)
     - [parallelMap](./docs/decorators/parallelMap.md)
     - [pairwise](./docs/decorators/pairwise.md)
+    - [tap](./docs/decorators/tap.md)
 - [Validation](./docs/validation.md)
 - [Configuration Options](./docs/configuration-options.md)
 

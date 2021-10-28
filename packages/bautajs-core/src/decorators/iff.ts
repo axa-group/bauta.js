@@ -26,7 +26,7 @@ import { BautaJSInstance, Context, Pipeline } from '../types';
  *
  * @example
  * 
- * import { iff, pipe, step } from @bautajs/core
+ * const { iff, step, pipe } require('@bautajs/core');
  * 
  * const randomPreviousPipeline = step(() => 'I am so random!');
  * const manageOnlyStringsPipeline = step(() => 'I can manage only strings, otherwise I crash');
