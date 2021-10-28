@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.2.1...v5.3.0) (2021-10-28)
+
+
+### Features
+
+* **datasource-rest:** hide large log body ([#275](https://github.axa.com/Digital/bauta-nodejs/issues/275)) ([a1dff45](https://github.axa.com/Digital/bauta-nodejs/commit/a1dff45dd34e2a28a332d5f4bf023d0116f6cfb1)), closes [#272](https://github.axa.com/Digital/bauta-nodejs/issues/272)
+
+
+
+
+
 ## [5.2.1](https://github.axa.com/Digital/bauta-nodejs/compare/v5.2.0...v5.2.1) (2021-10-04)
 
 **Note:** Version bump only for package @bautajs/datasource-rest

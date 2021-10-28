@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.2.1...v5.3.0) (2021-10-28)
+
+
+### Bug Fixes
+
+* **core:** expose iff decorator ([8498abd](https://github.axa.com/Digital/bauta-nodejs/commit/8498abd85075725a8323026f1a74c74a86d14d5e))
+
+
+### Features
+
+* **core:** add tap decorator ([#276](https://github.axa.com/Digital/bauta-nodejs/issues/276)) ([c4ea8ed](https://github.axa.com/Digital/bauta-nodejs/commit/c4ea8eddc99c8ff51fdbec158e631b1292fad7ab)), closes [#274](https://github.axa.com/Digital/bauta-nodejs/issues/274)
+* **datasource-rest:** hide large log body ([#275](https://github.axa.com/Digital/bauta-nodejs/issues/275)) ([a1dff45](https://github.axa.com/Digital/bauta-nodejs/commit/a1dff45dd34e2a28a332d5f4bf023d0116f6cfb1)), closes [#272](https://github.axa.com/Digital/bauta-nodejs/issues/272)
+
+
+
+
+
 ## [5.2.1](https://github.axa.com/Digital/bauta-nodejs/compare/v5.2.0...v5.2.1) (2021-10-04)
 
 
