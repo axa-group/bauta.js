@@ -142,7 +142,7 @@ describe('cache decorator usage', () => {
         }),
         {} as BautaJSInstance
       );
-      await sleep(100);
+      await sleep(200);
       myCachePipeline(
         null,
         createContext({
