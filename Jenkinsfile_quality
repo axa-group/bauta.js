@@ -1,4 +1,5 @@
 #!/usr/bin/groovy
 
 pipeline_pull_requests {
+  sonar_enabled = false
 }
