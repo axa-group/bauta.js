@@ -69,6 +69,7 @@
     "jest-config": "^27.1.0",
     "jest-extended": "^0.11.5",
     "jest-junit": "^12.2.0",
+    "jest-sonar-reporter": "^2.0.0",
     "lerna": "^4.0.0",
     "nock": "^13.1.3",
     "node-mocks-http": "^1.10.1",
@@ -81,7 +82,6 @@
     "ts-jest": "^27.0.5",
     "typescript": "4.4.x"
   },
-  "dependencies": {},
   "scripts": {
     "lerna": "lerna",
     "cm": "git-cz",
@@ -93,12 +93,11 @@
     "bootstrap": "npm run lerna bootstrap -- --no-ci",
     "postinstall": "husky install && npm run lerna bootstrap -- --no-ci && npm run compile",
     "clean": "npm run lerna clean -- --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
-    "release": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
-    "test": "jest --verbose --detectOpenHandles --testTimeout=30000",
-    "coverage": "npm test -- --coverage",
-    "test:clean": "jest --clearCache --testTimeout=30000",
-    "test:watch": "jest --verbose --watchAll --testTimeout=30000",
-    "test:ci": "npm run coverage -- --ci --maxWorkers=2  --reporters=default --reporters=jest-junit --testTimeout=30000",
+    "release:local": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
+    "release": "lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
+    "test": "jest --verbose --detectOpenHandles",
+    "test:clean": "jest --clearCache",
+    "test:watch": "npm run test -- --watchAll",
     "checkDeps": "npm run lerna exec -- --concurrency 14 -- npm outdated",
     "compile": "tsc --build tsconfig.build.json",
     "compile:clean": "tsc --build tsconfig.build.json --clean",
@@ -112,9 +111,8 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "jest": {
-    "projects": [
-      "<rootDir>/packages/*"
-    ]
+  "jestSonar": {
+    "reportPath": "coverage",
+    "reportFile": "test-reporter.xml"
   }
 }

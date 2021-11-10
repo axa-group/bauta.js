@@ -12,22 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module.exports = {
-  testEnvironment: 'node',
-  preset: 'ts-jest',
-  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/fixtures/'],
-  testMatch: ['**/?(*.)+(spec|test).ts?(x)'],
-  coverageReporters: ['lcov', 'text'],
-  testResultsProcessor: 'jest-sonar-reporter',
-  coverageDirectory: './coverage/',
-  collectCoverageFrom: ['**/*.ts', '!**/node_modules/**', '!**/coverage/**', '!**/jest.config.js'],
-  coveragePathIgnorePatterns: ['dist', 'benchmark'],
-  collectCoverage: true,
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.test.json',
-      diagnostics: false
-    }
-  },
-  testTimeout: 30000
-};
+const config = require('./jest.config.base');
+
+module.exports = { name: 'bautajs', ...config, projects: ['<rootDir>/packages/*'] };
