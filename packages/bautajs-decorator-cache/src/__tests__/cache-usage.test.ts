@@ -115,8 +115,11 @@ describe('cache decorator usage', () => {
     });
   });
 
-  describe('cache with expiration time of 10 millisecond', () => {
-    beforeEach(async () => {
+  describe('cache with maxAge expiration', () => {
+    let addNew: any;
+    let cachePipeline: CacheStepFunction<any, any, any>;
+    beforeEach(() => {
+      addNew = jest.fn(result => ({ ...result, new: 1 }));
       const normalizer: Normalizer<any, any> = (_, ctx) => ctx.data.value;
 
       const pp = pipe(
@@ -124,26 +127,19 @@ describe('cache decorator usage', () => {
           return ctx.data.value;
         },
         value => ({ a: '123', b: value }),
-        result => ({ ...result, new: 1 })
+        addNew
       );
-      myCachePipeline = cache(pp, <any>normalizer, { maxSize: 5, maxAge: 10 });
+
+      cachePipeline = cache(pp, <any>normalizer, { maxSize: 5, maxAge: 20 });
     });
 
     afterEach(() => {
-      myCachePipeline.store.clear();
+      cachePipeline.store.clear();
+      addNew.mockClear();
     });
 
-    test('as the expiration time is 10 millisecond, the second call should not be cached', async () => {
-      const spy = jest.spyOn(myCachePipeline.store, 'set');
-      myCachePipeline(
-        null,
-        createContext({
-          data: { value: '144' }
-        }),
-        {} as BautaJSInstance
-      );
-      await sleep(200);
-      myCachePipeline(
+    test('it should not have the cached element after the maxAge', async () => {
+      cachePipeline(
         null,
         createContext({
           data: { value: '144' }
@@ -151,8 +147,19 @@ describe('cache decorator usage', () => {
         {} as BautaJSInstance
       );
 
-      expect(myCachePipeline.store.get('144')).toStrictEqual({ a: '123', b: '144', new: 1 });
-      expect(spy).toHaveBeenCalledTimes(2);
+      // It waits more than the maxAge time before verifying the cache has been flushed
+      await sleep(500);
+      expect(cachePipeline.store.get('144')).toBeUndefined();
+
+      // Calling again the pipeline to verify that addNew step has been called again due to the cache is not active
+      cachePipeline(
+        null,
+        createContext({
+          data: { value: '144' }
+        }),
+        {} as BautaJSInstance
+      );
+      expect(addNew).toHaveBeenCalledTimes(2);
     });
   });
 
