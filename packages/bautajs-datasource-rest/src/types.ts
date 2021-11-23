@@ -98,7 +98,7 @@ export interface RestProviderOptions {
   /**
    * Indicates the max request and response body length in bytes that is permitted to log.
    *
-   * @default 1024
+   * @default 16384
    * @type {number}
    * @memberof RestProviderOptions
    */

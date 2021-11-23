@@ -17,6 +17,7 @@ import { utils } from '@bautajs/core';
 import is from '@sindresorhus/is';
 import fastSafeStringify from 'fast-safe-stringify';
 import { RestProviderOptions } from '../types';
+import { DEFAULT_MAX_BODY_LOG_SIZE } from '../constants';
 
 const outgoingResProto = Object.create(
   {},
@@ -94,7 +95,7 @@ export function resSerializer(
             ? fastSafeStringify(response.body)
             : (response.body as string) || '';
         const size = Buffer.byteLength(bodyString);
-        const maxSize = restProviderOptions.maxBodyLogSize || 1024;
+        const maxSize = restProviderOptions.maxBodyLogSize || DEFAULT_MAX_BODY_LOG_SIZE;
         if (size > maxSize) {
           res.body = {
             reason: `Body exceeds the limit of ${maxSize} bytes.`,

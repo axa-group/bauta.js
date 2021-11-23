@@ -564,6 +564,161 @@ describe('provider rest', () => {
       );
     });
 
+    test('maxBodyLogSize should be configurable on the bautajs instance', async () => {
+      const customBautajsInstance = new BautaJS({
+        staticConfig: {
+          maxBodyLogSize: 15
+        }
+      });
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com')
+        .post('/v1/policies', 'someString')
+        .reply(200, { bender: 'ok', bender2: 'ok2', foo: 'boo' });
+
+      const provider = restProvider(client => {
+        return client.post('https://pets.com/v1/policies', {
+          body: 'someString',
+          headers: {
+            accept: 'application/json'
+          },
+          responseType: 'json'
+        });
+      });
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, customBautajsInstance);
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: 'someString',
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-length': '10',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'outgoing request'
+      );
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200,
+            headers: { 'content-type': 'application/json' },
+            body: {
+              reason: 'Body exceeds the limit of 15 bytes.',
+              type: 'JSON',
+              byteLength: 43
+            }
+          })
+        },
+        'outgoing request completed'
+      );
+    });
+
+    test('maxBodyLogSize should set in the provider has to override the global maxBodyLogSize configuration', async () => {
+      const customBautajsInstance = new BautaJS({
+        staticConfig: {
+          maxBodyLogSize: 90000000
+        }
+      });
+      const logger = defaultLogger();
+      jest.spyOn(logger, 'debug').mockImplementation();
+      logger.child = () => {
+        return logger;
+      };
+      process.env.LOG_LEVEL = 'debug';
+      const { restProvider } = await import('../index');
+
+      nock('https://pets.com')
+        .post('/v1/policies', 'someString')
+        .reply(200, { bender: 'ok', bender2: 'ok2', foo: 'boo' });
+
+      const provider = restProvider(
+        client => {
+          return client.post('https://pets.com/v1/policies', {
+            body: 'someString',
+            headers: {
+              accept: 'application/json'
+            },
+            responseType: 'json'
+          });
+        },
+        { maxBodyLogSize: 20 }
+      );
+      const ctx = createContext({
+        id: '1',
+        req: { headers: { 'x-request-id': '1' } },
+        res: {},
+        log: logger
+      });
+
+      await provider()(null, ctx, customBautajsInstance);
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            body: 'someString',
+            headers: {
+              'user-agent': 'got (https://github.com/sindresorhus/got)',
+              accept: 'application/json',
+              'content-length': '10',
+              'accept-encoding': 'gzip, deflate, br',
+              'x-request-id': '1'
+            },
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          }
+        },
+        'outgoing request'
+      );
+
+      expect(logger.debug).toHaveBeenCalledWith(
+        {
+          datasourceReq: {
+            method: 'POST',
+            query: {},
+            url: 'https://pets.com/v1/policies'
+          },
+          datasourceRes: expect.objectContaining({
+            statusCode: 200,
+            headers: { 'content-type': 'application/json' },
+            body: {
+              reason: 'Body exceeds the limit of 20 bytes.',
+              type: 'JSON',
+              byteLength: 43
+            }
+          })
+        },
+        'outgoing request completed'
+      );
+    });
+
     test('should truncate the body to the specified size', async () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'debug').mockImplementation();
@@ -1077,7 +1232,7 @@ describe('provider rest', () => {
               url: 'https://pets.com/v1/policies'
             },
             datasourceErr: {
-              code: undefined,
+              code: 'ERR_GOT_REQUEST_ERROR',
               name: 'RequestError',
               message: 'something awful happened'
             }
@@ -1120,7 +1275,7 @@ describe('provider rest', () => {
           {
             datasourceErr: expect.objectContaining({
               headers: {},
-              code: undefined,
+              code: 'ERR_BODY_PARSE_FAILURE',
               body: 'this is not a json and this will generate a parser error',
               statusCode: 200,
               message: 'Unexpected token h in JSON at position 1 in "https://pets.com/v1/policies"',
@@ -1190,7 +1345,7 @@ describe('provider rest', () => {
         expect(logger.error).toHaveBeenCalledWith(
           {
             datasourceErr: expect.objectContaining({
-              code: undefined,
+              code: 'ERR_BODY_PARSE_FAILURE',
               message: 'Unexpected token w in JSON at position 0 in "https://pets.com/v1/policies"',
               name: 'ParseError',
               body: 'we force with this a parserError',

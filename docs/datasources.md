@@ -122,7 +122,6 @@ To disable the proxy even using proxy env variables just set agent null on the r
 
 ```js
 // my-datasource.js
-const { createHttpForeverAgent } =  require('native-proxy-agent');
 const { restProvider } =  require('@bautajs/datasource-rest');
 module.exports = restProvider((client) => {
   return client.get('http://myhost.com', { agent: null });
@@ -261,4 +260,24 @@ Request and response are logged out of the box in the following format:
     module: "@bautajs/datasource"
 ```
 
-**Request and response body are automatically hidden if they exceeds the maxBodyLogSize that by default is 1024 bytes.**
+Request and response body are automatically hidden if they exceeds the maxBodyLogSize that by default is 16kB. To modify this value you have two options;
+
+1. Configure it globally into the `bautajs` staticConfig
+
+```js
+const { BautaJS } = require('@bautajs/core');
+
+
+const bautajs = new BautaJS({ staticConfig: { maxBodyLogSize: 1024  } });
+```
+
+2. Configure it locally into every restProvider:
+
+
+```js
+// my-datasource.js
+const { restProvider } =  require('@bautajs/datasource-rest');
+module.exports = restProvider((client) => {
+  return client.get('http://myhost.com');
+}, { maxBodyLogSize: 1024 }) 
+```

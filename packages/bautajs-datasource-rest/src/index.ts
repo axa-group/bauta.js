@@ -129,40 +129,31 @@ function stepFn<TOut>(
     const logger = ctx.log.child({
       module: '@bautajs/datasource'
     });
+    const providerOptions = { ...bautajs.staticConfig, ...restProviderOptions };
     const log = isDebugLogLevel ? logger.debug.bind(logger) : logger.info.bind(logger);
     const promiseOrStream = fn(
       client.extend({
         hooks: {
           beforeRequest: [
             addRequestIdHook(ctx.id),
-            typeof restProviderOptions.logHooks?.logRequestHook === 'function'
-              ? restProviderOptions.logHooks?.logRequestHook(
-                  log,
-                  restProviderOptions,
-                  logAll,
-                  logger
-                )
-              : logRequestHook(log, restProviderOptions, logAll)
+            typeof providerOptions.logHooks?.logRequestHook === 'function'
+              ? providerOptions.logHooks?.logRequestHook(log, providerOptions, logAll, logger)
+              : logRequestHook(log, providerOptions, logAll)
           ],
           afterResponse: [
-            typeof restProviderOptions.logHooks?.logResponseHook === 'function'
-              ? restProviderOptions.logHooks?.logResponseHook(
-                  log,
-                  restProviderOptions,
-                  logAll,
-                  logger
-                )
-              : logResponseHook(log, restProviderOptions, logAll)
+            typeof providerOptions.logHooks?.logResponseHook === 'function'
+              ? providerOptions.logHooks?.logResponseHook(log, providerOptions, logAll, logger)
+              : logResponseHook(log, providerOptions, logAll)
           ],
           beforeError: [
-            typeof restProviderOptions.logHooks?.logErrorsHook === 'function'
-              ? restProviderOptions.logHooks?.logErrorsHook(
+            typeof providerOptions.logHooks?.logErrorsHook === 'function'
+              ? providerOptions.logHooks?.logErrorsHook(
                   logger.error.bind(logger),
-                  restProviderOptions,
+                  providerOptions,
                   logAll,
                   logger
                 )
-              : logErrorsHook(logger.error.bind(logger), restProviderOptions, logAll),
+              : logErrorsHook(logger.error.bind(logger), providerOptions, logAll),
             addErrorStatusCodeHook
           ]
         }
