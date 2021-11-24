@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.4.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.3.0...v5.4.0) (2021-11-24)
+
+
+### Features
+
+* **datasource-rest:** configure maxBodyLogSize ([#285](https://github.axa.com/Digital/bauta-nodejs/issues/285)) ([26e5565](https://github.axa.com/Digital/bauta-nodejs/commit/26e55650784a22cf5abd72b5b76daca5ce818ca4))
+
+
+
+
+
 # [5.3.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.2.1...v5.3.0) (2021-10-28)
 
 

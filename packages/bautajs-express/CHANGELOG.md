@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.4.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.3.0...v5.4.0) (2021-11-24)
+
+
+### Bug Fixes
+
+* **express,fastify:** add cancelation error msg ([af2f7bb](https://github.axa.com/Digital/bauta-nodejs/commit/af2f7bbee1e151c2db9056553f56cdb2cb238e48)), closes [#280](https://github.axa.com/Digital/bauta-nodejs/issues/280)
+
+
+
+
+
 # [5.3.0](https://github.axa.com/Digital/bauta-nodejs/compare/v5.2.1...v5.3.0) (2021-10-28)
 
 **Note:** Version bump only for package @bautajs/express
