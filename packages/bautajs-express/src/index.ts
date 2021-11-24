@@ -123,7 +123,12 @@ export class BautaJSExpress extends bautajs.BautaJS {
       const rejectWrapper = (response: any) => {
         // In case the request was canceled by the user there is no need to send any message to the user.
         if (response.name === 'CancelError') {
-          (req as ExpressRequest).log.error(`The request was canceled by the requester.`);
+          (req as ExpressRequest).log.error(
+            {
+              message: response.message
+            },
+            'The request was canceled by the requester.'
+          );
           return null;
         }
 

@@ -74,7 +74,12 @@ function createHandler(operation: Operation) {
       return response;
     } catch (error: any) {
       if (error.name === 'CancelError') {
-        request.log.error(`The request was canceled by the requester.`);
+        request.log.error(
+          {
+            message: error.message
+          },
+          'The request was canceled by the requester.'
+        );
         return {};
       }
 
