@@ -1,0 +1,25 @@
+The MIT License (MIT) Copyright © 2021 AXA Group
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+All AXA Companies constitute the "AXA Group" where "AXA Company" shall mean:
+
+(i) AXA, "Société Anonyme" with a Board of Directors (herein "AXA SA") having its principal offices at 25, avenue Matignon, 75008 Paris, registered on the Commercial Registry of Paris under the number 572 093 920; and
+
+(ii)    any other company controlled by, or controlling AXA SA, with a company being considered as controlling another:
+
+when it holds directly or indirectly a portion of the capital according to it the majority of the voting rights in general meetings of shareholders of this company;
+when it holds solely the majority of the voting rights in this company by virtue of an agreement concluded with other partners or shareholders and which is not contrary to the interest of the company;
+when it determines de facto, by voting rights which it holds, the decisions in the general meetings of shareholders of this company;
+in any event, when it holds, directly or indirectly, a portion of voting rights greater than 40% and when no other partner or shareholder holds directly or indirectly a portion which is greater than its own; and
+(iii)   any economic interest group or joint venture in which AXA SA and/or one or more other Companies of the AXA Group participates for at least 50% in operating costs;
+
+(iv)    in the cases where the law applicable to a company limits voting rights or control (such as defined here in above), this company will be deemed to be a company of the AXA Group, if the voting rights in general shareholders' meetings or the control held by a Company of the AXA Group reaches the maximum amount fixed by said applicable law; and
+
+(v) any legal entity in which an AXA company holds a lower portion of the capital or of voting rights or cost participation than set forth above when such company is authorized to do business under the name "AXA" or under a name which include the "AXA" business name;
+
+(vi)    and any other legal entity in which an AXA Company directly or indirectly has an economic interest. For the avoidance of doubt GIE AXA is deemed an AXA Company.

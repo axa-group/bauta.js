@@ -1,0 +1,16 @@
+dist/
+node_modules/
+coverage/
+target/
+*.csv
+*.dat
+*.iml
+*.log
+*.out
+*.pid
+*.seed
+*.sublime-*
+*.swo
+*.swp
+*.tgz
+packages/bautajs-core/benchmark/legacy/*.js

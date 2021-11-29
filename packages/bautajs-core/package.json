@@ -1,0 +1,54 @@
+{
+  "name": "@axa-group/bautajs-core",
+  "version": "1.0.0",
+  "description": "A simple library to make middlewares",
+  "main": "dist",
+  "types": "dist",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/axa-group/bauta.js/issues"
+  },
+  "homepage": "https://github.com/axa-group/bauta.js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axa-group/bauta.js.git"
+  },
+  "keywords": [
+    "bautajs",
+    "middleware"
+  ],
+  "author": {
+    "name": "Javier Blanco"
+  },
+  "maintainers": [
+    {
+      "email": "francisco.herrero@axa.com",
+      "name": "Francisco Herrero"
+    },
+    {
+      "email": "xavier.redondo@axa.com",
+      "name": "Xavier Redondo"
+    }
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "engines": {
+    "node": ">=10",
+    "npm": ">=5"
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^10.0.3",
+    "ajv": "^8.6.2",
+    "ajv-formats": "^2.1.1",
+    "fast-glob": "^3.2.7",
+    "fast-safe-stringify": "^2.0.8",
+    "hyperid": "^2.3.1",
+    "openapi-types": "^9.3.0",
+    "p-cancelable": "2.1.1",
+    "pino": "^6.13.2"
+  }
+}

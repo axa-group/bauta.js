@@ -1,0 +1,27 @@
+{
+    "name": "bautajs",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "args": {
+        "VARIANT": "14"
+      }
+    },
+  
+    "settings": {
+      "terminal.integrated.shell.linux": "/bin/bash"
+    },
+  
+    "extensions": [
+      "dbaeumer.vscode-eslint",
+      "Orta.vscode-jest",
+      "EditorConfig.EditorConfig",
+      "esbenp.prettier-vscode"
+    ],
+  
+    "postCreateCommand": "npm ci",
+  
+    "containerUser": "node",
+    "mounts": [
+      "source=${localEnv:HOME}${localEnv:USERPROFILE}/.npmrc,target=/home/node/.npmrc,type=bind,consistency=cached"
+    ]
+  }
