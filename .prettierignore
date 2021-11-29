@@ -1,0 +1,7 @@
+*.json
+*.md
+*.snap
+
+dist/
+coverage/
+coverages/

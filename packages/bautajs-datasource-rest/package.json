@@ -1,0 +1,47 @@
+{
+  "name": "@axa/bautajs-datasource-rest",
+  "version": "1.0.0",
+  "description": "A bautaJS datasource rest provider",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "tsc": "tsc",
+    "example": "npx ts-node ./example/simple.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/axa-group/bauta.js"
+  },
+	"publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "keywords": [
+    "bautajs",
+    "cache",
+    "middleware"
+  ],
+  "author": {
+    "name": "Javier Blanco"
+  },
+  "maintainers": [
+    {
+      "email": "francisco.herrero@axa.com",
+      "name": "Francisco Herrero"
+    },
+    {
+      "email": "xavier.redondo@axa.com",
+      "name": "Xavier Redondo"
+    }
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@axa/bautajs-core": "1.0.0",
+    "@sindresorhus/is": "^4.6.0",
+    "got": "^11.8.5",
+    "@axa/native-proxy-agent": "^1.0.0"
+  }
+}

@@ -1,0 +1,49 @@
+[
+  {
+    "in": "body",
+    "name": "request",
+    "required": true,
+    "schema": {
+      "required": ["geographicAddress", "typeCodesList"],
+      "properties": {
+        "typeCodesList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of provider type codes used to search the third-party service providers. Must contain at least one code",
+          "example": "AUTO_GARAGE"
+        },
+        "optionCodesList": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of option codes used to filter the third-party service providers list"
+        },
+        "limit": {
+          "type": "integer",
+
+          "description": "The max number of results to return, as sorted by increasing distance from the geographicAddress. Not used for search by name"
+        },
+        "radius": {
+          "type": "number",
+
+          "description": "The length, in meters, of the search radiusNot used for search by name"
+        },
+        "name": {
+          "type": "string",
+          "description": "The service provider name (or part of it) to check if that person is an AXA partner"
+        },
+        "policies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The policy or policies for which the search is performed"
+        }
+      }
+    },
+    "description": "The request parameters for the search of third-party service providers"
+  }
+]
