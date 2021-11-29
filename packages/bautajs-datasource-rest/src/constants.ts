@@ -1,0 +1,1 @@
+export const DEFAULT_MAX_BODY_LOG_SIZE = 16384;

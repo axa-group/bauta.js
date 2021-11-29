@@ -1,0 +1,230 @@
+{
+  "/test": {
+    "get": {
+      "operationId": "123",
+      "parameters": [
+        {
+          "in": "body",
+          "name": "request",
+          "required": true,
+          "schema": {
+            "required": ["geographicAddress", "typeCodesList"],
+            "properties": {
+              "typeCodesList": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description":
+                  "3A list of provider type codes used to search the third-party service providers. Must contain at least one code",
+                "example": "AUTO_GARAGE"
+              },
+              "optionCodesList": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description":
+                  "A list of option codes used to filter the third-party service providers list"
+              },
+              "limit": {
+                "type": "integer",
+
+                "description":
+                  "The max number of results to return, as sorted by increasing distance from the geographicAddress. Not used for search by name"
+              },
+              "radius": {
+                "type": "number",
+
+                "description":
+                  "The length, in meters, of the search radiusNot used for search by name"
+              },
+              "name": {
+                "type": "string",
+                "description":
+                  "The service provider name (or part of it) to check if that person."
+              },
+              "policies": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The policy or policies for which the search is performed"
+              }
+            }
+          },
+          "description": "The request parameters for the search of third-party service providers"
+        }
+      ],
+      "responses": {
+        "201": {
+          "description": "successful creation operation",
+          "schema": {
+            "required": ["content", "date", "customerMessageIndicator"],
+            "properties": {
+              "content": {
+                "description": "Content of the message",
+                "type": "string",
+                "example": "Your demand is in progress"
+              },
+              "expeditorName": {
+                "type": "string",
+                "description": "Name of the expeditor of the message",
+                "example": "Your demand is in progress"
+              },
+              "customerMessageIndicator": {
+                "type": "boolean",
+                "description": "Indicates whether the sender of the message is the customer",
+                "example": true
+              },
+              "date": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Date and time when the message was sent",
+                "example": "2017-07-18:12:00:00Z"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Not authorized",
+          "schema": {
+            "type": "object",
+            "required": ["code", "developerMessage"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description":
+                  "Error code.",
+                "example": "F100"
+              },
+              "userMessage": {
+                "type": "string",
+                "description":
+                  "An end-user friendly message which should be displayed to a user directly.",
+                "example": "Cannot validate your request. Some fields are mandatory."
+              },
+              "developerMessage": {
+                "type": "string",
+                "description": "Technical error message designed for application developers.",
+                "example": "Validation failed"
+              },
+              "messageKey": {
+                "type": "string",
+                "description": "The error label",
+                "example": "api_error_f110"
+              },
+              "actionKey": {
+                "type": "string",
+                "description": "The error action label",
+                "example": "api_error_f111_action"
+              },
+              "statusCode": {
+                "type": "number",
+                "description": "The response status code",
+                "example": "500"
+              },
+              "actionType": {
+                "type": "string",
+                "description": "The error action type",
+                "example": "WEBVIEW"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "schema": {
+            "type": "object",
+            "required": ["code", "developerMessage"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description":
+                  "Error code.",
+                "example": "F100"
+              },
+              "userMessage": {
+                "type": "string",
+                "description":
+                  "An end-user friendly message which should be displayed to a user directly.",
+                "example": "Cannot validate your request. Some fields are mandatory."
+              },
+              "developerMessage": {
+                "type": "string",
+                "description": "Technical error message designed for application developers.",
+                "example": "Validation failed"
+              },
+              "messageKey": {
+                "type": "string",
+                "description": "The error label",
+                "example": "api_error_f110"
+              },
+              "actionKey": {
+                "type": "string",
+                "description": "The error action label",
+                "example": "api_error_f111_action"
+              },
+              "statusCode": {
+                "type": "number",
+                "description": "The response status code",
+                "example": "500"
+              },
+              "actionType": {
+                "type": "string",
+                "description": "The error action type",
+                "example": "WEBVIEW"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal server error.",
+          "schema": {
+            "type": "object",
+            "required": ["code", "developerMessage"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "description":
+                  "Error code.",
+                "example": "F100"
+              },
+              "userMessage": {
+                "type": "string",
+                "description":
+                  "An end-user friendly message which should be displayed to a user directly.",
+                "example": "Cannot validate your request. Some fields are mandatory."
+              },
+              "developerMessage": {
+                "type": "string",
+                "description": "Technical error message designed for application developers.",
+                "example": "Validation failed"
+              },
+              "messageKey": {
+                "type": "string",
+                "description": "The error label",
+                "example": "api_error_f110"
+              },
+              "actionKey": {
+                "type": "string",
+                "description": "The error action label",
+                "example": "api_error_f111_action"
+              },
+              "statusCode": {
+                "type": "number",
+                "description": "The response status code",
+                "example": "500"
+              },
+              "actionType": {
+                "type": "string",
+                "description": "The error action type",
+                "example": "WEBVIEW"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

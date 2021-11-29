@@ -1,0 +1,30 @@
+{
+  "name": "@axa/bautajs-example",
+  "version": "1.0.0",
+  "description": "A bautaJS example",
+  "main": "./server.js",
+  "scripts": {
+    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/axa-group/bauta.js"
+  },
+  "private": true,
+  "keywords": [
+    "bautajs",
+    "express",
+    "middleware"
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@axa/bautajs-core": "1.0.0",
+    "@axa/bautajs-datasource-rest": "1.0.0",
+    "@axa/bautajs-decorator-cache": "1.0.0",
+    "@axa/bautajs-express": "1.0.0",
+		"@hapi/boom": "^10.0.0",
+    "express": "^4.18.1",
+    "pino": "^6.13.2",
+    "pino-pretty": "^6.0.0"
+  }
+}

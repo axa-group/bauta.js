@@ -1,0 +1,7 @@
+docs/
+src/
+node_modules/
+documentation.md
+jest.config.js
+tsconfig.json
+examples/

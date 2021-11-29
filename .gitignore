@@ -1,0 +1,33 @@
+*.csv
+*.dat
+*.iml
+*.log
+*.out
+*.pid
+*.seed
+*.sublime-*
+*.swo
+*.swp
+*.tgz
+.DS_Store
+.idea
+.project
+.strong-pm
+coverage
+node_modules
+npm-debug.log
+*.jtl
+logs
+target/*
+npm-shrinkwrap.json
+.history/
+.settings/
+junit.xml
+package-lock.json
+!/.github/actions/*/package-lock.json
+# Ignore the compiled output.
+dist/
+coverage/
+
+# TypeScript incremental compilation cache
+*.tsbuildinfo

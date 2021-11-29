@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "composite":true,
+    "typeRoots": ["node_modules/@types", "./types"]
+  },
+  "files": [],
+  "include": ["src/**/*.ts", "src/**/*.json"],
+  "exclude": ["**/__tests__"],
+  "references": [
+    { "path": "./packages/bautajs-core" },
+    { "path": "./packages/bautajs-datasource-rest" },
+    { "path": "./packages/bautajs-decorator-cache" },
+    { "path": "./packages/bautajs-express" },
+    { "path": "./packages/bautajs-fastify" }
+  ]
+}

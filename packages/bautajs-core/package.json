@@ -1,0 +1,45 @@
+{
+  "name": "@axa/bautajs-core",
+  "version": "1.0.0",
+  "description": "Bauta.js is an add-on for your Node.js applications such as Express.js or Fastify.",
+  "main": "dist",
+  "types": "dist",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/axa-group/bauta.js/issues"
+  },
+  "homepage": "https://github.com/axa-group/bauta.js#readme",
+	"publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axa-group/bauta.js.git"
+  },
+  "keywords": [
+    "bautajs",
+    "middleware"
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=5"
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "ajv": "^8.11.0",
+    "ajv-formats": "^2.1.1",
+    "fast-glob": "^3.2.11",
+    "fast-safe-stringify": "^2.1.1",
+    "hyperid": "^3.0.1",
+    "openapi-types": "^12.0.0",
+    "p-cancelable": "^2.1.1",
+    "pino": "^6.13.2"
+  }
+}
