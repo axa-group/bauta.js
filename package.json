@@ -71,7 +71,7 @@
     "pino": "^6.13.2",
     "prettier": "^2.3.2",
     "prettier-check": "^2.0.0",
-    "split2": "^3.2.2",
+    "split2": "^4.1.0",
     "stream-mock": "^2.0.5",
     "supertest": "^6.1.6",
     "ts-jest": "^27.0.5",
