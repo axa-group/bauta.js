@@ -48,7 +48,7 @@
     "fast-safe-stringify": "^2.0.8",
     "hyperid": "^2.3.1",
     "openapi-types": "^12.0.0",
-    "p-cancelable": "2.1.1",
+    "p-cancelable": "4.0.0",
     "pino": "^6.13.2"
   }
 }
