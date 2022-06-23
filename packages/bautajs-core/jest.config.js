@@ -14,4 +14,4 @@
  */
 const config = require('../../jest.config.base');
 
-module.exports = { name: '@bautajs/cache-decorator', ...config };
+module.exports = { displayName: '@bautajs/cache-decorator', ...config };

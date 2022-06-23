@@ -14,4 +14,4 @@
  */
 const config = require('./jest.config.base');
 
-module.exports = { name: 'bautajs', ...config, projects: ['<rootDir>/packages/*'] };
+module.exports = { displayName: 'bautajs', ...config, projects: ['<rootDir>/packages/*'] };

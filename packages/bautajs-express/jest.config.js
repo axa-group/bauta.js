@@ -14,4 +14,4 @@
  */
 const config = require('../../jest.config.base');
 
-module.exports = { name: '@axa-group/bautajs-express', ...config };
+module.exports = { displayName: '@axa-group/bautajs-express', ...config };
