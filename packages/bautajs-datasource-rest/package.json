@@ -37,7 +37,7 @@
   "dependencies": {
     "@axa-group/bautajs-core": "1.0.0",
     "@sindresorhus/is": "^4.0.1",
-    "got": "^11.8.2",
+    "got": "^12.1.0",
     "@axa/native-proxy-agent": "^1.0.0"
   }
 }
