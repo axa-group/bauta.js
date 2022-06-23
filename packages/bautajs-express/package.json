@@ -38,7 +38,7 @@
     "compression": "1.x",
     "cors": "2.x",
     "express": "4.x",
-    "express-pino-logger": "6.x",
+    "express-pino-logger": "7.x",
     "helmet": "4.x",
     "openapi-types": "^12.0.0",
     "pino": "^6.13.2",
