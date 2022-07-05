@@ -1,9 +1,0 @@
-{
-    "recommendations": [
-      "dbaeumer.vscode-eslint",
-      "Orta.vscode-jest",
-      "EditorConfig.EditorConfig",
-      "esbenp.prettier-vscode",
-      "ms-vscode-remote.remote-containers"
-    ]
-  }
