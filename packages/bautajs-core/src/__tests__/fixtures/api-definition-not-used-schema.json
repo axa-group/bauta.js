@@ -15,19 +15,11 @@
   "tags": [
     {
       "name": "pets",
-      "description": "This aggregate contains all of the elements necessary to reflect a quoted\ncoverage. Don't require user context.",
-      "externalDocs": {
-        "description": "More information available at",
-        "url": "https://orangesharing.com/confluence/display/SYM/7.1.3+API+Quotes"
-      }
+      "description": "This aggregate contains all of the elements necessary to reflect a quoted\ncoverage. Don't require user context."
     },
     {
       "name": "quotes",
-      "description": "This aggregate contains all of the elements necessary to reflect a quoted\ncoverage. Don't require user context.",
-      "externalDocs": {
-        "description": "More information available at",
-        "url": "https://orangesharing.com/confluence/display/SYM/7.1.3+API+Quotes"
-      }
+      "description": "This aggregate contains all of the elements necessary to reflect a quoted\ncoverage. Don't require user context."
     }
   ],
   "paths": {
