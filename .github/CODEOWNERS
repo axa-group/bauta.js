@@ -1,0 +1,8 @@
+# These owners will be the default owners for everything in the repo. 
+
+*   @bauta-team 
+
+
+# Maintainers must validate repository configuration files
+
+/.github/   @bauta-maintainers
