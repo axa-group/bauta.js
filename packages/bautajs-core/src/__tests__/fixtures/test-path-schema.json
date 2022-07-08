@@ -42,7 +42,7 @@
               "name": {
                 "type": "string",
                 "description":
-                  "The service provider name (or part of it) to check if that person is an AXA partner"
+                  "The service provider name (or part of it) to check if that person."
               },
               "policies": {
                 "type": "array",
@@ -95,7 +95,7 @@
               "code": {
                 "type": "string",
                 "description":
-                  "Error code. See <a href='https://axagroupsolutions.atlassian.net/wiki/x/UwHmAg' target='_blank'> possible values</a>",
+                  "Error code.",
                 "example": "F100"
               },
               "userMessage": {
@@ -141,7 +141,7 @@
               "code": {
                 "type": "string",
                 "description":
-                  "Error code. See <a href='https://axagroupsolutions.atlassian.net/wiki/x/UwHmAg' target='_blank'> possible values</a>",
+                  "Error code.",
                 "example": "F100"
               },
               "userMessage": {
@@ -187,7 +187,7 @@
               "code": {
                 "type": "string",
                 "description":
-                  "Error code. See <a href='https://axagroupsolutions.atlassian.net/wiki/x/UwHmAg' target='_blank'> possible values</a>",
+                  "Error code.",
                 "example": "F100"
               },
               "userMessage": {

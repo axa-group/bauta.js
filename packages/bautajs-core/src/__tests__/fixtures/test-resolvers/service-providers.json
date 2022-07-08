@@ -33,7 +33,7 @@
         },
         "name": {
           "type": "string",
-          "description": "The service provider name (or part of it) to check if that person is an AXA partner"
+          "description": "The service provider name (or part of it)"
         },
         "policies": {
           "type": "array",
