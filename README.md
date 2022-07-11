@@ -225,14 +225,10 @@ Bauta.js is a monorepo containing the following list of packages:
 
 You can read the Code of Conduct at [Code of Conduct](./CODE_OF_CONDUCT.md).
 
-## Who is behind it?
-
-This project is developed by AXA Group Operations Spain S.A.
-
 ## Legal Notice
 
 Copyright (c) AXA Group. All rights reserved.
-Licensed under the (MIT / Apache 2.0) License.
+Licensed under the MIT License.
 
 ## Third party dependencies licenses
 
