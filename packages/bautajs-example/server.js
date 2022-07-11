@@ -3,6 +3,7 @@ const { notFound } = require('@hapi/boom');
 const bautaJS = require('./server/instances/bauta');
 
 (async () => {
+  // Please, add helmet or other security library on your production API.
   const app = express();
 
   const router = await bautaJS.buildRouter();
