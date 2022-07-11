@@ -1,8 +1,8 @@
 # These owners will be the default owners for everything in the repo. 
 
-*   @axa-group/bauta-team
+*   @axa-group/bauta-reviewers
 
 
-# Maintainers must validate repository configuration files
+# Admins must validate repository configuration files
 
-/.github/   @axa-group/bauta-maintainers
+/.github/   @axa-group/bauta-admins
