@@ -32,7 +32,7 @@
     "express-pino-logger": "^6.0.0",
     "helmet": "^5.1.0",
     "openapi-types": "^12.0.0",
-    "pino": "^6.13.2",
+    "pino": "^8.2.0",
     "route-order": "^0.1.0",
     "swagger-ui-express": "^4.4.0"
   }

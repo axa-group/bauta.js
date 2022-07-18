@@ -55,7 +55,7 @@
     "lerna": "^5.1.5",
     "nock": "^13.2.7",
     "node-mocks-http": "^1.11.0",
-    "pino": "^6.13.2",
+    "pino": "^8.2.0",
     "prettier": "^2.7.1",
     "prettier-check": "^2.0.0",
     "split2": "^4.1.0",
