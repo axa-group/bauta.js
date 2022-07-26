@@ -20,12 +20,16 @@ import { isPromise } from '../utils/is-promise';
  *  const pipeline = pipe(
  *    randomPreviousPipeline,
  *    tap((prev) => {
- *      console.log(`some intermediate step. Prev is ${prev}`);
- *      // => 'some intermediate step. Prev is I am so random!'
+ *      console.log(`some intermediate step. Prev is "${prev}""`);
+ *      // prints 'some intermediate step. Prev is "I am so random!"'
+ *    }),
+ *    tap(async (prev) => {
+ *      await asyncProcess();
+ *      //'whether asyncProcess resolves or rejects. Prev still will be "I am so random!"'
  *    }),
  *    (prev) => {
  *      console.log(prev);
- *      // print 'I am so random!'
+ *      // prints 'I am so random!'
  *    }
  *  );
  *
