@@ -16,6 +16,22 @@ describe('tap decorator', () => {
     expect(log).toHaveBeenCalledWith('star wars');
   });
 
+  test('should work if the step in the tap does not return anything', async () => {
+    const log = jest.fn();
+    const getMovie = step(() => ({ name: 'star wars' }));
+    const logMovieName = step<{ name: string }, void>(({ name }) => {
+      log(name);
+    });
+
+    const pipeline = pipe(getMovie, tap(logMovieName));
+
+    expect(pipeline({}, createContext({}), {} as BautaJSInstance)).toStrictEqual({
+      name: 'star wars'
+    });
+
+    expect(log).toHaveBeenCalledWith('star wars');
+  });
+
   test('should perform asynchronously the current step action but return the previous step value', async () => {
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     const log = jest.fn();
