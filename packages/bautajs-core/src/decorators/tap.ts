@@ -8,6 +8,9 @@ import { isPromise } from '../utils/is-promise';
  * Tap supports promises, but it will ignore any error thrown inside the tapped
  * promise and will wait for its execution just to ignore its value.
  *
+ * The step inside tap does not need to return anything, since if it returns anything,
+ * it will be ignored anyways in favour of what was in the previous step.
+ *
  * @param {Pipeline.StepFunction<TIn, any>} stepFn - The step fn to execute
  * @returns {Pipeline.StepFunction<TIn, TIn>}
  *
@@ -34,7 +37,9 @@ import { isPromise } from '../utils/is-promise';
  *  );
  *
  */
-export function tap<TIn>(stepFn: Pipeline.StepFunction<TIn, TIn>): Pipeline.StepFunction<TIn, TIn> {
+export function tap<TIn>(
+  stepFn: Pipeline.StepFunction<TIn, TIn | void>
+): Pipeline.StepFunction<TIn, TIn | void> {
   return (prev, ctx, bautajs) => {
     const result = stepFn(prev, ctx, bautajs);
 
