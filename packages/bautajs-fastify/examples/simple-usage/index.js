@@ -21,7 +21,8 @@ fastify
   .register(bautajsFastify, {
     bautajsInstance: bautajsV1,
     apiBasePath: '/api/',
-    prefix: '/v1/'
+    prefix: '/v1/',
+    strictResponseSerialization: false
   })
   .after(() => {
     const bautajsV2 = new BautaJS({
@@ -36,7 +37,8 @@ fastify
     fastify.register(bautajsFastify, {
       bautajsInstance: bautajsV2,
       apiBasePath: '/api/',
-      prefix: '/v2/'
+      prefix: '/v2/',
+      strictResponseSerialization: false
     });
   });
 
