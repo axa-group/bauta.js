@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) AXA Group Operations Spain S.A.
+ *
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
+ * A copy of the License can be found in the LICENSE.TXT file distributed
+ * together with this file.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 // eslint-disable-next-line no-unused-vars
 import path from 'path';
 import fastify, { FastifyInstance } from 'fastify';
@@ -37,7 +51,6 @@ describe('bautaJS fastify tests', () => {
         limit: 123
       }
     })) as any;
-
     const body = JSON.parse(res.body);
     expect(res.statusCode).toBe(400);
     expect(body.message).toBe('The request was not valid');
@@ -45,7 +58,7 @@ describe('bautaJS fastify tests', () => {
       location: 'querystring',
       message: 'must match format "test"',
       errorCode: 'format',
-      path: '/limit'
+      path: '#/properties/limit/format'
     });
   });
 
@@ -82,7 +95,7 @@ describe('bautaJS fastify tests', () => {
       location: 'querystring',
       message: 'must match format "test"',
       errorCode: 'format',
-      path: '/limit'
+      path: '#/properties/limit/format'
     });
     expect(spy).toHaveBeenCalledWith(null);
   });
@@ -106,7 +119,15 @@ describe('bautaJS fastify tests', () => {
     });
     const body = JSON.parse(res.body);
     expect(res.statusCode).toBe(500);
-    expect(body.message).toBe('"code" is required!');
+    expect(body.message).toBe('Internal error');
+    expect(body.errors).toStrictEqual([
+      {
+        path: '/0/id',
+        errorCode: 'type',
+        location: 'response',
+        message: 'must be integer'
+      }
+    ]);
   });
   test('response validation should be disabled by default', async () => {
     fastifyInstance.register(bautajsFastify, {
@@ -186,8 +207,7 @@ describe('bautaJS fastify tests', () => {
 
     fastifyInstance.setErrorHandler((err: any, _request, reply) => {
       reply.status(err.statusCode).send({
-        // "code" is missing on the final error. A validation error will be thrown because of that.
-        message: err.message,
+        // "message" is missing on the final error. A validation error will be thrown because of that.
         status: reply.statusCode,
         errors: err.errors,
         fromErrorHandler: true

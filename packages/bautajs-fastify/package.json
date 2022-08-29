@@ -24,12 +24,25 @@
     "fastify",
     "middleware"
   ],
+  "author": {
+    "name": "Javier Blanco"
+  },
+  "maintainers": [
+    {
+      "email": "francisco.herrero@axa.com",
+      "name": "Francisco Herrero"
+    },
+    {
+      "email": "xavier.redondo@axa.com",
+      "name": "Xavier Redondo"
+    }
+  ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@axa/bautajs-core": "1.0.0",
-    "fastify": "^3.29.0",
-    "fastify-openapi-docs": "^0.4.0",
-    "fastify-plugin": "^3.0.1",
+    "fastify": "^4.5.3",
+    "@fastify/swagger": "^7.4.1",
+    "fastify-plugin": "^4.2.1",
     "fastify-x-request-id": "^2.0.0",
     "route-order": "^0.1.0"
   },

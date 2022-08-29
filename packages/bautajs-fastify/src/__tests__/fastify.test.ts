@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) AXA Group Operations Spain S.A.
+ *
+ * Licensed under the AXA Group Operations Spain S.A. License (the "License");
+ * you may not use this file except in compliance with the License.
+ * A copy of the License can be found in the LICENSE.TXT file distributed
+ * together with this file.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 // eslint-disable-next-line no-unused-vars
 import path from 'path';
 import FormData from 'form-data';
@@ -128,11 +142,11 @@ describe('bautaJS fastify tests', () => {
       // This won't call the apiHooks
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/v1'
+        url: '/v1/explorer'
       });
 
       // 301 is returned by the swagger explorer
-      expect(res.statusCode).toBe(301);
+      expect(res.statusCode).toBe(302);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith('preValidation');
     });
@@ -350,16 +364,16 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/v1/openapi.json'
+        url: '/v1/explorer/json'
       });
 
       const res2 = await fastifyInstance.inject({
         method: 'GET',
-        url: '/v1'
+        url: '/v1/explorer'
       });
 
       expect(res.statusCode).toBe(200);
-      expect(res2.statusCode).toBe(301);
+      expect(res2.statusCode).toBe(302);
     });
 
     test('should only show the tags that are in the exposed routes', async () => {
@@ -388,7 +402,7 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/v1/openapi.json'
+        url: '/v1/explorer/json'
       });
 
       expect(res.statusCode).toBe(200);
@@ -459,7 +473,7 @@ describe('bautaJS fastify tests', () => {
         )
       });
       fs.setErrorHandler((error, _request, reply) => {
-        reply.send({ message: error.message, status: error.statusCode });
+        reply.send({ message: error.message, code: 112 });
       });
 
       const res = await fs.inject({
@@ -470,7 +484,8 @@ describe('bautaJS fastify tests', () => {
 
       expect(res.statusCode).toBe(500);
       expect(JSON.parse(res.payload)).toStrictEqual({
-        message: 'some error'
+        message: 'some error',
+        code: 112
       });
     });
   });
