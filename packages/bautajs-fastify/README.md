@@ -36,7 +36,7 @@ fastify.listen(3000, err => {
 
 By default the following plugins are included on the fastify instance
 
-- [fastify-openapi-docs](https://github.com/ShogunPanda/fastify-openapi-docs) - Automatic swagger documentation exposed through the `/explorer` path
+- [@fastify/swagger](https://github.com/fastify/fastify-swagger) - Automatic swagger documentation exposed through the `/explorer` path
 
 ### Serialization
 
