@@ -62,7 +62,7 @@
     "stream-mock": "^2.0.5",
     "supertest": "^6.2.3",
     "ts-jest": "^28.0.5",
-    "typescript": "4.7.x"
+    "typescript": "4.8.x"
   },
   "scripts": {
     "lerna": "lerna",
