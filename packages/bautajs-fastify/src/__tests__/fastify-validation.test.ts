@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import path from 'path';
 import fastify, { FastifyInstance } from 'fastify';
 import { ValidationError } from '@axa/bautajs-core';
@@ -37,7 +36,6 @@ describe('bautaJS fastify tests', () => {
         limit: 123
       }
     })) as any;
-
     const body = JSON.parse(res.body);
     expect(res.statusCode).toBe(400);
     expect(body.message).toBe('The request was not valid');
@@ -45,7 +43,7 @@ describe('bautaJS fastify tests', () => {
       location: 'querystring',
       message: 'must match format "test"',
       errorCode: 'format',
-      path: '/limit'
+      path: '#/properties/limit/format'
     });
   });
 
@@ -82,7 +80,7 @@ describe('bautaJS fastify tests', () => {
       location: 'querystring',
       message: 'must match format "test"',
       errorCode: 'format',
-      path: '/limit'
+      path: '#/properties/limit/format'
     });
     expect(spy).toHaveBeenCalledWith(null);
   });
@@ -106,7 +104,15 @@ describe('bautaJS fastify tests', () => {
     });
     const body = JSON.parse(res.body);
     expect(res.statusCode).toBe(500);
-    expect(body.message).toBe('"code" is required!');
+    expect(body.message).toBe('Internal error');
+    expect(body.errors).toStrictEqual([
+      {
+        path: '/0/id',
+        errorCode: 'type',
+        location: 'response',
+        message: 'must be integer'
+      }
+    ]);
   });
   test('response validation should be disabled by default', async () => {
     fastifyInstance.register(bautajsFastify, {
@@ -186,8 +192,7 @@ describe('bautaJS fastify tests', () => {
 
     fastifyInstance.setErrorHandler((err: any, _request, reply) => {
       reply.status(err.statusCode).send({
-        // "code" is missing on the final error. A validation error will be thrown because of that.
-        message: err.message,
+        // "message" is missing on the final error. A validation error will be thrown because of that.
         status: reply.statusCode,
         errors: err.errors,
         fromErrorHandler: true

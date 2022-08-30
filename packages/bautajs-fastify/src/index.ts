@@ -2,7 +2,6 @@ import fp from 'fastify-plugin';
 import { FastifyInstance } from 'fastify';
 import responseXRequestId from 'fastify-x-request-id';
 import * as bautaJS from '@axa/bautajs-core';
-import path from 'path';
 import explorerPlugin from './explorer';
 import exposeRoutesPlugin from './expose-routes';
 import { BautaJSFastifyPluginOptions } from './types';
@@ -30,14 +29,10 @@ export async function bautajsFastify(
   fastify: FastifyInstance,
   opts: BautaJSFastifyPluginOptions & bautaJS.BautaJSOptions
 ): Promise<void>;
-export async function bautajsFastify(fastify: any, opts: any) {
+export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
   const bautajs = opts.bautajsInstance
     ? opts.bautajsInstance
-    : new bautaJS.BautaJS({
-        // Cast should be done because interface of fastify is wrong https://github.com/fastify/fastify/issues/1715
-        logger: fastify.log as bautaJS.Logger,
-        ...opts
-      });
+    : new bautaJS.BautaJS({ logger: fastify.log as bautaJS.Logger, ...opts });
 
   if (opts.inheritOperationsFrom) {
     bautajs.inheritOperationsFrom(opts.inheritOperationsFrom);
@@ -46,27 +41,39 @@ export async function bautajsFastify(fastify: any, opts: any) {
   await bautajs.bootstrap();
 
   // Add x-request-id on the response
-  fastify.register(responseXRequestId, { prefix: opts.prefix });
+  await fastify.register(responseXRequestId, { prefix: opts.prefix });
 
-  if (opts.apiDefinition && (!opts.explorer || opts.explorer.enabled)) {
-    fastify.register(explorerPlugin, {
-      apiDefinition: opts.apiDefinition,
-      operations: bautajs.operations,
-      prefix: opts.prefix
-    });
-  }
+  const apiDefinition = opts.apiDefinition ?? opts.bautajsInstance.apiDefinition;
 
-  if (opts.exposeOperations !== false) {
-    const routes = processOperations(bautajs.operations);
-    fastify.register(exposeRoutesPlugin, {
-      apiHooks: opts.apiHooks,
-      routes,
-      strictResponseSerialization: opts.strictResponseSerialization,
-      validator: bautajs.validator,
-      prefix: path.join(opts.prefix || '', opts.apiBasePath || '/api'),
-      onResponseValidationError: opts.onResponseValidationError
+  await fastify
+    .register(
+      async function registerEndpoints(fastifySwagger) {
+        // Scope of api prefix
+        if (apiDefinition && (!opts.explorer || opts.explorer.enabled)) {
+          fastifySwagger.register(explorerPlugin, {
+            apiDefinition,
+            operations: bautajs.operations
+          });
+        }
+        if (opts.exposeOperations !== false) {
+          const routes = processOperations(bautajs.operations);
+          await fastifySwagger.register(exposeRoutesPlugin, {
+            apiHooks: opts.apiHooks,
+            routes,
+            strictResponseSerialization: opts.strictResponseSerialization,
+            validator: bautajs.validator,
+            apiBasePath: opts.apiBasePath || '/api',
+            onResponseValidationError: opts.onResponseValidationError
+          });
+        }
+      },
+      {
+        prefix: opts.prefix
+      }
+    )
+    .after(() => {
+      fastify.log.info(`Explorer plugin registered at ${opts.prefix}explorer`);
     });
-  }
 
   // This will give access to some fastify features inside the pipelines
   bautajs.decorate('fastify', fastify);
@@ -75,6 +82,6 @@ export async function bautajsFastify(fastify: any, opts: any) {
 export * from './types';
 export * from './operators';
 export default fp(bautajsFastify, {
-  fastify: '3.x',
+  fastify: '4.x',
   name: 'bautajs'
 });

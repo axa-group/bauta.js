@@ -9,9 +9,6 @@
       }
     },
     "servers": [
-      {
-        "url": "/v1/api/"
-      }
     ],
     "paths": {
       "/randomYear": {

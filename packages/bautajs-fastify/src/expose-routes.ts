@@ -1,4 +1,5 @@
 import * as fastify from 'fastify';
+import path from 'path';
 import { Operation, ValidationError, Validator, LocationError } from '@axa/bautajs-core';
 import routeOrder from 'route-order';
 import { ApiHooks, OnResponseValidationError } from './types';
@@ -18,7 +19,7 @@ function mapFsValidationToLocationErrors(
 ): LocationError[] | undefined {
   return Array.isArray(validation.validation)
     ? validation.validation.map(error => ({
-        path: error.dataPath || error.instancePath,
+        path: error.schemaPath || error.instancePath,
         location: validation.validationContext || '',
         message: error.message || '',
         errorCode: error.keyword
@@ -61,6 +62,7 @@ function createHandler(operation: Operation) {
       // In case the response is already sent to the user don't send it again.
       if (reply.sent || reply.raw.headersSent || reply.raw.finished) {
         // In case reply was sent by reply.raw
+        reply.hijack();
         // eslint-disable-next-line no-param-reassign
         reply.sent = true;
         return {};
@@ -95,6 +97,7 @@ function createHandler(operation: Operation) {
           `Response has been sent to the requester, but the promise threw an error`
         );
         // In case reply was sent by reply.raw
+        reply.hijack();
         // eslint-disable-next-line no-param-reassign
         reply.sent = true;
         return {};
@@ -108,7 +111,7 @@ function createHandler(operation: Operation) {
 async function exposeRoutes(
   fastifyInstance: fastify.FastifyInstance,
   opts: {
-    prefix: string;
+    apiBasePath: string;
     routes: any;
     validator: Validator<any>;
     strictResponseSerialization?: boolean;
@@ -156,7 +159,7 @@ async function exposeRoutes(
         fastifyInstance.addHook(hook as any, fn);
       });
     }
-    const route = (opts.prefix + url).replace(/\/\//, '/');
+    const route = path.join(opts.apiBasePath, url);
     const preSerializationHooks = [];
     if (opts.apiHooks) {
       if (Array.isArray(opts.apiHooks.preSerialization)) {
@@ -172,7 +175,7 @@ async function exposeRoutes(
       validatorCompiler: ({ schema }) => validator.buildSchemaCompiler(schema),
       attachValidation: true,
       method,
-      url,
+      url: route,
       preSerialization: preSerializationHooks,
       handler: createHandler(operation),
       schema: {
@@ -182,7 +185,10 @@ async function exposeRoutes(
     });
 
     fastifyInstance.log.info(
-      `[OK] [${method.toUpperCase()}] ${route} operation exposed on the API from ${operation.id}`
+      `[OK] [${method.toUpperCase()}] ${path.join(
+        fastifyInstance.prefix,
+        route
+      )} operation exposed on the API from ${operation.id}`
     );
   }
 

@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import path from 'path';
 import FormData from 'form-data';
 import { Readable } from 'stream';
@@ -20,6 +19,7 @@ describe('bautaJS fastify tests', () => {
     afterEach(() => {
       fastifyInstance.close();
     });
+
     test('should disable the strict serialization from fastify', async () => {
       const expected = {
         id: 134,
@@ -128,11 +128,11 @@ describe('bautaJS fastify tests', () => {
       // This won't call the apiHooks
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/v1'
+        url: '/v1/explorer'
       });
 
       // 301 is returned by the swagger explorer
-      expect(res.statusCode).toBe(301);
+      expect(res.statusCode).toBe(302);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith('preValidation');
     });
@@ -350,16 +350,16 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/v1/openapi.json'
+        url: '/v1/explorer/json'
       });
 
       const res2 = await fastifyInstance.inject({
         method: 'GET',
-        url: '/v1'
+        url: '/v1/explorer'
       });
 
       expect(res.statusCode).toBe(200);
-      expect(res2.statusCode).toBe(301);
+      expect(res2.statusCode).toBe(302);
     });
 
     test('should only show the tags that are in the exposed routes', async () => {
@@ -388,11 +388,12 @@ describe('bautaJS fastify tests', () => {
 
       const res = await fastifyInstance.inject({
         method: 'GET',
-        url: '/v1/openapi.json'
+        url: '/v1/explorer/json'
       });
 
       expect(res.statusCode).toBe(200);
     });
+
     test('should return a 204 empty response if the pipeline do not return anything', async () => {
       const fs = fastify();
       fs.register(bautajsFastify, {
@@ -459,7 +460,7 @@ describe('bautaJS fastify tests', () => {
         )
       });
       fs.setErrorHandler((error, _request, reply) => {
-        reply.send({ message: error.message, status: error.statusCode });
+        reply.send({ message: error.message, code: 112 });
       });
 
       const res = await fs.inject({
@@ -470,7 +471,8 @@ describe('bautaJS fastify tests', () => {
 
       expect(res.statusCode).toBe(500);
       expect(JSON.parse(res.payload)).toStrictEqual({
-        message: 'some error'
+        message: 'some error',
+        code: 112
       });
     });
   });
@@ -522,6 +524,7 @@ describe('bautaJS fastify tests', () => {
     afterEach(() => {
       fastifyInstance.close();
     });
+
     test('should allow to specify multiple bautajs instances in different paths', async () => {
       fastifyInstance.register(bautajsFastify, {
         apiDefinition,
@@ -560,6 +563,36 @@ describe('bautaJS fastify tests', () => {
           name: 'pet2'
         }
       ]);
+    });
+
+    test('should allow to expose a swagger for multiple bautajs instances in different paths', async () => {
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiBasePath: '/api/',
+        prefix: '/v1/'
+      });
+
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiBasePath: '/api/',
+        prefix: '/v2/'
+      });
+
+      const res = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/explorer'
+      });
+
+      const res2 = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v2/explorer'
+      });
+
+      // 302 is returned by the swagger explorer
+      expect(res.statusCode).toBe(302);
+      expect(res2.statusCode).toBe(302);
     });
   });
 });

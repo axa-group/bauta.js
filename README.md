@@ -23,7 +23,7 @@ To get started with Bauta.js, we recommend using one of the framework's plugins 
 First, get Bauta.js with npm and the required dependencies:
 
 ```console
-npm i fastify@3 @axa/bautajs-core @axa/bautajs-fastify
+npm i fastify@4 @axa/bautajs-core @axa/bautajs-fastify
 ```
 
 Then create `server.js` and add the following content:
@@ -175,9 +175,11 @@ Bauta.js has a set of valuable decorators that you can use to build your resolve
 
 Bauta.js validates, based on the OpenAPI schema provided, the request input by default and could validate the response of your endpoints if you enabled it. For further details, take a look to the following [documentation](/docs/validation.md).
 
-### Built-in OpenAPI explorer
+### Built-in OpenAPI explorer (swagger)
 
 Using Bauta.js you are ready from the beginning to share your OpenAPI documentation exposed to the `/explorer` endpoint by default.
+
+With the `bautajs-fastify` plugin you will have the capability of having multiple openAPI exposed if you have multiple version exposed of your API (see [API versioning section](./docs/api-versioning.md)). In this case the explorer will be exposed with the prefix of every Bauta.js instance, i.e. `/v1/explorer`.
 
 ### API versioning
 
