@@ -23,7 +23,7 @@ To get started with Bauta.js, we recommend using one of the framework's plugins 
 First, get Bauta.js with npm and the required dependencies:
 
 ```console
-npm i fastify@3 @axa/bautajs-core @axa/bautajs-fastify
+npm i fastify@4 @axa/bautajs-core @axa/bautajs-fastify
 ```
 
 Then create `server.js` and add the following content:
