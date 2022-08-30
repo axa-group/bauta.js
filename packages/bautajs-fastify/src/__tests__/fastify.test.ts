@@ -19,6 +19,7 @@ describe('bautaJS fastify tests', () => {
     afterEach(() => {
       fastifyInstance.close();
     });
+
     test('should disable the strict serialization from fastify', async () => {
       const expected = {
         id: 134,
@@ -392,6 +393,7 @@ describe('bautaJS fastify tests', () => {
 
       expect(res.statusCode).toBe(200);
     });
+
     test('should return a 204 empty response if the pipeline do not return anything', async () => {
       const fs = fastify();
       fs.register(bautajsFastify, {
@@ -522,6 +524,7 @@ describe('bautaJS fastify tests', () => {
     afterEach(() => {
       fastifyInstance.close();
     });
+
     test('should allow to specify multiple bautajs instances in different paths', async () => {
       fastifyInstance.register(bautajsFastify, {
         apiDefinition,
@@ -560,6 +563,36 @@ describe('bautaJS fastify tests', () => {
           name: 'pet2'
         }
       ]);
+    });
+
+    test('should allow to expose a swagger for multiple bautajs instances in different paths', async () => {
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiBasePath: '/api/',
+        prefix: '/v1/'
+      });
+
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition,
+        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiBasePath: '/api/',
+        prefix: '/v2/'
+      });
+
+      const res = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/explorer'
+      });
+
+      const res2 = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v2/explorer'
+      });
+
+      // 302 is returned by the swagger explorer
+      expect(res.statusCode).toBe(302);
+      expect(res2.statusCode).toBe(302);
     });
   });
 });
