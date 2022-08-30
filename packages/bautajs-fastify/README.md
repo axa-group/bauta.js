@@ -36,7 +36,7 @@ fastify.listen(3000, err => {
 
 By default the following plugins are included on the fastify instance
 
-- [@fastify/swagger](https://github.com/fastify/fastify-swagger) - Automatic swagger documentation exposed through the `/explorer` path
+- [@fastify/swagger](https://github.com/fastify/fastify-swagger) - Automatic swagger documentation exposed through the `${prefix}/explorer` path.
 
 ### Serialization
 
