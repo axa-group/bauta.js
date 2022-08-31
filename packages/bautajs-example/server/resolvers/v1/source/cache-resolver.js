@@ -16,7 +16,7 @@ const normalizer = (_, ctx) => {
 
 const chuckFactsPipeline = pipe(chuckProvider(), transformResponse);
 
-const cachedChuckFactsPipeline = pipe(cache(chuckFactsPipeline, normalizer, { maxSize: 2 }));
+const cachedChuckFactsPipeline = pipe(cache(chuckFactsPipeline, { maxSize: 2 }, normalizer));
 
 module.exports = resolver(operations => {
   operations.chuckFacts.setup(cachedChuckFactsPipeline);
