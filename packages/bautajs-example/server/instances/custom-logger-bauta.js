@@ -4,10 +4,10 @@ function getLogger(moduleName) {
   const config = {
     level: 'debug',
     name: moduleName,
-		transport: {
-			target: 'pino-pretty'
-		}
-	};
+    transport: {
+      target: 'pino-pretty'
+    }
+  };
 
   return pino(config);
 }

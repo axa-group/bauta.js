@@ -36,7 +36,7 @@
     "route-order": "^0.1.0",
     "swagger-ui-express": "^4.4.0"
   },
-	"devDependencies": {
+  "devDependencies": {
     "@types/pino": "^6.3.11"
-	}
+  }
 }
