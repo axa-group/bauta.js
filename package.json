@@ -76,7 +76,7 @@
     "clean": "npm run lerna clean -- --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
     "release:local": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "release": "lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
-		"release:from-package": "lerna publish from-package --exact --no-verify-access --no-verify-registry --yes",
+    "release:from-package": "lerna publish from-package --exact --no-verify-access --no-verify-registry --yes",
     "test": "jest --verbose --detectOpenHandles",
     "test:clean": "jest --clearCache",
     "test:watch": "npm run test -- --watchAll",
@@ -97,8 +97,8 @@
     "reportPath": "coverage",
     "reportFile": "test-reporter.xml"
   },
-	"overrides": {
-		"minimist": "1.2.6",
+  "overrides": {
+    "minimist": "1.2.6",
     "@types/pino": "^7.0.5"
-	}
+  }
 }
