@@ -41,10 +41,10 @@ Licensed under the (MIT / Apache 2.0) License.
  - [compression@1.7.4](https://github.com/expressjs/compression) - MIT
  - [cors@2.8.5](https://github.com/expressjs/cors) - MIT
  - [express@4.18.1](https://github.com/expressjs/express) - MIT
- - [express-pino-logger@6.0.0](https://github.com/pinojs/express-pino-logger) - MIT
+ - [express-pino-logger@7.0.0](https://github.com/pinojs/express-pino-logger) - MIT
  - [helmet@5.1.0](https://github.com/helmetjs/helmet) - MIT
  - [openapi-types@12.0.0](https://github.com/kogosoftwarellc/open-api/tree/master/packages/openapi-types) - MIT
- - [pino@6.13.2](https://github.com/pinojs/pino) - MIT
+ - [pino@8.4.2](https://github.com/pinojs/pino) - MIT
  - [route-order@0.1.0](https://github.com/sfrdmn/node-route-order) - MIT
  - [swagger-ui-express@4.4.0](https://github.com/scottie1984/swagger-ui-express) - MIT
 
