@@ -96,9 +96,5 @@
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-reporter.xml"
-  },
-  "overrides": {
-    "minimist": "1.2.6",
-    "@types/pino": "^7.0.5"
   }
 }

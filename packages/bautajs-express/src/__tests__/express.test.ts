@@ -18,6 +18,7 @@ describe('bautaJS express', () => {
     test('should trigger the aborted event when the client close the connection and log the error', async () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'error').mockImplementation();
+      // @ts-ignore
       logger.child = () => logger;
       const bautajs = new BautaJSExpress({
         apiDefinition,
