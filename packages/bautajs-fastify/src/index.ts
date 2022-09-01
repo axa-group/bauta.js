@@ -1,7 +1,8 @@
 import fp from 'fastify-plugin';
 import { FastifyInstance } from 'fastify';
-import responseXRequestId from 'fastify-x-request-id';
 import * as bautaJS from '@axa/bautajs-core';
+
+import responseXRequestId from './x-request-id-plugin';
 import explorerPlugin from './explorer';
 import exposeRoutesPlugin from './expose-routes';
 import { BautaJSFastifyPluginOptions } from './types';
@@ -47,7 +48,7 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
 
   await fastify
     .register(
-      async function registerEndpoints(fastifySwagger) {
+      async function registerEndpoints(fastifySwagger: any) {
         // Scope of api prefix
         if (apiDefinition && (!opts.explorer || opts.explorer.enabled)) {
           fastifySwagger.register(explorerPlugin, {
@@ -81,6 +82,7 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
 
 export * from './types';
 export * from './operators';
+
 export default fp(bautajsFastify, {
   fastify: '4.x',
   name: 'bautajs'
