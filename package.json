@@ -26,7 +26,7 @@
     "@types/express-pino-logger": "^4.0.3",
     "@types/jest": "^28.1.3",
     "@types/node": "^18.0.0",
-    "@types/pino": "^6.3.11",
+    "@types/pino": "^7.0.5",
     "@types/split2": "^3.2.1",
     "@types/supertest": "^2.0.12",
     "@types/swagger-ui-express": "4.1.3",
@@ -55,7 +55,7 @@
     "lerna": "^5.1.5",
     "nock": "^13.2.7",
     "node-mocks-http": "^1.11.0",
-    "pino": "^6.13.2",
+    "pino": "^8.4.2",
     "prettier": "^2.7.1",
     "prettier-check": "^2.0.0",
     "split2": "^4.1.0",
@@ -76,7 +76,7 @@
     "clean": "npm run lerna clean -- --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
     "release:local": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "release": "lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
-		"release:from-package": "lerna publish from-package --exact --no-verify-access --no-verify-registry --yes",
+    "release:from-package": "lerna publish from-package --exact --no-verify-access --no-verify-registry --yes",
     "test": "jest --verbose --detectOpenHandles",
     "test:clean": "jest --clearCache",
     "test:watch": "npm run test -- --watchAll",
@@ -96,8 +96,5 @@
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-reporter.xml"
-  },
-	"overrides": {
-		"minimist": "1.2.6"
-	}
+  }
 }

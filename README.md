@@ -241,6 +241,7 @@ Licensed under the MIT License.
 - [BautaJS Express](./packages/bautajs-express/README.md#third-party-dependencies-licenses)
 - [BautaJS Cache Decorator](./packages/bautajs-decorator-cache/README.md#third-party-dependencies-licenses)
 - [BautaJS Rest Datasource](./packages/bautajs-datasource-rest/README.md#third-party-dependencies-licenses)
+
 ### Development
  - [@commitlint/config-conventional@17.0.2](https://github.com/conventional-changelog/commitlint) - MIT
  - [@types/body-parser@1.19.2](https://github.com/DefinitelyTyped/DefinitelyTyped) - MIT
@@ -250,7 +251,7 @@ Licensed under the MIT License.
  - [@types/express-pino-logger@4.0.3](https://github.com/DefinitelyTyped/DefinitelyTyped) - MIT
  - [@types/jest@28.1.3](https://github.com/DefinitelyTyped/DefinitelyTyped) - MIT
  - [@types/node@18.0.0](https://github.com/DefinitelyTyped/DefinitelyTyped) - MIT
- - [@types/pino@6.3.11](https://github.com/DefinitelyTyped/DefinitelyTyped) - MIT
+ - [@types/pino@7.0.5](undefined) - MIT
  - [@types/split2@3.2.1](https://github.com/DefinitelyTyped/DefinitelyTyped) - MIT
  - [@types/supertest@2.0.12](https://github.com/DefinitelyTyped/DefinitelyTyped) - MIT
  - [@types/swagger-ui-express@4.1.3](https://github.com/DefinitelyTyped/DefinitelyTyped) - MIT
@@ -279,11 +280,11 @@ Licensed under the MIT License.
  - [lerna@5.1.5](https://github.com/lerna/lerna) - MIT
  - [nock@13.2.7](https://github.com/nock/nock) - MIT
  - [node-mocks-http@1.11.0](https://github.com/howardabrams/node-mocks-http) - MIT
- - [pino@6.13.2](https://github.com/pinojs/pino) - MIT
+ - [pino@8.4.2](https://github.com/pinojs/pino) - MIT
  - [prettier@2.7.1](https://github.com/prettier/prettier) - MIT
  - [prettier-check@2.0.0](https://github.com/hexacta/prettier-check) - MIT
  - [split2@4.1.0](https://github.com/mcollina/split2) - ISC
  - [stream-mock@2.0.5](https://github.com/BastienAr/stream-mock) - MIT
  - [supertest@6.2.3](https://github.com/visionmedia/supertest) - MIT
  - [ts-jest@28.0.5](https://github.com/kulshekhar/ts-jest) - MIT
- - [typescript@4.7.x](https://github.com/Microsoft/TypeScript) - Apache-2.0
+ - [typescript@4.8.x](https://github.com/Microsoft/TypeScript) - Apache-2.0

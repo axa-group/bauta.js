@@ -21,6 +21,6 @@ Licensed under the (MIT / Apache 2.0) License.
  - [hyperid@3.0.1](https://github.com/mcollina/hyperid) - MIT
  - [openapi-types@12.0.0](https://github.com/kogosoftwarellc/open-api/tree/master/packages/openapi-types) - MIT
  - [p-cancelable@2.1.1](https://github.com/sindresorhus/p-cancelable) - MIT
- - [pino@6.13.2](https://github.com/pinojs/pino) - MIT
+ - [pino@8.4.2](https://github.com/pinojs/pino) - MIT
 
 ### Development

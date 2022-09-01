@@ -4,10 +4,12 @@ function getLogger(moduleName) {
   const config = {
     level: 'debug',
     name: moduleName,
-    prettyPrint: false
+    transport: {
+      target: 'pino-pretty'
+    }
   };
 
-  return pino(config, pino.destination(1));
+  return pino(config);
 }
 
 module.exports = getLogger;

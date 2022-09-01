@@ -200,11 +200,10 @@ describe('provider rest', () => {
 
     test('should log the requests data on debug mode', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(200, { bender: 'ok' });
@@ -252,9 +251,7 @@ describe('provider rest', () => {
       // 20 level means debug mode
       logger.level = 20;
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(200, { bender: 'ok' });
@@ -355,11 +352,10 @@ describe('provider rest', () => {
 
     test('should log the url port if specified', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com:3000')
@@ -406,12 +402,11 @@ describe('provider rest', () => {
 
     test('should not log headers and body if the log level is set to info', async () => {
       process.env.LOG_LEVEL = 'info';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
       jest.spyOn(logger, 'info').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com')
@@ -461,11 +456,10 @@ describe('provider rest', () => {
 
     test('should log the requests data on debug mode if the request body is not a json', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com').post('/v1/policies', 'someString').reply(200, { bender: 'ok' });
@@ -526,11 +520,10 @@ describe('provider rest', () => {
 
     test('should log always the body and headers if ignoreLogLevel is set to true', async () => {
       process.env.LOG_LEVEL = 'info';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'info').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com').post('/v1/policies', 'someString').reply(200, { bender: 'ok' });
@@ -594,11 +587,10 @@ describe('provider rest', () => {
 
     test('should not print the response body if the size in bytes exceed the maxBodyLogSize', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com')
@@ -673,11 +665,10 @@ describe('provider rest', () => {
           maxBodyLogSize: 15
         }
       });
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com')
@@ -749,11 +740,10 @@ describe('provider rest', () => {
           maxBodyLogSize: 90000000
         }
       });
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com')
@@ -823,11 +813,10 @@ describe('provider rest', () => {
 
     test('should not log the body in a buffer format in case that is a buffer', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com').post('/v1/policies').reply(200, { bender: 'ok' });
@@ -892,11 +881,10 @@ describe('provider rest', () => {
     });
     test('should not log the body if is an stream', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com').post('/v1/policies').reply(200, { bender: 'ok' });
@@ -957,11 +945,10 @@ describe('provider rest', () => {
 
     test('should override the logger hooks for response and request', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       const logResponseHook = () => {
@@ -1010,11 +997,10 @@ describe('provider rest', () => {
 
     test('should override the logger hooks for errors', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       const logErrorsHook = () => {
@@ -1058,11 +1044,10 @@ describe('provider rest', () => {
 
     test('should not print the request body if the size in bytes exceed the maxBodyLogSize', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'debug').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com')
@@ -1132,11 +1117,10 @@ describe('provider rest', () => {
 
     test('should not print the error body if the size in bytes exceed the maxBodyLogSize', async () => {
       process.env.LOG_LEVEL = 'debug';
-      const logger = defaultLogger();
+      const logger: Logger = defaultLogger();
+
       jest.spyOn(logger, 'error').mockImplementation();
-      logger.child = () => {
-        return logger;
-      };
+      logger.child = () => logger;
       const { restProvider } = await import('../index');
 
       nock('https://pets.com')
@@ -1231,7 +1215,8 @@ describe('provider rest', () => {
       });
       test('should log a network error', async () => {
         process.env.LOG_LEVEL = 'debug';
-        const logger = defaultLogger();
+        const logger: Logger = defaultLogger();
+
         jest.spyOn(logger, 'error').mockImplementation();
         logger.child = () => {
           return logger;
@@ -1277,7 +1262,8 @@ describe('provider rest', () => {
 
       test('should log an error if the response body could not be parsed', async () => {
         process.env.LOG_LEVEL = 'debug';
-        const logger = defaultLogger();
+        const logger: Logger = defaultLogger();
+
         logger.child = () => logger;
         jest.spyOn(logger, 'error').mockImplementation();
 
@@ -1327,7 +1313,8 @@ describe('provider rest', () => {
 
       test('should log a crash error on parsing', async () => {
         process.env.LOG_LEVEL = 'debug';
-        const logger = defaultLogger();
+        const logger: Logger = defaultLogger();
+
         // create context will create a logger child
         logger.child = () => logger;
         jest.spyOn(logger, 'error').mockImplementation();

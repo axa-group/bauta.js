@@ -54,11 +54,10 @@ describe('core tests', () => {
     test('should initialize the core if using a valid custom logger', async () => {
       const configLogger = {
         level: 'debug',
-        name: 'logger-custom-test',
-        prettyPrint: false
+        name: 'logger-custom-test'
       };
 
-      const validLogger = pino(configLogger, pino.destination(1)) as unknown as Logger;
+      const validLogger = pino(configLogger);
 
       const config = {
         endpoint: 'http://google.es'
@@ -86,13 +85,12 @@ describe('core tests', () => {
       const configLogger = {
         level: 'debug',
         name: 'logger-custom-test',
-        prettyPrint: false,
         customLevels: {
           always: 110 // Even if log.levelVal = 100 is set, always still gets printed
         }
       };
 
-      const validLogger = pino(configLogger, pino.destination(1));
+      const validLogger = pino(configLogger);
 
       const config = {
         endpoint: 'http://google.es'

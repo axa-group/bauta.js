@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import { Document, Operations, Logger, PathsObject } from '@axa/bautajs-core';
 import fastSafeStringify from 'fast-safe-stringify';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
-import P from 'pino';
+import type { Logger as PinoLogger } from 'pino';
 import { MiddlewareOption, BodyParserOptions, ExplorerOptions, HelmetOptions } from './types';
 import { genReqId } from './utils';
 import { reqSerializer } from './serializers/req';
@@ -59,7 +59,7 @@ export function initReqIdGenerator(
 
 export function initExpressPino(
   router: Router,
-  logger: P.Logger,
+  logger: PinoLogger,
   opt?: MiddlewareOption<ExpressPinoOptions>
 ) {
   // Align with Fastify logger.
@@ -72,6 +72,7 @@ export function initExpressPino(
   };
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     const pino = expressPino({
+      // @ts-ignore
       logger,
       genReqId: (req: any) => req.id,
       serializers: {
@@ -85,6 +86,7 @@ export function initExpressPino(
     router.use(pino);
     router.use(reqStartMw);
   } else if (opt && opt.enabled === true && opt.options) {
+    // @ts-ignore
     const pino = expressPino({
       logger,
       genReqId: (req: any) => req.id,

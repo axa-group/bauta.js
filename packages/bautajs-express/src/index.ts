@@ -2,7 +2,7 @@ import compression from 'compression';
 import express, { Response, IRoute } from 'express';
 import routeOrder from 'route-order';
 import * as bautajs from '@axa/bautajs-core';
-import P from 'pino';
+import type { Logger as PinoLogger } from 'pino';
 import {
   RouterOptions,
   ExpressRequest,
@@ -239,7 +239,7 @@ export class BautaJSExpress extends bautajs.BautaJS {
     const router = express.Router(options.routerOptions);
 
     initReqIdGenerator(router, this.logger, options.reqGenerator, options.expressPino);
-    initExpressPino(router, this.logger as P.Logger, options.expressPino);
+    initExpressPino(router, this.logger as PinoLogger, options.expressPino);
     initHelmet(router, options.helmet);
     initCors(router, options.cors);
     router.use(compression());
