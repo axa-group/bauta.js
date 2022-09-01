@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-fastify",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha.0",
   "description": "A bautaJS fastify plugin. Allows auto exposing the bautaJS operations.",
   "main": "dist",
   "types": "dist",
@@ -15,7 +15,7 @@
     "type": "git",
     "url": "https://github.com/axa-group/bauta.js"
   },
-	"publishConfig": {
+  "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
@@ -26,14 +26,14 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@axa/bautajs-core": "1.0.0",
-    "fastify": "^4.5.3",
+    "@axa/bautajs-core": "^2.0.0-alpha.0",
     "@fastify/swagger": "^7.4.1",
+    "fastify": "^4.5.3",
     "fastify-plugin": "^4.2.1",
     "fastify-x-request-id": "^2.0.0",
     "route-order": "^0.1.0"
   },
   "devDependencies": {
-    "@axa/bautajs-datasource-rest": "1.0.0"
+    "@axa/bautajs-datasource-rest": "^2.0.0-alpha.0"
   }
 }

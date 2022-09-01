@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-core",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha.0",
   "description": "Bauta.js is an add-on for your Node.js applications such as Express.js or Fastify.",
   "main": "dist",
   "types": "dist",
@@ -14,7 +14,7 @@
     "url": "https://github.com/axa-group/bauta.js/issues"
   },
   "homepage": "https://github.com/axa-group/bauta.js#readme",
-	"publishConfig": {
+  "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
