@@ -20,8 +20,7 @@ change it to:
 const bautaJS = require('./server/instances/bauta-with-custom-logger');
 ```
 
-This is a very simple case that allows you to see how you can easily use a custom logger, defined in custom-logger-bauta.js instead of the one used by default.
-
+With this change it a custom logger, defined in custom-logger-bauta.js, is used by bauta.js instead of the default one.
 
 ## Third party dependencies licenses
 
