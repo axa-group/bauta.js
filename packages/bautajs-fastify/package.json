@@ -27,8 +27,8 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@axa/bautajs-core": "^2.0.0",
-    "@fastify/swagger": "^7.4.1",
-    "fastify": "^4.5.3",
+    "@fastify/swagger": "^7.6.1",
+    "fastify": "^4.8.1",
     "fastify-plugin": "^4.2.1",
     "route-order": "^0.1.0"
   },
