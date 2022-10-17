@@ -8,7 +8,7 @@ const chuckProvider = restProvider(async (client, _, ctx) => {
   const result = await client.get(
     `https://api.chucknorris.io/jokes/search?query=${req.params.string}`,
     {
-      rejectUnauthorized: false,
+      https: { rejectUnauthorized: false },
       resolveBodyOnly: true
     }
   );
