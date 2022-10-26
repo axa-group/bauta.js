@@ -1,0 +1,319 @@
+
+  {
+    "openapi": "3.0.0",
+    "info": {
+      "version": "v1",
+      "title": "Swagger Petstore",
+      "license": {
+        "name": "MIT"
+      }
+    },
+    "paths": {
+      "/v1/unused": {
+        "get": {
+          "summary": "An endpoint definition without resolver",
+          "operationId": "unused",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/v1/randomYear": {
+        "get": {
+          "summary": "Provides information about a random year",
+          "operationId": "randomYear",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/v1/randomYear2": {
+        "get": {
+          "summary": "Provides information about a random year",
+          "operationId": "randomYear2",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/v1/factNumber/{number}": {
+        "get": {
+          "summary": "get a fact from a number",
+          "operationId": "factNumber",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/v1/factNumber2/{number}": {
+        "get": {
+          "summary": "get a fact from a number",
+          "operationId": "factNumber2",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/v1/articles": {
+        "get": {
+          "summary": "List all articles",
+          "operationId": "getAllArticles",
+          "tags": [
+            "articles"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "How many items to return at one time (max 100)",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A paged array of articles",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Articles"
+                  }
+                }
+              }
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/v1/no-pipeline": {
+        "get": {
+          "summary": "Endpoint without pipeline",
+          "operationId": "noPipeline",
+          "tags": [
+            "articles"
+          ],
+          "parameters": [
+            {
+              "name": "limit",
+              "in": "query",
+              "description": "How many items to return at one time (max 100)",
+              "required": false,
+              "schema": {
+                "type": "string",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "A paged array of articles"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/v1/cats": {
+        "get": {
+          "summary": "List all fact cats",
+          "operationId": "cats",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Cats"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/v1/chuckfacts/{string}": {
+        "get": {
+          "summary": "get a list of facts related to Chuck Norris",
+          "operationId": "chuckFacts",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "ThisShouldNotBeIncluded": {
+          "required": [
+            "userId",
+            "title"
+          ],
+          "properties": {
+            "userId": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            }
+          }
+        },
+        "Article": {
+          "required": [
+            "title"
+          ],
+          "properties": {
+            "userId": {
+              "nullable": true,
+              "type": "integer",
+              "format": "int64"
+            },
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            }
+          }
+        },
+        "Articles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Article"
+          }
+        },
+        "Cat": {
+          "required": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "type": "string"
+            }
+          }
+        },
+        "Cats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/Cat"
+          }
+        },
+        "Error": {
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }

@@ -1,0 +1,27 @@
+{
+  "name": "@axa/bautajs-fastify-example",
+  "version": "2.0.1",
+  "description": "A bautaJS example in fastify",
+  "main": "./server.js",
+  "scripts": {
+    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/axa-group/bauta.js"
+  },
+  "private": true,
+  "keywords": [
+    "bautajs",
+    "fastify",
+    "middleware"
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@axa/bautajs-core": "^2.0.1",
+    "@axa/bautajs-datasource-rest": "^2.0.1",
+    "@axa/bautajs-decorator-cache": "^2.0.1",
+    "@axa/bautajs-fastify": "^2.0.1",
+    "fastify": "^4.8.1"
+  }
+}

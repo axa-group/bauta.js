@@ -204,7 +204,8 @@ Bauta.js is written using TypesScript. Shipped with the typings definitions to i
 ## Guides
 
 - [Hello World! API implementation step by step](./docs/guides/hello-world.md) using Bauta.js with Express.js.
-- Example of Express.js Bauta.js API project: [bautajs-example](./packages/bautajs-example).
+- Example of bauta.js API project using [express](https://github.com/expressjs/express): [bautajs-express-example](./packages/bautajs-express-example).
+- Example of bauta.js API project using [fastify](https://github.com/fastify/fastify): [bautajs-fastify-example](./packages/bautajs-fastify-example).
 - [How to unit test your code that use Bauta.js?](./docs/guides/testing.md)
 
 ## Benchmark
