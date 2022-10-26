@@ -8,4 +8,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 #### 1.0.0 (2021-11-29)
 
-- Initial commit
+- Add first version of a Bauta.js fastify project example.
