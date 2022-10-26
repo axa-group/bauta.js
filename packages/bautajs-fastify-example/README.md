@@ -2,7 +2,6 @@
 
 - This API example intends to show how you can use Bauta.js with Fastify.
 - This project example purpose is to showcase main features using simple examples. 
-```suggestion
 - This project example **does not** intend to show good practices using Node.js or security practices at all. Please be sure you follow security good practices on your Node.js API (i.e. adding [helmet](@fastify/helmet)).
 
 
