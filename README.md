@@ -31,7 +31,7 @@ Then create `server.js` and add the following content:
 ```js
 const fastify = require('fastify')({ logger: true });
 const { resolver } = require('@axa/bautajs-core');
-const { bautajsFastify } = require('../dist/index');
+const { bautajsFastify } = require('@axa/bautajs-fastify');
 
 // You can use your own OpenAPI specifications ;)
 const apiDefinition = {
