@@ -29,6 +29,11 @@ app.listen(3000, err => {
 ```
 
 See a full example on [Example of a project from scratch](../../docs/hello-world.md).
+
+### Validation
+
+Fastify has a out-of-the-box request validation, therefore the builtin Bauta.js request validations is disabled on this plugin.
+
 # Legal Notice
 
 Copyright (c) AXA Group. All rights reserved.
