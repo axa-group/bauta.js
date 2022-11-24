@@ -2,6 +2,8 @@
 
 If an openAPI definition is not provided on the Bauta.js instance initizalition, the request and response validations are not usable.
 
+> ℹ️ This validation only refers to `bautajs-core` validation. If you are using `bautajs-fastify` or `bautajs-express` check the validation section of every package. See [bautajs-fastify validation](https://github.com/axa-group/bauta.js/tree/main/packages/bautajs-fastify#validation) and [bautajs-express validation](https://github.com/axa-group/bauta.js/tree/main/packages/bautajs-express#validation) for further details.
+
 ## Request validation
 
 Bauta.js comes with a default request validation using the [openAPI schema v2 or v3](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#specification). **This validation is enabled by default**.
