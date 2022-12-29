@@ -13,3 +13,6 @@ updates:
       # manage manually any breaking change
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      # manage manually any typescript change  
+      - dependency-name: "typescript"
+
