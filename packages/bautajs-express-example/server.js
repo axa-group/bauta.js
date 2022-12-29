@@ -8,7 +8,7 @@ const bautaJS = require('./server/instances/bauta');
 
   const router = await bautaJS.buildRouter();
 
-  app.use('/v1/', router);
+  app.use('/', router);
 
   /* Error handler */
   // 404 error

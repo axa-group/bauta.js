@@ -81,6 +81,17 @@
         "get": {
           "summary": "get a fact from a number",
           "operationId": "factNumber",
+          "parameters": [
+            {
+              "name": "number",
+              "in": "path",
+              "description": "The number to get a fact",
+              "required": true,
+              "schema": {
+                "type": "number"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": "Something!"
@@ -102,6 +113,17 @@
         "get": {
           "summary": "get a fact from a number",
           "operationId": "factNumber2",
+          "parameters": [
+            {
+              "name": "number",
+              "in": "path",
+              "description": "The number to get a fact",
+              "required": true,
+              "schema": {
+                "type": "number"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": "Something!"
@@ -216,6 +238,99 @@
         "get": {
           "summary": "get a list of facts related to Chuck Norris",
           "operationId": "chuckFacts",
+          "parameters": [
+            {
+              "name": "string",
+              "in": "path",
+              "description": "The string to get a chuck fact",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }, 
+      "/minimap": {
+        "get": {
+          "summary": "List all the keys and values in minimap",
+          "operationId": "getAllMinimap",
+          "responses": {
+            "200": {
+              "description": "Something!"
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post":  {
+          "summary": "create a minimap register",
+          "operationId": "createMinimap",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestMinimap"
+                }
+              }
+            },
+            "description": "Request body payload for GDPR right to be forgotten operation."
+          },
+          "responses": {
+            "202": {
+              "description": "Request was accepted and will be processed."
+            },
+            "default": {
+              "description": "unexpected error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/minimap/{key}": {
+        "get": {
+          "summary": "get the value from a key",
+          "operationId": "getMinimapByKey",
+          "parameters": [
+            {
+              "name": "key",
+              "in": "path",
+              "description": "The key of the minimap",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": "Something!"
@@ -297,6 +412,21 @@
             },
             "message": {
               "type": "string"
+            }
+          }
+        },
+        "RequestMinimap": {
+          "type": "object",
+          "required": ["key", "value"],
+          "description": "Request body for a minimap register",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "The key of the minimap register"
+            },
+            "value": {
+              "type": "string",
+              "description": "The value of the minimap register"
             }
           }
         }
