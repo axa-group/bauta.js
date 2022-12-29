@@ -29,7 +29,7 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "engines": {
     "node": ">=14",
-    "npm": ">=5"
+    "npm": ">=8"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
