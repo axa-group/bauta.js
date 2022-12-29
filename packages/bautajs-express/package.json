@@ -24,6 +24,10 @@
     "middleware"
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=8"
+  },
   "dependencies": {
     "@axa/bautajs-core": "^2.0.1",
     "compression": "^1.7.4",

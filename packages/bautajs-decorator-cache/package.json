@@ -24,6 +24,10 @@
     "middleware"
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=8"
+  },
   "dependencies": {
     "@axa/bautajs-core": "^2.0.1",
     "node-object-hash": "^2.3.10",

@@ -24,6 +24,10 @@
     "fastify",
     "middleware"
   ],
+  "engines": {
+    "node": ">=14",
+    "npm": ">=8"
+  },
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@axa/bautajs-core": "^2.0.1",
