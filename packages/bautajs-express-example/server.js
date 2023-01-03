@@ -23,7 +23,7 @@ const bautaJS = require('./server/instances/bauta');
       .json(err.errors || { message: err.message });
   });
 
-  app.listen(3000, err => {
+  app.listen(8080, err => {
     if (err) throw err;
     bautaJS.logger.info('Server listening on localhost: 3000');
   });

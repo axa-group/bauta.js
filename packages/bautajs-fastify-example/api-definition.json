@@ -1,234 +1,28 @@
 
-  {
-    "openapi": "3.0.0",
-    "info": {
-      "version": "v1",
-      "title": "Swagger Petstore",
-      "license": {
-        "name": "MIT"
-      }
-    },
-    "paths": {
-      "/v1/unused": {
-        "get": {
-          "summary": "An endpoint definition without resolver",
-          "operationId": "unused",
-          "responses": {
-            "200": {
-              "description": "Something!"
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/v1/randomYear": {
-        "get": {
-          "summary": "Provides information about a random year",
-          "operationId": "randomYear",
-          "responses": {
-            "200": {
-              "description": "Something!"
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/v1/randomYear2": {
-        "get": {
-          "summary": "Provides information about a random year",
-          "operationId": "randomYear2",
-          "responses": {
-            "200": {
-              "description": "Something!"
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/v1/factNumber/{number}": {
-        "get": {
-          "summary": "get a fact from a number",
-          "operationId": "factNumber",
-          "responses": {
-            "200": {
-              "description": "Something!"
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/v1/factNumber2/{number}": {
-        "get": {
-          "summary": "get a fact from a number",
-          "operationId": "factNumber2",
-          "responses": {
-            "200": {
-              "description": "Something!"
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/v1/articles": {
-        "get": {
-          "summary": "List all articles",
-          "operationId": "getAllArticles",
-          "tags": [
-            "articles"
-          ],
-          "parameters": [
-            {
-              "name": "limit",
-              "in": "query",
-              "description": "How many items to return at one time (max 100)",
-              "required": false,
-              "schema": {
-                "type": "string",
-                "format": "int32"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "A paged array of articles",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Articles"
-                  }
-                }
-              }
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/v1/no-pipeline": {
-        "get": {
-          "summary": "Endpoint without pipeline",
-          "operationId": "noPipeline",
-          "tags": [
-            "articles"
-          ],
-          "parameters": [
-            {
-              "name": "limit",
-              "in": "query",
-              "description": "How many items to return at one time (max 100)",
-              "required": false,
-              "schema": {
-                "type": "string",
-                "format": "int32"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "A paged array of articles"
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/v1/cats": {
-        "get": {
-          "summary": "List all fact cats",
-          "operationId": "cats",
-          "responses": {
-            "200": {
-              "description": "Something!"
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Cats"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/v1/chuckfacts/{string}": {
-        "get": {
-          "summary": "get a list of facts related to Chuck Norris",
-          "operationId": "chuckFacts",
-          "responses": {
-            "200": {
-              "description": "Something!"
-            },
-            "default": {
-              "description": "unexpected error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Error"
-                  }
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "v1",
+    "title": "Swagger Petstore",
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "paths": {
+    "/unused": {
+      "get": {
+        "summary": "An endpoint definition without resolver",
+        "operationId": "unused",
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -236,84 +30,382 @@
         }
       }
     },
-    "components": {
-      "schemas": {
-        "ThisShouldNotBeIncluded": {
-          "required": [
-            "userId",
-            "title"
-          ],
-          "properties": {
-            "userId": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "id": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "title": {
-              "type": "string"
-            },
-            "body": {
+    "/randomYear": {
+      "get": {
+        "summary": "Provides information about a random year",
+        "operationId": "randomYear",
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/randomYear2": {
+      "get": {
+        "summary": "Provides information about a random year",
+        "operationId": "randomYear2",
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/factNumber/{number}": {
+      "get": {
+        "summary": "get a fact from a number",
+        "operationId": "factNumber",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "description": "The number to get a fact",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/factNumber2/{number}": {
+      "get": {
+        "summary": "get a fact from a number",
+        "operationId": "factNumber2",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "description": "The number to get a fact",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/articles": {
+      "get": {
+        "summary": "List all articles",
+        "operationId": "listAllArticles",
+        "tags": [
+          "articles"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "How many items to return at one time (max 100)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paged array of articles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Articles"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cats": {
+      "get": {
+        "summary": "List all fact cats",
+        "operationId": "cats",
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chuckfacts/{string}": {
+      "get": {
+        "summary": "get a list of facts related to Chuck Norris",
+        "operationId": "chuckFacts",
+        "parameters": [
+          {
+            "name": "string",
+            "in": "path",
+            "description": "The string to get a chuck fact",
+            "required": true,
+            "schema": {
               "type": "string"
             }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "An object with a list of facts related to the string in the input request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChuckFactsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }, 
+    "/minimap": {
+      "get": {
+        "summary": "List all the keys and values in minimap",
+        "operationId": "getAllMinimap",
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post":  {
+        "summary": "create a minimap register",
+        "operationId": "createMinimap",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestMinimap"
+              }
+            }
+          },
+          "description": "Request body payload for GDPR right to be forgotten operation."
         },
-        "Article": {
-          "required": [
-            "title"
-          ],
-          "properties": {
-            "userId": {
-              "nullable": true,
-              "type": "integer",
-              "format": "int64"
-            },
-            "id": {
-              "type": "integer",
-              "format": "int64"
-            },
-            "title": {
-              "type": "string"
-            },
-            "body": {
+        "responses": {
+          "202": {
+            "description": "Request was accepted and will be processed."
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/minimap/{key}": {
+      "get": {
+        "summary": "get the value from a key",
+        "operationId": "getMinimapByKey",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the minimap",
+            "required": true,
+            "schema": {
               "type": "string"
             }
           }
-        },
-        "Articles": {
-          "type": "array",
-          "items": {
-            "$ref": "#/components/schemas/Article"
-          }
-        },
-        "Cat": {
-          "required": [
-            "text"
-          ],
-          "properties": {
-            "text": {
-              "type": "string"
-            }
-          }
-        },
-        "Cats": {
-          "type": "array",
-          "items": {
-            "$ref": "#/components/schemas/Cat"
-          }
-        },
-        "Error": {
-          "properties": {
-            "code": {
-              "type": "string"
-            },
-            "message": {
-              "type": "string"
+        ],
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
           }
         }
       }
     }
+  },
+  "components": {
+    "schemas": {
+      "ChuckFactsResponse": {
+        "required": [
+          "total", "result"
+        ],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChuckFact"
+            }
+          }
+        }
+      },
+      "ChuckFact": {
+        "required": [
+          "created_at", "value"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "Article": {
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        }
+      },
+      "Articles": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Article"
+        }
+      },
+      "Error": {
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "RequestMinimap": {
+        "type": "object",
+        "required": ["key", "value"],
+        "description": "Request body for a minimap register",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The key of the minimap register"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the minimap register"
+          }
+        }
+      }
+    }
   }
+}
