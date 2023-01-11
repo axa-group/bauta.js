@@ -26,8 +26,7 @@ With this change it a custom logger, defined in custom-logger-bauta.js, is used 
 
 ### Production
  - [@axa/bautajs-core@1.0.0](https://github.com/axa-group/bauta.js) - MIT*
- - [@axa/bautajs-datasource-rest@1.0.0](https://github.com/axa-group/bauta.js) - MIT*
- - [@axa/bautajs-decorator-cache@1.0.0](https://github.com/axa-group/bauta.js) - MIT*
+ - [@axa/bautajs-datasource-rest@1.0.0](https://github.com/axa-group/bauta.js) - MIT* 
  - [@axa/bautajs-express@1.0.0](https://github.com/axa-group/bauta.js) - MIT*
  - [@hapi/boom@10.0.0](https://github.com/hapijs/boom) - BSD-3-Clause
  - [express@4.18.1](https://github.com/expressjs/express) - MIT

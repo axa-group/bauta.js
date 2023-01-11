@@ -31,8 +31,7 @@ const objectHash = nodeObjectHash({
  * @param {Number} options.maxSize=500 Max number of items on cache.
  * @return {CacheDecoratorFunction<TIn, TOut>} An operation function that you can plug in on a `bautajs` pipeline.
  * @example
- * import { pipe, createContext } from '@axa/bautajs-core';
- * import { cache } from '@axa/bautajs-decorator-cache';
+ * import { pipe, createContext, cache } from '@axa/bautajs-core';
  *
  * function createAKey(prev, ctx, bautajs) {
  *  ctx.data.myKey = 'mykey';
