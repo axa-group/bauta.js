@@ -29,14 +29,14 @@ The ideal scenario where bauta.js shines is in delivering REST API's and especia
 
 Thus, the ideal scenario could consist:
 
-- A set of services[^1], every one of them with its own business needs. Following the micro-services architecture you deploy each of those services independently.
+- A set of one or more services, every one of them with its own business needs. Following the micro-services architecture you deploy each of those services independently.
 - Those same set of services should share a common set of technical requirements in terms of security, token management, external calls management, error management, logging, etc.
 
 ### What about other scenarios?
 
 Depending on the scenario is up to you to decide whether bauta.js is useful to you or not. We hope that this document can provide information to easily assist you in that decision.
 
-For example, if you are exposing a GraphQL server then you can decide to use directly a GraphQL server like Apollo or Mercurius and you may think that you do not need bauta.js [^2].
+For example, if you are exposing a GraphQL server then you can decide to use directly a GraphQL server like Apollo or Mercurius and you may think that you do not need bauta.js [^1].
 
 Another case would be if your REST API is an entire monolith. Is it worth it to learn bauta.js if you are maintaining an already big monolith? As usual, it depends, but the advantage of having your monolith in bauta.js is that it should be easier to separate it in different micro-services if you have the need to do so in the future. 
 
@@ -53,7 +53,7 @@ StepFunction is a function in bauta.js that conforms to the following signature:
 
 Because not only the application code uses this as a type. Bauta.js itself uses this signature for its internal execution. Even bauta.js more advanced abstractions are in turn or return a StepFunction. And finally, because almost all the logic defined in terms of endpoints are a combination of one or more StepFunctions (check pipeline for more details).
 
-One could Think about the code of a bauta.js application as a bunch of StepFunctions that are run one after another or in parallel and whose results are passed from one to the next defined in your code[^3]. 
+One could Think about the code of a bauta.js application as a bunch of StepFunctions that are run one after another or in parallel and whose results are passed from one to the next defined in your code. 
 
 #### What are the main parts of an StepFunction?
 
@@ -61,7 +61,7 @@ These are three input parameters of an StepFunction:
 
 - prev: is the previous value. this always take the value (or values) returned by the previous StepFunction. This value can be undefined, usually because is the the first StepFunction and there is none previously.
 
-- context: this is the context of the request being processed. You can think of this parameter as the session of the request [^4].
+- context: this is the context of the request being processed. You can think of this parameter as the session of the request [^2].
 
 - bautaJSInstance: this object represents the bauta.js server instance itself. The most used field of this object is called staticConfig and has all the variables loaded by bauta.js at startup time.
 
@@ -70,7 +70,7 @@ These are three input parameters of an StepFunction:
 An operation is a type that abstracts a route definition. Initially, you may think of an Operation as the concept that glues together:
 - a route or endpoint defined in your swagger
 - if applicable, an schema that the operation has to conform to
-- a business logic that handles the input from the request and generates a response to the caller [^5]
+- a business logic that handles the input from the request and generates a response to the caller together with any possible side effect
 
 
 ### Resolver 
@@ -86,7 +86,7 @@ Let's try to make an example to help understand these concepts. We want to imple
 - from the incoming request call get the starting and destination points, and generate a request input to a service similar to Google's Distance Matrix API
 - send that request to the service
 - obtain the distance from the response from the previous request
-- using that distance, call another service that returns the price in fuel that you would use[^6]
+- using that distance, call another service that returns the price in fuel that you would use
 - return that value to the caller as the response of the incoming request
 
 ### bauta.js code structure
@@ -137,7 +137,7 @@ Brief explanation:
 
 ## Decorators
 
-We use plenty of decorators in bauta.js. The main reason for this is to allow the editor to provide dynamic typings. But another is because they are useful to glue the code in a logic way[^8].
+We use plenty of decorators in bauta.js. The main reason for this is to allow the editor to provide dynamic typings. But another is because they are useful to glue the code in a logic way (ressembling a bit functional programming).
 
 Since this is not a tutorial, we will skip how and why they are used in each case. You have extensive documentation about decorators [here](../../README.md#decorators). 
 
@@ -147,7 +147,7 @@ Almost every concept in bauta.js has a decorator that is required to be used. Fo
 |------------------------|-----------------------|
 | StepFunction | step |
 | Resolver | resolver |
-| Pipeline[^9] | pipe | 
+| Pipeline | pipe | 
 
 ### Why has to be all wrapped in decorators?
 
@@ -159,7 +159,7 @@ The long answer is because:
 
 - sometimes the decorators *are* mandatory, and it is easier to use them all the time.
 - the decorators, even when optional, mark a function as belonging to a step or a pipeline, and help differentiate the code which is a step from normal functions.
-- the decorators may provide helpful intellisense help[^10]
+- the decorators may provide helpful intellisense help[^4]
 
 As an example, imagine you want to make a "guess" service to receive the value head or tail and then check if this guess is valid or not. Using bauta.js you might end with something similar to this:
 
@@ -178,44 +178,33 @@ Furthermore, you can create a pipeline and pipe it into another pipeline, which 
 
 ## Developer experience comparison 
 
+Let's assume that you want to implement an API REST service. Regardless of its functional domain or its technical requirements, there are a few things that the service will need to do.
 
-TODO: lifecycle of a request with bauta.js / wihout.
+In the next diagram in the left side we convey these responsabilities if you do not use bauta.js.
+
+![bauta.js conceptual comparison](./service-conceptual-hlv.png)
+
+We are not saying that your application code has to implement all those responsabilities from scrath. In fact it is almost sure that you will use libraries for that, but the point is that you will have those libraries as dependencies from your project and you will have to maintain those dependencies and the code that integrates them in your application. 
+
+In comparison you can see that on the right side, with bauta.js, you have those responsabilities hidden inside bauta.js. You can use them as easily with your custom solution but your service has less boilerplate due to those common technical requirements and you can focus on your business code. 
+
+### Small note about the diagram and fastify
+
+While the diagram represents 100% a case using the express framework, it is not totally exact for a case using fastify. The reason is because fastify offers its own high performant schema validator and body parser. Thus, for the diagram in the right to be totally correct the body parser box should be inside fastify box and there should be up two schema validations boxes: one for bauta.js and the other for fastify that validates as well when parsing the request. 
+
+Another way of seeing this is that when using fastify, bauta.js is used as plugin. In any case the message is the same: your application does not have to bother with schema validation or other technical details because is being done by the abstractions provided by bauta.js together with the chosen server framekwork.
 
 
 
+[^1]: With bauta.js it is possible to expose a Mercurius graphql endpoint, but that is not a common scenario.
+
+[^2]: To be precise the context extends the session of the low level library server and it has a few extra set of data and utilities.
+
+[^3]: The two functions run in this example are datasources, which is a decorator that returns a StepFunction that executes a request to a third party API. You can check further details about datasources [here](../.././docs/datasources.md)
+
+[^4]: This may depend on the editor used, whether you are using typescript or javascript and the code itself
 
 
-
-
-
-
-
-
-
-
-
-
-[^1]: You could use bauta.js and still obtain benefits if you maintain a single REST API.
-
-[^2]: With bauta.js it is possible to expose a Mercurius graphql endpoint, but that is not a common scenario.
-
-[^3]: This is only true if there are no errors, we will go there in a following section.
-
-[^4]: To be precise the context extends the session of the low level library server and it has a few extra set of data and utilities.
-
-[^5]: It might generate side-effects as well.
-
-[^6]: A pipeline is just an list of stepFunctions that are executed in order.
-
-[^7]: The two functions run in this example are datasources, which is a decorator that returns a StepFunction that executes a request to a third party API. You can check further details about datasources [here](../.././docs/datasources.md)
-
-[^8]: It is similar to functional programming.
-
-[^9]: In a real scenario this service could have a car model as parameter, or an efficiency indicator, but we make a simplification here assuming that all cars are equally efficient.
-
-[^10]: This may depend on the editor used, whether you are using typescript or javascript and the code itself
-
-[^11]: The code is complete but imports and exports sections have been omitted
 
 
 
