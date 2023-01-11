@@ -2,7 +2,7 @@
 
 ## Audience of this document
 
-This document is for anyone that is starting to learn about bauta.js library. This can be a developer that has just discovered bauta.js or person in a team that is wondering whether bauta.js could be helpful to them or cover their needs.
+This document is for anyone that is starting to learn about bauta.js library. For example a developer that has just discovered bauta.js or a techical lead in a team that is wondering whether bauta.js could be helpful to them or cover their needs.
 
 ## Reason for this document
 
@@ -132,7 +132,7 @@ Brief explanation:
 - The file ```calculator-pipeline.js``` exports the pipeline that implements this business logic. This is done through the decorator function pipe, that has a list of StepFunctions. This allows for a very readable and testable logic, even when having more advanced cases with more complex decorators.
 
 *Detail:* 
-> The pipe decorator composes the business logic that will be run each time a request is processed from all the StepFunctions passed as arguments. In this list there can be references to any number of StepFunctions that will be run or, like in the example's datasources[^7] ```sendCalculateDistanceMessage``` and ```sendFuelCostMessage```, we might require a function that when run returns a StepFunction reference.
+> The pipe decorator composes the business logic that will be run each time a request is processed from all the StepFunctions passed as arguments. In this list there can be references to any number of StepFunctions that will be run or, like in the example's datasources[^3] ```sendCalculateDistanceMessage``` and ```sendFuelCostMessage```, we might require a function that when run returns a StepFunction reference.
 
 
 ## Decorators
