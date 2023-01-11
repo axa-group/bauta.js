@@ -1,5 +1,7 @@
-import { pipe, BautaJSInstance, createContext } from '@axa/bautajs-core';
-import { cache } from '../index';
+import { createContext } from '../utils/create-context';
+import { pipe } from '../index';
+import { cache } from '../decorators/cache';
+import { BautaJSInstance } from '../types';
 import { sleep } from './utils';
 
 describe('cache setup', () => {

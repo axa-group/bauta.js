@@ -1,7 +1,14 @@
-import { BautaJSInstance, Context, Pipeline } from '@axa/bautajs-core';
-import QuickLRU, { Options } from 'quick-lru-cjs';
 import nodeObjectHash from 'node-object-hash';
-import { Normalizer, CacheStepFunction } from './types';
+import QuickLRU, { Options } from 'quick-lru-cjs';
+import { BautaJSInstance, Context, Pipeline } from '../types';
+
+export interface Normalizer<TIn, CacheKey> {
+  (prev: TIn, ctx: Context, bautajs: BautaJSInstance): CacheKey;
+}
+
+export interface CacheStepFunction<TIn, TOut, CacheKey> extends Pipeline.StepFunction<TIn, TOut> {
+  store: QuickLRU<CacheKey, TOut>;
+}
 
 const objectHash = nodeObjectHash({
   // We don't care about the order of an object properties this could add some overhead over the performance.
@@ -24,8 +31,7 @@ const objectHash = nodeObjectHash({
  * @param {Number} options.maxSize=500 Max number of items on cache.
  * @return {CacheDecoratorFunction<TIn, TOut>} An operation function that you can plug in on a `bautajs` pipeline.
  * @example
- * import { pipe, createContext } from '@axa/bautajs-core';
- * import { cache } from '@axa/bautajs-decorator-cache';
+ * import { pipe, createContext, cache } from '@axa/bautajs-core';
  *
  * function createAKey(prev, ctx, bautajs) {
  *  ctx.data.myKey = 'mykey';
@@ -88,6 +94,3 @@ export function cache<TIn, TOut, CacheKey = string>(
     writable: false
   }) as CacheStepFunction<TIn, TOut, CacheKey>;
 }
-
-export default cache;
-export * from './types';

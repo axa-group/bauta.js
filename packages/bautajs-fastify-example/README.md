@@ -9,7 +9,6 @@
 
 ### Production
  - [@axa/bautajs-core@2.0.0](https://github.com/axa-group/bauta.js) - MIT*
- - [@axa/bautajs-datasource-rest@2.0.0](https://github.com/axa-group/bauta.js) - MIT*
- - [@axa/bautajs-decorator-cache@2.0.0](https://github.com/axa-group/bauta.js) - MIT*
+ - [@axa/bautajs-datasource-rest@2.0.0](https://github.com/axa-group/bauta.js) - MIT* 
  - [@axa/bautajs-fastify@2.0.0](https://github.com/axa-group/bauta.js) - MIT*
  - [fastify@4.8.1](https://github.com/fastify/fastify) - MIT

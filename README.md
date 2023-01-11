@@ -170,6 +170,7 @@ Bauta.js has a set of valuable decorators that you can use to build your resolve
 - [pairwise](./docs/decorators/pairwise.md)
 - [tap](./docs/decorators/tap.md)
 - [retryWhen](./docs/decorators/retry-when.md)
+- [cache](./docs/decorators/cache.md)
 
 ### Request and response validation
 
@@ -221,7 +222,6 @@ Bauta.js is a monorepo containing the following list of packages:
 - [BautaJS Core](./packages/bautajs-core)
 - [BautaJS Fastify](./packages/bautajs-fastify)
 - [BautaJS Express](./packages/bautajs-express)
-- [BautaJS Cache Decorator](./packages/bautajs-decorator-cache)
 - [BautaJS Rest Datasource](./packages/bautajs-datasource-rest)
 
 ## Code of Conduct
@@ -240,7 +240,6 @@ Licensed under the MIT License.
 - [BautaJS Core](./packages/bautajs-core/README.md#third-party-dependencies-licenses)
 - [BautaJS Fastify](./packages/bautajs-fastify/README.md#third-party-dependencies-licenses)
 - [BautaJS Express](./packages/bautajs-express/README.md#third-party-dependencies-licenses)
-- [BautaJS Cache Decorator](./packages/bautajs-decorator-cache/README.md#third-party-dependencies-licenses)
 - [BautaJS Rest Datasource](./packages/bautajs-datasource-rest/README.md#third-party-dependencies-licenses)
 
 ### Development
