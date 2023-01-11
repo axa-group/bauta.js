@@ -6,25 +6,24 @@ This document is for anyone that is starting to learn about bauta.js library. Th
 
 ## Reason for this document
 
-This document tries to bridge the gap between two groups of people. The first group is the maintainers of bauta.js, who may have a lot of context and understanding of what the library does and how. The second group are the possible users of this library, who have a very clear understanding of their needs but are not sure if they should make the effort of learning and using this library in their developments.
+The goal of this document is to help you to answer the question: "Do I want to use bauta.js?" and provide you a starting point answering the question "How do i get started with bauta.js?".
 
+We hope that by reading this document, that should not take more than 15 or 20 minutes, you can review quickly what is bauta.js about and let you determine if it could be helpful to you.
+
+This document tries to convey the model used by bauta.js at high level. This is to speed up the process of understanding how bauta.js is used and if it is useful to you.
 ### What this document is *not*
 
 - This document does not list bauta.js capabilities or features. 
 - This document is not a tutorial on the library itself, nor it is a hands-on. You can have that information in the documentation starting [here](../../README.md).
 - Since this is not a tutorial, the explanations in this section differ a bit from the common pattern "piece of code" --> "what stuff does each line". 
 
-### Purpose of the section
-
-This section tries to convey the mental model that you should (and we) have when using bauta.js. This is to speed up the process of understanding how bauta.js is used and if it is useful to you.
-
-To do his job, bauta.js can be used on top of two low level frameworks: express or fastify. Thus, bauta.js itself is an utility library that provides a set of useful abstractions and glues common patterns that cover most of the use cases related to the creation of REST API's and middlewares. 
-
 ## What is the purpose of bauta.js?
 
 Bauta.js main goal is to provide a layer of utilities and abstractions between a low level library server and your server code. 
 
-### Ideal Scenario
+To do his job, bauta.js can be used on top of two low level frameworks: express or fastify. Thus, bauta.js itself is an utility library that provides a set of useful abstractions and glues common patterns that cover most of the use cases related to the creation of REST API's and middlewares. 
+
+## Ideal Scenario
 
 The ideal scenario where bauta.js shines is in delivering REST API's and especially using micro-services architecture. This allows you to use and reuse the bauta.js abstractions in different services and gain back the time and effort that you might have invested in learning to use it. 
 
@@ -39,7 +38,7 @@ Depending on the scenario is up to you to decide whether bauta.js is useful to y
 
 For example, if you are exposing a GraphQL server then you can decide to use directly a GraphQL server like Apollo or Mercurius and you may think that you do not need bauta.js [^2].
 
-Another case would be if your REST API is an entire monolith. Is it worth it to learn bauta.js if you are maintaining an already big monolith? As usual, it depends, but the advantage of having your monolith in bauta.js is that it should be easier to separate it in different micro-services if you have the need to do so in the future.
+Another case would be if your REST API is an entire monolith. Is it worth it to learn bauta.js if you are maintaining an already big monolith? As usual, it depends, but the advantage of having your monolith in bauta.js is that it should be easier to separate it in different micro-services if you have the need to do so in the future. 
 
 ## The key concepts of bauta.js
 
