@@ -1,6 +1,5 @@
 const { getRequest } = require('@axa/bautajs-express');
-const { pipe, resolver, step } = require('@axa/bautajs-core');
-const { cache } = require('@axa/bautajs-decorator-cache');
+const { pipe, resolver, step, cache } = require('@axa/bautajs-core');
 const { chuckProvider } = require('./chuck-datasource');
 
 const transformResponse = step(response => {

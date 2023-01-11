@@ -1,21 +1,13 @@
-## BautaJS cache decorator
+## cache decorator
 
-A cache decorator using [moize](https://github.com/planttheidea/moize) for Bauta.js pipelines.
-
-## How to install
-
-```console
-  npm install @axa/bautajs-decorator-cache
-```
-
+A cache decorator using [quick-lru](https://github.com/sindresorhus/quick-lru) for Bauta.js pipelines.
 
 ## Usage
 
 Include it on your pipeline as follows:
 
 ```js
-  import { pipe, createContext } from '@axa/bautajs-core';
-  import { cache } from '@axa/bautajs-decorator-cache';
+  import { pipe, createContext, cache } from '@axa/bautajs-core';
 
   function createAKey(prev, ctx, bautajs) {
    ctx.data.myKey = 'mykey';
@@ -35,7 +27,7 @@ Include it on your pipeline as follows:
    doSomethingHeavy
   );
 
-  const cacheMyPipeline = cache(myPipeline, (prev, ctx) => ctx.data.myKey, { maxSize:3 });
+  const cacheMyPipeline = cache(myPipeline, { maxSize:3 }, (prev, ctx) => ctx.data.myKey);
 
   const result = await cacheMyPipeline(null, createContext({req:{}}), {});
   console.log(result);
@@ -48,16 +40,12 @@ Include it on your pipeline as follows:
 
 Normalize functions must return an identifier key in the form of a primitive type that is used to determine if a new value requires cache or not. If you need to use more than one field to generate a key, concatenate or stringify those fields that you need.
 
-There are two main use cases in normalize:
-- you want to use only fields from the context to generate the key
-- you want to use at least one field from a previously generated object
-
 ### Normalize with only context fields
 
 It is straightforward and you can do the following:
 
 ```js
-const normalizer = (_, ctx) => ctx.whatever_field;
+const normalizer = (_, ctx) => ctx.data.whatever_field;
 ```
 
 ### Normalize uses at least one field from a previously generated object
@@ -66,8 +54,7 @@ This is trickier because you have to take into account that you will not have th
 
 
 ```js
-  const { pipe } = require('@axa/bautajs-core');
-  const { cache } = require('@axa/bautajs-decorator-cache');
+  const { pipe, cache } = require('@axa/bautajs-core');  
   const { someHeavyOperation } = require('./my-helper');
 
   const myPipeline = pipe( someHeavyOperation, (result) => ({...result, iWantToUseAsKeyThis:1}))
@@ -77,9 +64,9 @@ This is trickier because you have to take into account that you will not have th
       operations.v1.op1.setup(p =>
         p.pipe(
             cache(
-                myPipeline,
-                normalizer, // When normalizer is called, result from pipeline is not yet there
-                { maxSize:5 }
+                myPipeline,                
+                { maxSize:5 },
+                normalizer // When normalizer is called, result from pipeline is not yet there
             )
         )
     );
@@ -107,7 +94,7 @@ To use the object as a key in the cache normalizer, this object needs to be set 
             .pipe((_, ctx) => {
               return { iAmTheKey: 'test' };
             },
-            cache(pp, normalizer, { maxSize: 5 })
+            cache(pp, { maxSize: 5 }, normalizer)
         );
 ```
 
