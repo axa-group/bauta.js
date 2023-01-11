@@ -2,6 +2,7 @@ import { prepareToLog } from './utils/prepare-to-log';
 
 export * from './bauta';
 export * from './decorators/match';
+export * from './decorators/cache';
 export * from './decorators/resolver';
 export * from './decorators/step';
 export * from './decorators/pipeline';
