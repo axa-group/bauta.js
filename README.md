@@ -18,7 +18,7 @@ Bauta.js is an add-on for your Node.js applications such as Express.js or Fastif
 
 ## Bauta.js and developer experience
 
-If you want an overview of what bauta.js is about from a developer experience point of view it may be interesting to check [this section](./docs/developer-experience/readme.md).
+If you want an overview of what bauta.js is about from a developer experience point of view, check the [developer experience section](./docs/developer-experience/readme.md).
 
 ## Quick start
 
