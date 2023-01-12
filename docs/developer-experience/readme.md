@@ -194,6 +194,25 @@ While the diagram represents 100% a case using the express framework, it is not 
 
 Another way of seeing this is that when using fastify, bauta.js is used as plugin. In any case the message is the same: your application does not have to bother with schema validation or other technical details because is being done by the abstractions provided by bauta.js together with the chosen server framekwork.
 
+## Next steps
+
+After this, depending on your preferences you may do the following:
+
+- You may go to the main documentation page [here](../../README.md) and read further documentation.
+- You may go and check our guides [here](../guides/hello-world.md) and [here](../guides/testing.md);
+- If you want firsthand contact with the code you can check our example projects for express [bautajs-express-example](../../packages/bautajs-express-example/) and for fastify [bautajs-fastify-example](../../packages/bautajs-fastify-example/).
+
+### Should I learn bauta.js using express or fastify?
+
+First of all, if you have already made a choice based on your preferences or your needs, then ignore this section. 
+
+However, if you have doubts about whether you should learn bauta.js using fastify or express, then we recommend the following: Start learning bauta.js using the server library that you are more familiar with. You may know express best because it has been around for more years. Or it could be that you know best fastify because you have not used or stopped using express. The point is to try to avoid learning two things at the same time.
+
+Finally, if you know little about both express and fastify, then at bauta.js level it does not matter which of the two you decide to learn. Fastify is more performant and its abstractions are more modern, so if you have to learn one server framework it may be the most modern. But fastify has a slighty higher learning curve than express, so you may start learning bauta.js using express as well[^5]. 
+
+If you are still unsure, you can compare both example projects [bautajs-express-example](../../packages/bautajs-express-example/) and [bautajs-fastify-example](../../packages/bautajs-fastify-example/). You will see that at bauta.js the code is almost similar but how the server is started depends on each library particularities. 
+
+
 
 
 [^1]: With bauta.js it is possible to expose a Mercurius graphql endpoint, but that is not a common scenario.
@@ -204,6 +223,7 @@ Another way of seeing this is that when using fastify, bauta.js is used as plugi
 
 [^4]: This may depend on the editor used, whether you are using typescript or javascript and the code itself
 
+[^5]: This comparison is only in the scope of learning bauta.js. It is totally normal that fastify has a higher learning curve than express because fastify does a lot of more things and covers more responsabilities than express. We are not trying to compare both frameworks or impose a preference on you: both fastify and express are tools and each one of them or both may be perfect depending on your needs.
 
 
 
