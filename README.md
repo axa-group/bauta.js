@@ -16,6 +16,10 @@ Bauta.js is an add-on for your Node.js applications such as Express.js or Fastif
 - Built-in logging system.
 - Written in TypeScript.
 
+## Bauta.js and developer experience
+
+If you want an overview of what bauta.js is about from a developer experience point of view, check the [developer experience section](./docs/developer-experience/readme.md).
+
 ## Quick start
 
 To get started with Bauta.js, we recommend using one of the framework's plugins it exposes. For example, if you feel comfortable writing your Node.js applications using Express.js, you should use the Bauta.js Express plugin. However, we recommend the usage of the Bauta.js Fastify plugin.
