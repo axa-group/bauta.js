@@ -3,6 +3,16 @@ import { createContext } from '../../utils/create-context';
 import { BautaJSInstance } from '../../types';
 
 describe('catchError pipeline tests', () => {
+  test('should throw the error without any custom  error handler', () => {
+    const expectedError = new Error('crashhh!!!');
+    const ctx = createContext({});
+    const pipeline = pipe(() => {
+      throw new Error('crashhh!!!');
+    });
+
+    expect(() => pipeline(null, ctx, {} as BautaJSInstance)).toThrow(expectedError);
+  });
+
   test('should set the given error handler', () => {
     const errorHandler = () => {
       throw new Error('error');
@@ -35,7 +45,7 @@ describe('catchError pipeline tests', () => {
     expect(errorHandler.mock.calls).toHaveLength(1);
   });
 
-  test('should catch the error for nested pipelines', () => {
+  test('should catch the error for nested pipelines using an errorHandler in the outer pipeline', () => {
     const expected = new Error('error');
     const errorHandler = () => {
       throw expected;
@@ -47,6 +57,44 @@ describe('catchError pipeline tests', () => {
     const pipeline = pipe(() => {
       return 'ok';
     }, pipelineNested).catchError(errorHandler);
+
+    expect(() => pipeline(null, ctx, {} as BautaJSInstance)).toThrow(expected);
+  });
+
+  test('should catch the error through both inner and outer pipeline custom error handler', () => {
+    const expected = new Error('error');
+    const errorHandler = () => {
+      throw expected;
+    };
+    const innerErrorHandler = () => {
+      throw new Error('inner error');
+    };
+
+    const ctx = createContext({});
+    const pipelineNested = pipe(() => {
+      throw new Error('crashhh!!!');
+    }).catchError(innerErrorHandler);
+    const pipeline = pipe(() => {
+      return 'ok';
+    }, pipelineNested).catchError(errorHandler);
+
+    expect(() => pipeline(null, ctx, {} as BautaJSInstance)).toThrow(expected);
+  });
+
+  test('should catch the error through the inner pipeline custom error handler', () => {
+    const expected = new Error('inner error');
+
+    const innerErrorHandler = () => {
+      throw new Error('inner error');
+    };
+
+    const ctx = createContext({});
+    const pipelineNested = pipe(() => {
+      throw new Error('crashhh!!!');
+    }).catchError(innerErrorHandler);
+    const pipeline = pipe(pipelineNested, () => {
+      return 'ok';
+    });
 
     expect(() => pipeline(null, ctx, {} as BautaJSInstance)).toThrow(expected);
   });
