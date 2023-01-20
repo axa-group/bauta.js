@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-fastify",
-  "version": "2.1.0-beta.0",
+  "version": "2.1.0",
   "description": "A bautaJS fastify plugin. Allows auto exposing the bautaJS operations.",
   "main": "dist",
   "types": "dist",
@@ -30,13 +30,13 @@
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@axa/bautajs-core": "^2.1.0-beta.0",
+    "@axa/bautajs-core": "^2.1.0",
     "@fastify/swagger": "^7.6.1",
     "fastify": "^4.8.1",
     "fastify-plugin": "^4.2.1",
     "route-order": "^0.1.0"
   },
   "devDependencies": {
-    "@axa/bautajs-datasource-rest": "^2.1.0-beta.0"
+    "@axa/bautajs-datasource-rest": "^2.1.0"
   }
 }
