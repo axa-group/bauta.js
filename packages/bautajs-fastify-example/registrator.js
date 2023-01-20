@@ -8,12 +8,13 @@ async function registerFastifyServer(fastify) {
   fastify
     .register(bautajsFastify, {
       apiDefinition,
-      prefix: '',
+      prefix: '/api/',
       apiBasePath: '/',
       resolversPath: './server/resolvers/**/*.js',
       staticConfig: {
         someVar: 2
-      }
+      },
+      strictResponseSerialization: false
     })
     .after(err => {
       if (err) {
