@@ -2,8 +2,8 @@
 
 Below there is a list of decorators and what they accept based on the following icons:
 
-- :hourglass_flowing_sand: --> a promise
-- :bulb: --> synchronous value or function
+- :hourglass_flowing_sand: : a promise
+- :bulb: : synchronous value or function
 
 # List of Bauta decorators
 
@@ -35,5 +35,5 @@ Below there is a list of decorators and what they accept based on the following 
 | :bulb: :hourglass_flowing_sand: | retry-when | [bautajs-core/decorators/retry-when](../../packages/bautajs-core/decorators/retry-when)                               | 
 | :bulb: :hourglass_flowing_sand: | tap | [bautajs-core/decorators/tap](../../packages/bautajs-core/decorators/tap)                                                    | 
 
-(*) --> All these decorators are transparent to the fact that they are using promises or not. That is: if input is a value, they return a value, but if their input is a promise, they return a promise.
+(*) : All these decorators are transparent to the fact that they are using promises or not. That is: if input is a value, they return a value, but if their input is a promise, they return a promise.
 
