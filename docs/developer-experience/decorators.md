@@ -2,8 +2,8 @@
 
 Below there is a list of decorators and what they accept based on the following icons:
 
-- :hourglass_flowing_sand: icon means that input is a promise
-- :bulb: icon means that input is a synchronous value or function
+- :hourglass_flowing_sand: the hourglass icon means that input is a promise
+- :bulb: the bulb icon means that input is a synchronous value or function
 
 # List of Bauta decorators
 
