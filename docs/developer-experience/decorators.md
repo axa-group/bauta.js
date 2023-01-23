@@ -7,12 +7,12 @@ Below there is a list of decorators and what they accept based on the following 
 
 # List of Bauta decorators
 
-| Allows                          | Name                   | path                                                                                        |
-|---------------------------------|------------------------|---------------------------------------------------------------------------------------------|
-| :bulb: :hourglass_flowing_sand: | pipeline (inputs)      | [bautajs-core/decorators/pipeline](../../packages/bautajs-core/decorators/pipeline.ts)      | 
-| :bulb:                          | pipeline (catch-error) |                                                                                             | 
-| :bulb:                          | resolver               | [bautajs-core/decorators/resolver](../../packages/bautajs-core/decorators/resolver.ts)      | 
-| :bulb: :hourglass_flowing_sand: | step(*)                | [bautajs-core/decorators/step](../../packages/bautajs-core/decorators/step.ts)              | 
+| Allows                          | Name                   | path                                                                                            |
+|---------------------------------|------------------------|-------------------------------------------------------------------------------------------------|
+| :bulb: :hourglass_flowing_sand: | pipeline (inputs)      | [bautajs-core/decorators/pipeline](../../packages/bautajs-core/src/decorators/pipeline.ts)      | 
+| :bulb:                          | pipeline (catch-error) |                                                                                                 | 
+| :bulb:                          | resolver               | [bautajs-core/decorators/resolver](../../packages/bautajs-core/src/decorators/resolver.ts)      | 
+| :bulb: :hourglass_flowing_sand: | step(*)                | [bautajs-core/decorators/step](../../packages/bautajs-core/src/decorators/step.ts)              | 
 
 
 # List of Utility decorators
