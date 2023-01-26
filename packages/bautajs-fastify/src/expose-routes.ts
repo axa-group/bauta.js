@@ -1,7 +1,6 @@
 import * as fastify from 'fastify';
 import path from 'path';
 import { Operation, ValidationError, Validator, LocationError } from '@axa/bautajs-core';
-import routeOrder from 'route-order';
 import { ApiHooks, OnResponseValidationError } from './types';
 
 // We are using ajv 8 and dataPath is moved to instancePath
@@ -192,12 +191,10 @@ async function exposeRoutes(
     );
   }
 
-  Object.keys(opts.routes)
-    .sort(routeOrder())
-    .forEach(route => {
-      const methods = Object.keys(opts.routes[route]);
-      methods.forEach(method => addRoute(opts.routes[route][method], opts.validator));
-    });
+  Object.keys(opts.routes).forEach(route => {
+    const methods = Object.keys(opts.routes[route]);
+    methods.forEach(method => addRoute(opts.routes[route][method], opts.validator));
+  });
 }
 
 export default exposeRoutes;

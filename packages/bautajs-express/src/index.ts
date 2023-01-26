@@ -1,8 +1,8 @@
 import compression from 'compression';
 import express, { Response, IRoute } from 'express';
-import routeOrder from 'route-order';
 import * as bautajs from '@axa/bautajs-core';
 import type { Logger as PinoLogger } from 'pino';
+import { sortRoutes } from './route-order';
 import {
   RouterOptions,
   ExpressRequest,
@@ -249,14 +249,10 @@ export class BautaJSExpress extends bautajs.BautaJS {
 
     const routes = this.processOperations();
 
-    Object.keys(routes)
-      .sort(routeOrder())
-      .forEach(route => {
-        const methods = Object.keys(routes[route]);
-        methods.forEach(method =>
-          this.addRoute(routes[route][method], router, options.apiBasePath)
-        );
-      });
+    sortRoutes(Object.keys(routes)).forEach(route => {
+      const methods = Object.keys(routes[route]);
+      methods.forEach(method => this.addRoute(routes[route][method], router, options.apiBasePath));
+    });
 
     if (this.apiDefinition) {
       initExplorer(
