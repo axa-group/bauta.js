@@ -17,9 +17,6 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "ES2019",
-    "paths": {
-      "*" : ["types/*"]
-    }
+    "target": "ES2019"
   }
 }
