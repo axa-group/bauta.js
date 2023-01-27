@@ -2,7 +2,7 @@ import compression from 'compression';
 import express, { Response, IRoute } from 'express';
 import * as bautajs from '@axa/bautajs-core';
 import type { Logger as PinoLogger } from 'pino';
-import { sortRoutes } from './route-order';
+import { sortRoutes } from './routes-order';
 import {
   RouterOptions,
   ExpressRequest,

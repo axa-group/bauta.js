@@ -1,5 +1,5 @@
 const { pipe, step, resolver } = require('@axa/bautajs-core');
-const { getRequest } = require('@axa/bautajs-express');
+const { getRequest } = require('@axa/bautajs-fastify');
 
 const transformResponse = step(response => {
   return {

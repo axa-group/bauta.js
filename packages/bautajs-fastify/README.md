@@ -68,8 +68,7 @@ Licensed under the (MIT / Apache 2.0) License.
  - [@fastify/swagger@7.4.1](https://github.com/fastify/fastify-swagger) - MIT
  - [fastify-plugin@4.2.1](https://github.com/fastify/fastify-plugin) - MIT
  - [fastify-x-request-id@2.0.0](https://github.com/dimonnwc3/fastify-x-request-id) - MIT
- - [route-order@0.1.0](https://github.com/sfrdmn/node-route-order) - MIT
-
+ 
 ## Development
  - [@axa/bautajs-datasource-rest@5.1.2](https://github.com/axa-group/bauta.js) - MIT*
 
@@ -80,7 +79,6 @@ Licensed under the (MIT / Apache 2.0) License.
  - [fastify@4.5.3](https://github.com/fastify/fastify) - MIT
  - [@fastify/swagger@7.4.1](https://github.com/fastify/fastify-swagger) - MIT
  - [fastify-plugin@4.2.1](https://github.com/fastify/fastify-plugin) - MIT
- - [route-order@0.1.0](https://github.com/sfrdmn/node-route-order) - MIT
 
 ### Development
  - [@axa/bautajs-datasource-rest@1.0.0](https://github.com/axa-group/bauta.js) - MIT*

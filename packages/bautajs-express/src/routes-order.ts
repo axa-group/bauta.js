@@ -1,13 +1,11 @@
-/* eslint-disable no-useless-escape */
-
 const STATIC_ROUTE = 1;
 const ROUTE_WITH_SUFFIX = 11;
 const ROUTE_WITH_PARAM = 111;
 const ROUTE_WITH_OPTIONAL_PARAM = 1111;
 
-const REGEXP_CONTAINS_OPTIONAL_PARAM = /^\:(.*)\?/;
-const REGEXP_CONTAINS_SUFFIX = /^\:(.*)\./;
-const REGEXP_CONTAINS_PARAM = /^\:/;
+const REGEXP_CONTAINS_OPTIONAL_PARAM = /^:(.*)\?/;
+const REGEXP_CONTAINS_SUFFIX = /^:(.*)\./;
+const REGEXP_CONTAINS_PARAM = /^:/;
 
 function toValue(str: string) {
   if (str === '*') return Number.MAX_SAFE_INTEGER;
@@ -30,5 +28,6 @@ function compareRoutes(firstRoute: string, secondRoute: string) {
 }
 
 export function sortRoutes(routes: string[]) {
-  return routes.sort(compareRoutes);
+  const workArray = [...routes];
+  return workArray.sort(compareRoutes);
 }
