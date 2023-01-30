@@ -320,6 +320,59 @@
           }
         }
       }
+    },
+    "/multiple-path/specific": {
+      "get": {
+        "summary": "Specific endpoint to test path collision and route ordering",
+        "operationId": "multiplePathSpecific",
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/multiple-path/{key}": {
+      "get": {
+        "summary": "General endpoint to test path collision and route ordering",
+        "operationId": "multiplePathGeneral",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the minimap",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {

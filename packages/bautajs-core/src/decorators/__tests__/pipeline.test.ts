@@ -189,4 +189,34 @@ describe('pipe tests', () => {
     expect(onCanceled2).toHaveBeenCalledTimes(1);
     expect(onCanceled1).toHaveBeenCalledTimes(1);
   });
+
+  test('should only execute the onCanceled of the executed steps even with promises', async () => {
+    const onCanceled1 = jest.fn();
+    const onCanceled2 = jest.fn();
+    const onCanceled3 = jest.fn();
+    const pipeline = pipe(
+      async (_, ctx) => {
+        ctx.token.onCancel(onCanceled1);
+        return Promise.resolve('first pipeline');
+      },
+      async (_, ctx) => {
+        ctx.token.onCancel(onCanceled2);
+        ctx.token.cancel();
+        return Promise.resolve('second pipeline');
+      },
+      async (_, ctx) => {
+        ctx.token.onCancel(onCanceled3);
+        return Promise.resolve('third pipeline');
+      }
+    );
+    const ctx = createContext({});
+
+    await expect(() => pipeline(null, ctx, {} as BautaJSInstance)).rejects.toThrow(
+      new Error('Pipeline canceled due to a request cancellation.')
+    );
+
+    expect(onCanceled3).toHaveBeenCalledTimes(0);
+    expect(onCanceled2).toHaveBeenCalledTimes(1);
+    expect(onCanceled1).toHaveBeenCalledTimes(1);
+  });
 });

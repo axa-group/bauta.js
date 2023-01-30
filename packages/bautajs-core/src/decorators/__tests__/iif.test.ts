@@ -44,4 +44,18 @@ describe('iif decorator', () => {
       'Plastic is not fantastic!'
     );
   });
+
+  test('should work even if the result of the if is a promise', async () => {
+    const saveEarthPipeline = pipe(() => 'Plastic is not fantastic!');
+    const plasticLoversPipeline = pipe(() => 'Plastic is fantastic!');
+    const myBigIf = pipe(async (prev: any) =>
+      Promise.resolve(prev.includes('Plastic is fantastic!'))
+    );
+
+    const pipeline = pipe(saveEarthPipeline, iif(myBigIf, plasticLoversPipeline));
+
+    expect(pipeline({}, createContext({}), {} as BautaJSInstance)).toBe(
+      'Plastic is not fantastic!'
+    );
+  });
 });

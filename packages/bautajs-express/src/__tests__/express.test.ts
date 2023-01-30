@@ -12,6 +12,7 @@ const apiDefinition = require('./fixtures/test-api-definitions.json');
 const apiDefinitionV2 = require('./fixtures/test-api-definitions-v2.json');
 const apiDefinitionSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
 const apiDefinitionSwaggerCircularDeps = require('./fixtures/test-api-definitions-swagger-circular-deps.json');
+const apiDefinitionSwaggerPathOrdering = require('./fixtures/test-api-definitions-swagger-path-ordering.json');
 
 describe('bautaJS express', () => {
   describe('request cancellation', () => {
@@ -335,6 +336,74 @@ describe('bautaJS express', () => {
           name: 'pet2'
         }
       ]);
+    });
+  });
+
+  describe('path ordering', () => {
+    test('should work with specific operation first in the resolver', async () => {
+      const bautajs = new BautaJSExpress({
+        apiDefinition: apiDefinitionSwaggerPathOrdering,
+        resolversPath: path.resolve(
+          __dirname,
+          './fixtures/test-resolvers/path-ordering-specific-first-resolver.js'
+        )
+      });
+
+      const router = await bautajs.buildRouter();
+
+      const app = express();
+      app.use('/v1', router);
+
+      const generalResponse = await supertest(app)
+        .get('/v1/api/multiple-path/cat')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(generalResponse.body).toStrictEqual({
+        message: 'This is the general text for requests and now we are receiving: cat'
+      });
+
+      const specificResponse = await supertest(app)
+        .get('/v1/api/multiple-path/specific')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(specificResponse.body).toStrictEqual({
+        message: 'This is a simple text for requests to the specific path'
+      });
+    });
+
+    test('should work with general operation first in the resolver', async () => {
+      const bautajs = new BautaJSExpress({
+        apiDefinition: apiDefinitionSwaggerPathOrdering,
+        resolversPath: path.resolve(
+          __dirname,
+          './fixtures/test-resolvers/path-ordering-general-first-resolver.js'
+        )
+      });
+
+      const router = await bautajs.buildRouter();
+
+      const app = express();
+      app.use('/v1', router);
+
+      const generalResponse = await supertest(app)
+        .get('/v1/api/multiple-path/cat')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(generalResponse.body).toStrictEqual({
+        message: 'This is the general text for requests and now we are receiving: cat'
+      });
+
+      const specificResponse = await supertest(app)
+        .get('/v1/api/multiple-path/specific')
+        .expect('Content-Type', /json/)
+        .expect(200);
+
+      expect(specificResponse.body).toStrictEqual({
+        message: 'This is a simple text for requests to the specific path'
+      });
     });
   });
 });

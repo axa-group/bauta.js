@@ -9,6 +9,7 @@ import { getRequest, getResponse } from '../operators';
 const apiDefinition = require('./fixtures/test-api-definitions.json');
 const apiDefinitionSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
 const apiDefinitionSwaggerWithExtraTag = require('./fixtures/test-api-definition-extra-tag.json');
+const apiDefinitionSwaggerPathOrdering = require('./fixtures/test-api-definitions-swagger-path-ordering.json');
 
 describe('bautaJS fastify tests', () => {
   describe('bautaJS fastify generic test', () => {
@@ -593,6 +594,76 @@ describe('bautaJS fastify tests', () => {
       // 302 is returned by the swagger explorer
       expect(res.statusCode).toBe(302);
       expect(res2.statusCode).toBe(302);
+    });
+  });
+
+  describe('path ordering', () => {
+    let fastifyInstance: FastifyInstance<any>;
+    beforeEach(() => {
+      fastifyInstance = fastify();
+    });
+    afterEach(() => {
+      fastifyInstance.close();
+    });
+
+    test('should work with specific operation first in the resolver', async () => {
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition: apiDefinitionSwaggerPathOrdering,
+        resolversPath: path.resolve(
+          __dirname,
+          './fixtures/test-resolvers/path-ordering-specific-first-resolver.js'
+        ),
+        apiBasePath: '/api/',
+        prefix: '/v1/'
+      });
+
+      const generalResponse = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/api/multiple-path/cat'
+      });
+
+      expect(JSON.parse(generalResponse.payload)).toStrictEqual({
+        message: 'This is the general text for requests and now we are receiving: cat'
+      });
+
+      const specificResponse = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/api/multiple-path/specific'
+      });
+
+      expect(JSON.parse(specificResponse.payload)).toStrictEqual({
+        message: 'This is a simple text for requests to the specific path'
+      });
+    });
+
+    test('should work with general operation first in the resolver', async () => {
+      fastifyInstance.register(bautajsFastify, {
+        apiDefinition: apiDefinitionSwaggerPathOrdering,
+        resolversPath: path.resolve(
+          __dirname,
+          './fixtures/test-resolvers/path-ordering-general-first-resolver.js'
+        ),
+        apiBasePath: '/api/',
+        prefix: '/v1/'
+      });
+
+      const generalResponse = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/api/multiple-path/cat'
+      });
+
+      expect(JSON.parse(generalResponse.payload)).toStrictEqual({
+        message: 'This is the general text for requests and now we are receiving: cat'
+      });
+
+      const specificResponse = await fastifyInstance.inject({
+        method: 'GET',
+        url: '/v1/api/multiple-path/specific'
+      });
+
+      expect(JSON.parse(specificResponse.payload)).toStrictEqual({
+        message: 'This is a simple text for requests to the specific path'
+      });
     });
   });
 });
