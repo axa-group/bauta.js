@@ -30,6 +30,38 @@
         }
       }
     },
+    "/cancel/{number}": {
+      "get": {
+        "summary": "service to test cancel request. Waits number seconds until an answer is given but cancel if number is greather than 10 seconds",
+        "operationId": "cancelRequest",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "description": "The number of seconds to wait",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/randomYear": {
       "get": {
         "summary": "Provides information about a random year",
