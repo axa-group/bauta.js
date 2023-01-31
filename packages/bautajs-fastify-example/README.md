@@ -37,6 +37,9 @@
 - GET `api/multiple-path/{key}`
 - GET `api/multiple-path/specific`
   - These two endpoints help understand how the route ordering works
+- GET `api/cancel/{number}`
+  - Returns a string if number is less than 10 seconds. Aborts after 10 seconds in the rest of the cases.
+
 
 ## Third party dependencies licenses
 
