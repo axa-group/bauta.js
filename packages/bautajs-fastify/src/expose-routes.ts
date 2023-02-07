@@ -159,7 +159,7 @@ async function exposeRoutes(
         fastifyInstance.addHook(hook as any, fn);
       });
     }
-    const route = path.join(opts.apiBasePath, url);
+    const route = path.posix.join(opts.apiBasePath, url);
     const preSerializationHooks = [];
     if (opts.apiHooks) {
       if (Array.isArray(opts.apiHooks.preSerialization)) {
@@ -185,7 +185,7 @@ async function exposeRoutes(
     });
 
     fastifyInstance.log.info(
-      `[OK] [${method.toUpperCase()}] ${path.join(
+      `[OK] [${method.toUpperCase()}] ${path.posix.join(
         fastifyInstance.prefix,
         route
       )} operation exposed on the API from ${operation.id}`
