@@ -233,7 +233,7 @@ export class BautaJS implements BautaJSInstance {
   static requireAll<T>(folder: string | string[], execute: boolean = true, vars?: T) {
     const execFiles = (folderPath: string) => {
       const result: any = [];
-      fastGlob.sync(folderPath).forEach((file: string) => {
+      fastGlob.sync(folderPath.replace(/\\/g, '/')).forEach((file: string) => {
         // eslint-disable-next-line global-require, import/no-dynamic-require
         let data = require(resolve(file));
         if (data.default) {

@@ -299,6 +299,31 @@ describe('bauta core tests', () => {
         }
       ]);
     });
+
+    test('should load the resolvers from the given array of windows paths', async () => {
+      const config = {
+        endpoint: 'http://google.es'
+      };
+
+      const bautaJS = new BautaJS({
+        apiDefinition: testApiDefinitionsJson as Document,
+        resolversPath: [
+          `${__dirname}\\fixtures\\test-resolvers\\operation-resolver.js`,
+          `${__dirname}\\fixtures\\test-resolvers\\operation-resolver-1.js`
+        ],
+        staticConfig: config
+      });
+      await bautaJS.bootstrap();
+
+      await expect(
+        bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
+      ).resolves.toStrictEqual([
+        {
+          id: 132,
+          name: 'pet1'
+        }
+      ]);
+    });
   });
 
   describe('execution cancellation', () => {
