@@ -8,7 +8,8 @@
     "dist"
   ],
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "test": "jest --verbose --detectOpenHandles"
   },
   "bugs": {
     "url": "https://github.com/axa-group/bauta.js/issues"

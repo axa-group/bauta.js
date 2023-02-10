@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "tsc": "tsc",
+    "test": "jest --verbose --detectOpenHandles",
     "example": "node ./examples/simple-usage/index.js"
   },
   "repository": {

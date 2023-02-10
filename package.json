@@ -12,6 +12,9 @@
     "proxy",
     "multipart"
   ],
+  "workspaces": [
+    "packages/*"
+  ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "bugs": {
     "url": "https://github.com/axa-group/bauta.js/issues"
@@ -72,14 +75,13 @@
     "benchmark-core": "npx concurrently -k -s first \"node ./packages/bautajs-core/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:3000/api/op1\"",
     "benchmark-express": "npx concurrently -k -s first \"node ./packages/bautajs-express/benchmark/simple.js\" \"npx autocannon -c 20 -d 5 -p 10 localhost:3000/api/op1\"",
     "benchmark-fastify": "npx concurrently -k -s first \"node ./packages/bautajs-fastify/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:3000/api/op1\"",
-    "lint": "eslint \"*/**/*.{ts,tsx}\"",
-    "bootstrap": "npm run lerna bootstrap -- --no-ci",
-    "prepare": "husky install && npm run lerna bootstrap -- --no-ci && npm run build",
-    "clean": "npm run lerna clean -- --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
+    "lint": "eslint '*/**/*.{ts,tsx}' ",
+    "prepare": "husky install",
+    "clean": "npm exec --workspaces -- npx rimraf node_modules dist && npx rimraf node_modules dist",
     "release:local": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "release": "lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "release:from-package": "lerna publish from-package --exact --no-verify-access --no-verify-registry --yes",
-    "test": "jest --verbose --detectOpenHandles",
+    "test": "turbo run test",
     "test:clean": "jest --clearCache",
     "test:watch": "npm run test -- --watchAll",
     "checkDeps": "npm run lerna exec -- --concurrency 14 -- npm outdated",
@@ -98,5 +100,8 @@
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-reporter.xml"
+  },
+  "dependencies": {
+    "turbo": "^1.7.4"
   }
 }
