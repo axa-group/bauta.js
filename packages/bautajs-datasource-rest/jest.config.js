@@ -1,3 +1,6 @@
-const config = require('../../jest.config.base');
+const config = require('@axa/bautajs-tsconfig/jest.config.base');
 
-module.exports = { displayName: '@axa/bautajs-datasource-rest', ...config };
+module.exports = {
+  displayName: '@axa/bautajs-datasource-rest',
+  ...config
+};

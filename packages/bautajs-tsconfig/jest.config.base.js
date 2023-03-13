@@ -11,7 +11,7 @@ module.exports = {
   collectCoverage: true,
   globals: {
     'ts-jest': {
-      tsconfig: 'tsconfig.test.json',
+      tsconfig: '../bautajs-tsconfig/tsconfig.test.json',
       diagnostics: false
     }
   },
