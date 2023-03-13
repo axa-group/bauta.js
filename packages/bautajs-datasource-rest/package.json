@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "tsc": "tsc",
+    "build": "tsc --build",
     "test": "jest --verbose --detectOpenHandles",
     "example": "npx ts-node ./example/simple.ts"
   },
@@ -33,6 +34,7 @@
   "dependencies": {
     "@axa/bautajs-core": "^3.0.0-alpha.0",
     "@axa/native-proxy-agent": "^1.0.0",
+    "@axa/bautajs-tsconfig": "*",
     "@sindresorhus/is": "^4.6.0",
     "got": "^11.8.5"
   }

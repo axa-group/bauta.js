@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "tsc": "tsc",
+    "build": "tsc --build",
     "test": "jest --verbose --detectOpenHandles",
     "example": "node ./examples/simple-usage/index.js"
   },
@@ -32,6 +33,7 @@
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
     "@axa/bautajs-core": "^3.0.0-alpha.0",
+    "@axa/bautajs-tsconfig": "*",
     "@fastify/swagger": "^7.6.1",
     "fastify": "^4.8.1",
     "fastify-plugin": "^4.2.1"

@@ -21,6 +21,7 @@
     "@axa/bautajs-core": "^3.0.0-alpha.0",
     "@axa/bautajs-datasource-rest": "^3.0.0-alpha.0",    
     "@axa/bautajs-fastify": "^3.0.0-alpha.0",
+    "@axa/bautajs-tsconfig": "*",
     "fastify": "^4.8.1"
   }
 }

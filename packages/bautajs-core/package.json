@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "tsc": "tsc",
+    "build": "tsc --build",
     "test": "jest --verbose --detectOpenHandles"
   },
   "bugs": {
@@ -34,6 +35,7 @@
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
+    "@axa/bautajs-tsconfig": "*",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
     "fast-glob": "^3.2.11",

@@ -85,7 +85,7 @@
     "test:clean": "jest --clearCache",
     "test:watch": "npm run test -- --watchAll",
     "checkDeps": "npm run lerna exec -- --concurrency 14 -- npm outdated",
-    "build": "tsc --build tsconfig.build.json",
+    "build": "turbo run build",
     "build:clean": "tsc --build tsconfig.build.json --clean",
     "watch": "tsc --build tsconfig.build.json --watch"
   },

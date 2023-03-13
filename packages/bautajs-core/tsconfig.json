@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@axa/bautajs-tsconfig/base.json",
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
@@ -7,7 +7,6 @@
       "es2020",
     ],
   },
-
   "include": ["src/**/*", "src/**/*.json"],
   "exclude": ["**/__tests__", "**/__mocks__"]
 }
