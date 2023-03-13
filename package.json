@@ -77,7 +77,7 @@
     "benchmark-fastify": "npx concurrently -k -s first \"node ./packages/bautajs-fastify/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:3000/api/op1\"",
     "lint": "eslint '*/**/*.{ts,tsx}' ",
     "prepare": "husky install",
-    "clean": "npm exec --workspaces -- npx rimraf node_modules dist && npx rimraf node_modules dist",
+    "clean": "turbo run clean && rm -rf node_modules",
     "release:local": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "release": "lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "release:from-package": "lerna publish from-package --exact --no-verify-access --no-verify-registry --yes",

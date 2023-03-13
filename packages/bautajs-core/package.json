@@ -10,6 +10,7 @@
   "scripts": {
     "tsc": "tsc",
     "build": "tsc --build",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "test": "jest --verbose --detectOpenHandles"
   },
   "bugs": {
@@ -35,7 +36,6 @@
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
-    "@axa/bautajs-tsconfig": "*",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
     "fast-glob": "^3.2.11",
@@ -44,5 +44,8 @@
     "openapi-types": "^12.0.0",
     "p-cancelable": "^2.1.1",
     "pino": "^8.4.2"
+  },
+  "devDependencies": {    
+    "@axa/bautajs-tsconfig": "*"
   }
 }

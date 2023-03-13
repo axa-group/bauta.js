@@ -10,6 +10,7 @@
   "scripts": {
     "tsc": "tsc",
     "build": "tsc --build",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "test": "jest --verbose --detectOpenHandles"
   },
   "repository": {
@@ -32,7 +33,6 @@
   },
   "dependencies": {
     "@axa/bautajs-core": "^3.0.0-alpha.0",
-    "@axa/bautajs-tsconfig": "*",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.18.1",
@@ -41,5 +41,8 @@
     "openapi-types": "^12.0.0",
     "pino": "^8.4.2",
     "swagger-ui-express": "^4.4.0"
+  },
+  "devDependencies": {    
+    "@axa/bautajs-tsconfig": "*"
   }
 }
