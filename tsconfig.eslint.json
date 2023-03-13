@@ -1,0 +1,3 @@
+{
+  "extends": "@axa/bautajs-tsconfig/tsconfig.base.json"
+}

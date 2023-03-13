@@ -45,7 +45,6 @@ describe('bautaJS express', () => {
       try {
         await request;
       } catch (e) {
-        // eslint-disable-next-line jest/no-conditional-expect
         expect(logger.error).toHaveBeenCalledWith(
           { message: 'Request was aborted by the requester intentionally' },
           'The request was canceled by the requester.'
@@ -122,7 +121,6 @@ describe('bautaJS express', () => {
       expect(res.body).toStrictEqual({ ok: 'finished early' });
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test('should not send the response again if already has been sent on a readable pipe', async () => {
       const bautajs = new BautaJSExpress({
         apiDefinition,
@@ -159,7 +157,6 @@ describe('bautaJS express', () => {
         .expect('123');
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test('should not force empty object if the status code is 204', async () => {
       const bautajs = new BautaJSExpress({
         apiDefinition,
@@ -181,7 +178,6 @@ describe('bautaJS express', () => {
       await supertest(app).get('/v1/api/test').expect(204, '');
     });
 
-    // eslint-disable-next-line jest/expect-expect
     test('should not override the headers set on the pipeline by the swagger ones', async () => {
       const form = new FormData();
       const bautajs = new BautaJSExpress({

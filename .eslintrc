@@ -1,27 +1,28 @@
 {
+  "root": true,
+  "plugins": ["@typescript-eslint", "import", "prettier"],
   "extends": [
-    "airbnb-base",
     "airbnb-typescript/base",
-    "plugin:jest/all",
-    "plugin:prettier/recommended",
-    "prettier"
+    "prettier",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2020,
-    "project": "./tsconfig.base.json",
-    "sourceType": "module"
+    "project": "tsconfig.eslint.json"
   },
   "overrides": [
     {
-      "files": "**/__tests__/*.js",
+      "files": "**/__tests__/*.ts",
       "rules": {
-        "example-internal/no-focused-tests": 2
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/ban-ts-comment": 0,
+        "@typescript-eslint/no-var-requires": 0
       }
     }
   ],
-  "plugins": ["import", "prettier", "jest"],
   "rules": {
+    "@typescript-eslint/ban-ts-comment": 1,
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {
@@ -40,11 +41,6 @@
     "comma-dangle": ["error", "never"],
     "import/no-extraneous-dependencies": "off",
     "import/prefer-default-export": "off",
-    "jest/consistent-test-it": 0,
-    "jest/no-hooks": 0,
-    "jest/require-hook": 0,
-    "jest/prefer-expect-assertions": 0,
-    "jest/no-conditional-in-test": 0,
     "no-multiple-empty-lines": [
       "error",
       {

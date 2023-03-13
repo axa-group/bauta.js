@@ -3,7 +3,7 @@ import fastSafeStringify from 'fast-safe-stringify';
 export class NotFoundError extends Error {
   public statusCode: number;
 
-  constructor(message: string, statusCode: number = 404) {
+  constructor(message: string, statusCode = 404) {
     super(message);
     this.name = 'Not Found Error';
     this.statusCode = statusCode;

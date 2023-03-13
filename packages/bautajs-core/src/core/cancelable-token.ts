@@ -3,7 +3,7 @@ import { CancelableToken, OnCancel } from '../types';
 export class CancelableTokenBuilder implements CancelableToken {
   private cancelStack: OnCancel[] = [];
 
-  public isCanceled: boolean = false;
+  public isCanceled = false;
 
   cancel() {
     this.isCanceled = true;

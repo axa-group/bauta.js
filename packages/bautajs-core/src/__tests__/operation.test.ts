@@ -416,12 +416,11 @@ describe('operation class tests', () => {
       expect(result).toBeNull();
     });
 
-    // eslint-disable-next-line jest/no-done-callback
     test('should not validate the response if the response is a stream', done => {
       const {
         input: inputStreamTest,
         expected: expectedStream
-        // eslint-disable-next-line global-require
+        // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
       } = require('./fixtures/test-long-string-stream.json');
 
       streamOperationTest.setup(

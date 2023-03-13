@@ -146,7 +146,7 @@ export function pipe<
 export function pipe<T, R>(
   ...functions: Array<Pipeline.StepFunction<T, R>>
 ): Pipeline.PipelineFunction<T, R> {
-  if (functions.length === 0 || !functions.every((fn: Function) => typeof fn === 'function')) {
+  if (functions.length === 0 || !functions.every(fn => typeof fn === 'function')) {
     throw new Error('A Pipeline.StepFunction must be a function.');
   }
 

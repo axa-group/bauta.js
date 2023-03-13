@@ -82,7 +82,7 @@ export interface Dictionary<T> {
 }
 
 // OpenAPI document
-export interface OpenAPIV2Document extends OpenAPIV2.Document {}
+export type OpenAPIV2Document = OpenAPIV2.Document;
 export interface OpenAPIV3Document extends OpenAPIV3.Document {
   basePath?: string;
 }
@@ -127,17 +127,17 @@ export interface IValidationError extends Error {
 }
 export interface Logger {
   fatal(msg: string, ...args: any[]): void;
-  fatal(obj: {}, msg?: string, ...args: any[]): void;
+  fatal(obj: object, msg?: string, ...args: any[]): void;
   error(msg: string, ...args: any[]): void;
-  error(obj: {}, msg?: string, ...args: any[]): void;
+  error(obj: object, msg?: string, ...args: any[]): void;
   warn(msg: string, ...args: any[]): void;
-  warn(obj: {}, msg?: string, ...args: any[]): void;
+  warn(obj: object, msg?: string, ...args: any[]): void;
   info(msg: string, ...args: any[]): void;
-  info(obj: {}, msg?: string, ...args: any[]): void;
+  info(obj: object, msg?: string, ...args: any[]): void;
   debug(msg: string, ...args: any[]): void;
-  debug(obj: {}, msg?: string, ...args: any[]): void;
+  debug(obj: object, msg?: string, ...args: any[]): void;
   trace(msg: string, ...args: any[]): void;
-  trace(obj: {}, msg?: string, ...args: any[]): void;
+  trace(obj: object, msg?: string, ...args: any[]): void;
   child: (bindings: Bindings) => Logger;
   level?: string | number | (() => number | string);
 }
@@ -443,6 +443,7 @@ export interface Session {
   url?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export declare namespace Pipeline {
   interface CatchError<ErrorType> {
     (error: GenericError, ctx: Context, batuajs: BautaJSInstance): ErrorType;
@@ -479,4 +480,4 @@ export interface CancelableToken {
   onCancel: (fn: OnCancel) => void;
 }
 
-export interface CancelablePromise<T> extends PCancelable<T> {}
+export type CancelablePromise<T> = PCancelable<T>;

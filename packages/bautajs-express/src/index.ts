@@ -50,11 +50,7 @@ export class BautaJSExpress extends bautajs.BautaJS {
     this.onResponseValidationError = options.onResponseValidationError;
   }
 
-  private addRoute(
-    operation: bautajs.Operation,
-    router: express.Router,
-    apiBasePath: string = '/api/'
-  ) {
+  private addRoute(operation: bautajs.Operation, router: express.Router, apiBasePath = '/api/') {
     const method = operation.route?.method.toLowerCase() as keyof Omit<IRoute, 'path' | 'stack'>;
     const responses = operation.route?.schema.response;
     const { url = '' } = operation.route || {};

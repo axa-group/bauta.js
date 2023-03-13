@@ -179,7 +179,6 @@ describe('bauta core tests', () => {
       try {
         await bautaJS.operations.operation1.run({ req, res });
       } catch (e: any) {
-        // eslint-disable-next-line jest/no-conditional-expect
         expect(e.stack).toBe(`${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`);
       }
     });
@@ -527,10 +526,8 @@ describe('bauta core tests', () => {
       request1.cancel();
       expect.assertions(3);
 
-      // eslint-disable-next-line jest/valid-expect-in-promise
       const [, req2] = await Promise.all([
         request1.catch((e: any) => {
-          // eslint-disable-next-line jest/no-conditional-expect
           expect(e).toStrictEqual(expect.objectContaining({ message: 'Promise was canceled' }));
           return Promise.resolve({});
         }),

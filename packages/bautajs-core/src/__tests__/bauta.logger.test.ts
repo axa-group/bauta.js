@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import pino from 'pino';
 import { BautaJS } from '../index';
 import { Logger } from '../types';
@@ -31,6 +32,7 @@ describe('core tests', () => {
 
     test('should not initialize the core if using an invalid logger', async () => {
       const invalidLogger = defaultLogger();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       delete invalidLogger.info; // A custom made logger with no info is considered invalid
 

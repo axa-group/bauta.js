@@ -40,7 +40,7 @@ const outgoingResProto = Object.create(
 export function resSerializer(
   response: GOTResponse,
   restProviderOptions: RestProviderOptions,
-  isDebugMode: boolean = false
+  isDebugMode = false
 ) {
   const res = Object.create(outgoingResProto);
   res.responseTime = response.timings?.phases.total;
