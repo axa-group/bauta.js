@@ -40,6 +40,6 @@
   },
   "devDependencies": {
     "@axa/bautajs-datasource-rest": "^3.0.0-alpha.0",
-    "@axa/bautajs-tsconfig": "*"
+    "@axa/bautajs-dev-config": "*"
   }
 }

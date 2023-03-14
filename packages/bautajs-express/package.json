@@ -43,6 +43,6 @@
     "swagger-ui-express": "^4.4.0"
   },
   "devDependencies": {    
-    "@axa/bautajs-tsconfig": "*"
+    "@axa/bautajs-dev-config": "*"
   }
 }

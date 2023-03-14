@@ -46,6 +46,6 @@
     "pino": "^8.4.2"
   },
   "devDependencies": {    
-    "@axa/bautajs-tsconfig": "*"
+    "@axa/bautajs-dev-config": "*"
   }
 }

@@ -34,7 +34,7 @@
   "dependencies": {
     "@axa/bautajs-core": "^3.0.0-alpha.0",
     "@axa/native-proxy-agent": "^1.0.0",
-    "@axa/bautajs-tsconfig": "*",
+    "@axa/bautajs-dev-config": "*",
     "@sindresorhus/is": "^4.6.0",
     "got": "^11.8.5"
   }
