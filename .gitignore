@@ -31,3 +31,6 @@ coverage/
 
 # TypeScript incremental compilation cache
 *.tsbuildinfo
+
+## Sonar reporter
+test-report.xml

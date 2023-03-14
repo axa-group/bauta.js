@@ -11,7 +11,7 @@
     "tsc": "tsc",
     "build": "tsc --build",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "test": "jest --verbose --detectOpenHandles"
+    "test": "jest"
   },
   "bugs": {
     "url": "https://github.com/axa-group/bauta.js/issues"
