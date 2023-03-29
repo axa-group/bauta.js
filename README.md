@@ -4,17 +4,17 @@
 
 Bauta.js is an add-on for your Node.js applications such as Express.js or Fastify. Bauta.js improves the developer experience enriching your application architecture and encouraging an API design-first mindset. The main features Bauta.js provides are:
 
-- Express.js plugin.
-- Fastify plugin.
-- Resolvers.
-- Pipelines and Steps functions.
-- Decorators.
-- Request/Response validation.
-- Built-in OpenAPI explorer.
-- API versioning.
-- Datasource Providers.
-- Built-in logging system.
-- Written in TypeScript.
+- Express.js plugin
+- Fastify plugin
+- Resolvers
+- Pipelines and Steps functions
+- Decorators
+- Request/Response validation
+- Built-in OpenAPI explorer
+- API versioning
+- Datasource Providers
+- Built-in logging system
+- Written in TypeScript
 
 ## Bauta.js and developer experience
 
