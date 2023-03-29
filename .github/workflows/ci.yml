@@ -12,6 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [14.x, 16.x, 18.x]
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -49,6 +50,7 @@ jobs:
   antivirus-checker:
     name: antivirus-checker
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -79,7 +81,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Comment on the PR on malware detected
-        if: ${{ env.IS_MALWARE_DETECTED == 'true' && github.event_name == 'pull_request' }}
+        if: ${{ env.IS_MALWARE_DETECTED == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
         run: |
