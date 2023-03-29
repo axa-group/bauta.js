@@ -41,5 +41,6 @@ jobs:
         uses: actions/dependency-review-action@v3
         with:
           fail-on-severity: high
-          deny-licenses: LGPL-2.0, BSD-2-Clause # https://spdx.org/licenses/
+          # https://spdx.org/licenses/
+          deny-licenses: GPL-2.0+, AGPL-3.0-or-later, LGPL-2.0-or-later
           comment-summary-in-pr: true
