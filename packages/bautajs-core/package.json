@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-core",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Bauta.js is an add-on for your Node.js applications such as Express.js or Fastify.",
   "main": "dist",
   "types": "dist",
