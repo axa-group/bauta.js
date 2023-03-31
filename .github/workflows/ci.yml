@@ -9,11 +9,13 @@ on:
 jobs:
   build:
     name: CI
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [14.x, 16.x, 18.x]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -27,3 +29,76 @@ jobs:
       - run: npm run lint
       - run: npm run build --if-present
       - run: npm test
+
+  dependency-review:
+    name: dependency-review
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: high
+          # https://spdx.org/licenses/
+          deny-licenses: GPL-2.0+, AGPL-3.0-or-later, LGPL-2.0-or-later
+          comment-summary-in-pr: true
+
+  # Antivirus review
+  antivirus-checker:
+    name: antivirus-checker
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: ClamAV Scan
+        run: |
+          # Download the latest image for caching
+          docker pull clamav/clamav:latest
+          # Run ClamAV scan and ignore exit code
+          docker run --rm --mount type=bind,source="/home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}",target=/scandir clamav/clamav:latest clamscan --recursive --log=/scandir/scan.log /scandir || true
+          # Format the scan results as JSON
+          sudo sed '/^\s*$/d' scan.log | \
+          awk -vmax="$(sudo cat scan.log | wc -l)" -F: 'BEGIN{print "{"} NR>1{gsub(/^ /, "", $2); printf "%s", "\042"$1"\042:\042"$2"\042"; if (NR<max-3) {print ","}else{print ""}}; END{print "}"}' \
+          > scan.json
+          # Detect if malware is found and save that as an environment variable
+          if sudo grep --quiet --only-matching --max-count 1 'FOUND' scan.log; then
+            is_malware_detected='true'
+          else
+            is_malware_detected='false'
+          fi
+          echo "IS_MALWARE_DETECTED=$is_malware_detected" >> $GITHUB_ENV
+
+      - name: Upload ClamAV scan results to an artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ClamAV_${{ github.sha }}
+          path: scan.json
+          if-no-files-found: ignore
+
+      - name: Comment on the PR on malware detected
+        if: ${{ env.IS_MALWARE_DETECTED == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "🦠 Possible malware detected, please review it before merge this PR. ```$(cat scan.txt)```"
+
+      - name: Fail on malware detected in PR
+        if: ${{ env.IS_MALWARE_DETECTED == 'true' }}
+        run: exit 1
+
+  gitleaks-scan:
+    name: gitleaks-scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}

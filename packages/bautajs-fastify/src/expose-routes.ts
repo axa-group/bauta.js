@@ -122,15 +122,27 @@ async function exposeRoutes(
     const method: fastify.HTTPMethods = (operation.route?.method.toUpperCase() ||
       'GET') as fastify.HTTPMethods;
     const { url = '' } = operation.route || {};
-    const requestSchema =
-      operation.route?.schema && operation.requestValidationEnabled
-        ? {
-            body: operation.route?.schema.body,
-            params: operation.route?.schema.params,
-            headers: operation.route?.schema.headers,
-            querystring: operation.route?.schema.querystring
-          }
-        : {};
+    const requestSchema: any = {};
+    // Avoid defining the request schema member as undefined
+    // to prevent https://github.com/fastify/fastify/issues/4634
+    if (operation.route?.schema && operation.requestValidationEnabled) {
+      if (operation.route?.schema.body) {
+        requestSchema.body = operation.route?.schema.body;
+      }
+
+      if (operation.route?.schema.params) {
+        requestSchema.params = operation.route?.schema.params;
+      }
+
+      if (operation.route?.schema.headers) {
+        requestSchema.headers = operation.route?.schema.headers;
+      }
+
+      if (operation.route?.schema.querystring) {
+        requestSchema.querystring = operation.route?.schema.querystring;
+      }
+    }
+
     const responseSchema = operation.route?.schema
       ? { response: operation.route?.schema.response }
       : {};
@@ -158,7 +170,7 @@ async function exposeRoutes(
         fastifyInstance.addHook(hook as any, fn);
       });
     }
-    const route = path.join(opts.apiBasePath, url);
+    const route = path.posix.join(opts.apiBasePath, url);
     const preSerializationHooks = [];
     if (opts.apiHooks) {
       if (Array.isArray(opts.apiHooks.preSerialization)) {
@@ -184,7 +196,7 @@ async function exposeRoutes(
     });
 
     fastifyInstance.log.info(
-      `[OK] [${method.toUpperCase()}] ${path.join(
+      `[OK] [${method.toUpperCase()}] ${path.posix.join(
         fastifyInstance.prefix,
         route
       )} operation exposed on the API from ${operation.id}`

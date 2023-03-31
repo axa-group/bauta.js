@@ -72,7 +72,7 @@
     "benchmark-core": "npx concurrently -k -s first \"node ./packages/bautajs-core/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:3000/api/op1\"",
     "benchmark-express": "npx concurrently -k -s first \"node ./packages/bautajs-express/benchmark/simple.js\" \"npx autocannon -c 20 -d 5 -p 10 localhost:3000/api/op1\"",
     "benchmark-fastify": "npx concurrently -k -s first \"node ./packages/bautajs-fastify/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:3000/api/op1\"",
-    "lint": "eslint '*/**/*.{ts,tsx}' ",
+    "lint": "eslint \"*/**/*.{ts,tsx}\"",
     "bootstrap": "npm run lerna bootstrap -- --no-ci",
     "prepare": "husky install && npm run lerna bootstrap -- --no-ci && npm run build",
     "clean": "npm run lerna clean -- --yes && git clean -dfqX -- ./node_modules **/{dist,node_modules}/ ./packages/*/tsconfig*tsbuildinfo ./packages/*/package-lock.json ./coverage",
