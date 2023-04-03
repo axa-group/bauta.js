@@ -10,7 +10,6 @@ import {
   BautaJSOptions,
   ValidationError
 } from '@axa/bautajs-core';
-import P from 'pino';
 
 export interface ICallback {
   (error?: GenericError, result?: any): void;
@@ -78,9 +77,8 @@ export type OnResponseValidationError = (
   res: express.Response
 ) => any;
 
-// Since the request logger is express-pino, force the logger on options to be Pino
 export interface BautaJSExpressOptions extends BautaJSOptions {
-  logger?: P.Logger;
+  logger?: Logger;
   /**
    * Method executed after a response validation throws an error.
    * Since this happens after the error handler is executed you might need to reformat the validation errors.

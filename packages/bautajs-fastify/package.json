@@ -35,8 +35,8 @@
   "dependencies": {
     "@axa/bautajs-core": "^3.0.0-alpha.0",
     "@fastify/swagger": "^7.6.1",
-    "fastify": "^4.8.1",
-    "fastify-plugin": "^4.2.1"
+    "fastify": "^4.15.0",
+    "fastify-plugin": "^4.5.0"
   },
   "devDependencies": {
     "@axa/bautajs-datasource-rest": "^3.0.0-alpha.0",

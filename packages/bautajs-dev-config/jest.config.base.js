@@ -9,11 +9,14 @@ module.exports = {
   collectCoverageFrom: ['**/*.ts', '!**/node_modules/**', '!**/coverage/**', '!**/jest.config.js'],
   coveragePathIgnorePatterns: ['dist', 'benchmark'],
   collectCoverage: true,
-  globals: {
-    'ts-jest': {
-      tsconfig: '../bautajs-dev-config/tsconfig.test.json',
-      diagnostics: false
-    }
+  transform: {
+    '/.[jt]sx?$/': [
+      'ts-jest',
+      {
+        tsconfig: '../bautajs-dev-config/tsconfig.test.json',
+        diagnostics: false
+      }
+    ]
   },
   testTimeout: 30000
 };

@@ -482,9 +482,9 @@ describe('bautaJS fastify tests', () => {
     test('should log a message in case of the request was canceled', async () => {
       const logger = defaultLogger();
       jest.spyOn(logger, 'error').mockImplementation();
-      logger.child = () => {
+      logger.child = (() => {
         return logger;
-      };
+      }) as any;
       const fs = fastify({ logger });
       fs.register(bautajsFastify, {
         apiBasePath: '/api/',

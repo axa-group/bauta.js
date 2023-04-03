@@ -3,7 +3,7 @@
 import split from 'split2';
 import pino from 'pino';
 import supertest from 'supertest';
-import { resolver, defaultLogger } from '@axa/bautajs-core';
+import { resolver, defaultLogger, Logger } from '@axa/bautajs-core';
 import express from 'express';
 import { BautaJSExpress } from '../index';
 
@@ -108,10 +108,8 @@ describe('express middlewares', () => {
 
   describe('express pino logger', () => {
     test('pino logger can be disabled', async () => {
-      const logger = defaultLogger();
-      logger.child = () => {
-        return logger;
-      };
+      const logger: Logger = defaultLogger();
+      logger.child = () => logger;
       const spy = jest.spyOn(logger, 'info');
       const bautajs = new BautaJSExpress({
         logger,
@@ -149,10 +147,8 @@ describe('express middlewares', () => {
     });
 
     test('incoming request must be logged with pino express', async () => {
-      const logger = defaultLogger();
-      logger.child = () => {
-        return logger;
-      };
+      const logger: Logger = defaultLogger();
+      logger.child = () => logger;
       const spy = jest.spyOn(logger, 'info');
       const bautajs = new BautaJSExpress({
         logger,
