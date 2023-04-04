@@ -18,8 +18,6 @@
 - GET `/api/chuckfacts/{string}`
   - Returns a list of chuckfacts from the string
   - Shows how to use the cache decorator in a resolver
-- GET `/api/cats`
-  - Returns a list of cat facts
 - GET `/api/minimap`
   - Returns an object with all the defined key-values
 - GET `/api/minimap/${key}`
@@ -38,7 +36,7 @@
 - GET `api/multiple-path/specific`
   - These two endpoints help understand how the route ordering works
 - GET `api/cancel/{number}`
-  - Returns a string if number is less than 10 seconds. Aborts after 10 seconds in the rest of the cases.
+  - Returns a string if number is lower than 3 seconds. Aborts after 3 seconds in the rest of the cases.
 
 
 ## Third party dependencies licenses

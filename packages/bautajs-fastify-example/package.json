@@ -4,7 +4,8 @@
   "description": "A bautaJS example in fastify",
   "main": "./server.js",
   "scripts": {
-    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server.js"
+    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
