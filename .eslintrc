@@ -13,7 +13,7 @@
   },
   "overrides": [
     {
-      "files": "**/__tests__/*.ts",
+      "files": "**/*.js",
       "rules": {
         "@typescript-eslint/no-explicit-any": 0,
         "@typescript-eslint/ban-ts-comment": 0,
@@ -21,7 +21,7 @@
       }
     },
     {
-      "files": "**/test/*.{js,ts}",
+      "files": "**/test/*",
       "rules": {
         "@typescript-eslint/no-explicit-any": 0,
         "@typescript-eslint/ban-ts-comment": 0,
