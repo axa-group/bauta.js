@@ -26,7 +26,7 @@ describe('provider rest', () => {
 
   describe('restProvider extend', () => {
     test('should allow to create your own rest provider', async () => {
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       const Id = '123';
       nock('https://google.com').get(`/${Id}`).reply(200, 'text');
@@ -54,7 +54,7 @@ describe('provider rest', () => {
 
   describe('got extends defaults', () => {
     test('should allow do a requests with GOT options and the built in agent', async () => {
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       const Id = '123';
       nock('https://google.com')
@@ -81,7 +81,7 @@ describe('provider rest', () => {
     });
 
     test('should add the response status code if an http error ocurres', async () => {
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       const Id = '123';
       nock('https://google.com').get(`/${Id}`).reply(404, { message: 'not found' });
@@ -107,7 +107,7 @@ describe('provider rest', () => {
     });
 
     test('should add the response status code if an http error ocurres and message should be case insensitive', async () => {
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       const Id = '123';
       nock('https://google.com').get(`/${Id}`).reply(404, { Message: 'not found' });
@@ -133,7 +133,7 @@ describe('provider rest', () => {
     });
 
     test('should allow do a requests with GOT options and the built in agent with de default set up', async () => {
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
       const Id = '123';
       nock('https://google.com')
         .get(`/${Id}`)
@@ -160,7 +160,7 @@ describe('provider rest', () => {
 
   describe('request cancellation', () => {
     test('should cancel the request if the a cancel is executed', async () => {
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
       nock('http://pets.com').get('/v1/policies').reply(200, {});
 
       const myContext = createContext({ req: {}, res: {}, log: bautajs.logger });
@@ -178,7 +178,7 @@ describe('provider rest', () => {
     });
 
     test('should cancel the request if the a cancel is executed and the request is an stream', async () => {
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
       nock('http://pets.com').get('/v1/policies').reply(200, {});
 
       const myContext = createContext({ req: {}, res: {}, log: bautajs.logger });
@@ -204,7 +204,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(200, { bender: 'ok' });
 
@@ -252,7 +252,7 @@ describe('provider rest', () => {
       logger.level = 20;
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(200, { bender: 'ok' });
 
@@ -308,7 +308,7 @@ describe('provider rest', () => {
           return logger;
         }
       };
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com').post('/v1/policies', { test: '1234' }).reply(200, { bender: 'ok' });
 
@@ -356,7 +356,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com:3000')
         .post('/v1/policies', { test: '1234' })
@@ -407,7 +407,7 @@ describe('provider rest', () => {
       jest.spyOn(logger, 'debug').mockImplementation();
       jest.spyOn(logger, 'info').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com')
         .post('/v1/policies', {
@@ -460,7 +460,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com').post('/v1/policies', 'someString').reply(200, { bender: 'ok' });
 
@@ -524,7 +524,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'info').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com').post('/v1/policies', 'someString').reply(200, { bender: 'ok' });
 
@@ -591,7 +591,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com')
         .post('/v1/policies', 'someString')
@@ -669,7 +669,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com')
         .post('/v1/policies', 'someString')
@@ -744,7 +744,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com')
         .post('/v1/policies', 'someString')
@@ -817,7 +817,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com').post('/v1/policies').reply(200, { bender: 'ok' });
 
@@ -885,7 +885,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com').post('/v1/policies').reply(200, { bender: 'ok' });
 
@@ -949,7 +949,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       const logResponseHook = () => {
         return (response: any) => {
@@ -1001,7 +1001,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       const logErrorsHook = () => {
         return (error: RequestError) => {
@@ -1048,7 +1048,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'debug').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com')
         .post('/v1/policies', "{ bender: 'ok', bender2: 'ok2', foo: 'boo' }")
@@ -1121,7 +1121,7 @@ describe('provider rest', () => {
 
       jest.spyOn(logger, 'error').mockImplementation();
       logger.child = () => logger;
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       nock('https://pets.com')
         .post('/v1/policies', "{ bender: 'ok', bender2: 'ok2', foo: 'boo' }")
@@ -1178,7 +1178,7 @@ describe('provider rest', () => {
     });
 
     test('should sent the query params to the provider', async () => {
-      const { restProvider } = await import('../index');
+      const { restProvider } = await import('../src/index');
 
       const Id = '123';
       nock('https://google.com')
@@ -1221,7 +1221,7 @@ describe('provider rest', () => {
         logger.child = () => {
           return logger;
         };
-        const { restProvider } = await import('../index');
+        const { restProvider } = await import('../src/index');
 
         nock('https://pets.com/v1').get('/policies').replyWithError('something awful happened');
 
@@ -1267,7 +1267,7 @@ describe('provider rest', () => {
         logger.child = () => logger;
         jest.spyOn(logger, 'error').mockImplementation();
 
-        const { restProvider } = await import('../index');
+        const { restProvider } = await import('../src/index');
 
         nock('https://pets.com/v1')
           .get('/policies')
@@ -1319,7 +1319,7 @@ describe('provider rest', () => {
         logger.child = () => logger;
         jest.spyOn(logger, 'error').mockImplementation();
         jest.spyOn(logger, 'debug').mockImplementation();
-        const { restProvider } = await import('../index');
+        const { restProvider } = await import('../src/index');
 
         nock('https://pets.com/v1').get('/policies').reply(200, 'we force with this a parserError');
 
@@ -1384,7 +1384,7 @@ describe('provider rest', () => {
       });
 
       test('should generate a meaningful error if there is an issue', async () => {
-        const { restProvider } = await import('../index');
+        const { restProvider } = await import('../src/index');
 
         nock('https://pets.com/v1').get('/policies').reply(200, '<html><div></div></html>', {
           'content-type': 'text/html'
