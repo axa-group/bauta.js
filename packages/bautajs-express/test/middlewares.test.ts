@@ -5,7 +5,7 @@ import pino from 'pino';
 import supertest from 'supertest';
 import { resolver, defaultLogger, Logger } from '@axa/bautajs-core';
 import express from 'express';
-import { BautaJSExpress } from '../index';
+import { BautaJSExpress } from '../src/index';
 
 const apiDefinitionExtraTag = require('./fixtures/test-api-definitions-extra-tag.json');
 const apiDefinition = require('./fixtures/test-api-unused-definitions.json');

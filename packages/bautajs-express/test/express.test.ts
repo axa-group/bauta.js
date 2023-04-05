@@ -5,8 +5,8 @@ import FormData from 'form-data';
 import supertest from 'supertest';
 import { Readable } from 'stream';
 import { resolver, asPromise, defaultLogger } from '@axa/bautajs-core';
-import { BautaJSExpress } from '../index';
-import { getRequest, getResponse } from '../operators';
+import { BautaJSExpress } from '../src/index';
+import { getRequest, getResponse } from '../src/operators';
 
 const apiDefinition = require('./fixtures/test-api-definitions.json');
 const apiDefinitionV2 = require('./fixtures/test-api-definitions-v2.json');

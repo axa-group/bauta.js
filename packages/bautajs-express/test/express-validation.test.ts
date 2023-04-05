@@ -2,7 +2,7 @@
 import express from 'express';
 import path from 'path';
 import supertest from 'supertest';
-import { BautaJSExpress } from '../index';
+import { BautaJSExpress } from '../src/index';
 
 const apiDefinitionsCustomValidation = require('./fixtures/test-api-definitions-custom-validation.json');
 
