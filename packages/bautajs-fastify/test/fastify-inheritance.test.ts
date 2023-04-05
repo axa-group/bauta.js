@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import { BautaJS } from '@axa/bautajs-core';
 import fastify, { FastifyInstance } from 'fastify';
-import { bautajsFastify } from '../index';
+import { bautajsFastify } from '../src/index';
 
 const [
   apiDefinition,

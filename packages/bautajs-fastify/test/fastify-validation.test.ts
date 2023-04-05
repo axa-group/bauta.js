@@ -1,7 +1,7 @@
 import path from 'path';
 import fastify, { FastifyInstance } from 'fastify';
 import { ValidationError } from '@axa/bautajs-core';
-import { bautajsFastify } from '../index';
+import { bautajsFastify } from '../src/index';
 
 const apiDefinitionCustomValidation = require('./fixtures/test-api-definitions-custom-validation.json');
 

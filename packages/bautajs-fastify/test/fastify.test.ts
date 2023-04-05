@@ -3,8 +3,7 @@ import FormData from 'form-data';
 import { Readable } from 'stream';
 import { resolver, defaultLogger, pipe, asPromise } from '@axa/bautajs-core';
 import fastify, { FastifyInstance } from 'fastify';
-import { bautajsFastify } from '../index';
-import { getRequest, getResponse } from '../operators';
+import { bautajsFastify, getRequest, getResponse } from '../src/index';
 
 const apiDefinition = require('./fixtures/test-api-definitions.json');
 const apiDefinitionSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');

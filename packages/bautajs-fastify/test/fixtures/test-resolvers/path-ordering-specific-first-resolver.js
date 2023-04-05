@@ -1,5 +1,5 @@
 const { pipe, step, resolver } = require('@axa/bautajs-core');
-const { getRequest } = require('../../../index');
+const { getRequest } = require('../../../src/index');
 
 const transformResponse = step(response => {
   return {
@@ -20,13 +20,13 @@ function specificStep() {
 }
 
 module.exports = resolver(operations => {
-  operations.multiplePathGeneral
-    .validateRequest(false)
-    .validateResponse(false)
-    .setup(pipe(generalStep, transformResponse));
-
   operations.multiplePathSpecific
     .validateRequest(false)
     .validateResponse(false)
     .setup(pipe(specificStep, transformResponse));
+
+  operations.multiplePathGeneral
+    .validateRequest(false)
+    .validateResponse(false)
+    .setup(pipe(generalStep, transformResponse));
 });
