@@ -1,7 +1,7 @@
-import { createContext } from '../utils/create-context';
-import { pipe } from '../index';
-import { cache } from '../decorators/cache';
-import { BautaJSInstance } from '../types';
+import { createContext } from '../src/utils/create-context';
+import { pipe } from '../src/index';
+import { cache } from '../src/decorators/cache';
+import { BautaJSInstance } from '../src/types';
 import { sleep } from './utils';
 
 describe('cache setup', () => {

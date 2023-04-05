@@ -2,13 +2,13 @@ import { Readable, Writable } from 'stream';
 import httpMocks from 'node-mocks-http';
 import { EventEmitter } from 'events';
 import { ObjectWritableMock } from 'stream-mock';
-import { OperationBuilder } from '../core/operation';
-import { Operation, Route, BautaJSInstance, OpenAPIV3Document, RawContext } from '../types';
+import { OperationBuilder } from '../src/core/operation';
+import { Operation, Route, BautaJSInstance, OpenAPIV3Document, RawContext } from '../src/types';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testSchemaRareCasesJson from './fixtures/test-schema-rare-cases.json';
-import { pipe, BautaJS } from '../index';
-import Parser from '../open-api/parser';
-import { asPromise } from '../decorators/as-promise';
+import { pipe, BautaJS } from '../src/index';
+import Parser from '../src/open-api/parser';
+import { asPromise } from '../src/decorators/as-promise';
 
 describe('operation class tests', () => {
   let route: Route;

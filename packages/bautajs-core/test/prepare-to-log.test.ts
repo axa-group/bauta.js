@@ -1,4 +1,4 @@
-import { prepareToLog } from '../utils/prepare-to-log';
+import { prepareToLog } from '../src/utils/prepare-to-log';
 
 import smallObject from './fixtures/small-object-less-than-3200-size.json';
 

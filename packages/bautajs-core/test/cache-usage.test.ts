@@ -1,7 +1,7 @@
-import { pipe } from '../index';
-import { createContext } from '../utils/create-context';
-import { cache, CacheStepFunction, Normalizer } from '../decorators/cache';
-import { BautaJSInstance } from '../types';
+import { pipe } from '../src/index';
+import { createContext } from '../src/utils/create-context';
+import { cache, CacheStepFunction, Normalizer } from '../src/decorators/cache';
+import { BautaJSInstance } from '../src/types';
 import { sleep } from './utils';
 
 describe('cache decorator usage', () => {

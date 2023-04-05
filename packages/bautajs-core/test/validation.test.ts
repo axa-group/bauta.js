@@ -1,5 +1,5 @@
-import { BautaJS, resolver } from '../index';
-import { Document, RawContext } from '../types';
+import { BautaJS, resolver } from '../src/index';
+import { Document, RawContext } from '../src/types';
 import circularSchema from './fixtures/circular-schema.json';
 import formatSchema from './fixtures/schema-with-format.json';
 import nullableSchema from './fixtures/nullable-schema.json';

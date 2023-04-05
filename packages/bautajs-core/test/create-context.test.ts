@@ -1,5 +1,5 @@
-import { defaultLogger } from '../default-logger';
-import { createContext } from '../utils/create-context';
+import { defaultLogger } from '../src/default-logger';
+import { createContext } from '../src/utils/create-context';
 
 describe('create context tests', () => {
   test('should generate a request id', () => {

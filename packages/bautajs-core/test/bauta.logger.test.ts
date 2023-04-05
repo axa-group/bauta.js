@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import pino from 'pino';
-import { BautaJS } from '../index';
-import { Logger } from '../types';
-import { defaultLogger } from '../default-logger';
+import { BautaJS } from '../src/index';
+import { Logger } from '../src/types';
+import { defaultLogger } from '../src/default-logger';
 
 const validLevels = ['trace', 'info', 'error', 'debug', 'fatal', 'warn'];
 const message = 'This is a general message';

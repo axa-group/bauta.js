@@ -1,6 +1,6 @@
 import fastSafeStringify from 'fast-safe-stringify';
 import path from 'path';
-import { BautaJS, pipe, resolver, OnCancel, Document, CancelablePromise } from '../index';
+import { BautaJS, pipe, resolver, OnCancel, Document, CancelablePromise } from '../src/index';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-versions.json';
 
