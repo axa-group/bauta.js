@@ -29,7 +29,7 @@
     "benchmark-express": "npx concurrently -k -s first \"node ./packages/bautajs-express/benchmark/simple.js\" \"npx autocannon -c 20 -d 5 -p 10 localhost:3000/api/op1\"",
     "benchmark-fastify": "npx concurrently -k -s first \"node ./packages/bautajs-fastify/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:3000/api/op1\"",
     "clean": "turbo run clean && rm -rf node_modules",
-    "lint": "eslint . --ext '.js,.ts'",
+    "lint": "eslint \"*/**/*.{ts,js}\"",
     "test": "turbo run test",
     "release:local": "npm run clean && npm i && npm run test && lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
     "release": "lerna publish --exact --conventional-commits --no-verify-access --no-verify-registry --yes",
