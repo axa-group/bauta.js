@@ -65,6 +65,16 @@
       }
     ],
     "no-promise-executor-return": 0,
-    "class-methods-use-this": "warn"
+    "class-methods-use-this": "warn",
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "pattern": {
+          "js": "never",
+          "ts": "never"
+        }
+      }
+    ]
   }
 }
