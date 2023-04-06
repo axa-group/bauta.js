@@ -62,12 +62,12 @@ describe('bautajs-express-example regressions tests', () => {
   test('GET api/cancel/:number should return a successful request for a number lower than 3', async () => {
     const res = await supertest(app).get(`/api/cancel/2`);
     expect(res.statusCode).toBe(200);
-  }, 5000);
+  });
 
   test('GET api/cancel/:number should return a server error response for a number higher than 3', async () => {
     const res = await supertest(app).get(`/api/cancel/4`);
     expect(res.statusCode).toBe(500);
-  }, 5000);
+  });
 
   test('minimap should create, get all and get by id successfully', async () => {
     const resPost1 = await supertest(app).post('/api/minimap').send({

@@ -70,7 +70,7 @@ describe('bautajs-fastify-example regressions tests', () => {
       url: `/api/cancel/2`
     });
     expect(res.statusCode).toBe(200);
-  }, 5000);
+  });
 
   test('GET api/cancel/:number should return a server error response for a number higher than 3', async () => {
     const res = await fastify.inject({
@@ -78,7 +78,7 @@ describe('bautajs-fastify-example regressions tests', () => {
       url: `/api/cancel/4`
     });
     expect(res.statusCode).toBe(500);
-  }, 5000);
+  });
 
   test('minimap should create, get all and get by id successfully', async () => {
     const resPost1 = await fastify.inject({

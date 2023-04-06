@@ -2,7 +2,7 @@ module.exports = {
   testEnvironment: 'node',
   preset: 'ts-jest',
   testPathIgnorePatterns: ['/node_modules/', '/dist/', '/fixtures/'],
-  testMatch: ['**/?(*.)+(spec|test).ts?(x)'],
+  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)'],
   coverageReporters: ['lcov', 'text'],
   testResultsProcessor: 'jest-sonar-reporter',
   coverageDirectory: './coverage/',
