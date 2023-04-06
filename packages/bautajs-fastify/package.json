@@ -28,7 +28,7 @@
     "middleware"
   ],
   "engines": {
-    "node": ">=14",
+    "node": ">=16",
     "npm": ">=8"
   },
   "license": "SEE LICENSE IN LICENSE.txt",

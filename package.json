@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/axa-group/bauta.js#readme",
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "scripts": {
     "lerna": "lerna",
