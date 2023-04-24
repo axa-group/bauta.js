@@ -56,8 +56,9 @@ jobs:
     needs: publish
     runs-on: 'ubuntu-latest'
     steps:
-      - name: 'Fetch all the tags from origin'
-        run: git fetch --tags origin
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: 'Create GitHub release'
         run: |
           gh release create v${{ inputs.version }} --verify-tag  --target ${{ inputs.branch}} -t 'v${{ inputs.version }}' --generate-notes
