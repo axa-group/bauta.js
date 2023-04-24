@@ -30,7 +30,7 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "lint": "eslint \"*/**/*.{ts,js}\"",
     "test": "turbo run test",
-    "release": "lerna publish --no-changelog --yes",
+    "release": "lerna publish --no-changelog --yes --no-commit-hooks",
     "checkDeps": "npx npm-check-updates -u && npm run lerna exec -- npx npm-check-updates -u",
     "build": "turbo run build",
     "prepare": "husky install"
