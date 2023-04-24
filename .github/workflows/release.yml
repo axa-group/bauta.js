@@ -21,9 +21,14 @@ on:
         required: true
         default: 'main'
         type: string
+      prerelease:
+        description: 'Is this release a prerelease?'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
-  Publish:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -41,17 +46,27 @@ jobs:
         run: npm run lint
       - name: Run tests
         run: npm test
+      - name: Removing package-lock
+        run: rm package-lock.json
       - name: Versioning & Publishing
-        run: npm release ${{ inputs.version }}
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@users.noreply.github.com"
+          npm run release ${{ inputs.version }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
           GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
 
-  Release:
+  release:
+    needs: publish
+    if: |
+      always() && 
+      needs.publish.result == 'success'
     runs-on: 'ubuntu-latest'
     steps:
-      - name: 'Fetch all the tags from origin'
-        run: git fetch --tags origin
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: 'Create GitHub release'
         run: |
           gh release create v${{ inputs.version }} --verify-tag  --target ${{ inputs.branch}} -t 'v${{ inputs.version }}' --generate-notes
