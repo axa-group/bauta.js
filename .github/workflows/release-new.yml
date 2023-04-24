@@ -44,7 +44,10 @@ jobs:
       - name: Removing package-lock
         run: rm package-lock.json
       - name: Versioning & Publishing
-        run: npm run release ${{ inputs.version }}
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@users.noreply.github.com"
+          npm run release ${{ inputs.version }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
           GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
