@@ -33,8 +33,6 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
-      - name: Disabling package-lock generation
-        run: npm config set package-lock false
       - name: Install dependencies
         run: npm i
       - name: Build distributable files
@@ -43,6 +41,8 @@ jobs:
         run: npm run lint
       - name: Run tests
         run: npm test
+      - name: Removing package-lock
+        run: rm package-lock.json
       - name: Versioning & Publishing
         run: npm run release ${{ inputs.version }}
         env:
