@@ -23,7 +23,7 @@ on:
         type: string
 
 jobs:
-  Publish:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -42,12 +42,13 @@ jobs:
       - name: Run tests
         run: npm test
       - name: Versioning & Publishing
-        run: npm release ${{ inputs.version }}
+        run: npm run release ${{ inputs.version }}
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
           GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
 
-  Release:
+  release:
+    needs: publish
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'Fetch all the tags from origin'
