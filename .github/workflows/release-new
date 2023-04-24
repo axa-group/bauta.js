@@ -1,0 +1,59 @@
+# BAUTA.JS RELEASE PROCESS
+# 1) on-demand workflow
+#     1.1) input version semver (X.Y.Z) mandatory
+#     1.2) input branch (main by default)
+# 2) lerna publish x.y.z
+#     2.1) git tag + commit --- chore(release): vX.Y.Z
+#     2.2) NPM publish
+# 3) github release from tag vX.Y.Z on 1.2) branch input
+
+name: Bauta.js Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (semver) to release'
+        required: true
+        type: string
+      branch:
+        description: 'Base branch to release'
+        required: true
+        default: 'main'
+        type: string
+
+jobs:
+  Publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+      - name: Install dependencies
+        run: npm i
+      - name: Build distributable files
+        run: npm run build
+      - name: Run linter
+        run: npm run lint
+      - name: Run tests
+        run: npm test
+      - name: Versioning & Publishing
+        run: npm release ${{ inputs.version }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
+
+  Release:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'Fetch all the tags from origin'
+        run: git fetch --tags origin
+      - name: 'Create GitHub release'
+        run: |
+          gh release create v${{ inputs.version }} --verify-tag  --target ${{ inputs.branch}} -t 'v${{ inputs.version }}' --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
