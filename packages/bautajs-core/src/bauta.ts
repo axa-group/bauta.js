@@ -43,8 +43,10 @@ function prebuildApi(apiDefinition: Document): API {
         })
         .flat(1)
     };
-  } catch (e: any) {
-    throw new Error(`The OpenAPI API definition provided is not valid. Error ${e.message}`);
+  } catch (e) {
+    throw new Error(
+      `The OpenAPI API definition provided is not valid. Error ${(e as Error).message}`
+    );
   }
 }
 
@@ -83,7 +85,7 @@ export class BautaJS implements BautaJSInstance {
 
   public readonly validator: Validator<any>;
 
-  private bootstrapped: boolean = false;
+  private bootstrapped = false;
 
   constructor({
     apiDefinition,
@@ -174,6 +176,7 @@ export class BautaJS implements BautaJSInstance {
     enableResponseValidation: boolean,
     api?: API
   ): Operations {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
 
     function createOperation(operationId: string) {
@@ -230,11 +233,11 @@ export class BautaJS implements BautaJSInstance {
    *
    * const files = requireAll('./my/path/to/datasources/*.js', true, {someVar:123});
    */
-  static requireAll<T>(folder: string | string[], execute: boolean = true, vars?: T) {
+  static requireAll<T>(folder: string | string[], execute = true, vars?: T) {
     const execFiles = (folderPath: string) => {
       const result: any = [];
       fastGlob.sync(folderPath.replace(/\\/g, '/')).forEach((file: string) => {
-        // eslint-disable-next-line global-require, import/no-dynamic-require
+        // eslint-disable-next-line global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
         let data = require(resolve(file));
         if (data.default) {
           data = data.default;

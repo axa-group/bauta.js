@@ -55,7 +55,7 @@ const outgoingErrProto = Object.create(
 export function errSerializer(
   error: RequestError,
   restProviderOptions: RestProviderOptions,
-  isDebugMode: boolean = false
+  isDebugMode = false
 ) {
   const err = Object.create(outgoingErrProto);
   err.responseTime = error.response?.timings?.phases.total;

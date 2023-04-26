@@ -8,7 +8,7 @@ export class ValidationError extends Error implements IValidationError {
 
   public response: any;
 
-  constructor(message: string, errors: LocationError[], statusCode: number = 500, response?: any) {
+  constructor(message: string, errors: LocationError[], statusCode = 500, response?: any) {
     super(message);
     this.name = 'Validation Error';
     this.errors = errors;
