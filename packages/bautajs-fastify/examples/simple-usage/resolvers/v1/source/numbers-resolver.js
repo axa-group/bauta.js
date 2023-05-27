@@ -1,6 +1,5 @@
 const { resolver, step, pipe } = require('@axa/bautajs-core');
 const { exampleRestProviderYear, exampleRestProvider } = require('./numbers-datasource');
-const { catsRestProviderWithHttps } = require('./cats-datasource');
 
 const transformResponse = step(response => {
   return {
@@ -15,6 +14,4 @@ module.exports = resolver(operations => {
   operations.factNumber.setup(pipe(exampleRestProvider(), transformResponse));
 
   operations.factNumber2.setup(pipe(exampleRestProvider(), transformResponse));
-
-  operations.cats.setup(pipe(catsRestProviderWithHttps(), transformResponse));
 });
