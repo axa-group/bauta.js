@@ -7,11 +7,6 @@ import { sleep } from './utils';
 describe('cache decorator usage', () => {
   let myCachePipeline: CacheStepFunction<any, any, any>;
 
-  beforeAll(() => {
-    process.env.LOG_LEVEL = 'debug';
-    process.env.DEBUG = 'bautajs*';
-  });
-
   describe('normalizer using context req param', () => {
     beforeEach(async () => {
       const normalizer: Normalizer<any, any> = (_, ctx) => ctx.data.value;
