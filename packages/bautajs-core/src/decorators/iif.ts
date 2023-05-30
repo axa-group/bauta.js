@@ -30,11 +30,11 @@ import { BautaJSInstance, Context, Pipeline } from '../types';
  *  );
  *
  */
-export function iif<TIn, TOut>(
+export function iif<TIn, TPipelineOut, TElsePipelineOut>(
   condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
-  pipeline: Pipeline.StepFunction<TIn, TOut>,
-  elsePipeline?: Pipeline.StepFunction<TIn, TOut>
-): Pipeline.StepFunction<TIn, TOut> {
+  pipeline: Pipeline.StepFunction<TIn, TPipelineOut>,
+  elsePipeline?: Pipeline.StepFunction<TIn, TElsePipelineOut>
+): Pipeline.StepFunction<TIn, TIn | TPipelineOut | TElsePipelineOut> {
   return (prev, ctx, bautajs) => {
     if (condition(prev, ctx, bautajs) === true) {
       return pipeline(prev, ctx, bautajs);
@@ -45,6 +45,6 @@ export function iif<TIn, TOut>(
     }
 
     // prettier-ignore
-    return prev as unknown as TOut;
+    return prev as unknown as TIn;
   };
 }
