@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-decorator-cache",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "A bautaJS cache decorator",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -29,7 +29,7 @@
     "npm": ">=8"
   },
   "dependencies": {
-    "@axa/bautajs-core": "^2.2.1",
+    "@axa/bautajs-core": "^2.2.2",
     "node-object-hash": "^2.3.10",
     "quick-lru-cjs": "^5.2.1"
   }
