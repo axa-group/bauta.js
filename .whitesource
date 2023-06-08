@@ -1,3 +1,10 @@
 {
-  "settingsInheritedFrom": "axa-group/whitesource-config@main"
+  "settingsInheritedFrom": "axa-group/whitesource-config@main",
+  
+  "remediateSettings": {
+    "extends": [
+       "config:base",
+       "github>mend-toolkit/mend-examples//Repo-Integration/Renovate/smart-merge"
+      ]
+  }
 }
