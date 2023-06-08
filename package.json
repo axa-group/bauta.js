@@ -52,7 +52,7 @@
     "jest-extended": "2.0.0",
     "jest-junit": "13.2.0",
     "jest-sonar-reporter": "^2.0.0",
-    "lerna": "^5.1.5",
+    "lerna": "^6.0.0",
     "nock": "^13.2.7",
     "node-mocks-http": "^1.11.0",
     "pino": "^8.4.2",
