@@ -39,6 +39,7 @@ class MatchBuilder<TIn, TOut> implements Match<TIn, TOut> {
     pipeline: Pipeline.StepFunction<TIn, TOut>;
   }[] = [];
 
+  // eslint-disable-next-line class-methods-use-this
   private otherwisePipeline: Pipeline.StepFunction<TIn, TOut> = () => null as any;
 
   run(value: TIn, ctx: Context, bautajs: BautaJSInstance) {

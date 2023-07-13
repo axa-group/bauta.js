@@ -49,7 +49,7 @@ function buildURL(url: URL) {
 export function reqSerializer(
   options: NormalizedOptions,
   restProviderOptions: RestProviderOptions,
-  isDebugMode: boolean = false
+  isDebugMode = false
 ) {
   const req = Object.create(outgoingReqProto);
   if (options.url) {

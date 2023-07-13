@@ -1,10 +1,11 @@
 {
   "name": "@axa/bautajs-express-example",
-  "version": "2.3.0",
+  "version": "3.0.0-alpha.2",
   "description": "A bautaJS example in express",
   "main": "./server.js",
   "scripts": {
-    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server.js"
+    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -18,13 +19,12 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@axa/bautajs-core": "^2.3.0",
-    "@axa/bautajs-datasource-rest": "^2.3.0",
-    "@axa/bautajs-decorator-cache": "^2.3.0",
-    "@axa/bautajs-express": "^2.3.0",
-    "@hapi/boom": "^10.0.0",
-    "express": "^4.18.1",
-    "pino": "^8.4.2",
-    "pino-pretty": "^9.1.0"
+    "@axa/bautajs-core": "^3.0.0-alpha.2",
+    "@axa/bautajs-datasource-rest": "^3.0.0-alpha.2",
+    "@axa/bautajs-express": "^3.0.0-alpha.2",
+    "@hapi/boom": "^10.0.1",
+    "express": "^4.18.2",
+    "pino": "^8.11.0",
+    "pino-pretty": "^10.0.0"
   }
 }

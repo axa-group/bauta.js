@@ -72,8 +72,7 @@ export function initExpressPino(
   };
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
     const pino = expressPino({
-      // @ts-ignore
-      logger,
+      logger: logger as any,
       genReqId: (req: any) => req.id,
       serializers: {
         req: reqSerializer,
@@ -86,9 +85,8 @@ export function initExpressPino(
     router.use(pino);
     router.use(reqStartMw);
   } else if (opt && opt.enabled === true && opt.options) {
-    // @ts-ignore
     const pino = expressPino({
-      logger,
+      logger: logger as any,
       genReqId: (req: any) => req.id,
       serializers: {
         req: reqSerializer,

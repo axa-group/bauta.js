@@ -30,6 +30,38 @@
         }
       }
     },
+    "/cancel/{number}": {
+      "get": {
+        "summary": "service to test cancel request. Waits number seconds until an answer is given but cancel if number is greather than 10 seconds",
+        "operationId": "cancelRequest",
+        "parameters": [
+          {
+            "name": "number",
+            "in": "path",
+            "description": "The number of seconds to wait",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/randomYear": {
       "get": {
         "summary": "Provides information about a random year",
@@ -179,27 +211,6 @@
         }
       }
     },
-    "/cats": {
-      "get": {
-        "summary": "List all fact cats",
-        "operationId": "cats",
-        "responses": {
-          "200": {
-            "description": "Something!"
-          },
-          "default": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/chuckfacts/{string}": {
       "get": {
         "summary": "get a list of facts related to Chuck Norris",
@@ -293,6 +304,59 @@
       "get": {
         "summary": "get the value from a key",
         "operationId": "getMinimapByKey",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The key of the minimap",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/multiple-path/specific": {
+      "get": {
+        "summary": "Specific endpoint to test path collision and route ordering",
+        "operationId": "multiplePathSpecific",
+        "responses": {
+          "200": {
+            "description": "Something!"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/multiple-path/{key}": {
+      "get": {
+        "summary": "General endpoint to test path collision and route ordering",
+        "operationId": "multiplePathGeneral",
         "parameters": [
           {
             "name": "key",

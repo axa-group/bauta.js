@@ -7,8 +7,12 @@
     "bootstrap": {
       "npmClientArgs": [
         "--no-package-lock"
-      ]
+      ],
+      "version": {
+        "message": "chore(release): %s"
+      }
     }
   },
-  "version": "2.3.0"
+  "useWorkspaces": true,
+  "version": "3.0.0-alpha.2"
 }

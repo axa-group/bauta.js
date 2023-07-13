@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-datasource-rest",
-  "version": "2.3.0",
+  "version": "3.0.0-alpha.2",
   "description": "A bautaJS datasource rest provider",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "tsc": "tsc",
+    "build": "tsc --build",
+    "test": "jest",
     "example": "npx ts-node ./example/simple.ts"
   },
   "repository": {
@@ -26,11 +28,12 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "engines": {
-    "node": ">=14",
+    "node": ">=16",
     "npm": ">=8"
   },
   "dependencies": {
-    "@axa/bautajs-core": "^2.3.0",
+    "@axa/bautajs-core": "^3.0.0-alpha.2",
+    "@axa/bautajs-dev-config": "*",
     "@axa/native-proxy-agent": "^1.0.0",
     "@sindresorhus/is": "^4.6.0",
     "got": "^11.8.5"
