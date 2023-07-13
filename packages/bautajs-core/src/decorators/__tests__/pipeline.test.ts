@@ -39,6 +39,34 @@ describe('pipe tests', () => {
     expect(pipeline(null, ctx, {} as BautaJSInstance)).toStrictEqual(expected);
   });
 
+  test('should allow for up to 16 steps in a pipeline', async () => {
+    const expected = "Let's sing: LA LA LA LA LA LA LA LA LA LA LA LA LA LA LA ";
+    const firstValue = 'LA ';
+    const myStep = (prev: string) => `${prev}${firstValue}`;
+
+    const pipeline = pipe(
+      () => "Let's sing: ",
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep,
+      myStep
+    );
+    const ctx = createContext({});
+
+    expect(pipeline(null, ctx, {} as BautaJSInstance)).toStrictEqual(expected);
+  });
+
   test('should allow pipelines on pipe method', async () => {
     const expected = 'this will be showed';
     const pipeline1 = pipe(() => expected);
