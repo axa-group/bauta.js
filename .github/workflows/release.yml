@@ -45,13 +45,13 @@ jobs:
       - name: Removing package-lock
         run: rm package-lock.json
       - name: Versioning & Publishing
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          GH_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor}}@users.noreply.github.com"
           npm run release ${{ inputs.version }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-          GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
 
   release:
     needs: publish
