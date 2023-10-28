@@ -34,3 +34,5 @@ coverage/
 
 ## Sonar reporter
 test-report.xml
+
+.turbo

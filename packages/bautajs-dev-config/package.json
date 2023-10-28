@@ -1,5 +1,8 @@
 {
   "name": "@axa/bautajs-dev-config",
   "version": "3.0.0",
-  "private": true
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
