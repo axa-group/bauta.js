@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/axa-group/bauta.js#readme",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "scripts": {
     "benchmark-core": "npx concurrently -k -s first \"node ./packages/bautajs-core/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:3000/api/op1\"",
