@@ -18,9 +18,9 @@ If applicable, add screenshots to help explain your problem.
 
 ### Desktop (please complete the following information):\*\*
 
-- OS: [e.g. Linux, MacOSX, Windows 10]
+- OS: [e.g. Linux, MacOSX, Windows 11]
 - fp-toolbox version [e.g. v1.0.0]
-- Node.js version [e.g. v12.14.1]
+- Node.js version [e.g. v20.8.1]
 
 ### Additional context
 

@@ -14,8 +14,8 @@ Bauta.js will deprecate the non-supported Node.js version following the Release 
 
 | Version          | Supported          |
 | ---------------- | ------------------ |
-| Node.js 16.x     | :white_check_mark: |
 | Node.js 18.x     | :white_check_mark: |
+| Node.js 20.x     | :white_check_mark: |
 
 ## Reporting a Vulnerability
 

@@ -28,7 +28,7 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "engines": {
-    "node": ">=16",
+    "node": ">=18",
     "npm": ">=8"
   },
   "dependencies": {

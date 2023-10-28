@@ -1298,7 +1298,8 @@ describe('provider rest', () => {
               code: 'ERR_BODY_PARSE_FAILURE',
               body: 'this is not a json and this will generate a parser error',
               statusCode: 200,
-              message: 'Unexpected token h in JSON at position 1 in "https://pets.com/v1/policies"',
+              message:
+                'Unexpected token \'h\', "this is not"... is not valid JSON in "https://pets.com/v1/policies"',
               name: 'ParseError'
             }),
             datasourceReq: {
@@ -1341,7 +1342,9 @@ describe('provider rest', () => {
         }
 
         await expect(providerThrowsAnError()).rejects.toThrow(
-          new Error('Unexpected token w in JSON at position 0 in "https://pets.com/v1/policies"')
+          new Error(
+            'Unexpected token \'w\', "we force w"... is not valid JSON in "https://pets.com/v1/policies"'
+          )
         );
 
         expect(logger.error).toHaveBeenCalledTimes(1); // We check error logging in another test
@@ -1367,7 +1370,8 @@ describe('provider rest', () => {
           {
             datasourceErr: expect.objectContaining({
               code: 'ERR_BODY_PARSE_FAILURE',
-              message: 'Unexpected token w in JSON at position 0 in "https://pets.com/v1/policies"',
+              message:
+                'Unexpected token \'w\', "we force w"... is not valid JSON in "https://pets.com/v1/policies"',
               name: 'ParseError',
               body: 'we force with this a parserError',
               headers: {},
@@ -1407,7 +1411,9 @@ describe('provider rest', () => {
         }
 
         await expect(providerThrowsAnError()).rejects.toThrow(
-          new Error('Unexpected token < in JSON at position 0 in "https://pets.com/v1/policies"')
+          new Error(
+            'Unexpected token \'<\', "<html><div"... is not valid JSON in "https://pets.com/v1/policies"'
+          )
         );
       });
     });
