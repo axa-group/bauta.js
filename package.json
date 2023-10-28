@@ -76,11 +76,11 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "turbo": "^1.9.3",
-    "typescript": "~5.0.0"
+    "typescript": "~5.2.0"
   },
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-reporter.xml"
   },
-  "packageManager": "npm@9.8.0"
+  "packageManager": "npm@9.9.0"
 }
