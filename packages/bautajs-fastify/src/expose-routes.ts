@@ -41,7 +41,7 @@ function createHandler(operation: Operation) {
     const op = operation.run<{ req: fastify.FastifyRequest; res: fastify.FastifyReply }, any>({
       req: request,
       res: reply,
-      id: request.id || request.headers['x-request-id'],
+      id: (request.id || request.headers['x-request-id']) as string,
       url: request.url,
       log: request.log
     });
