@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-express-example",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0",
   "description": "A bautaJS example in express",
   "main": "./server.js",
   "scripts": {
@@ -19,9 +19,9 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@axa/bautajs-core": "^3.0.0-alpha.2",
-    "@axa/bautajs-datasource-rest": "^3.0.0-alpha.2",
-    "@axa/bautajs-express": "^3.0.0-alpha.2",
+    "@axa/bautajs-core": "^3.0.0",
+    "@axa/bautajs-datasource-rest": "^3.0.0",
+    "@axa/bautajs-express": "^3.0.0",
     "@hapi/boom": "^10.0.1",
     "express": "^4.18.2",
     "pino": "^8.11.0",
