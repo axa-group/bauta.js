@@ -1,6 +1,5 @@
 const { getRequest } = require('@axa/bautajs-fastify');
-const { pipe, resolver } = require('@axa/bautajs-core');
-const { cache } = require('@axa/bautajs-decorator-cache');
+const { cache, pipe, resolver } = require('@axa/bautajs-core');
 const { chuckProvider } = require('../datasources/chuck-datasource');
 
 const normalizer = (_, ctx) => {

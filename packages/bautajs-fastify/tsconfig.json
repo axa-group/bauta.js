@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "@axa/bautajs-dev-config/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist"

@@ -24,17 +24,17 @@ export class OperationBuilder implements Operation {
 
   public schema?: OpenAPI.Operation;
 
-  public deprecated: boolean = false;
+  public deprecated = false;
 
-  public requestValidationEnabled: boolean = true;
+  public requestValidationEnabled = true;
 
-  public responseValidationEnabled: boolean = false;
+  public responseValidationEnabled = false;
 
   public handler: Pipeline.StepFunction<any, any>;
 
   private private?: boolean;
 
-  private setupDone: boolean = false;
+  private setupDone = false;
 
   private validator?: OperationValidators;
 

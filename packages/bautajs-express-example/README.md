@@ -4,6 +4,13 @@
 - This project example purpose is to showcase main features using simple examples. 
 - This project example **does not** intend to show good practices using Node.js or security practices at all. Please be sure you follow security good practices on your Node.js API (i.e. adding [helmet](https://www.npmjs.com/package/helmet)).
 
+## How to start
+
+- It is recommented that you are using node v18.
+- `npm install` from the root project of the monorepo
+- enter into `packages/bautajs-express-example` folder 
+- run npm script `npm run start`
+
 ## List of exposed Services
 
 - GET `/api/articles`
@@ -27,6 +34,11 @@
   - Returns a string with a random fact from the input number
 - GET `api/factNumber2/{number}`
   - Returns an object with a random fact from the input number
+- GET `api/multiple-path/{key}`
+- GET `api/multiple-path/specific`
+  - These two endpoints help understand how the route ordering works
+- GET `api/cancel/{number}`
+  - Returns a string if number is less than 10 seconds. Aborts after 10 seconds in the rest of the cases.
 
 
 ## Custom Logger example
@@ -51,8 +63,7 @@ With this change it a custom logger, defined in custom-logger-bauta.js, is used 
 
 ### Production
  - [@axa/bautajs-core@1.0.0](https://github.com/axa-group/bauta.js) - MIT*
- - [@axa/bautajs-datasource-rest@1.0.0](https://github.com/axa-group/bauta.js) - MIT*
- - [@axa/bautajs-decorator-cache@1.0.0](https://github.com/axa-group/bauta.js) - MIT*
+ - [@axa/bautajs-datasource-rest@1.0.0](https://github.com/axa-group/bauta.js) - MIT* 
  - [@axa/bautajs-express@1.0.0](https://github.com/axa-group/bauta.js) - MIT*
  - [@hapi/boom@10.0.0](https://github.com/hapijs/boom) - BSD-3-Clause
  - [express@4.18.1](https://github.com/expressjs/express) - MIT

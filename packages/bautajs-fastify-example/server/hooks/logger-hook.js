@@ -1,6 +1,6 @@
 function logRequest(request, reply, done) {
   // eslint-disable-next-line no-console
-  console.log(`this would be a logRequest: ${request.url}`);
+  request.log.info(`logRequest: ${request.url}`);
   return done();
 }
 

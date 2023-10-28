@@ -28,21 +28,25 @@ function compose<T, R>(
 export function pipe<ValueType, ReturnType>(
   f1: Pipeline.StepFunction<ValueType, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 export function pipe<ValueType, ResultValue1, ReturnType>(
   f1: Pipeline.StepFunction<ValueType, ResultValue1>,
   f2: Pipeline.StepFunction<ResultValue1, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 export function pipe<ValueType, ResultValue1, ResultValue2, ReturnType>(
   f1: Pipeline.StepFunction<ValueType, ResultValue1>,
   f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
   f3: Pipeline.StepFunction<ResultValue2, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 export function pipe<ValueType, ResultValue1, ResultValue2, ResultValue3, ReturnType>(
   f1: Pipeline.StepFunction<ValueType, ResultValue1>,
   f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
   f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
   f4: Pipeline.StepFunction<ResultValue3, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 export function pipe<ValueType, ResultValue1, ResultValue2, ResultValue3, ResultValue4, ReturnType>(
   f1: Pipeline.StepFunction<ValueType, ResultValue1>,
   f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
@@ -50,6 +54,7 @@ export function pipe<ValueType, ResultValue1, ResultValue2, ResultValue3, Result
   f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
   f5: Pipeline.StepFunction<ResultValue4, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 export function pipe<
   ValueType,
   ResultValue1,
@@ -66,6 +71,7 @@ export function pipe<
   f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
   f6: Pipeline.StepFunction<ResultValue5, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 export function pipe<
   ValueType,
   ResultValue1,
@@ -84,6 +90,7 @@ export function pipe<
   f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
   f7: Pipeline.StepFunction<ResultValue6, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 export function pipe<
   ValueType,
   ResultValue1,
@@ -104,6 +111,7 @@ export function pipe<
   f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
   f8: Pipeline.StepFunction<ResultValue7, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 export function pipe<
   ValueType,
   ResultValue1,
@@ -127,6 +135,252 @@ export function pipe<
   f9: Pipeline.StepFunction<ResultValue8, ReturnType>
 ): Pipeline.PipelineFunction<ValueType, ReturnType>;
 
+export function pipe<
+  ValueType,
+  ResultValue1,
+  ResultValue2,
+  ResultValue3,
+  ResultValue4,
+  ResultValue5,
+  ResultValue6,
+  ResultValue7,
+  ResultValue8,
+  ResultValue9,
+  ReturnType
+>(
+  f1: Pipeline.StepFunction<ValueType, ResultValue1>,
+  f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
+  f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
+  f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
+  f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
+  f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
+  f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
+  f8: Pipeline.StepFunction<ResultValue7, ResultValue8>,
+  f9: Pipeline.StepFunction<ResultValue8, ResultValue9>,
+  f10: Pipeline.StepFunction<ResultValue9, ReturnType>
+): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
+export function pipe<
+  ValueType,
+  ResultValue1,
+  ResultValue2,
+  ResultValue3,
+  ResultValue4,
+  ResultValue5,
+  ResultValue6,
+  ResultValue7,
+  ResultValue8,
+  ResultValue9,
+  ResultValue10,
+  ReturnType
+>(
+  f1: Pipeline.StepFunction<ValueType, ResultValue1>,
+  f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
+  f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
+  f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
+  f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
+  f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
+  f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
+  f8: Pipeline.StepFunction<ResultValue7, ResultValue8>,
+  f9: Pipeline.StepFunction<ResultValue8, ResultValue9>,
+  f10: Pipeline.StepFunction<ResultValue9, ResultValue10>,
+  f11: Pipeline.StepFunction<ResultValue10, ReturnType>
+): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
+export function pipe<
+  ValueType,
+  ResultValue1,
+  ResultValue2,
+  ResultValue3,
+  ResultValue4,
+  ResultValue5,
+  ResultValue6,
+  ResultValue7,
+  ResultValue8,
+  ResultValue9,
+  ResultValue10,
+  ResultValue11,
+  ReturnType
+>(
+  f1: Pipeline.StepFunction<ValueType, ResultValue1>,
+  f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
+  f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
+  f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
+  f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
+  f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
+  f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
+  f8: Pipeline.StepFunction<ResultValue7, ResultValue8>,
+  f9: Pipeline.StepFunction<ResultValue8, ResultValue9>,
+  f10: Pipeline.StepFunction<ResultValue9, ResultValue10>,
+  f11: Pipeline.StepFunction<ResultValue10, ResultValue11>,
+  f12: Pipeline.StepFunction<ResultValue11, ReturnType>
+): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
+export function pipe<
+  ValueType,
+  ResultValue1,
+  ResultValue2,
+  ResultValue3,
+  ResultValue4,
+  ResultValue5,
+  ResultValue6,
+  ResultValue7,
+  ResultValue8,
+  ResultValue9,
+  ResultValue10,
+  ResultValue11,
+  ReturnType
+>(
+  f1: Pipeline.StepFunction<ValueType, ResultValue1>,
+  f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
+  f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
+  f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
+  f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
+  f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
+  f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
+  f8: Pipeline.StepFunction<ResultValue7, ResultValue8>,
+  f9: Pipeline.StepFunction<ResultValue8, ResultValue9>,
+  f10: Pipeline.StepFunction<ResultValue9, ResultValue10>,
+  f11: Pipeline.StepFunction<ResultValue10, ResultValue11>,
+  f12: Pipeline.StepFunction<ResultValue11, ReturnType>
+): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
+export function pipe<
+  ValueType,
+  ResultValue1,
+  ResultValue2,
+  ResultValue3,
+  ResultValue4,
+  ResultValue5,
+  ResultValue6,
+  ResultValue7,
+  ResultValue8,
+  ResultValue9,
+  ResultValue10,
+  ResultValue11,
+  ResultValue12,
+  ReturnType
+>(
+  f1: Pipeline.StepFunction<ValueType, ResultValue1>,
+  f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
+  f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
+  f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
+  f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
+  f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
+  f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
+  f8: Pipeline.StepFunction<ResultValue7, ResultValue8>,
+  f9: Pipeline.StepFunction<ResultValue8, ResultValue9>,
+  f10: Pipeline.StepFunction<ResultValue9, ResultValue10>,
+  f11: Pipeline.StepFunction<ResultValue10, ResultValue11>,
+  f12: Pipeline.StepFunction<ResultValue11, ResultValue12>,
+  f13: Pipeline.StepFunction<ResultValue12, ReturnType>
+): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
+export function pipe<
+  ValueType,
+  ResultValue1,
+  ResultValue2,
+  ResultValue3,
+  ResultValue4,
+  ResultValue5,
+  ResultValue6,
+  ResultValue7,
+  ResultValue8,
+  ResultValue9,
+  ResultValue10,
+  ResultValue11,
+  ResultValue12,
+  ResultValue13,
+  ReturnType
+>(
+  f1: Pipeline.StepFunction<ValueType, ResultValue1>,
+  f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
+  f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
+  f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
+  f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
+  f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
+  f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
+  f8: Pipeline.StepFunction<ResultValue7, ResultValue8>,
+  f9: Pipeline.StepFunction<ResultValue8, ResultValue9>,
+  f10: Pipeline.StepFunction<ResultValue9, ResultValue10>,
+  f11: Pipeline.StepFunction<ResultValue10, ResultValue11>,
+  f12: Pipeline.StepFunction<ResultValue11, ResultValue12>,
+  f13: Pipeline.StepFunction<ResultValue12, ResultValue13>,
+  f14: Pipeline.StepFunction<ResultValue13, ReturnType>
+): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
+export function pipe<
+  ValueType,
+  ResultValue1,
+  ResultValue2,
+  ResultValue3,
+  ResultValue4,
+  ResultValue5,
+  ResultValue6,
+  ResultValue7,
+  ResultValue8,
+  ResultValue9,
+  ResultValue10,
+  ResultValue11,
+  ResultValue12,
+  ResultValue13,
+  ResultValue14,
+  ReturnType
+>(
+  f1: Pipeline.StepFunction<ValueType, ResultValue1>,
+  f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
+  f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
+  f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
+  f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
+  f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
+  f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
+  f8: Pipeline.StepFunction<ResultValue7, ResultValue8>,
+  f9: Pipeline.StepFunction<ResultValue8, ResultValue9>,
+  f10: Pipeline.StepFunction<ResultValue9, ResultValue10>,
+  f11: Pipeline.StepFunction<ResultValue10, ResultValue11>,
+  f12: Pipeline.StepFunction<ResultValue11, ResultValue12>,
+  f13: Pipeline.StepFunction<ResultValue12, ResultValue13>,
+  f14: Pipeline.StepFunction<ResultValue13, ResultValue14>,
+  f15: Pipeline.StepFunction<ResultValue14, ReturnType>
+): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
+export function pipe<
+  ValueType,
+  ResultValue1,
+  ResultValue2,
+  ResultValue3,
+  ResultValue4,
+  ResultValue5,
+  ResultValue6,
+  ResultValue7,
+  ResultValue8,
+  ResultValue9,
+  ResultValue10,
+  ResultValue11,
+  ResultValue12,
+  ResultValue13,
+  ResultValue14,
+  ResultValue15,
+  ReturnType
+>(
+  f1: Pipeline.StepFunction<ValueType, ResultValue1>,
+  f2: Pipeline.StepFunction<ResultValue1, ResultValue2>,
+  f3: Pipeline.StepFunction<ResultValue2, ResultValue3>,
+  f4: Pipeline.StepFunction<ResultValue3, ResultValue4>,
+  f5: Pipeline.StepFunction<ResultValue4, ResultValue5>,
+  f6: Pipeline.StepFunction<ResultValue5, ResultValue6>,
+  f7: Pipeline.StepFunction<ResultValue6, ResultValue7>,
+  f8: Pipeline.StepFunction<ResultValue7, ResultValue8>,
+  f9: Pipeline.StepFunction<ResultValue8, ResultValue9>,
+  f10: Pipeline.StepFunction<ResultValue9, ResultValue10>,
+  f11: Pipeline.StepFunction<ResultValue10, ResultValue11>,
+  f12: Pipeline.StepFunction<ResultValue11, ResultValue12>,
+  f13: Pipeline.StepFunction<ResultValue12, ResultValue13>,
+  f14: Pipeline.StepFunction<ResultValue13, ResultValue14>,
+  f15: Pipeline.StepFunction<ResultValue14, ResultValue15>,
+  f16: Pipeline.StepFunction<ResultValue15, ReturnType>
+): Pipeline.PipelineFunction<ValueType, ReturnType>;
+
 /**
  * Create a pipeline of Pipeline.StepFunctions executing one after the other.
  * @export
@@ -146,7 +400,7 @@ export function pipe<
 export function pipe<T, R>(
   ...functions: Array<Pipeline.StepFunction<T, R>>
 ): Pipeline.PipelineFunction<T, R> {
-  if (functions.length === 0 || !functions.every((fn: Function) => typeof fn === 'function')) {
+  if (functions.length === 0 || !functions.every(fn => typeof fn === 'function')) {
     throw new Error('A Pipeline.StepFunction must be a function.');
   }
 

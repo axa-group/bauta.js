@@ -1,24 +1,70 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+# BAUTA.JS RELEASE PROCESS
+# 1) on-demand workflow
+#     1.1) input version semver (X.Y.Z) mandatory
+#     1.2) input branch (main by default)
+# 2) lerna publish x.y.z
+#     2.1) git tag + commit --- chore(release): vX.Y.Z
+#     2.2) NPM publish
+# 3) github release from tag vX.Y.Z on 1.2) branch input
 
-name: Publish npm version when new GitHub release
+name: Bauta.js Release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (semver) to release'
+        required: true
+        type: string
+      branch:
+        description: 'Base branch to release'
+        required: true
+        default: 'main'
+        type: string
 
 jobs:
-  publish-npm:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
-      - run: npm i
-      - run: npm run build
-      - run: npm test
-      - run: npm run release:from-package
+      - name: Install dependencies
+        run: npm i
+      - name: Build distributable files
+        run: npm run build
+      - name: Run linter
+        run: npm run lint
+      - name: Run tests
+        run: npm test
+      - name: Removing package-lock
+        run: rm package-lock.json
+      - name: Versioning & Publishing
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          GH_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@users.noreply.github.com"
+          npm run release ${{ inputs.version }}
+
+  release:
+    needs: publish
+    if: |
+      always() && 
+      needs.publish.result == 'success'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'Create GitHub release'
+        run: |
+          gh release create v${{ inputs.version }} --verify-tag  --target ${{ inputs.branch}} -t 'v${{ inputs.version }}' --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
