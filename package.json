@@ -82,5 +82,5 @@
     "reportPath": "coverage",
     "reportFile": "test-reporter.xml"
   },
-  "packageManager": "npm@9.9.0"
+  "packageManager": "npm@9.9.2"
 }
