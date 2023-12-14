@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-fastify",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A bautaJS fastify plugin. Allows auto exposing the bautaJS operations.",
   "main": "dist",
   "types": "dist",
