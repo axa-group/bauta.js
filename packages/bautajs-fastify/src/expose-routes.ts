@@ -62,8 +62,6 @@ function createHandler(operation: Operation) {
       if (reply.sent || reply.raw.headersSent || reply.raw.finished) {
         // In case reply was sent by reply.raw
         reply.hijack();
-        // eslint-disable-next-line no-param-reassign
-        reply.sent = true;
         return {};
       }
 
