@@ -10,7 +10,8 @@ import {
   Logger,
   Operations,
   BasicOperation,
-  Validator
+  Validator,
+  DocumentParsed
 } from './types';
 import { isLoggerValid } from './utils/logger-validator';
 import Parser from './open-api/parser';
@@ -50,6 +51,8 @@ function prebuildApi(apiDefinition: Document): API {
   }
 }
 
+const myCachedApis: { [key: string]: DocumentParsed } = {};
+
 /**
  *
  * @export
@@ -87,6 +90,8 @@ export class BautaJS implements BautaJSInstance {
 
   private bootstrapped = false;
 
+  private useApiDefinitionCache = false;
+
   constructor({
     apiDefinition,
     staticConfig,
@@ -96,7 +101,8 @@ export class BautaJS implements BautaJSInstance {
     customValidationFormats,
     resolversPath,
     resolvers,
-    validatorOptions
+    validatorOptions,
+    testOptions
   }: BautaJSOptions = {}) {
     const api = apiDefinition ? prebuildApi(apiDefinition) : undefined;
     let responseValidation = false;
@@ -104,6 +110,7 @@ export class BautaJS implements BautaJSInstance {
 
     this.apiDefinition = apiDefinition;
     this.staticConfig = staticConfig;
+    this.useApiDefinitionCache = !!testOptions?.useApiDefinitionCache;
 
     this.logger = logger || defaultLogger('@axa/bautajs-core');
     if (!isLoggerValid(this.logger)) {
@@ -125,12 +132,13 @@ export class BautaJS implements BautaJSInstance {
 
     // Load custom resolvers and operations modifiers
     if (resolvers) {
-      resolvers.forEach(resolver => {
+      const myResolvers = testOptions?.useTestResolvers || resolvers;
+      myResolvers.forEach(resolver => {
         resolver(this.operations);
       });
     } else {
       BautaJS.requireAll<[Operations]>(
-        resolversPath || './server/resolvers/**/*resolver.js',
+        testOptions?.useTestResolverPath || resolversPath || './server/resolvers/**/*resolver.js',
         true,
         [this.operations]
       );
@@ -141,9 +149,23 @@ export class BautaJS implements BautaJSInstance {
     if (this.bootstrapped === true) {
       throw new Error('The instance has already being bootstrapped.');
     }
+
     if (this.apiDefinition) {
+      const apiDefinitionName = `${this.apiDefinition.info.title} ${this.apiDefinition.info.version}`;
+
       const parser = new Parser(this.logger);
-      const parsedApiDefinition = await parser.asyncParse(this.apiDefinition);
+      let parsedApiDefinition;
+
+      if (!this.useApiDefinitionCache) {
+        parsedApiDefinition = await parser.asyncParse(this.apiDefinition);
+      } else {
+        if (!myCachedApis[apiDefinitionName]) {
+          parsedApiDefinition = await parser.asyncParse(this.apiDefinition);
+          myCachedApis[apiDefinitionName] = parsedApiDefinition;
+        }
+        parsedApiDefinition = myCachedApis[apiDefinitionName];
+      }
+
       parsedApiDefinition.routes.forEach(route => {
         if (Object.prototype.hasOwnProperty.call(this.operations, route.operationId)) {
           this.operations[route.operationId].addRoute(route);

@@ -142,6 +142,26 @@ export interface Logger {
   level?: string | number | (() => number | string);
 }
 
+/**
+ * These options are only used in test context when we have bauta re-instantianted a lot of times
+ */
+export interface TestOptions {
+  /**
+   * uses an internal cache at the api definition level, when true checks if the api has already been parsed and is present in the cache
+   */
+  useApiDefinitionCache?: boolean;
+
+  /**
+   * uses a resolver for an specific test. this is used to limit the resolvers to load in a test.
+   * instead of loading all resolvers of the entire service you can limit to one.
+   * for design it is limited to a single string and for maintenance purposes if your test is
+   *  so complex that has more than one resolver path you should not use this option
+   */
+  useTestResolverPath?: string;
+
+  useTestResolvers?: Resolver[];
+}
+
 // BautaJS
 export interface BautaJSOptions {
   /**
@@ -211,6 +231,8 @@ export interface BautaJSOptions {
    * @memberof BautaJSOptions
    */
   readonly validatorOptions?: Ajv.Options;
+
+  testOptions?: TestOptions;
 }
 
 export interface BautaJSInstance {
