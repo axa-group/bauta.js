@@ -76,7 +76,8 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "turbo": "^1.9.3",
-    "typescript": "~5.2.0"
+    "typescript": "~5.2.0",
+    "qs": "^6.11.2"  
   },
   "jestSonar": {
     "reportPath": "coverage",

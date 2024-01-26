@@ -12,7 +12,9 @@ function getQueryParamStep(_prev, ctx) {
 
   const { chickenIds } = req.query;
 
-  return `This is the general text for requests and now we are receiving: ${chickenIds}`;
+  return `This is the general text for requests and now we are receiving: ${JSON.stringify(
+    chickenIds
+  )}`;
 }
 
 module.exports = resolver(operations => {
