@@ -75,6 +75,15 @@ Additionally, it allow to specify againts what HTTPS response status code you wa
   });
 ```
 
+### Request validation flow
+
+Bauta.js delegates into the AJV validator the validation of the schemas. This may be done directly or through the server application. Thus, the behaviour of the request schema validation depends on the AJV options that are exposed to Bauta.js constructor through the `validatorOptions` field.
+
+You may check details about this options [in the AJV documentation page](https://ajv.js.org/options.html#options-to-modify-validated-data). 
+
+If you have reached this page because you are having troubling during the schema validation phase, it may be interesting checking this [troubleshooting guide during schema validation](./guides/troubleshooting-schema-validation-issues.md)
+
+
 ### Response validation flow
 
 #### HTTP status code 2xx
