@@ -83,6 +83,15 @@ You may check details about this options [in the AJV documentation page](https:/
 
 If you have reached this page because you are having troubling during the schema validation phase, it may be interesting checking this [troubleshooting guide during schema validation](./guides/troubleshooting-schema-validation-issues.md)
 
+#### Side note about request parsing
+
+While this section involves request validation, it is important to note that before validation, the request has to be parsed. This applies to entire bodies in a PUT/POST request or the url's parameters in any request.
+
+Bauta.js does not parse anything because this is delegated to the server instance used by Bauta.js (currently Express or Fastify). This means that to adapt the request parsing to your needs you will have to check the Server documentation to check how you can do it so.
+
+An archetypical example would be query strings as array using comma separated values. This is not supported out of the box by the query parser used by node and thus, you would need to make modifications to the server instance used by Bauta.js before initializing the Bauta.js instance.
+
+The conclusion of this section is that if you have issues when parsing the request, you will have to check the documentation of the Server instance to see how you can add a custom query parser that meets your needs.
 
 ### Response validation flow
 
