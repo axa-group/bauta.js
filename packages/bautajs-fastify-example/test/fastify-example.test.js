@@ -1,6 +1,5 @@
 const Fastify = require('fastify');
 const nock = require('nock');
-const qs = require('qs');
 
 const { registerFastifyServer } = require('../registrator');
 
