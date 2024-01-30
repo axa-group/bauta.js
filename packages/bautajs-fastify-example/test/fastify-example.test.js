@@ -220,34 +220,3 @@ describe('bautajs-fastify-example regressions tests', () => {
     });
   });
 });
-
-describe('bautajs-fastify-example with custom query string parser', () => {
-  let fastify;
-  beforeAll(async () => {
-    nock.disableNetConnect();
-    fastify = Fastify({ logger: true, querystringParser: str => qs.parse(str, { comma: true }) });
-    await registerFastifyServer(fastify);
-  });
-
-  afterEach(() => {});
-
-  afterAll(() => {
-    nock.enableNetConnect();
-    nock.cleanAll();
-    fastify.close();
-  });
-
-  test('GET api/array-query-param-csv processes elements sepparated by commas', async () => {
-    const chickenId = 'elliot';
-    const chickenId2 = 'jeanne';
-
-    const res = await fastify.inject({
-      method: 'GET',
-      url: `/api/array-query-param?chickenIds=${chickenId},${chickenId2}`
-    });
-    expect(res.statusCode).toBe(200);
-    expect(JSON.parse(res.body)).toEqual({
-      message: `This is the general text for requests and now we are receiving: ["${chickenId}","${chickenId2}"]`
-    });
-  });
-});

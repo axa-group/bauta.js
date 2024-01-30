@@ -22,9 +22,4 @@ module.exports = resolver(operations => {
     .validateRequest(true)
     .validateResponse(false)
     .setup(pipe(getQueryParamStep, transformResponse));
-
-  operations.queryParamAsArrayCsv
-    .validateRequest(true)
-    .validateResponse(false)
-    .setup(pipe(getQueryParamStep, transformResponse));
 });

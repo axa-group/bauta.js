@@ -422,44 +422,6 @@
           }
         }
       }
-    },
-    "/array-query-param-csv" :{
-      "get": {
-        "operationId": "queryParamAsArrayCsv",
-        "summary": "Generates an array with all the input query params",
-        "parameters": [
-          {
-            "name": "chickenIds",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "minItems": 1,
-              "maxItems": 1000
-            },
-            "style": "form",
-            "explode": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Something!"
-          },
-          "default": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
