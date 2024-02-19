@@ -14,7 +14,10 @@ async function registerFastifyServer(fastify) {
       staticConfig: {
         someVar: 2
       },
-      strictResponseSerialization: false
+      strictResponseSerialization: false,
+      validatorOptions: {
+        coerceTypes: 'array'
+      }
     })
     .after(err => {
       if (err) {

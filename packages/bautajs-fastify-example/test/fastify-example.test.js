@@ -190,4 +190,32 @@ describe('bautajs-fastify-example regressions tests', () => {
     expect(res.statusCode).toBe(200);
     expect(nock.isDone()).toBe(true);
   });
+
+  test('GET api/array-query-param should work even with a single element', async () => {
+    const chickenId = 'elliot';
+
+    const res = await fastify.inject({
+      method: 'GET',
+      url: `/api/array-query-param?chickenIds=${chickenId}`
+    });
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body)).toEqual({
+      message: `This is the general text for requests and now we are receiving: ["${chickenId}"]`
+    });
+  });
+
+  test('GET api/array-query-param-csv is not capable of parsing comma separated values with default node query string parser', async () => {
+    const chickenId = 'elliot';
+    const chickenId2 = 'jeanne';
+
+    const res = await fastify.inject({
+      method: 'GET',
+      url: `/api/array-query-param?chickenIds=${chickenId},${chickenId2}`
+    });
+    expect(res.statusCode).toBe(200);
+    // Note here that we are not parsing both ids as a TWO elements but we are parsing everything as a single element
+    expect(JSON.parse(res.body)).toEqual({
+      message: `This is the general text for requests and now we are receiving: ["${chickenId},${chickenId2}"]`
+    });
+  });
 });

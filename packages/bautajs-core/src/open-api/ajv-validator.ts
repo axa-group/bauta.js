@@ -13,6 +13,15 @@ import {
 } from './validator-utils';
 import { AJVOperationValidators } from './operation-validators';
 
+const VALIDATOR_DEFAULT_OPTIONS: Options = {
+  logger: false,
+  strict: false,
+  coerceTypes: false,
+  useDefaults: true,
+  removeAdditional: true,
+  allErrors: true
+} as const;
+
 export class AjvValidator implements Validator<ValidateFunction> {
   private ajv: Ajv;
 
@@ -29,12 +38,7 @@ export class AjvValidator implements Validator<ValidateFunction> {
 
   private static buildAjv(validatorOptions: Options = {}) {
     return new Ajv({
-      logger: false,
-      strict: false,
-      coerceTypes: false,
-      useDefaults: true,
-      removeAdditional: true,
-      allErrors: true,
+      ...VALIDATOR_DEFAULT_OPTIONS,
       ...validatorOptions
     });
   }

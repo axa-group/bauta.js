@@ -31,6 +31,18 @@ function createHandler(operation: Operation) {
     let response;
     // Convert the fastify validation error to the bautajs validation error format
     if (request.validationError) {
+      // This error is intentionally logged as trace because for most of the errors is an expected error
+      request.log.trace(
+        {
+          error: {
+            name: request.validationError.name,
+            message: request.validationError.message,
+            stack: request.validationError.stack
+          }
+        },
+        `Fastify schema validation error found on the request`
+      );
+
       reply.status(400);
       throw new ValidationError(
         'The request was not valid',
