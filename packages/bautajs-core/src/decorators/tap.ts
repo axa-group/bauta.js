@@ -157,8 +157,6 @@ export function tap<
  * @param {stepFunctions: Array<Pipeline.StepFunction<T, R>>} stepFunctions - The step functions to execute
  * @returns {Pipeline.StepFunction<TIn, TIn>}
  *
- * @example
- *
  *
  */
 
