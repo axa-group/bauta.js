@@ -74,7 +74,7 @@ jobs:
           echo "IS_MALWARE_DETECTED=$is_malware_detected" >> $GITHUB_ENV
 
       - name: Upload ClamAV scan results to an artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ClamAV_${{ github.sha }}
           path: scan.json
