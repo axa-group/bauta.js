@@ -1,4 +1,15 @@
 import { BautaJSInstance, Context, Pipeline } from '../types';
+export function iif<TIn, TPipelineOut>(
+  condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
+  pipeline: Pipeline.StepFunction<TIn, TPipelineOut>
+): Pipeline.StepFunction<TIn, TIn | TPipelineOut>;
+
+export function iif<TIn, TPipelineOut, TElsePipelineOut>(
+  condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
+  pipeline: Pipeline.StepFunction<TIn, TPipelineOut>,
+  elsePipeline: Pipeline.StepFunction<TIn, TElsePipelineOut>
+): Pipeline.StepFunction<TIn, TPipelineOut | TElsePipelineOut>;
+
 /**
  * Decorator that allows to execute given pipeline conditionally. It accepts the condition step function and pipeline.
  * If the condition step function will be evaluated to truthy value the pipeline will be executed.
