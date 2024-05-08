@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe, step } from '../..';
-import { tap } from '../tap';
+import { BautaJSInstance, createContext, pipe, step } from '../../index.js';
+import { tap } from '../tap.js';
 
 describe('tap decorator', () => {
   test('should perform the current step action but return the previous step value', async () => {

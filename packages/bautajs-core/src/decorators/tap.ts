@@ -1,6 +1,6 @@
-import { GenericError, Pipeline, Context, BautaJSInstance } from '../types';
-import { isPromise } from '../utils/is-promise';
-import { compose } from './pipeline';
+import { GenericError, Pipeline, Context, BautaJSInstance } from '../types.js';
+import { isPromise } from '../utils/is-promise.js';
+import { compose } from './pipeline.js';
 
 const defaultErrorHandler: Pipeline.CatchError<GenericError> = e => {
   throw e;

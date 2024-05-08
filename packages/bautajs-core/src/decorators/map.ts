@@ -1,4 +1,4 @@
-import { BautaJSInstance, Context } from '../types';
+import { BautaJSInstance, Context } from '../types.js';
 /**
  * Decorator that allows to loop over the given selected array and map each item.
  *

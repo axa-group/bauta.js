@@ -1,13 +1,13 @@
 import * as Ajv from 'ajv';
-import { Dictionary, LocationError, OperationValidators } from '../types';
-import { ValidationError } from '../core/validation-error';
+import { Dictionary, LocationError, OperationValidators } from '../types.js';
+import { ValidationError } from '../core/validation-error.js';
 import {
   bodySchema,
   querystringSchema,
   paramsSchema,
   responseSchema,
   headersSchema
-} from './validator-utils';
+} from './validator-utils.js';
 
 function formatLocationErrors(
   errors?: Ajv.ErrorObject[] | null,

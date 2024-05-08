@@ -1,8 +1,8 @@
 import fastGlob from 'fast-glob';
 import { resolve } from 'path';
 import { OpenAPIV2 } from 'openapi-types';
-import { OperationBuilder } from './core/operation';
-import { defaultLogger } from './default-logger';
+import { OperationBuilder } from './core/operation.js';
+import { defaultLogger } from './default-logger.js';
 import {
   BautaJSInstance,
   BautaJSOptions,
@@ -11,11 +11,11 @@ import {
   Operations,
   BasicOperation,
   Validator
-} from './types';
-import { isLoggerValid } from './utils/logger-validator';
-import Parser from './open-api/parser';
-import { decorate } from './utils/decorate';
-import { AjvValidator } from './open-api/ajv-validator';
+} from './types.js';
+import { isLoggerValid } from './utils/logger-validator.js';
+import Parser from './open-api/parser.js';
+import { decorate } from './utils/decorate.js';
+import { AjvValidator } from './open-api/ajv-validator.js';
 
 interface API {
   version: string;

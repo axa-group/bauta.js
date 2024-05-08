@@ -1,6 +1,6 @@
 import nodeObjectHash from 'node-object-hash';
 import QuickLRU, { Options } from 'quick-lru-cjs';
-import { BautaJSInstance, Context, Pipeline } from '../types';
+import { BautaJSInstance, Context, Pipeline } from '../types.js';
 
 export interface Normalizer<TIn, CacheKey> {
   (prev: TIn, ctx: Context, bautajs: BautaJSInstance): CacheKey;

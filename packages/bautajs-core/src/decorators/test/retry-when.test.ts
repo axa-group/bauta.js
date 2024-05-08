@@ -1,4 +1,4 @@
-import { BautaJSInstance, createContext, retryWhen } from '../..';
+import { BautaJSInstance, createContext, retryWhen } from '../../index.js';
 
 describe('retryWhen decorator', () => {
   test('should execute pipeline until the condition is meet with default options', async () => {

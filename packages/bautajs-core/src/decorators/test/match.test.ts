@@ -1,7 +1,7 @@
-import { pipe } from '../pipeline';
-import { match } from '../match';
-import { createContext } from '../../utils/create-context';
-import { BautaJSInstance } from '../..';
+import { pipe } from '../pipeline.js';
+import { match } from '../match.js';
+import { createContext } from '../../utils/create-context.js';
+import { BautaJSInstance } from '../../index.js';
 
 describe('match decorator', () => {
   test('should select the pipeline execution depending on the condition', () => {

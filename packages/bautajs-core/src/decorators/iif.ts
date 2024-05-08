@@ -1,4 +1,4 @@
-import { BautaJSInstance, Context, Pipeline } from '../types';
+import { BautaJSInstance, Context, Pipeline } from '../types.js';
 /**
  * Decorator that allows to execute given pipeline conditionally. It accepts the condition step function and pipeline.
  * If the condition step function will be evaluated to truthy value the pipeline will be executed.

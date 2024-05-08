@@ -1,4 +1,4 @@
-import { CancelableToken, OnCancel } from '../types';
+import { CancelableToken, OnCancel } from '../types.js';
 
 export class CancelableTokenBuilder implements CancelableToken {
   private cancelStack: OnCancel[] = [];

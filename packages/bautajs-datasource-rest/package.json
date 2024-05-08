@@ -2,7 +2,8 @@
   "name": "@axa/bautajs-datasource-rest",
   "version": "3.0.1",
   "description": "A bautaJS datasource rest provider",
-  "main": "./dist/index.js",
+  "exports": "./dist/index.js",
+  "type": "module",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/**/*"
@@ -10,8 +11,7 @@
   "scripts": {
     "tsc": "tsc",
     "build": "tsc --build",
-    "test": "jest",
-    "example": "npx ts-node ./example/simple.ts"
+    "test": "jest"
   },
   "repository": {
     "type": "git",

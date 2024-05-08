@@ -1,5 +1,5 @@
-import { BautaJSInstance, Context, Pipeline } from '../types';
-import { map } from './map';
+import { BautaJSInstance, Context, Pipeline } from '../types.js';
+import { map } from './map.js';
 
 /**
  * Loop over the selected array and create a promise for each array item with the given mapFn, then it will resolve everything in parallel.

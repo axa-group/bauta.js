@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe } from '../../index';
-import { parallelAllSettled } from '../parallel-all-settled';
+import { BautaJSInstance, createContext, pipe } from '../../index.js';
+import { parallelAllSettled } from '../parallel-all-settled.js';
 
 describe('parallel-all-settled decorator', () => {
   test('should execute the promises in parallel and return array of objects containing status and value for resolved, and reason and status for rejected', async () => {

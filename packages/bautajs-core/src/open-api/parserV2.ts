@@ -1,5 +1,5 @@
 import { OpenAPIV2 } from 'openapi-types';
-import { DocumentParsed, Route, RouteSchema } from '../types';
+import { DocumentParsed, Route, RouteSchema } from '../types.js';
 
 class ParserV2 {
   public document: DocumentParsed;

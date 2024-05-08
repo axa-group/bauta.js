@@ -2,8 +2,9 @@
   "name": "@axa/bautajs-core",
   "version": "3.0.1",
   "description": "Bauta.js is an add-on for your Node.js applications such as Express.js or Fastify.",
-  "main": "dist",
+  "exports": "./dist/index.js",
   "types": "dist",
+  "type": "module",
   "files": [
     "dist"
   ],
@@ -11,7 +12,7 @@
     "tsc": "tsc",
     "build": "tsc --build",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "test": "jest"
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "bugs": {
     "url": "https://github.com/axa-group/bauta.js/issues"

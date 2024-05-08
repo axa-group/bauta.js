@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe } from '../../index';
-import { parallel } from '../parallel';
+import { BautaJSInstance, createContext, pipe } from '../../index.js';
+import { parallel } from '../parallel.js';
 
 describe('parallel decorator', () => {
   test('should execute the promises in parallel', async () => {

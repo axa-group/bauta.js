@@ -12,6 +12,7 @@
     "proxy",
     "multipart"
   ],
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],

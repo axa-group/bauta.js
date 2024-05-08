@@ -1,7 +1,13 @@
 import Ajv, { ValidateFunction, Format, Options } from 'ajv';
 import addFormats from 'ajv-formats';
 import crypto from 'crypto';
-import { Validator, RouteSchema, Dictionary, CustomValidationFormat, JSONSchema } from '../types';
+import {
+  Validator,
+  RouteSchema,
+  Dictionary,
+  CustomValidationFormat,
+  JSONSchema
+} from '../types.js';
 import {
   cleanId,
   removeCircularReferences,
@@ -10,8 +16,8 @@ import {
   paramsSchema,
   responseSchema,
   headersSchema
-} from './validator-utils';
-import { AJVOperationValidators } from './operation-validators';
+} from './validator-utils.js';
+import { AJVOperationValidators } from './operation-validators.js';
 
 const VALIDATOR_DEFAULT_OPTIONS: Options = {
   logger: false,
@@ -23,21 +29,21 @@ const VALIDATOR_DEFAULT_OPTIONS: Options = {
 } as const;
 
 export class AjvValidator implements Validator<ValidateFunction> {
-  private ajv: Ajv;
+  private ajv: Ajv.default;
 
   constructor(
     private readonly customValidationFormats?: CustomValidationFormat[],
     validatorOptions?: Options
   ) {
     this.ajv = AjvValidator.buildAjv(validatorOptions);
-    addFormats(this.ajv);
+    addFormats.default(this.ajv);
     if (this.customValidationFormats?.length) {
       this.addCustomFormats(this.customValidationFormats);
     }
   }
 
   private static buildAjv(validatorOptions: Options = {}) {
-    return new Ajv({
+    return new Ajv.default({
       ...VALIDATOR_DEFAULT_OPTIONS,
       ...validatorOptions
     });

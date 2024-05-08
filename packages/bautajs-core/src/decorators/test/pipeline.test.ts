@@ -1,6 +1,6 @@
 import httpMocks from 'node-mocks-http';
-import { createContext, BautaJSInstance, GenericError } from '../../index';
-import { pipe } from '../pipeline';
+import { createContext, BautaJSInstance, GenericError } from '../../index.js';
+import { pipe } from '../pipeline.js';
 
 describe('pipe tests', () => {
   test('should throw an error on pipe 0 StepFunctions', () => {

@@ -2,8 +2,9 @@
   "name": "@axa/bautajs-express",
   "version": "3.0.1",
   "description": "A bautaJS Express.js plugin. Allow auto exposing the bautaJS operations.",
-  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": "./dist/index.js",
+  "type": "module",
   "files": [
     "dist/**/*"
   ],

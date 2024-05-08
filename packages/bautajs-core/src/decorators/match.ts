@@ -1,4 +1,4 @@
-import { BautaJSInstance, Context, Pipeline } from '../types';
+import { BautaJSInstance, Context, Pipeline } from '../types.js';
 
 /**
  * Resolve the given predicate an execute the pipeline for that condition

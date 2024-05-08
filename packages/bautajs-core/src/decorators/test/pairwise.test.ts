@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe, step } from '../..';
-import { pairwise } from '../pairwise';
+import { BautaJSInstance, createContext, pipe, step } from '../../index.js';
+import { pairwise } from '../pairwise.js';
 
 describe('pairwise decorator', () => {
   test('should merge the previous and actual value and return an array in next step if actual is a promise', async () => {

@@ -1,4 +1,4 @@
-import { Pipeline } from '../types';
+import { Pipeline } from '../types.js';
 
 export function parallelAllSettled<TIn, TOut1, TOut2>(
   fn1: Pipeline.StepFunction<TIn, TOut1>,

@@ -1,5 +1,5 @@
 import { promisify } from 'util';
-import { BautaJSInstance, Context, GenericError, Pipeline } from '../types';
+import { BautaJSInstance, Context, GenericError, Pipeline } from '../types.js';
 
 export type StepFunctionCallback<TIn, TOut> = (
   prev: TIn,

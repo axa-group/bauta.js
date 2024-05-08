@@ -9,11 +9,11 @@ import {
   Pipeline,
   Request,
   RawData
-} from '../types';
-import { buildDefaultStep } from '../utils/default-step';
-import { createContext } from '../utils/create-context';
-import { isPromise } from '../utils/is-promise';
-import { ValidationError } from './validation-error';
+} from '../types.js';
+import { buildDefaultStep } from '../utils/default-step.js';
+import { createContext } from '../utils/create-context.js';
+import { isPromise } from '../utils/is-promise.js';
+import { ValidationError } from './validation-error.js';
 
 export class OperationBuilder implements Operation {
   public static create(id: string, bautajs: BautaJSInstance): Operation {

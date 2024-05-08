@@ -13,7 +13,7 @@ export function prepareToLog(
   disableTruncateLog = false
 ): string {
   if (typeof object === 'object') {
-    return truncate(fastSafeStringify(object), truncateLogSize, disableTruncateLog);
+    return truncate(fastSafeStringify.default(object), truncateLogSize, disableTruncateLog);
   }
 
   return truncate(object, truncateLogSize, disableTruncateLog);

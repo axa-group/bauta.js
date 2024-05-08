@@ -1,5 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { DocumentParsed, RouteSchema } from '../types';
+import { DocumentParsed, RouteSchema } from '../types.js';
 
 const HttpOperations = new Set(['delete', 'get', 'head', 'patch', 'post', 'put', 'options']);
 

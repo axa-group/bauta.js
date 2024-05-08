@@ -1,9 +1,9 @@
 import { OpenAPI, OpenAPIV3, OpenAPIV2 } from 'openapi-types';
 import SwaggerParser from '@apidevtools/swagger-parser';
-import ParserV2 from './parserV2';
-import ParserV3 from './parserV3';
+import ParserV2 from './parserV2.js';
+import ParserV3 from './parserV3.js';
 
-import { DocumentParsed, Document, Logger } from '../types';
+import { DocumentParsed, Document, Logger } from '../types.js';
 
 class Parser {
   private documentParsed?: DocumentParsed;
