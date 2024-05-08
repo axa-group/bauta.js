@@ -1,5 +1,5 @@
 import { BautaJSInstance, Context, Pipeline } from '../types';
-export function iif<TIn, TPipelineOut>(
+export function iif<TIn, TPipelineOut, elseNever>(
   condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
   pipeline: Pipeline.StepFunction<TIn, TPipelineOut>
 ): Pipeline.StepFunction<TIn, TIn | TPipelineOut>;
