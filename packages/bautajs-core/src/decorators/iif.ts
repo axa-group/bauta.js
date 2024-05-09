@@ -12,6 +12,33 @@ export function iif<TIn, TPipelineOut, TElsePipelineOut>(
 ): Pipeline.StepFunction<TIn, TPipelineOut | TElsePipelineOut>;
 
 /**
+ * @deprecated This function is deprecated and will be removed in future releases
+ *
+ * if elsePipeline is not provided there is no need to provide a third generic type variable
+ *
+ * remove the third not used generic and use the following instead
+ * ```ts
+ *  iif<TIn, TPipelineOut>(...)
+ * ```
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function iif<TIn, TPipelineOut, TElseNever>(
+  condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
+  pipeline: Pipeline.StepFunction<TIn, TPipelineOut>
+): Pipeline.StepFunction<TIn, TIn | TPipelineOut>;
+
+export function iif<TIn, TPipelineOut>(
+  condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
+  pipeline: Pipeline.StepFunction<TIn, TPipelineOut>
+): Pipeline.StepFunction<TIn, TIn | TPipelineOut>;
+
+export function iif<TIn, TPipelineOut, TElsePipelineOut>(
+  condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
+  pipeline: Pipeline.StepFunction<TIn, TPipelineOut>,
+  elsePipeline: Pipeline.StepFunction<TIn, TElsePipelineOut>
+): Pipeline.StepFunction<TIn, TPipelineOut | TElsePipelineOut>;
+
+/**
  * Decorator that allows to execute given pipeline conditionally. It accepts the condition step function and pipeline.
  * If the condition step function will be evaluated to truthy value the pipeline will be executed.
  * If the condition step function will be evaluated to falsy:
