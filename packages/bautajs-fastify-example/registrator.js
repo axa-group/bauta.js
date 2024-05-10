@@ -1,4 +1,4 @@
-import { bautajsFastify, logger } from '@axa/bautajs-fastify';
+import { bautajsFastify } from '@axa/bautajs-fastify';
 import apiDefinition from './api-definition.json' assert { type: 'json' };
 import { logRequest } from './server/hooks/logger-hook.js';
 
@@ -21,12 +21,10 @@ async function registerFastifyServer(fastify) {
     })
     .after(err => {
       if (err) {
-        logger.error(err, 'Error on fastify server');
+        console.log(err, 'Error on fastify server');
         throw err;
       }
     });
 }
 
-module.exports = {
-  registerFastifyServer
-};
+export { registerFastifyServer };

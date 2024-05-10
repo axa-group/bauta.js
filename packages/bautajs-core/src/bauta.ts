@@ -106,6 +106,7 @@ export class BautaJS implements BautaJSInstance {
     this.staticConfig = staticConfig;
 
     this.logger = logger || defaultLogger('@axa/bautajs-core');
+
     if (!isLoggerValid(this.logger)) {
       throw new Error(
         'Logger is not valid. Must be compliant with basic logging levels(trace, debug, info, warn, error, fatal)'
@@ -122,19 +123,20 @@ export class BautaJS implements BautaJSInstance {
 
     this.validator = new AjvValidator(customValidationFormats, validatorOptions);
     this.operations = this.registerOperations(requestValidation, responseValidation, api);
-
-    // Load custom resolvers and operations modifiers
-    if (resolvers) {
-      resolvers.forEach(resolver => {
-        resolver(this.operations);
-      });
-    } else {
-      BautaJS.requireAll<[Operations]>(
-        resolversPath || './server/resolvers/**/*resolver.js',
-        true,
-        [this.operations]
-      );
-    }
+    (async () => {
+      // Load custom resolvers and operations modifiers
+      if (resolvers) {
+        resolvers.forEach(resolver => {
+          resolver(this.operations);
+        });
+      } else {
+        await BautaJS.requireAll<[Operations]>(
+          resolversPath || './server/resolvers/**/*resolver.js',
+          true,
+          [this.operations]
+        );
+      }
+    })();
   }
 
   public async bootstrap(): Promise<void> {
@@ -233,12 +235,18 @@ export class BautaJS implements BautaJSInstance {
    *
    * const files = requireAll('./my/path/to/datasources/*.js', true, {someVar:123});
    */
-  static requireAll<T>(folder: string | string[], execute = true, vars?: T) {
-    const execFiles = (folderPath: string) => {
+  static async requireAll<T>(folder: string | string[], execute = true, vars?: T) {
+    console.log('we at the start of requireAll');
+    const execFiles = async (folderPath: string) => {
+      console.log('we at the start of execFiles');
       const result: any = [];
-      fastGlob.sync(folderPath.replace(/\\/g, '/')).forEach((file: string) => {
-        // eslint-disable-next-line global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
-        let data = require(resolve(file));
+      const files = fastGlob.sync(folderPath.replace(/\\/g, '/'));
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        let data = await import(resolve(file));
+        console.log('data from import', data);
         if (data.default) {
           data = data.default;
         }
@@ -247,17 +255,24 @@ export class BautaJS implements BautaJSInstance {
         }
 
         result.push(data);
-      });
+      }
+
+      console.log('we at the end of execFiles', result);
 
       return result;
     };
 
     let files = [];
     if (Array.isArray(folder)) {
-      files = folder.map(folderPath => execFiles(folderPath));
+      for (let i = 0; i < folder.length; i++) {
+        const folderPath = folder[i];
+        files.push(await execFiles(folderPath));
+      }
     } else {
-      files = execFiles(folder);
+      files = await execFiles(folder);
     }
+
+    console.log('we at the end of requireAll');
 
     return files;
   }
