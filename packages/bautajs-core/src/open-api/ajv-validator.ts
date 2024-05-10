@@ -1,6 +1,6 @@
 import Ajv, { ValidateFunction, Format, Options } from 'ajv';
 import addFormats from 'ajv-formats';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import {
   Validator,
   RouteSchema,

@@ -1,4 +1,4 @@
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 import { BautaJSInstance, Context, GenericError, Pipeline } from '../types.js';
 
 export type StepFunctionCallback<TIn, TOut> = (

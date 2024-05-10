@@ -1,6 +1,7 @@
-const fastify = require('fastify')({ logger: true });
+import Fastify from 'fastify';
+import { registerFastifyServer } from './registrator.js';
 
-const { registerFastifyServer } = require('./registrator');
+const fastify = Fastify({ logger: true });
 
 (async () => {
   await registerFastifyServer(fastify);

@@ -1,4 +1,4 @@
-const { restProvider } = require('@axa/bautajs-datasource-rest');
+import { restProvider } from '@axa/bautajs-datasource-rest';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 module.exports.getAllArticles = restProvider((client, _prev, _ctx, _bautajs) => {

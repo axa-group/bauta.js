@@ -1,5 +1,5 @@
-const Fastify = require('fastify');
-const nock = require('nock');
+import Fastify from 'fastify';
+import nock from 'nock';
 
 const { registerFastifyServer } = require('../registrator');
 

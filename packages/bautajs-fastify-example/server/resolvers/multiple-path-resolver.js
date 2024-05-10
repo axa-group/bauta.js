@@ -1,5 +1,5 @@
-const { pipe, step, resolver } = require('@axa/bautajs-core');
-const { getRequest } = require('@axa/bautajs-fastify');
+import { pipe, step, resolver } from '@axa/bautajs-core';
+import { getRequest } from '@axa/bautajs-fastify';
 
 const transformResponse = step(response => {
   return {
@@ -19,7 +19,7 @@ function specificStep() {
   return 'This is a simple text for requests to the specific path';
 }
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.multiplePathGeneral
     .validateRequest(false)
     .validateResponse(false)

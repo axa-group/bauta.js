@@ -1,5 +1,5 @@
 import fastGlob from 'fast-glob';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { OpenAPIV2 } from 'openapi-types';
 import { OperationBuilder } from './core/operation.js';
 import { defaultLogger } from './default-logger.js';

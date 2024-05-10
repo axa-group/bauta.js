@@ -1,6 +1,6 @@
-const { bautajsFastify, logger } = require('@axa/bautajs-fastify');
-const apiDefinition = require('./api-definition.json');
-const { logRequest } = require('./server/hooks/logger-hook');
+import { bautajsFastify, logger } from '@axa/bautajs-fastify';
+import apiDefinition from './api-definition.json' assert { type: 'json' };
+import { logRequest } from './server/hooks/logger-hook.js';
 
 async function registerFastifyServer(fastify) {
   fastify.addHook('onRequest', logRequest);

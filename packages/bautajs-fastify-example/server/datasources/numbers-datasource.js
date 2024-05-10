@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { getRequest } = require('@axa/bautajs-fastify');
-const { restProvider } = require('@axa/bautajs-datasource-rest');
+import { getRequest } from '@axa/bautajs-fastify';
+import { restProvider } from '@axa/bautajs-datasource-rest';
 
 const exampleRestProviderYear = restProvider((client, _prv, ctx) => {
   const req = getRequest(ctx);
@@ -18,7 +18,4 @@ const exampleRestProvider = restProvider((client, _prv, ctx) => {
   });
 });
 
-module.exports = {
-  exampleRestProviderYear,
-  exampleRestProvider
-};
+export { exampleRestProviderYear, exampleRestProvider };

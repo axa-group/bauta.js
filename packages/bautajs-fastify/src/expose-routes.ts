@@ -1,5 +1,5 @@
 import * as fastify from 'fastify';
-import path from 'path';
+import path from 'node:path';
 import { Operation, ValidationError, Validator, LocationError } from '@axa/bautajs-core';
 import { ApiHooks, OnResponseValidationError } from './types.js';
 
