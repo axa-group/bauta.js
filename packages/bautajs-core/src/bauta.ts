@@ -249,10 +249,14 @@ export class BautaJS implements BautaJSInstance {
 
         let data = await import(resolve(file));
         console.log('data from import', data);
+        // console.log('data from require toString', data?.toString());
+        console.log('data default from require toString', data?.default.toString());
         if (data.default) {
+          console.log('habemus default');
           data = data.default;
         }
         if (typeof data === 'function' && execute === true) {
+          console.log('habemus function');
           data = Array.isArray(vars) ? data(...vars) : data(vars);
         }
 
