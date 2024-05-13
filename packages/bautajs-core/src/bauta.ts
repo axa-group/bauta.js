@@ -240,7 +240,9 @@ export class BautaJS implements BautaJSInstance {
     const execFiles = async (folderPath: string) => {
       console.log('we at the start of execFiles');
       const result: any = [];
-      const files = fastGlob.sync(folderPath.replace(/\\/g, '/'));
+      const files = await fastGlob.async(folderPath.replace(/\\/g, '/'));
+
+      console.log('files', files);
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
