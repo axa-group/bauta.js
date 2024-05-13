@@ -10,7 +10,8 @@ import {
   Logger,
   Operations,
   BasicOperation,
-  Validator
+  Validator,
+  Resolver
 } from './types.js';
 import { isLoggerValid } from './utils/logger-validator.js';
 import Parser from './open-api/parser.js';
@@ -87,6 +88,10 @@ export class BautaJS implements BautaJSInstance {
 
   private bootstrapped = false;
 
+  private readonly resolversPath: string | string[] | undefined;
+
+  private resolvers: Resolver[] | undefined;
+
   constructor({
     apiDefinition,
     staticConfig,
@@ -123,26 +128,59 @@ export class BautaJS implements BautaJSInstance {
 
     this.validator = new AjvValidator(customValidationFormats, validatorOptions);
     this.operations = this.registerOperations(requestValidation, responseValidation, api);
-    (async () => {
-      // Load custom resolvers and operations modifiers
-      if (resolvers) {
-        resolvers.forEach(resolver => {
-          resolver(this.operations);
-        });
-      } else {
-        await BautaJS.requireAll<[Operations]>(
-          resolversPath || './server/resolvers/**/*resolver.js',
-          true,
-          [this.operations]
-        );
-      }
-    })();
+
+    // This is required for loadResolvers, done this way to not modify the bauta.js construction interface which would be a big clusterluck
+    this.resolvers = resolvers;
+    this.resolversPath = resolversPath;
+
+    // TODO: this does not make sense in the scope of express and it is only leaved like this commented for reference
+    // (async () => {
+    //   // Load custom resolvers and operations modifiers
+    //   if (resolvers) {
+    //     resolvers.forEach(resolver => {
+    //       resolver(this.operations);
+    //     });
+    //   } else {
+    //     await BautaJS.requireAll<[Operations]>(
+    //       resolversPath || './server/resolvers/**/*resolver.js',
+    //       true,
+    //       [this.operations]
+    //     );
+    //   }
+
+    //   console.log('after loading the resolvers, this.operations is', this.operations);
+    // })();
+
+    console.log('this is the end of the line for you, little guy!!!!');
+  }
+
+  public async loadResolvers(): Promise<void> {
+    console.log('before loading the resolvers, this.operations is', this.operations);
+
+    // Load custom resolvers and operations modifiers
+    if (this.resolvers) {
+      this.resolvers.forEach(resolver => {
+        resolver(this.operations);
+      });
+    } else {
+      await BautaJS.requireAll<[Operations]>(
+        this.resolversPath || './server/resolvers/**/*resolver.js',
+        true,
+        [this.operations]
+      );
+    }
+
+    console.log('after loading the resolvers, this.operations is', this.operations);
   }
 
   public async bootstrap(): Promise<void> {
     if (this.bootstrapped === true) {
       throw new Error('The instance has already being bootstrapped.');
     }
+
+    // this is not totally perfect but i do not want to expose yet this function outside core
+    await this.loadResolvers();
+
     if (this.apiDefinition) {
       const parser = new Parser(this.logger);
       const parsedApiDefinition = await parser.asyncParse(this.apiDefinition);
