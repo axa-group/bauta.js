@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-fastify-example",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "A bautaJS example in fastify",
   "main": "./server.js",
   "scripts": {
@@ -19,9 +19,9 @@
   ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "dependencies": {
-    "@axa/bautajs-core": "^3.0.1",
-    "@axa/bautajs-datasource-rest": "^3.0.1",
-    "@axa/bautajs-fastify": "^3.0.2",
+    "@axa/bautajs-core": "^3.1.0",
+    "@axa/bautajs-datasource-rest": "^3.1.0",
+    "@axa/bautajs-fastify": "^3.1.0",
     "fastify": "^4.15.0"
   }
 }
