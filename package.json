@@ -70,7 +70,7 @@
     "node-mocks-http": "^1.12.2",
     "node-object-hash": "^2.3.10",
     "pino": "^8.11.0",
-    "prettier": "^2.8.7",
+    "prettier": "^3.2.5",
     "split2": "^4.2.0",
     "stream-mock": "^2.0.5",
     "supertest": "^6.3.3",
