@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-datasource-rest",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "A bautaJS datasource rest provider",
   "exports": "./dist/index.js",
   "type": "module",
@@ -32,7 +32,7 @@
     "npm": ">=8"
   },
   "dependencies": {
-    "@axa/bautajs-core": "^3.0.1",
+    "@axa/bautajs-core": "^3.1.0",
     "@axa/bautajs-dev-config": "^3.0.1",
     "@axa/native-proxy-agent": "^1.0.0",
     "@sindresorhus/is": "^4.6.0",
