@@ -1,0 +1,29 @@
+{
+  "name": "@axa/bautajs-fastify-versioning-example",
+  "version": "1.0.0",
+  "description": "A bautaJS example of versioning in fastify",
+  "main": "./server-without-versioning.js",
+  "scripts": {
+    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server-without-versioning.js",
+    "start:parent": "LOG_LEVEL=info DEBUG=bautajs* node ./versioning-only-parent.js",
+    "start:plugin": "LOG_LEVEL=info DEBUG=bautajs* node ./versioning-plugin-inherits.js",
+    "start:external": "LOG_LEVEL=info DEBUG=bautajs* node ./versioning-external-inherits.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/axa-group/bauta.js"
+  },
+  "private": true,
+  "keywords": [
+    "bautajs",
+    "fastify",
+    "middleware"
+  ],
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "@axa/bautajs-core": "^3.1.0",
+    "@axa/bautajs-datasource-rest": "^3.1.0",
+    "@axa/bautajs-fastify": "^3.1.0",
+    "fastify": "^4.15.0"
+  }
+}

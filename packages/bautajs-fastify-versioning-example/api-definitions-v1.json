@@ -1,0 +1,66 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "A new API",
+    "version": "v1",
+    "title": "Cats API"
+  },
+  "servers": [
+    {
+      "url": "/v1/api/"
+    }
+  ],
+  "paths": {
+    "/cats": {
+      "get": {
+        "operationId": "findCat",
+        "responses": {
+          "200": {
+            "description": "Miau!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "communication": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dogs": {
+      "get": {
+        "operationId": "findDog",
+        "responses": {
+          "200": {
+            "description": "Woof!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "communication": {
+                      "type": "string"
+                    },
+                    "breed": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
