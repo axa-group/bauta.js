@@ -4,6 +4,7 @@ import { BautaJS, pipe, resolver, OnCancel, Document, CancelablePromise } from '
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-versions.json';
 import { getDirname } from './utils';
+import { jest } from '@jest/globals';
 
 describe('bauta core tests', () => {
   describe('core initialization tests', () => {
@@ -189,7 +190,7 @@ describe('bauta core tests', () => {
       }
     });
 
-    test.only('should not validate the response by default', async () => {
+    test('should not validate the response by default', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -563,11 +564,12 @@ describe('bauta core tests', () => {
         resolvers: [resolver(() => {})],
         staticConfig: config
       });
-      // @ts-ignore
-      expect(() => bautaJSV2.inheritOperationsFrom({})).toThrow(
+
+      await expect(() => bautaJSV2.inheritOperationsFrom({} as any)).rejects.toThrow(
         new Error('A bautaJS instance must be provided.')
       );
     });
+
     test('should inherit the given operations from another bautajs instance on use inheritOperationsFrom', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -684,7 +686,8 @@ describe('bauta core tests', () => {
       expect(Object.prototype.hasOwnProperty.call(bautaJSV2.operations, 'operation1')).toBeFalsy();
       expect(request3).toBe('okoperationInherited');
     });
-    test('operations can not be inherit after bootstrap', async () => {
+
+    test.only('operations can not be inherit after bootstrap', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -710,6 +713,7 @@ describe('bauta core tests', () => {
         resolvers: [resolver(() => {})],
         staticConfig: config
       });
+
       await bautaJSV2.bootstrap();
 
       expect(() => bautaJSV2.inheritOperationsFrom(bautaJSV1)).toThrow(
@@ -764,7 +768,7 @@ describe('bauta core tests', () => {
         resolvers: [resolver(() => {})],
         staticConfig: config
       });
-      bautaJSV2.inheritOperationsFrom(bautaJSV1);
+      await bautaJSV2.inheritOperationsFrom(bautaJSV1);
       await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
       expect(bautaJSV1.operations.operation1.schema).not.toStrictEqual(
         bautaJSV2.operations.operation1.schema

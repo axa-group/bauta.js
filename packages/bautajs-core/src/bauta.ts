@@ -178,7 +178,6 @@ export class BautaJS implements BautaJSInstance {
       throw new Error('The instance has already being bootstrapped.');
     }
 
-    // this is not totally perfect but i do not want to expose yet this function outside core
     await this.loadResolvers();
 
     if (this.apiDefinition) {
@@ -325,13 +324,18 @@ export class BautaJS implements BautaJSInstance {
     return files;
   }
 
-  public inheritOperationsFrom(bautajsInstance: BautaJSInstance) {
+  public async inheritOperationsFrom(bautajsInstance: BautaJSInstance) {
     if (!(bautajsInstance instanceof BautaJS)) {
       throw new Error('A bautaJS instance must be provided.');
     }
-    if (this.bootstrapped === true) {
-      throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
-    }
+
+    // For me is not an issue that this has already been bootstrapped, but this requires TESTING
+    // if (this.bootstrapped === true) {
+    //   throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
+    // }
+
+    await this.loadResolvers();
+
     if (bautajsInstance.bootstrapped === false) {
       this.logger.warn(
         'The given instance is not bootstrapped, thus operation schema will be no inherited.'

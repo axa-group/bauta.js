@@ -8,6 +8,7 @@ import schemaTwoOperations from './fixtures/schema-two-operations.json';
 import schemaWithoutDefaultResponse from './fixtures/schema-without-default-response.json';
 import schemaWith200ResponseCode from './fixtures/schema-with-200-response-code.json';
 import schemaWith400ResponseCode from './fixtures/schema-with-400-response-code.json';
+import { jest } from '@jest/globals';
 
 describe('validation tests', () => {
   test('should allow the validation of circular schemas', async () => {

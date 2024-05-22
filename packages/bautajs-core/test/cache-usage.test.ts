@@ -3,6 +3,7 @@ import { createContext } from '../src/utils/create-context';
 import { cache, CacheStepFunction, Normalizer } from '../src/decorators/cache';
 import { BautaJSInstance } from '../src/types';
 import { sleep } from './utils';
+import { jest } from '@jest/globals';
 
 describe('cache decorator usage', () => {
   let myCachePipeline: CacheStepFunction<any, any, any>;

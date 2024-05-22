@@ -1,5 +1,6 @@
 import { defaultLogger } from '../src/default-logger';
 import { createContext } from '../src/utils/create-context';
+import { jest } from '@jest/globals';
 
 describe('create context tests', () => {
   test('should generate a request id', () => {

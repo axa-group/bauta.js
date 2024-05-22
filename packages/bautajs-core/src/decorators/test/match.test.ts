@@ -2,6 +2,7 @@ import { pipe } from '../pipeline.js';
 import { match } from '../match.js';
 import { createContext } from '../../utils/create-context.js';
 import { BautaJSInstance } from '../../index.js';
+import { jest } from '@jest/globals';
 
 describe('match decorator', () => {
   test('should select the pipeline execution depending on the condition', () => {

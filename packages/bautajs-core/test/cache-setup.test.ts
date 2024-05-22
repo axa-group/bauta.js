@@ -3,6 +3,7 @@ import { pipe } from '../src/index';
 import { cache } from '../src/decorators/cache';
 import { BautaJSInstance } from '../src/types';
 import { sleep } from './utils';
+import { jest } from '@jest/globals';
 
 describe('cache setup', () => {
   beforeEach(async () => {

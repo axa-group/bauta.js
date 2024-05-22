@@ -1,6 +1,7 @@
 import { pipe } from '../pipeline.js';
 import { createContext } from '../../utils/create-context.js';
 import { BautaJSInstance } from '../../types.js';
+import { jest } from '@jest/globals';
 
 describe('catchError pipeline tests', () => {
   test('should throw the error without any custom  error handler', () => {

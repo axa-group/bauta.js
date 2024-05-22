@@ -3,6 +3,7 @@ import pino from 'pino';
 import { BautaJS } from '../src/index';
 import { Logger } from '../src/types';
 import { defaultLogger } from '../src/default-logger';
+import { jest } from '@jest/globals';
 
 const validLevels = ['trace', 'info', 'error', 'debug', 'fatal', 'warn'];
 const message = 'This is a general message';
