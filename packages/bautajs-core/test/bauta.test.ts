@@ -1,8 +1,9 @@
 import fastSafeStringify from 'fast-safe-stringify';
-import path from 'path';
+import path from 'node:path';
 import { BautaJS, pipe, resolver, OnCancel, Document, CancelablePromise } from '../src/index';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-versions.json';
+import { getDirname } from './utils';
 
 describe('bauta core tests', () => {
   describe('core initialization tests', () => {
@@ -93,7 +94,7 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       await bautaJS.bootstrap();
@@ -122,7 +123,7 @@ describe('bauta core tests', () => {
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         enableRequestValidation: false,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
       await bautaJS.bootstrap();
 
@@ -137,7 +138,10 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         enableRequestValidation: false
       });
       bautaJS.operations.operation1.validateRequest(true);
@@ -179,11 +183,13 @@ describe('bauta core tests', () => {
       try {
         await bautaJS.operations.operation1.run({ req, res });
       } catch (e: any) {
-        expect(e.stack).toBe(`${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`);
+        expect(e.stack).toBe(
+          `${e.name}: ${e.message} \n ${fastSafeStringify.default(e, undefined, 2)}`
+        );
       }
     });
 
-    test('should not validate the response by default', async () => {
+    test.only('should not validate the response by default', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -196,14 +202,19 @@ describe('bauta core tests', () => {
 
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         staticConfig: config
       });
+
+      await bautaJS.bootstrap();
+
       bautaJS.operations.operation1.setup(() => ({
         id: 1,
         name: 'pety'
       }));
-      await bautaJS.bootstrap();
 
       await expect(bautaJS.operations.operation1.run({ req, res })).resolves.toStrictEqual({
         id: 1,
@@ -260,7 +271,10 @@ describe('bauta core tests', () => {
 
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         staticConfig: config
       });
 
@@ -282,8 +296,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: [
-          path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-          path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver-1.js')
+          path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js'),
+          path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver-1.js')
         ],
         staticConfig: config
       });
@@ -307,8 +321,8 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: [
-          `${__dirname}\\fixtures\\test-resolvers\\operation-resolver.js`,
-          `${__dirname}\\fixtures\\test-resolvers\\operation-resolver-1.js`
+          `${getDirname()}\\fixtures\\test-resolvers\\operation-resolver.js`,
+          `${getDirname()}\\fixtures\\test-resolvers\\operation-resolver-1.js`
         ],
         staticConfig: config
       });

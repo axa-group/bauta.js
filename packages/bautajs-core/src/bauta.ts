@@ -151,11 +151,11 @@ export class BautaJS implements BautaJSInstance {
     //   console.log('after loading the resolvers, this.operations is', this.operations);
     // })();
 
-    console.log('this is the end of the line for you, little guy!!!!');
+    // console.log('this is the end of the line for you, little guy!!!!');
   }
 
   public async loadResolvers(): Promise<void> {
-    console.log('before loading the resolvers, this.operations is', this.operations);
+    // console.log('before loading the resolvers, this.operations is', this.operations);
 
     // Load custom resolvers and operations modifiers
     if (this.resolvers) {
@@ -170,7 +170,7 @@ export class BautaJS implements BautaJSInstance {
       );
     }
 
-    console.log('after loading the resolvers, this.operations is', this.operations);
+    // console.log('after loading the resolvers, this.operations is', this.operations);
   }
 
   public async bootstrap(): Promise<void> {
@@ -274,38 +274,38 @@ export class BautaJS implements BautaJSInstance {
    * const files = requireAll('./my/path/to/datasources/*.js', true, {someVar:123});
    */
   static async requireAll<T>(folder: string | string[], execute = true, vars?: T) {
-    console.log('we at the start of requireAll');
+    // console.log('we at the start of requireAll');
     const execFiles = async (folderPath: string) => {
-      console.log('we at the start of execFiles');
+      // console.log('we at the start of execFiles');
       const result: any = [];
       const files = await fastGlob.async(folderPath.replace(/\\/g, '/'));
 
-      console.log('files', files);
+      // console.log('files', files);
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
-        console.log('import path is', file);
+        // console.log('import path is', file);
 
         let data = await import(resolve(file));
-        console.log('data from import', data);
+        // console.log('data from import', data);
 
-        console.log('data default from require toString', data?.default.toString());
+        // console.log('data default from require toString', data?.default.toString());
         if (data.default) {
-          console.log('habemus default', data.default);
+          // console.log('habemus default', data.default);
           data = data.default;
         }
         if (typeof data === 'function' && execute === true) {
-          console.log('habemus function', data.toString(), Array.isArray(vars));
-          console.log('vars', vars);
+          // console.log('habemus function', data.toString(), Array.isArray(vars));
+          // console.log('vars', vars);
           data = Array.isArray(vars) ? data(...vars) : data(vars);
-          console.log('data after something weird', data);
+          // console.log('data after something weird', data);
         }
 
         result.push(data);
       }
 
-      console.log('we at the end of execFiles', result);
+      // console.log('we at the end of execFiles', result);
 
       return result;
     };
@@ -320,7 +320,7 @@ export class BautaJS implements BautaJSInstance {
       files = await execFiles(folder);
     }
 
-    console.log('we at the end of requireAll');
+    // console.log('we at the end of requireAll');
 
     return files;
   }

@@ -1,4 +1,4 @@
-module.exports = operations => {
+export default operations => {
   operations.operation1.setup(() => {
     return [
       {
