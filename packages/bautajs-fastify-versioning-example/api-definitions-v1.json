@@ -14,6 +14,7 @@
     "/cats": {
       "get": {
         "operationId": "findCat",
+        "deprecated": true,
         "responses": {
           "200": {
             "description": "Miau!",

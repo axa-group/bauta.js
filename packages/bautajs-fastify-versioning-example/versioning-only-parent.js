@@ -9,7 +9,7 @@ const apiDefinitionsV2 = require('./api-definitions-v2.json');
 
 const bautaJsV1 = new BautaJS({
   apiDefinition: apiDefinitionsV1,
-  resolversPath: './server/v1/resolvers*.js',
+  resolversPath: './server/v1/resolvers.js',
   staticConfig: {
     someVar: 2
   },
@@ -28,7 +28,7 @@ const bautaJsV1 = new BautaJS({
     })
     .after(() => {
       fastify.register(bautajsFastify, {
-        resolversPath: './server/v2/resolvers*.js',
+        resolversPath: './server/v2/resolvers.js',
         apiDefinition: apiDefinitionsV2,
         prefix: '/v2/',
         apiBasePath: '/api/',

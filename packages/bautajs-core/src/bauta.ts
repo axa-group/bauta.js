@@ -10,7 +10,8 @@ import {
   Logger,
   Operations,
   BasicOperation,
-  Validator
+  Validator,
+  Route
 } from './types';
 import { isLoggerValid } from './utils/logger-validator';
 import Parser from './open-api/parser';
@@ -20,6 +21,23 @@ import { AjvValidator } from './open-api/ajv-validator';
 interface API {
   version: string;
   operations: BasicOperation[];
+}
+
+/**
+ * This utility function generates a identifier for a route that delimites its uniqueness
+ * at route level (regardless of the operationId). It is used to be sure if we should
+ * inherit or not a route from a parent instance.
+ *
+ * Note that its value has no meaning at routing level (it is not a valid url or method)
+ *
+ * @param route
+ * @returns
+ */
+function getRouteIdentifier(route: Route | undefined) {
+  if (!route) {
+    return '';
+  }
+  return `${route.method}_${route.url}_${route.path}`;
 }
 
 function prebuildApi(apiDefinition: Document): API {
@@ -98,7 +116,7 @@ export class BautaJS implements BautaJSInstance {
     resolvers,
     validatorOptions
   }: BautaJSOptions = {}) {
-    console.log('constructor in bautajs-core started');
+    // console.log('constructor in bautajs-core started');
     const api = apiDefinition ? prebuildApi(apiDefinition) : undefined;
     let responseValidation = false;
     let requestValidation = true;
@@ -137,11 +155,11 @@ export class BautaJS implements BautaJSInstance {
       );
     }
 
-    console.log('constructor in bautajs-core finished', this.operations);
+    // console.log('constructor in bautajs-core finished', this.operations);
   }
 
   public async bootstrap(): Promise<void> {
-    console.log('bootstrap in bautajs-core started');
+    // console.log('bootstrap in bautajs-core started');
     if (this.bootstrapped === true) {
       throw new Error('The instance has already being bootstrapped.');
     }
@@ -161,16 +179,16 @@ export class BautaJS implements BautaJSInstance {
     }
 
     // This will prevent to create new operations after bootstrapping the bautajs instance.
-    this.operations = Object.freeze(
-      Object.entries(this.operations).reduce((acc: Operations, [key, val]) => {
-        acc[key] = val;
+    // this.operations = Object.freeze(
+    //   Object.entries(this.operations).reduce((acc: Operations, [key, val]) => {
+    //     acc[key] = val;
 
-        return acc;
-      }, {})
-    );
-    this.bootstrapped = true;
+    //     return acc;
+    //   }, {})
+    // );
+    // this.bootstrapped = true;
 
-    console.log('bootstrap in bautajs-core finished', this.operations);
+    // console.log('bootstrap in bautajs-core finished', this.operations);
   }
 
   public decorate(property: string | symbol, value: any, dependencies?: string[]) {
@@ -270,24 +288,55 @@ export class BautaJS implements BautaJSInstance {
   }
 
   public inheritOperationsFrom(bautajsInstance: BautaJSInstance) {
-    console.log('inheritOperationsFrom in bautajs-core started');
+    console.log('inheritOperationsFrom in bautajs-core started', this.operations);
+
+    Object.values(this.operations).forEach(op => {
+      console.log(
+        'MELON this.operation',
+        op.id,
+        'route',
+        op.route,
+        'op.identifier',
+        getRouteIdentifier(op.route)
+      );
+    });
+
     if (!(bautajsInstance instanceof BautaJS)) {
       throw new Error('A bautaJS instance must be provided.');
     }
-    if (this.bootstrapped === true) {
-      throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
-    }
+    // if (this.bootstrapped === true) {
+    //   throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
+    // }
     if (bautajsInstance.bootstrapped === false) {
       this.logger.warn(
         'The given instance is not bootstrapped, thus operation schema will be no inherited.'
       );
     }
+
     Object.keys(bautajsInstance.operations).forEach(operationId => {
+      // console.log('iterating parent operations', operationId);
       const operation = bautajsInstance.operations[operationId];
+
+      const routeIdentifier = getRouteIdentifier(operation.route);
+
+      const routeAlreadyExists = !!Object.values(this.operations).find(
+        op => getRouteIdentifier(op.route) === routeIdentifier
+      );
+
+      console.log(
+        'operationId',
+        operationId,
+        'with route id',
+        routeIdentifier,
+        'routeAlreadyExists',
+        routeAlreadyExists
+      );
       if (
         operation.deprecated !== true &&
-        !Object.prototype.hasOwnProperty.call(this.operations, operationId)
+        !Object.prototype.hasOwnProperty.call(this.operations, operationId) &&
+        !routeAlreadyExists
       ) {
+        console.log('XAVI INHERITING OPERATION', operationId);
         this.operations[operationId] = OperationBuilder.create(operation.id, this);
         this.operations[operationId].setup(operation.handler);
         this.operations[operationId].requestValidationEnabled = operation.requestValidationEnabled;
