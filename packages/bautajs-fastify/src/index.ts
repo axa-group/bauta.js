@@ -26,16 +26,19 @@ export async function bautajsFastify(
   fastify: FastifyInstance,
   opts: BautaJSFastifyPluginOptions
 ): Promise<void>;
+
 export async function bautajsFastify(
   fastify: FastifyInstance,
   opts: BautaJSFastifyPluginOptions & bautaJS.BautaJSOptions
 ): Promise<void>;
+
 export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
   const bautajs = opts.bautajsInstance
     ? opts.bautajsInstance
     : new bautaJS.BautaJS({ logger: fastify.log as bautaJS.Logger, ...opts });
 
   if (opts.inheritOperationsFrom) {
+    console.log('habemus inheritOperationsFrom in bautajs-fastify');
     bautajs.inheritOperationsFrom(opts.inheritOperationsFrom);
   }
 

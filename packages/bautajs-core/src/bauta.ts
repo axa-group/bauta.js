@@ -98,6 +98,7 @@ export class BautaJS implements BautaJSInstance {
     resolvers,
     validatorOptions
   }: BautaJSOptions = {}) {
+    console.log('constructor in bautajs-core started');
     const api = apiDefinition ? prebuildApi(apiDefinition) : undefined;
     let responseValidation = false;
     let requestValidation = true;
@@ -135,12 +136,16 @@ export class BautaJS implements BautaJSInstance {
         [this.operations]
       );
     }
+
+    console.log('constructor in bautajs-core finished', this.operations);
   }
 
   public async bootstrap(): Promise<void> {
+    console.log('bootstrap in bautajs-core started');
     if (this.bootstrapped === true) {
       throw new Error('The instance has already being bootstrapped.');
     }
+
     if (this.apiDefinition) {
       const parser = new Parser(this.logger);
       const parsedApiDefinition = await parser.asyncParse(this.apiDefinition);
@@ -164,6 +169,8 @@ export class BautaJS implements BautaJSInstance {
       }, {})
     );
     this.bootstrapped = true;
+
+    console.log('bootstrap in bautajs-core finished', this.operations);
   }
 
   public decorate(property: string | symbol, value: any, dependencies?: string[]) {
@@ -263,6 +270,7 @@ export class BautaJS implements BautaJSInstance {
   }
 
   public inheritOperationsFrom(bautajsInstance: BautaJSInstance) {
+    console.log('inheritOperationsFrom in bautajs-core started');
     if (!(bautajsInstance instanceof BautaJS)) {
       throw new Error('A bautaJS instance must be provided.');
     }
@@ -293,6 +301,8 @@ export class BautaJS implements BautaJSInstance {
         }
       }
     });
+
+    console.log('inheritOperationsFrom in bautajs-core finished', this.operations);
     return this;
   }
 }
