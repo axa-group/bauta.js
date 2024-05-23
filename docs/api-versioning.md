@@ -175,7 +175,7 @@ module.exports = resolver((operations) => {
 
 When you want to apply versioning, you have to modify slightly the way that bautaJs starts up to clearly configure what is considered the old version of your service endpoints and what is considered the latest version.
 
-### Example using Bauta.js core without a Node.js framework plugin
+#### Example using Bauta.js core without a Node.js framework plugin
 
 Now we need to specify a `bautaJS` instance per API swagger version.
 
@@ -222,9 +222,9 @@ In this example the `findCat` from v1 instance will be inherited to the v2 insta
 Calling `inheritOperationsFrom` after bootstrap the instance is not possible and will always throw an error. This behaviour is intended since api schema is resolved on bootstrap time so if the instance is already bootstrapped and `inheritOperationsFrom` is called after this could lead to unexpected behaviour of your API.
 
 
-### Example using Bauta.js with a @axa/bautajs-fastify plugin
+#### Example using Bauta.js with a @axa/bautajs-fastify plugin
 
-#### Creating the Bauta.js instances and setting up the inheritance outside the plugin
+##### Creating the Bauta.js instances and setting up the inheritance outside the plugin
 
 ```js
 const { BautaJS } = require('@axa/bautajs-core');
@@ -267,7 +267,7 @@ const bautajsV2 = new BautaJS({
 })()
 ```
 
-#### Creating the Bauta.js instances and setting up the inheritance with the plugin option 'inheritOperationsFrom'
+##### Creating the Bauta.js instances and setting up the inheritance with the plugin option 'inheritOperationsFrom'
 
 ```js
 const { BautaJS } = require('@axa/bautajs-core');
@@ -311,7 +311,7 @@ const bautajsV2 = new BautaJS({
 })()
 ```
 
-#### Creating only the parent Bauta.js instance and setting up the inheritance with the plugin option 'inheritOperationsFrom'
+##### Creating only the parent Bauta.js instance and setting up the inheritance with the plugin option 'inheritOperationsFrom'
 
 ```js
 const { BautaJS } = require('@axa/bautajs-core');
@@ -351,7 +351,7 @@ const bautajsV1 = new BautaJS({
 })()
 ```
 
-Note about the examples: there are orientative examples, if you want to use them in a real case scenario, remember that you need
+Note about the examples: these are orientative examples, if you want to use them in a real case scenario, remember that you need
 to start up the server accordingly (for instance, in `fastify` you have to listen to the plugin instance you have created and registered).
 
 
