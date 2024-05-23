@@ -3,14 +3,16 @@ const { pipe, resolver, step } = require('@axa/bautajs-core');
 const getCatStep = step(() => {
   return {
     name: 'Grey',
-    communication: 'Meow'
+    communication: 'Meow',
+    breed: 'all cats are the same'
   };
 });
 
 const getDogStep = step(() => {
   return {
     name: 'Milu',
-    communication: 'Woof'
+    communication: 'Woof',
+    breed: 'fox-terrier'
   };
 });
 

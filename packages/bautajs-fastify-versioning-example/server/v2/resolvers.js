@@ -9,6 +9,13 @@ const getCatStep = step(() => {
 });
 
 module.exports = resolver(operations => {
-  operations.findCatV2.validateRequest(true).validateResponse(true).setup(pipe(getCatStep));
-  // operations.findCat.validateRequest(true).validateResponse(true).setup(pipe(getCatStep));
+  operations.findCatV2
+    .validateRequest(true)
+    .validateResponse(true)
+    .setup(
+      pipe(getCatStep, prev => {
+        console.log('mierda mia', prev);
+        return prev;
+      })
+    );
 });

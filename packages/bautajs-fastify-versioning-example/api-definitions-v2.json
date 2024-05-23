@@ -27,7 +27,7 @@
                     "communication": {
                       "type": "string"
                     },
-                    "favouriteAction:": {
+                    "favouriteAction": {
                       "type": "string"
                     }
                   }

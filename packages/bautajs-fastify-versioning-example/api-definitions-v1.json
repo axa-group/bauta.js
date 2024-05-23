@@ -27,6 +27,9 @@
                     },
                     "communication": {
                       "type": "string"
+                    },
+                    "breed": {
+                      "type": "string"
                     }
                   }
                 }

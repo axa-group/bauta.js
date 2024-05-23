@@ -179,14 +179,14 @@ export class BautaJS implements BautaJSInstance {
     }
 
     // This will prevent to create new operations after bootstrapping the bautajs instance.
-    // this.operations = Object.freeze(
-    //   Object.entries(this.operations).reduce((acc: Operations, [key, val]) => {
-    //     acc[key] = val;
+    this.operations = Object.freeze(
+      Object.entries(this.operations).reduce((acc: Operations, [key, val]) => {
+        acc[key] = val;
 
-    //     return acc;
-    //   }, {})
-    // );
-    // this.bootstrapped = true;
+        return acc;
+      }, {})
+    );
+    this.bootstrapped = true;
 
     // console.log('bootstrap in bautajs-core finished', this.operations);
   }
@@ -304,9 +304,9 @@ export class BautaJS implements BautaJSInstance {
     if (!(bautajsInstance instanceof BautaJS)) {
       throw new Error('A bautaJS instance must be provided.');
     }
-    // if (this.bootstrapped === true) {
-    //   throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
-    // }
+    if (this.bootstrapped === true) {
+      throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
+    }
     if (bautajsInstance.bootstrapped === false) {
       this.logger.warn(
         'The given instance is not bootstrapped, thus operation schema will be no inherited.'

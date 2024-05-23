@@ -37,12 +37,12 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
     ? opts.bautajsInstance
     : new bautaJS.BautaJS({ logger: fastify.log as bautaJS.Logger, ...opts });
 
-  await bautajs.bootstrap();
-
   if (opts.inheritOperationsFrom) {
     console.log('habemus inheritOperationsFrom in bautajs-fastify');
     bautajs.inheritOperationsFrom(opts.inheritOperationsFrom);
   }
+
+  await bautajs.bootstrap();
 
   // Add x-request-id on the response
   await fastify.register(responseXRequestId, { prefix: opts.prefix });
