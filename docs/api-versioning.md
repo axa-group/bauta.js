@@ -27,9 +27,9 @@ For versioning to work there are three parts that **must** be configured in orde
 
 ### 1. Swagger API definition
 
-:exclamation: You **must** declare any route that you want to use in the new version as ``deprecated``.  :exclamation:
+:exclamation: You **must** declare any existing route that you want to use as a new version as ``deprecated``.  :exclamation:
 
-This is required to make sure that bautaJs does not overwrite the new version with the old implementation.
+This is required to make sure that bautaJs does not overwrite the new version with the original route implementation.
 
 Below there is an example of API definitions for two API versions (note: you may use two different swaggers and load each one of them separatedly):
 
