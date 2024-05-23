@@ -8,11 +8,30 @@
 
 - It is recommented that you are using node v18.
 - `npm install` from the root project of the monorepo
-- enter into `packages/bautajs-fastify-example` folder 
+- enter into `packages/bautajs-fastify-versioning-example` folder 
 
 ## Brief explanation of the different examples
 
-TODO
+We have a set of three services:
+
+- `v1`
+  - `cats` --> endpoint marked as `deprecated`. This service returns name, communication and breed
+  - `dogs` --> This service returns name, communication and breed
+- `v2`
+  - `cats` --> latest version of the endpoint. This service returns petName, communication and favouriteAction
+
+
+## An example of each initialization method 
+
+You can run npm start for each one of the scripts:
+
+- ``npm run start``: Uses default port 8080. Basic example without any versioning. Only v1 endpoints are exposed.
+- ``start:external``: Configures the versioning inheritance outside the plugin.
+- ``start:plugin``: Configures the versioning inheritance with the plugin option 'inheritOperationsFrom' and instantiates the two instances of bautaJs (the original and the new version).
+- ``start:parent``: Configures the versioning inheritance instantiating only the parent bautaJs instance and uses the plugin option 'inheritOperationsFrom' to add the new version endpoints.
+
+
+This is only a showcase of how the versioning works. For details you should check [versioning](https://github.com/axa-group/bauta.js/blob/main/docs/api-versioning.md).
 
 
 ## Third party dependencies licenses
