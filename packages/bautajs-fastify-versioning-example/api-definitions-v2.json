@@ -1,0 +1,42 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "A new API",
+    "version": "v2",
+    "title": "Cats API"
+  },
+  "servers": [
+    {
+      "url": "/v2/api/"
+    }
+  ],
+  "paths": {
+    "/cats": {
+      "get": {
+        "operationId": "findCatV2",
+        "responses": {
+          "200": {
+            "description": "Miaw!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "petName": {
+                      "type": "string"
+                    },
+                    "communication": {
+                      "type": "string"
+                    },
+                    "favouriteAction": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
