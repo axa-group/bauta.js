@@ -26,12 +26,10 @@ export async function bautajsFastify(
   fastify: FastifyInstance,
   opts: BautaJSFastifyPluginOptions
 ): Promise<void>;
-
 export async function bautajsFastify(
   fastify: FastifyInstance,
   opts: BautaJSFastifyPluginOptions & bautaJS.BautaJSOptions
 ): Promise<void>;
-
 export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
   const bautajs = opts.bautajsInstance
     ? opts.bautajsInstance

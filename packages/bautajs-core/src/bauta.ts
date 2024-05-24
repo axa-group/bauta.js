@@ -141,7 +141,6 @@ export class BautaJS implements BautaJSInstance {
     if (this.bootstrapped === true) {
       throw new Error('The instance has already being bootstrapped.');
     }
-
     if (this.apiDefinition) {
       const parser = new Parser(this.logger);
       const parsedApiDefinition = await parser.asyncParse(this.apiDefinition);
@@ -275,10 +274,8 @@ export class BautaJS implements BautaJSInstance {
         'The given instance is not bootstrapped, thus operation schema will be no inherited.'
       );
     }
-
     Object.keys(bautajsInstance.operations).forEach(operationId => {
       const operation = bautajsInstance.operations[operationId];
-
       if (
         operation.deprecated !== true &&
         !Object.prototype.hasOwnProperty.call(this.operations, operationId)
@@ -296,7 +293,6 @@ export class BautaJS implements BautaJSInstance {
         }
       }
     });
-
     return this;
   }
 }
