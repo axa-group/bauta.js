@@ -7,8 +7,7 @@ import {
   createContext,
   defaultLogger,
   Logger,
-  pipe,
-  Document
+  pipe
 } from '@axa/bautajs-core';
 import { CancelableRequest, RequestError } from 'got';
 import { Readable } from 'stream';
