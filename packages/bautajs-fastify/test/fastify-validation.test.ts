@@ -1,9 +1,11 @@
 import path from 'path';
 import fastify, { FastifyInstance } from 'fastify';
-import { ValidationError } from '@axa/bautajs-core';
-import { bautajsFastify } from '../src/index';
+import { ValidationError, Document } from '@axa/bautajs-core';
+import { bautajsFastify } from '../src/index.js';
 
-const apiDefinitionCustomValidation = require('./fixtures/test-api-definitions-custom-validation.json');
+import apiDefinitionCustomValidation from './fixtures/test-api-definitions-custom-validation.json';
+import { getDirname } from './utils.js';
+import { jest } from '@jest/globals';
 
 describe('bautaJS fastify tests', () => {
   let fastifyInstance: FastifyInstance<any>;
@@ -19,8 +21,8 @@ describe('bautaJS fastify tests', () => {
       apiBasePath: '/api/',
       prefix: '/v1/',
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      apiDefinition: apiDefinitionCustomValidation,
-      resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+      apiDefinition: apiDefinitionCustomValidation as Document,
+      resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
     });
 
     fastifyInstance.setErrorHandler((err: ValidationError, _req, reply) => {
@@ -53,8 +55,8 @@ describe('bautaJS fastify tests', () => {
       apiBasePath: '/api/',
       prefix: '/v1/',
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      apiDefinition: apiDefinitionCustomValidation,
-      resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+      apiDefinition: apiDefinitionCustomValidation as Document,
+      resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
     });
 
     fastifyInstance.setErrorHandler((err: ValidationError, _req, reply) => {
@@ -90,9 +92,9 @@ describe('bautaJS fastify tests', () => {
       apiBasePath: '/api/',
       prefix: '/v1/',
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      apiDefinition: apiDefinitionCustomValidation,
+      apiDefinition: apiDefinitionCustomValidation as Document,
       resolversPath: path.resolve(
-        __dirname,
+        getDirname(),
         './fixtures/test-resolvers/operation-resolver-invalid.js'
       ),
       enableResponseValidation: true
@@ -119,9 +121,9 @@ describe('bautaJS fastify tests', () => {
       apiBasePath: '/api/',
       prefix: '/v1/',
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      apiDefinition: apiDefinitionCustomValidation,
+      apiDefinition: apiDefinitionCustomValidation as Document,
       resolversPath: path.resolve(
-        __dirname,
+        getDirname(),
         './fixtures/test-resolvers/operation-resolver-invalid.js'
       ),
       strictResponseSerialization: false
@@ -140,9 +142,9 @@ describe('bautaJS fastify tests', () => {
       apiBasePath: '/api/',
       prefix: '/v1/',
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      apiDefinition: apiDefinitionCustomValidation,
+      apiDefinition: apiDefinitionCustomValidation as Document,
       resolversPath: path.resolve(
-        __dirname,
+        getDirname(),
         './fixtures/test-resolvers/operation-resolver-invalid.js'
       ),
       enableResponseValidation: true,
@@ -170,7 +172,7 @@ describe('bautaJS fastify tests', () => {
     fastifyInstance.register(bautajsFastify, {
       apiBasePath: '/api/',
       prefix: '/v1/',
-      apiDefinition: apiDefinitionCustomValidation,
+      apiDefinition: apiDefinitionCustomValidation as Document,
       resolvers: [
         operations => {
           operations.operation1.setup(() => {

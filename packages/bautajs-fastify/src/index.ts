@@ -36,7 +36,7 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
     : new bautaJS.BautaJS({ logger: fastify.log as bautaJS.Logger, ...opts });
 
   if (opts.inheritOperationsFrom) {
-    bautajs.inheritOperationsFrom(opts.inheritOperationsFrom);
+    await bautajs.inheritOperationsFrom(opts.inheritOperationsFrom);
   }
 
   await bautajs.bootstrap();
