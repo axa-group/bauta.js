@@ -279,6 +279,8 @@ describe('bauta core tests', () => {
         staticConfig: config
       });
 
+      await bautaJS.bootstrap();
+
       await expect(
         bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
       ).resolves.toStrictEqual([
@@ -302,6 +304,7 @@ describe('bauta core tests', () => {
         ],
         staticConfig: config
       });
+
       await bautaJS.bootstrap();
 
       await expect(
@@ -327,6 +330,7 @@ describe('bauta core tests', () => {
         ],
         staticConfig: config
       });
+
       await bautaJS.bootstrap();
 
       await expect(
@@ -687,7 +691,7 @@ describe('bauta core tests', () => {
       expect(request3).toBe('okoperationInherited');
     });
 
-    test.only('operations can not be inherit after bootstrap', async () => {
+    test('operations can not be inherit after bootstrap', async () => {
       const config = {
         endpoint: 'http://google.es'
       };
@@ -708,6 +712,7 @@ describe('bauta core tests', () => {
         ],
         staticConfig: config
       });
+
       const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
@@ -716,7 +721,7 @@ describe('bauta core tests', () => {
 
       await bautaJSV2.bootstrap();
 
-      expect(() => bautaJSV2.inheritOperationsFrom(bautaJSV1)).toThrow(
+      await expect(() => bautaJSV2.inheritOperationsFrom(bautaJSV1)).rejects.toThrow(
         new Error('Operation inherit should be done before bootstrap the BautaJS instance.')
       );
     });
@@ -763,13 +768,17 @@ describe('bauta core tests', () => {
         ],
         staticConfig: config
       });
+
       const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
         staticConfig: config
       });
+
       await bautaJSV2.inheritOperationsFrom(bautaJSV1);
+
       await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
+
       expect(bautaJSV1.operations.operation1.schema).not.toStrictEqual(
         bautaJSV2.operations.operation1.schema
       );

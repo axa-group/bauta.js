@@ -88,6 +88,9 @@ export class BautaJS implements BautaJSInstance {
 
   private bootstrapped = false;
 
+  // to not load the resolvers twice (only relevant for versioning operations)
+  private resolversAlreadyLoaded = false;
+
   private readonly resolversPath: string | string[] | undefined;
 
   private resolvers: Resolver[] | undefined;
@@ -155,19 +158,23 @@ export class BautaJS implements BautaJSInstance {
   }
 
   public async loadResolvers(): Promise<void> {
-    // console.log('before loading the resolvers, this.operations is', this.operations);
+    if (this.resolversAlreadyLoaded === false) {
+      // console.log('before loading the resolvers, this.operations is', this.operations);
 
-    // Load custom resolvers and operations modifiers
-    if (this.resolvers) {
-      this.resolvers.forEach(resolver => {
-        resolver(this.operations);
-      });
-    } else {
-      await BautaJS.requireAll<[Operations]>(
-        this.resolversPath || './server/resolvers/**/*resolver.js',
-        true,
-        [this.operations]
-      );
+      // Load custom resolvers and operations modifiers
+      if (this.resolvers) {
+        this.resolvers.forEach(resolver => {
+          resolver(this.operations);
+        });
+      } else {
+        await BautaJS.requireAll<[Operations]>(
+          this.resolversPath || './server/resolvers/**/*resolver.js',
+          true,
+          [this.operations]
+        );
+      }
+
+      this.resolversAlreadyLoaded = true;
     }
 
     // console.log('after loading the resolvers, this.operations is', this.operations);
@@ -329,12 +336,13 @@ export class BautaJS implements BautaJSInstance {
       throw new Error('A bautaJS instance must be provided.');
     }
 
-    // For me is not an issue that this has already been bootstrapped, but this requires TESTING
-    // if (this.bootstrapped === true) {
-    //   throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
-    // }
+    if (this.bootstrapped === true) {
+      throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
+    }
 
-    await this.loadResolvers();
+    // We need to do this before the overriding of the operations
+    // When we do not version, this is done in bootstrap, but when we version, we need to do it here
+    await bautajsInstance.loadResolvers();
 
     if (bautajsInstance.bootstrapped === false) {
       this.logger.warn(
