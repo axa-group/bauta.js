@@ -4,7 +4,7 @@ import { jest } from '@jest/globals';
 
 describe('tap decorator', () => {
   test('should perform the current step action but return the previous step value', async () => {
-    const log = jest.fn();
+    const log = jest.fn() as any;
     const getMovie = step(() => ({ name: 'star wars' }));
     const logMovieName = step<{ name: string }, { name: string }>(({ name }) => log(name));
 
@@ -36,7 +36,7 @@ describe('tap decorator', () => {
   test('should perform asynchronously the current step action but return the previous step value', async () => {
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     const log = jest.fn();
-    const tappedPromise = async (name: string) => {
+    const tappedPromise: (name: string) => Promise<any> = async (name: string) => {
       await delay(100);
       return log(name);
     };

@@ -178,7 +178,7 @@ describe('pipe tests', () => {
 
   test('should throw an pipeline cancellation error if request was canceled on a sync environment fn is resolved and not execute further step functions', () => {
     const step1 = jest.fn();
-    const step2 = jest.fn((_, ctx) => {
+    const step2 = jest.fn((_, ctx: any) => {
       ctx.token.cancel();
     });
     const step3 = jest.fn();

@@ -28,7 +28,7 @@ describe('catchError pipeline tests', () => {
   });
 
   test('should be called only onces', async () => {
-    const errorHandler = jest.fn().mockRejectedValue(new Error('error'));
+    const errorHandler = jest.fn().mockRejectedValue(new Error('error') as never);
 
     const stepFunction1 = () => 'bender';
     const stepFunction2 = () => 'bender3';

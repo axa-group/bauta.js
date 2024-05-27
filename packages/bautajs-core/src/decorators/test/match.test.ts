@@ -1,5 +1,5 @@
 import { pipe } from '../pipeline.js';
-import { match } from '../match.js';
+import { Match, match } from '../match.js';
 import { createContext } from '../../utils/create-context.js';
 import { BautaJSInstance } from '../../index.js';
 import { jest } from '@jest/globals';
@@ -43,7 +43,7 @@ describe('match decorator', () => {
       return (prev: any) => prev === staticValue;
     });
 
-    const matchBuilder = jest.fn(m =>
+    const matchBuilder = jest.fn((m: Match<any, any>) =>
       m
         .on(someFuctionThatShouldBeExecuted(1), myPipeline1)
         .on((prev: any) => prev === 2, myPipeline1)
