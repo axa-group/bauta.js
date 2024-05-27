@@ -11,6 +11,7 @@ import {
 } from '@axa/bautajs-core';
 import { CancelableRequest, RequestError } from 'got';
 import { Readable } from 'stream';
+import { jest } from '@jest/globals';
 
 describe('provider rest', () => {
   let bautajs: BautaJSInstance;
