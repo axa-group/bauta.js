@@ -1,5 +1,5 @@
-const { resolver, pipe, step } = require('@axa/bautajs-core');
-const { getRequest } = require('@axa/bautajs-express');
+import { resolver, pipe, step } from '@axa/bautajs-core';
+import { getRequest } from '@axa/bautajs-express';
 
 const transformResponse = step(response => {
   return {
@@ -36,7 +36,7 @@ function giveAnswerAfterWaitingWithTimeout() {
   });
 }
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.cancelRequest
     .validateRequest(false)
     .validateResponse(false)

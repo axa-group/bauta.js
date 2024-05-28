@@ -1,8 +1,8 @@
-const express = require('express');
-const nock = require('nock');
-const supertest = require('supertest');
+import express from 'express';
+import nock from 'nock';
+import supertest from 'supertest';
 
-const bautaJS = require('../server/instances/bauta');
+import bautaJS from '../server/instances/bauta.js';
 
 describe('bautajs-express-example regressions tests', () => {
   let app;

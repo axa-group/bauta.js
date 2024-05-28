@@ -1,6 +1,6 @@
-const express = require('express');
-const { notFound } = require('@hapi/boom');
-const bautaJS = require('./server/instances/bauta');
+import express from 'express';
+import { notFound } from '@hapi/boom';
+import bautaJS from './server/instances/bauta.js';
 
 (async () => {
   // Please, add helmet or other security library on your production API.

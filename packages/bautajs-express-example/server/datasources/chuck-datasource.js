@@ -1,5 +1,5 @@
-const { getRequest } = require('@axa/bautajs-express');
-const { restProvider } = require('@axa/bautajs-datasource-rest');
+import { getRequest } from '@axa/bautajs-express';
+import { restProvider } from '@axa/bautajs-datasource-rest';
 
 // Used to test that an https works
 const chuckProvider = restProvider((client, _, ctx) => {
@@ -9,6 +9,4 @@ const chuckProvider = restProvider((client, _, ctx) => {
   });
 });
 
-module.exports = {
-  chuckProvider
-};
+export { chuckProvider };
