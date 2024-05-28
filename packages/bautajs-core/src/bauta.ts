@@ -135,32 +135,10 @@ export class BautaJS implements BautaJSInstance {
     // This is required for loadResolvers, done this way to not modify the bauta.js construction interface which would be a big clusterluck
     this.resolvers = resolvers;
     this.resolversPath = resolversPath;
-
-    // TODO: this does not make sense in the scope of express and it is only leaved like this commented for reference
-    // (async () => {
-    //   // Load custom resolvers and operations modifiers
-    //   if (resolvers) {
-    //     resolvers.forEach(resolver => {
-    //       resolver(this.operations);
-    //     });
-    //   } else {
-    //     await BautaJS.requireAll<[Operations]>(
-    //       resolversPath || './server/resolvers/**/*resolver.js',
-    //       true,
-    //       [this.operations]
-    //     );
-    //   }
-
-    //   console.log('after loading the resolvers, this.operations is', this.operations);
-    // })();
-
-    // console.log('this is the end of the line for you, little guy!!!!');
   }
 
   public async loadResolvers(): Promise<void> {
     if (this.resolversAlreadyLoaded === false) {
-      // console.log('before loading the resolvers, this.operations is', this.operations);
-
       // Load custom resolvers and operations modifiers
       if (this.resolvers) {
         this.resolvers.forEach(resolver => {
@@ -176,8 +154,6 @@ export class BautaJS implements BautaJSInstance {
 
       this.resolversAlreadyLoaded = true;
     }
-
-    // console.log('after loading the resolvers, this.operations is', this.operations);
   }
 
   public async bootstrap(): Promise<void> {
@@ -280,38 +256,24 @@ export class BautaJS implements BautaJSInstance {
    * const files = requireAll('./my/path/to/datasources/*.js', true, {someVar:123});
    */
   static async requireAll<T>(folder: string | string[], execute = true, vars?: T) {
-    // console.log('we at the start of requireAll');
     const execFiles = async (folderPath: string) => {
-      // console.log('we at the start of execFiles');
       const result: any = [];
       const files = await fastGlob.async(folderPath.replace(/\\/g, '/'));
-
-      // console.log('files', files);
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
 
-        // console.log('import path is', file);
-
         let data = await import(resolve(file));
-        // console.log('data from import', data);
 
-        // console.log('data default from require toString', data?.default.toString());
         if (data.default) {
-          // console.log('habemus default', data.default);
           data = data.default;
         }
         if (typeof data === 'function' && execute === true) {
-          // console.log('habemus function', data.toString(), Array.isArray(vars));
-          // console.log('vars', vars);
           data = Array.isArray(vars) ? data(...vars) : data(vars);
-          // console.log('data after something weird', data);
         }
 
         result.push(data);
       }
-
-      // console.log('we at the end of execFiles', result);
 
       return result;
     };
@@ -325,8 +287,6 @@ export class BautaJS implements BautaJSInstance {
     } else {
       files = await execFiles(folder);
     }
-
-    // console.log('we at the end of requireAll');
 
     return files;
   }
