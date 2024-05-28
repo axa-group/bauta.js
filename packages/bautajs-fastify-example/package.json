@@ -5,8 +5,8 @@
   "type": "module",
   "exports": "./dist/server.js",  
   "scripts": {
-    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server.js",
-    "test": "jest"
+    "start": "LOG_LEVEL=info DEBUG=bautajs* NODE_DEBUG='esm' NODE_OPTIONS='--experimental-vm-modules --trace-warnings' node  ./server.js",
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js"
   },
   "repository": {
     "type": "git",

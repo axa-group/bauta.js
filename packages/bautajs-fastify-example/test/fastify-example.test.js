@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
 import nock from 'nock';
 
-const { registerFastifyServer } = require('../registrator');
+import { registerFastifyServer } from '../registrator.js';
 
 describe('bautajs-fastify-example regressions tests', () => {
   let fastify;
