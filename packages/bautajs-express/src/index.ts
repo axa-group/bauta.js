@@ -236,8 +236,6 @@ export class BautaJSExpress extends bautajs.BautaJS {
 
     await this.bootstrap();
 
-    console.log('after bootstrap');
-
     initReqIdGenerator(router, this.logger, options.reqGenerator, options.expressPino);
     initExpressPino(router, this.logger as PinoLogger, options.expressPino);
     initHelmet(router, options.helmet);
