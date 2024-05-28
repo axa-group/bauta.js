@@ -4,25 +4,27 @@ import path from 'path';
 import FormData from 'form-data';
 import supertest from 'supertest';
 import { Readable } from 'stream';
-import { resolver, asPromise, defaultLogger } from '@axa/bautajs-core';
-import { BautaJSExpress } from '../src/index';
-import { getRequest, getResponse } from '../src/operators';
+import { resolver, asPromise, defaultLogger, Document } from '@axa/bautajs-core';
+import { BautaJSExpress } from '../src/index.js';
+import { getRequest, getResponse } from '../src/operators.js';
 
-const apiDefinition = require('./fixtures/test-api-definitions.json');
-const apiDefinitionV2 = require('./fixtures/test-api-definitions-v2.json');
-const apiDefinitionSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
-const apiDefinitionSwaggerCircularDeps = require('./fixtures/test-api-definitions-swagger-circular-deps.json');
-const apiDefinitionSwaggerPathOrdering = require('./fixtures/test-api-definitions-swagger-path-ordering.json');
+import apiDefinition from './fixtures/test-api-definitions.json';
+import apiDefinitionV2 from './fixtures/test-api-definitions-v2.json';
+import apiDefinitionSwagger2 from './fixtures/test-api-definitions-swagger-2.json';
+import apiDefinitionSwaggerCircularDeps from './fixtures/test-api-definitions-swagger-circular-deps.json';
+import apiDefinitionSwaggerPathOrdering from './fixtures/test-api-definitions-swagger-path-ordering.json';
+import { getDirname } from './utils.js';
+import { jest } from '@jest/globals';
 
 describe('bautaJS express', () => {
   describe('request cancellation', () => {
     test('should trigger the aborted event when the client close the connection and log the error', async () => {
       const logger = defaultLogger();
-      jest.spyOn(logger, 'error').mockImplementation();
+      jest.spyOn(logger, 'error').mockImplementation(() => undefined);
       // @ts-ignore
       logger.child = () => logger;
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           operations => {
             operations.operation1.setup((_, ctx) => {
@@ -55,8 +57,8 @@ describe('bautaJS express', () => {
   describe('express initialization', () => {
     test('should expose the given swagger with an express API', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        apiDefinition: apiDefinition as Document,
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const router = await bautajs.buildRouter();
@@ -79,9 +81,9 @@ describe('bautaJS express', () => {
 
     test('should not expose the endpoints that have been configured as private', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolversPath: path.resolve(
-          __dirname,
+          getDirname(),
           './fixtures/test-resolvers/private-operation-resolver.js'
         )
       });
@@ -98,7 +100,7 @@ describe('bautaJS express', () => {
 
     test('should not send the response again if already has been sent', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           operations => {
             operations.operation1.setup((_, ctx) => {
@@ -123,7 +125,7 @@ describe('bautaJS express', () => {
 
     test('should not send the response again if already has been sent on a readable pipe', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(
@@ -159,7 +161,7 @@ describe('bautaJS express', () => {
 
     test('should not force empty object if the status code is 204', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup((_, ctx) => {
@@ -181,7 +183,7 @@ describe('bautaJS express', () => {
     test('should not override the headers set on the pipeline by the swagger ones', async () => {
       const form = new FormData();
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(
@@ -211,8 +213,8 @@ describe('bautaJS express', () => {
 
     test('should allow swagger 2.0', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition: apiDefinitionSwagger2,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        apiDefinition: apiDefinitionSwagger2 as Document,
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
       const router = await bautajs.buildRouter();
 
@@ -234,8 +236,8 @@ describe('bautaJS express', () => {
 
     test('should return the swagger even if the openAPI swagger json has circular dependenciesw', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition: apiDefinitionSwaggerCircularDeps,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        apiDefinition: apiDefinitionSwaggerCircularDeps as Document,
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const router = await bautajs.buildRouter({ explorer: { enabled: true } });
@@ -251,7 +253,7 @@ describe('bautaJS express', () => {
     test('should not expose the swagger if explorer is set to false', async () => {
       const bautajs = new BautaJSExpress({
         apiDefinition: apiDefinitionSwagger2,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const router = await bautajs.buildRouter({ explorer: { enabled: false } });
@@ -266,9 +268,9 @@ describe('bautaJS express', () => {
 
     test('should left error handling to express error handler', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolversPath: path.resolve(
-          __dirname,
+          getDirname(),
           './fixtures/test-resolvers/operation-resolver-error.js'
         )
       });
@@ -294,12 +296,12 @@ describe('bautaJS express', () => {
   describe('two express instances', () => {
     test('should be possible to create two bautajs express instances and expose it in different paths', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        apiDefinition: apiDefinition as Document,
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
       const bautajsV2 = new BautaJSExpress({
-        apiDefinition: apiDefinitionV2,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        apiDefinition: apiDefinitionV2 as Document,
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const router = await bautajs.buildRouter();
@@ -338,9 +340,9 @@ describe('bautaJS express', () => {
   describe('path ordering', () => {
     test('should work with specific operation first in the resolver', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition: apiDefinitionSwaggerPathOrdering,
+        apiDefinition: apiDefinitionSwaggerPathOrdering as Document,
         resolversPath: path.resolve(
-          __dirname,
+          getDirname(),
           './fixtures/test-resolvers/path-ordering-specific-first-resolver.js'
         )
       });
@@ -371,9 +373,9 @@ describe('bautaJS express', () => {
 
     test('should work with general operation first in the resolver', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition: apiDefinitionSwaggerPathOrdering,
+        apiDefinition: apiDefinitionSwaggerPathOrdering as Document,
         resolversPath: path.resolve(
-          __dirname,
+          getDirname(),
           './fixtures/test-resolvers/path-ordering-general-first-resolver.js'
         )
       });
