@@ -24,7 +24,7 @@ function giveAnswerAfterWaitingWithTimeout() {
       }, timeout)
     );
 
-    cancelTimeout = 3000;
+    const cancelTimeout = 3000;
     const cancelator = new Promise(resolve =>
       setTimeout(() => {
         ctx.token.cancel(); // If this triggers the promise does not resolve but it is cancelled
