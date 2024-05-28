@@ -234,14 +234,16 @@ export class BautaJSExpress extends bautajs.BautaJS {
   ): Promise<express.Router> {
     const router = express.Router(options.routerOptions);
 
+    await this.bootstrap();
+
+    console.log('after bootstrap');
+
     initReqIdGenerator(router, this.logger, options.reqGenerator, options.expressPino);
     initExpressPino(router, this.logger as PinoLogger, options.expressPino);
     initHelmet(router, options.helmet);
     initCors(router, options.cors);
     router.use(compression());
     initBodyParser(router, options.bodyParser);
-
-    await this.bootstrap();
 
     const routes = this.processOperations();
 
