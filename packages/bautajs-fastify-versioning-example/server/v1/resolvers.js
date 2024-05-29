@@ -1,4 +1,4 @@
-const { pipe, resolver, step } = require('@axa/bautajs-core');
+import { pipe, resolver, step } from '@axa/bautajs-core';
 
 const getCatStep = step(() => {
   return {
@@ -16,7 +16,7 @@ const getDogStep = step(() => {
   };
 });
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.findCat.validateRequest(true).validateResponse(true).setup(pipe(getCatStep));
   operations.findDog.validateRequest(true).validateResponse(true).setup(pipe(getDogStep));
 });

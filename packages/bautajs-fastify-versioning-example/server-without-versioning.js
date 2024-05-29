@@ -1,9 +1,11 @@
-const fastify = require('fastify')({ logger: true });
+import Fastify from 'fastify';
 
-const { bautajsFastify } = require('@axa/bautajs-fastify');
-const { BautaJS } = require('@axa/bautajs-core');
+import { bautajsFastify } from '@axa/bautajs-fastify';
+import { BautaJS } from '@axa/bautajs-core';
 
-const apiDefinitionsV1 = require('./api-definitions-v1.json');
+import apiDefinitionsV1 from './api-definitions-v1.json' assert { type: 'json' };
+
+const fastify = Fastify({ logger: true });
 
 const bautaJsV1 = new BautaJS({
   apiDefinition: apiDefinitionsV1,
