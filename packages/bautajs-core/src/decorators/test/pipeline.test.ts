@@ -1,6 +1,7 @@
 import httpMocks from 'node-mocks-http';
-import { createContext, BautaJSInstance, GenericError } from '../../index';
-import { pipe } from '../pipeline';
+import { createContext, BautaJSInstance, GenericError } from '../../index.js';
+import { pipe } from '../pipeline.js';
+import { jest } from '@jest/globals';
 
 describe('pipe tests', () => {
   test('should throw an error on pipe 0 StepFunctions', () => {
@@ -177,7 +178,7 @@ describe('pipe tests', () => {
 
   test('should throw an pipeline cancellation error if request was canceled on a sync environment fn is resolved and not execute further step functions', () => {
     const step1 = jest.fn();
-    const step2 = jest.fn((_, ctx) => {
+    const step2 = jest.fn((_, ctx: any) => {
       ctx.token.cancel();
     });
     const step3 = jest.fn();

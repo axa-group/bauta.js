@@ -39,7 +39,7 @@ async function explorerPlugin(
   } else {
     swaggerOptions.swagger = { ...opiFixed, tags: availableTags };
   }
-  await fastify.register(swagger, {
+  await fastify.register(swagger.default, {
     ...swaggerOptions
   });
 }

@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe } from '../../index';
-import { asPromise } from '../as-promise';
+import { BautaJSInstance, createContext, pipe } from '../../index.js';
+import { asPromise } from '../as-promise.js';
 
 describe('callback decorator', () => {
   test('should execute as a callback', async () => {

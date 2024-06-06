@@ -1,5 +1,5 @@
 import fastSafeStringify from 'fast-safe-stringify';
-import { IValidationError, LocationError } from '../types';
+import { IValidationError, LocationError } from '../types.js';
 
 export class ValidationError extends Error implements IValidationError {
   public errors: LocationError[];
@@ -20,7 +20,7 @@ export class ValidationError extends Error implements IValidationError {
   }
 
   private formatStack() {
-    return `${this.name}: ${this.message} \n ${fastSafeStringify(this, undefined, 2)}`;
+    return `${this.name}: ${this.message} \n ${fastSafeStringify.default(this, undefined, 2)}`;
   }
 
   public toJSON() {

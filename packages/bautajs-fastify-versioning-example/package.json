@@ -2,12 +2,13 @@
   "name": "@axa/bautajs-fastify-versioning-example",
   "version": "1.0.0",
   "description": "A bautaJS example of versioning in fastify",
+  "type": "module",
   "main": "./server-without-versioning.js",
   "scripts": {
-    "start": "LOG_LEVEL=info DEBUG=bautajs* node ./server-without-versioning.js",
-    "start:parent": "LOG_LEVEL=info DEBUG=bautajs* node ./versioning-only-parent.js",
-    "start:plugin": "LOG_LEVEL=info DEBUG=bautajs* node ./versioning-plugin-inherits.js",
-    "start:external": "LOG_LEVEL=info DEBUG=bautajs* node ./versioning-external-inherits.js"
+    "start": "LOG_LEVEL=info DEBUG=bautajs* NODE_DEBUG='esm' NODE_OPTIONS='--experimental-vm-modules --trace-warnings' node ./server-without-versioning.js",
+    "start:parent": "LOG_LEVEL=info DEBUG=bautajs* NODE_DEBUG='esm' NODE_OPTIONS='--experimental-vm-modules --trace-warnings' node ./versioning-only-parent.js",
+    "start:plugin": "LOG_LEVEL=info DEBUG=bautajs* NODE_DEBUG='esm' NODE_OPTIONS='--experimental-vm-modules --trace-warnings' node ./versioning-plugin-inherits.js",
+    "start:external": "LOG_LEVEL=info DEBUG=bautajs* NODE_DEBUG='esm' NODE_OPTIONS='--experimental-vm-modules --trace-warnings' node ./versioning-external-inherits.js"
   },
   "repository": {
     "type": "git",

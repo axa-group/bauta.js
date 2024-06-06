@@ -1,8 +1,8 @@
 import { NormalizedOptions } from 'got';
 import is from '@sindresorhus/is';
 import fastSafeStringify from 'fast-safe-stringify';
-import { RestProviderOptions } from '../types';
-import { DEFAULT_MAX_BODY_LOG_SIZE } from '../constants';
+import { RestProviderOptions } from '../types.js';
+import { DEFAULT_MAX_BODY_LOG_SIZE } from '../constants.js';
 
 const outgoingReqProto = Object.create(
   {},
@@ -65,13 +65,13 @@ export function reqSerializer(
       req.headers = options.headers;
     }
     if (options.body || options.json) {
-      if (is.nodeStream(options.body)) {
+      if (is.default.nodeStream(options.body)) {
         req.body = {
           file: {
             type: 'Stream'
           }
         };
-      } else if (is.buffer(options.body)) {
+      } else if (is.default.buffer(options.body)) {
         req.body = {
           file: {
             type: 'Buffer',
@@ -80,7 +80,7 @@ export function reqSerializer(
         };
       } else {
         const body = options.body || options.json || '';
-        const bodyString = typeof body === 'object' ? fastSafeStringify(body) : body;
+        const bodyString = typeof body === 'object' ? fastSafeStringify.default(body) : body;
         const size = Buffer.byteLength(bodyString);
         const maxSize = restProviderOptions.maxBodyLogSize || DEFAULT_MAX_BODY_LOG_SIZE;
         if (size > maxSize) {

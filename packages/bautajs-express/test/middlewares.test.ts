@@ -3,21 +3,22 @@
 import split from 'split2';
 import pino from 'pino';
 import supertest from 'supertest';
-import { resolver, defaultLogger, Logger } from '@axa/bautajs-core';
+import { resolver, defaultLogger, Logger, Document } from '@axa/bautajs-core';
 import express from 'express';
-import { BautaJSExpress } from '../src/index';
+import { BautaJSExpress } from '../src/index.js';
+import { jest } from '@jest/globals';
 
-const apiDefinitionExtraTag = require('./fixtures/test-api-definitions-extra-tag.json');
-const apiDefinition = require('./fixtures/test-api-unused-definitions.json');
-const expectedFullSwagger = require('./fixtures/expected-api-full-unused-swagger.json');
-const expectedUnusedSwagger = require('./fixtures/expected-api-unused-swagger.json');
-const expectedOnlyTagsSwagger = require('./fixtures/expected-api-only-used-tags-swagger.json');
+import apiDefinitionExtraTag from './fixtures/test-api-definitions-extra-tag.json';
+import apiDefinition from './fixtures/test-api-unused-definitions.json';
+import expectedFullSwagger from './fixtures/expected-api-full-unused-swagger.json';
+import expectedUnusedSwagger from './fixtures/expected-api-unused-swagger.json';
+import expectedOnlyTagsSwagger from './fixtures/expected-api-only-used-tags-swagger.json';
 
 describe('express middlewares', () => {
   describe('express explorer', () => {
     test('should exposes all endpoints that has a resolver', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(() => [
@@ -46,12 +47,12 @@ describe('express middlewares', () => {
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect(200);
 
-      expect(JSON.parse(res.text)).toStrictEqual(expectedFullSwagger);
+      expect(JSON.parse(res.text)).toStrictEqual(JSON.parse(JSON.stringify(expectedFullSwagger)));
     });
 
     test('should not expose the endpoint if there is no resolver for it', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(() => [
@@ -74,12 +75,12 @@ describe('express middlewares', () => {
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect(200);
 
-      expect(JSON.parse(res.text)).toStrictEqual(expectedUnusedSwagger);
+      expect(JSON.parse(res.text)).toStrictEqual(JSON.parse(JSON.stringify(expectedUnusedSwagger)));
     });
 
     test('should only show the tags that are in the exposed routes', async () => {
       const bautajs = new BautaJSExpress({
-        apiDefinition: apiDefinitionExtraTag,
+        apiDefinition: apiDefinitionExtraTag as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(() => [
@@ -102,7 +103,9 @@ describe('express middlewares', () => {
         .expect('Content-Type', 'text/html; charset=utf-8')
         .expect(200);
 
-      expect(JSON.parse(res.text)).toStrictEqual(expectedOnlyTagsSwagger);
+      expect(JSON.parse(res.text)).toStrictEqual(
+        JSON.parse(JSON.stringify(expectedOnlyTagsSwagger))
+      );
     });
   });
 
@@ -113,7 +116,7 @@ describe('express middlewares', () => {
       const spy = jest.spyOn(logger, 'info');
       const bautajs = new BautaJSExpress({
         logger,
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(() => [
@@ -152,7 +155,7 @@ describe('express middlewares', () => {
       const spy = jest.spyOn(logger, 'info');
       const bautajs = new BautaJSExpress({
         logger,
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(() => [
@@ -186,7 +189,7 @@ describe('express middlewares', () => {
       const logger = pino(dest);
       const bautajs = new BautaJSExpress({
         logger,
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(() => [
@@ -237,7 +240,7 @@ describe('express middlewares', () => {
       const logger = pino(dest);
       const bautajs = new BautaJSExpress({
         logger,
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operation1.setup(() => [

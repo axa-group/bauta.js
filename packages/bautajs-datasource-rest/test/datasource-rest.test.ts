@@ -11,6 +11,7 @@ import {
 } from '@axa/bautajs-core';
 import { CancelableRequest, RequestError } from 'got';
 import { Readable } from 'stream';
+import { jest } from '@jest/globals';
 
 describe('provider rest', () => {
   let bautajs: BautaJSInstance;
@@ -202,7 +203,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -250,7 +251,7 @@ describe('provider rest', () => {
       const logger: Logger = defaultLogger();
       // 20 level means debug mode
       logger.level = 20;
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -354,7 +355,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -404,8 +405,8 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'info';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
-      jest.spyOn(logger, 'info').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
+      jest.spyOn(logger, 'info').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -458,7 +459,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -522,7 +523,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'info';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'info').mockImplementation();
+      jest.spyOn(logger, 'info').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -589,7 +590,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -667,7 +668,7 @@ describe('provider rest', () => {
       });
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -742,7 +743,7 @@ describe('provider rest', () => {
       });
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -815,7 +816,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -883,7 +884,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -947,7 +948,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -999,7 +1000,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -1046,7 +1047,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'debug').mockImplementation();
+      jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -1119,7 +1120,7 @@ describe('provider rest', () => {
       process.env.LOG_LEVEL = 'debug';
       const logger: Logger = defaultLogger();
 
-      jest.spyOn(logger, 'error').mockImplementation();
+      jest.spyOn(logger, 'error').mockImplementation(() => undefined);
       logger.child = () => logger;
       const { restProvider } = await import('../src/index');
 
@@ -1217,7 +1218,7 @@ describe('provider rest', () => {
         process.env.LOG_LEVEL = 'debug';
         const logger: Logger = defaultLogger();
 
-        jest.spyOn(logger, 'error').mockImplementation();
+        jest.spyOn(logger, 'error').mockImplementation(() => undefined);
         logger.child = () => {
           return logger;
         };
@@ -1265,7 +1266,7 @@ describe('provider rest', () => {
         const logger: Logger = defaultLogger();
 
         logger.child = () => logger;
-        jest.spyOn(logger, 'error').mockImplementation();
+        jest.spyOn(logger, 'error').mockImplementation(() => undefined);
 
         const { restProvider } = await import('../src/index');
 
@@ -1316,8 +1317,8 @@ describe('provider rest', () => {
 
         // create context will create a logger child
         logger.child = () => logger;
-        jest.spyOn(logger, 'error').mockImplementation();
-        jest.spyOn(logger, 'debug').mockImplementation();
+        jest.spyOn(logger, 'error').mockImplementation(() => undefined);
+        jest.spyOn(logger, 'debug').mockImplementation(() => undefined);
         const { restProvider } = await import('../src/index');
 
         nock('https://pets.com/v1').get('/policies').reply(200, 'we force with this a parserError');

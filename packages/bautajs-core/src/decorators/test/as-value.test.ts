@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe } from '../../index';
-import { asValue } from '../as-value';
+import { BautaJSInstance, createContext, pipe } from '../../index.js';
+import { asValue } from '../as-value.js';
 
 describe('as value decorator', () => {
   test('should allow send a simple value', async () => {

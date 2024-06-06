@@ -1,5 +1,5 @@
-const { pipe, resolver, step } = require('@axa/bautajs-core');
-const { getRequest } = require('@axa/bautajs-fastify');
+import { pipe, resolver, step } from '@axa/bautajs-core';
+import { getRequest } from '@axa/bautajs-fastify';
 
 const transformResponse = step(response => {
   return {
@@ -17,7 +17,7 @@ function getQueryParamStep(_prev, ctx) {
   )}`;
 }
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.queryParamAsArray
     .validateRequest(true)
     .validateResponse(false)

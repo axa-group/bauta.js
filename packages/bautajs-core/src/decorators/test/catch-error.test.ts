@@ -1,6 +1,7 @@
-import { pipe } from '../pipeline';
-import { createContext } from '../../utils/create-context';
-import { BautaJSInstance } from '../../types';
+import { pipe } from '../pipeline.js';
+import { createContext } from '../../utils/create-context.js';
+import { BautaJSInstance } from '../../types.js';
+import { jest } from '@jest/globals';
 
 describe('catchError pipeline tests', () => {
   test('should throw the error without any custom  error handler', () => {
@@ -27,7 +28,7 @@ describe('catchError pipeline tests', () => {
   });
 
   test('should be called only onces', async () => {
-    const errorHandler = jest.fn().mockRejectedValue(new Error('error'));
+    const errorHandler = jest.fn().mockRejectedValue(new Error('error') as never);
 
     const stepFunction1 = () => 'bender';
     const stepFunction2 = () => 'bender3';

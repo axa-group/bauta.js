@@ -1,4 +1,4 @@
-import { BautaJSInstance, Context, Pipeline } from '../types';
+import { BautaJSInstance, Context, Pipeline } from '../types.js';
 /**
  * @deprecated This function is deprecated and will be removed in future releases
  *

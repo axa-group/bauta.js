@@ -1,5 +1,5 @@
-import { Pipeline } from '../types';
-import { NotFoundError } from '../core/not-found-error';
+import { Pipeline } from '../types.js';
+import { NotFoundError } from '../core/not-found-error.js';
 
 export function buildDefaultStep(): Pipeline.StepFunction<any, any> {
   return () => {

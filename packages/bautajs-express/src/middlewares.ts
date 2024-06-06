@@ -7,10 +7,10 @@ import { Document, Operations, Logger, PathsObject } from '@axa/bautajs-core';
 import fastSafeStringify from 'fast-safe-stringify';
 import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import type { Logger as PinoLogger } from 'pino';
-import { MiddlewareOption, BodyParserOptions, ExplorerOptions, HelmetOptions } from './types';
-import { genReqId } from './utils';
-import { reqSerializer } from './serializers/req';
-import { resSerializer } from './serializers/res';
+import { MiddlewareOption, BodyParserOptions, ExplorerOptions, HelmetOptions } from './types.js';
+import { genReqId } from './utils.js';
+import { reqSerializer } from './serializers/req.js';
+import { resSerializer } from './serializers/res.js';
 
 function buildOpenAPIPaths(operations: Operations) {
   const paths: PathsObject = {};
@@ -71,7 +71,7 @@ export function initExpressPino(
     next();
   };
   if (!opt || (opt && opt.enabled === true && !opt.options)) {
-    const pino = expressPino({
+    const pino = expressPino.default({
       logger: logger as any,
       genReqId: (req: any) => req.id,
       serializers: {
@@ -85,7 +85,7 @@ export function initExpressPino(
     router.use(pino);
     router.use(reqStartMw);
   } else if (opt && opt.enabled === true && opt.options) {
-    const pino = expressPino({
+    const pino = expressPino.default({
       logger: logger as any,
       genReqId: (req: any) => req.id,
       serializers: {
@@ -148,7 +148,7 @@ export function initExplorer(
       tags.includes(t.name)
     );
     router.get(openAPIPath, (_, res) => {
-      res.send(fastSafeStringify({ ...apiDefinition, paths, tags: availableTags }));
+      res.send(fastSafeStringify.default({ ...apiDefinition, paths, tags: availableTags }));
       res.end();
     });
     router.use(

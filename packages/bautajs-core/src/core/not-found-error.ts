@@ -13,7 +13,7 @@ export class NotFoundError extends Error {
   }
 
   private formatStack() {
-    return `${this.name}: ${this.message} \n ${fastSafeStringify(this, undefined, 2)}`;
+    return `${this.name}: ${this.message} \n ${fastSafeStringify.default(this, undefined, 2)}`;
   }
 
   public toJSON() {

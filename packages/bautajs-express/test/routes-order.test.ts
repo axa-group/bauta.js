@@ -1,4 +1,4 @@
-import { sortRoutes } from '../src/routes-order';
+import { sortRoutes } from '../src/routes-order.js';
 
 describe('sortRoutes', () => {
   test('should work with the order as expected without optional parameters', () => {

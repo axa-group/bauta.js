@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe } from '../..';
-import { iif } from '../iif';
+import { BautaJSInstance, createContext, pipe } from '../../index.js';
+import { iif } from '../iif.js';
 
 describe('iif decorator', () => {
   test('should execute pipeline if the condition is truthy', async () => {

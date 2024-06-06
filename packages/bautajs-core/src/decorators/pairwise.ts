@@ -1,5 +1,5 @@
-import { Pipeline } from '../types';
-import { isPromise } from '../utils/is-promise';
+import { Pipeline } from '../types.js';
+import { isPromise } from '../utils/is-promise.js';
 /**
  * Decorator that returns the previous and current value as array
  *

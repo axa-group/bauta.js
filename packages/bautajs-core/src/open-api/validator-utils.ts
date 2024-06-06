@@ -1,5 +1,5 @@
 import fastJson from 'fast-safe-stringify';
-import { JSONSchema } from '../types';
+import { JSONSchema } from '../types.js';
 
 const bodySchema = Symbol('body-schema');
 const querystringSchema = Symbol('querystring-schema');
@@ -23,7 +23,7 @@ function cleanId(schema: JSONSchema) {
 
 function removeCircularReferences(schema: JSONSchema) {
   return JSON.parse(
-    fastJson(schema, (_key, value) => {
+    fastJson.default(schema, (_key, value) => {
       if (value === '[Circular]') {
         return undefined;
       }

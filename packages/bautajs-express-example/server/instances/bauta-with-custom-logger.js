@@ -1,7 +1,7 @@
-const { BautaJSExpress } = require('@axa/bautajs-express');
-const apiDefinition = require('../../api-definition.json');
+import { BautaJSExpress } from '@axa/bautajs-express';
+import apiDefinition from '../../api-definition.json' assert { type: 'json' };
 
-const logger = require('./custom-logger-bauta')('bauta-logger');
+import logger from './custom-logger-bauta';
 
 module.exports = new BautaJSExpress({
   apiDefinition,
@@ -9,5 +9,5 @@ module.exports = new BautaJSExpress({
   staticConfig: {
     someVar: 2
   },
-  logger
+  logger: logger('bauta-logger')
 });

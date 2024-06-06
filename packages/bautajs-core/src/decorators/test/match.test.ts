@@ -1,7 +1,8 @@
-import { pipe } from '../pipeline';
-import { match } from '../match';
-import { createContext } from '../../utils/create-context';
-import { BautaJSInstance } from '../..';
+import { pipe } from '../pipeline.js';
+import { Match, match } from '../match.js';
+import { createContext } from '../../utils/create-context.js';
+import { BautaJSInstance } from '../../index.js';
+import { jest } from '@jest/globals';
 
 describe('match decorator', () => {
   test('should select the pipeline execution depending on the condition', () => {
@@ -42,7 +43,7 @@ describe('match decorator', () => {
       return (prev: any) => prev === staticValue;
     });
 
-    const matchBuilder = jest.fn(m =>
+    const matchBuilder = jest.fn((m: Match<any, any>) =>
       m
         .on(someFuctionThatShouldBeExecuted(1), myPipeline1)
         .on((prev: any) => prev === 2, myPipeline1)

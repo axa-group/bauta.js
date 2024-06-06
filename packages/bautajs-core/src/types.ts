@@ -262,7 +262,7 @@ export interface BautaJSInstance {
    * - If the inherit operation is set as deprecated, his behaviour won't be inherited.
    * @memberof BautaJSInstance
    */
-  inheritOperationsFrom(bautajs: BautaJSInstance): BautaJSInstance;
+  inheritOperationsFrom(bautajs: BautaJSInstance): Promise<BautaJSInstance>;
 }
 
 export type CustomValidationFormat = {

@@ -9,10 +9,10 @@ import got, {
 } from 'got';
 import { createHttpAgent, createHttpsAgent } from '@axa/native-proxy-agent';
 import { Context, BautaJSInstance } from '@axa/bautajs-core';
-import { reqSerializer } from './serializers/req';
-import { resSerializer } from './serializers/res';
-import { errSerializer } from './serializers/err';
-import { ProviderOperation, RestProvider, RestProviderOptions } from './types';
+import { reqSerializer } from './serializers/req.js';
+import { resSerializer } from './serializers/res.js';
+import { errSerializer } from './serializers/err.js';
+import { ProviderOperation, RestProvider, RestProviderOptions } from './types.js';
 
 const httpAgent = createHttpAgent();
 const httpsAgent = createHttpsAgent();
@@ -182,7 +182,7 @@ function stepFn<TOut>(
 }
 
 function create(globalGotOptions?: ExtendOptions) {
-  const defaultClient = got.extend({
+  const defaultClient = got.default.extend({
     agent: {
       http: httpAgent,
       https: httpsAgent
@@ -232,4 +232,4 @@ export {
   logErrorsHook,
   addErrorStatusCodeHook
 };
-export * from './types';
+export * from './types.js';

@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe, step } from '../..';
-import { parallelMap } from '../parallel-map';
+import { BautaJSInstance, createContext, pipe, step } from '../../index.js';
+import { parallelMap } from '../parallel-map.js';
 
 describe('parallel map decorator', () => {
   test('should throw an error if the selector do not return an array', async () => {

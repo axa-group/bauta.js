@@ -1,5 +1,5 @@
-const { resolver, pipe, step } = require('@axa/bautajs-core');
-const { getRequest } = require('@axa/bautajs-express');
+import { resolver, pipe, step } from '@axa/bautajs-core';
+import { getRequest } from '@axa/bautajs-express';
 
 const transformResponse = step(response => {
   return {
@@ -24,7 +24,7 @@ function giveAnswerAfterWaitingWithTimeout() {
       }, timeout)
     );
 
-    cancelTimeout = 3000;
+    const cancelTimeout = 3000;
     const cancelator = new Promise(resolve =>
       setTimeout(() => {
         ctx.token.cancel(); // If this triggers the promise does not resolve but it is cancelled
@@ -36,7 +36,7 @@ function giveAnswerAfterWaitingWithTimeout() {
   });
 }
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.cancelRequest
     .validateRequest(false)
     .validateResponse(false)

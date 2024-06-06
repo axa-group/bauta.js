@@ -1,8 +1,5 @@
-const { pipe, step, resolver } = require('@axa/bautajs-core');
-const {
-  exampleRestProviderYear,
-  exampleRestProvider
-} = require('../datasources/numbers-datasource');
+import { pipe, step, resolver } from '@axa/bautajs-core';
+import { exampleRestProviderYear, exampleRestProvider } from '../datasources/numbers-datasource.js';
 
 const transformResponse = step(response => {
   return {
@@ -10,7 +7,7 @@ const transformResponse = step(response => {
   };
 });
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.randomYear
     .validateRequest(false)
     .validateResponse(false)

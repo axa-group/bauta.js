@@ -1,7 +1,7 @@
-const { BautaJSExpress } = require('@axa/bautajs-express');
-const apiDefinition = require('../../api-definition.json');
+import { BautaJSExpress } from '@axa/bautajs-express';
+import apiDefinition from '../../api-definition.json' assert { type: 'json' };
 
-module.exports = new BautaJSExpress({
+export default new BautaJSExpress({
   apiDefinition,
   resolversPath: './server/resolvers/**/*resolver.js',
   staticConfig: {

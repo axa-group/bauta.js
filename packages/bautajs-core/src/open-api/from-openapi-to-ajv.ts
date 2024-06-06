@@ -1,4 +1,4 @@
-import { Dictionary, Response } from '../types';
+import { Dictionary, Response } from '../types.js';
 
 const unknownFormats: Dictionary<boolean> = { int32: true, int64: true };
 

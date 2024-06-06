@@ -2,16 +2,18 @@
 import express from 'express';
 import path from 'path';
 import supertest from 'supertest';
-import { BautaJSExpress } from '../src/index';
+import { BautaJSExpress } from '../src/index.js';
+import { Document } from '@axa/bautajs-core';
 
-const apiDefinitionsCustomValidation = require('./fixtures/test-api-definitions-custom-validation.json');
+import apiDefinitionsCustomValidation from './fixtures/test-api-definitions-custom-validation.json';
+import { getDirname } from './utils.js';
 
 describe('bautaJS express validation tests', () => {
   test('should validate the request with the bautajs validator adding a custom format', async () => {
     const bautajs = new BautaJSExpress({
-      apiDefinition: apiDefinitionsCustomValidation,
+      apiDefinition: apiDefinitionsCustomValidation as Document,
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
-      resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+      resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
     });
 
     const router = await bautajs.buildRouter();
@@ -41,10 +43,10 @@ describe('bautaJS express validation tests', () => {
 
   test('should validate the response with the bautajs validator adding a custom format', async () => {
     const bautajs = new BautaJSExpress({
-      apiDefinition: apiDefinitionsCustomValidation,
+      apiDefinition: apiDefinitionsCustomValidation as Document,
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
       resolversPath: path.resolve(
-        __dirname,
+        getDirname(),
         './fixtures/test-resolvers/operation-resolver-invalid.js'
       )
     });
@@ -75,10 +77,10 @@ describe('bautaJS express validation tests', () => {
 
   test('should allow modify the response validation error format', async () => {
     const bautajs = new BautaJSExpress({
-      apiDefinition: apiDefinitionsCustomValidation,
+      apiDefinition: apiDefinitionsCustomValidation as Document,
       customValidationFormats: [{ name: 'test', validate: /[A-Z]/ }],
       resolversPath: path.resolve(
-        __dirname,
+        getDirname(),
         './fixtures/test-resolvers/operation-resolver-invalid.js'
       ),
       enableResponseValidation: true,
@@ -112,7 +114,7 @@ describe('bautaJS express validation tests', () => {
 
   test('response validation should be performed after the error handler', async () => {
     const bautajs = new BautaJSExpress({
-      apiDefinition: apiDefinitionsCustomValidation,
+      apiDefinition: apiDefinitionsCustomValidation as Document,
       resolvers: [
         operations => {
           operations.operation1.setup(() => {

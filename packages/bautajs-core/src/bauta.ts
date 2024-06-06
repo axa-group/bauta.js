@@ -1,8 +1,8 @@
 import fastGlob from 'fast-glob';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { OpenAPIV2 } from 'openapi-types';
-import { OperationBuilder } from './core/operation';
-import { defaultLogger } from './default-logger';
+import { OperationBuilder } from './core/operation.js';
+import { defaultLogger } from './default-logger.js';
 import {
   BautaJSInstance,
   BautaJSOptions,
@@ -10,12 +10,13 @@ import {
   Logger,
   Operations,
   BasicOperation,
-  Validator
-} from './types';
-import { isLoggerValid } from './utils/logger-validator';
-import Parser from './open-api/parser';
-import { decorate } from './utils/decorate';
-import { AjvValidator } from './open-api/ajv-validator';
+  Validator,
+  Resolver
+} from './types.js';
+import { isLoggerValid } from './utils/logger-validator.js';
+import Parser from './open-api/parser.js';
+import { decorate } from './utils/decorate.js';
+import { AjvValidator } from './open-api/ajv-validator.js';
 
 interface API {
   version: string;
@@ -87,6 +88,13 @@ export class BautaJS implements BautaJSInstance {
 
   private bootstrapped = false;
 
+  // to not load the resolvers twice (only relevant for versioning operations)
+  private resolversAlreadyLoaded = false;
+
+  private readonly resolversPath: string | string[] | undefined;
+
+  private resolvers: Resolver[] | undefined;
+
   constructor({
     apiDefinition,
     staticConfig,
@@ -106,6 +114,7 @@ export class BautaJS implements BautaJSInstance {
     this.staticConfig = staticConfig;
 
     this.logger = logger || defaultLogger('@axa/bautajs-core');
+
     if (!isLoggerValid(this.logger)) {
       throw new Error(
         'Logger is not valid. Must be compliant with basic logging levels(trace, debug, info, warn, error, fatal)'
@@ -123,17 +132,27 @@ export class BautaJS implements BautaJSInstance {
     this.validator = new AjvValidator(customValidationFormats, validatorOptions);
     this.operations = this.registerOperations(requestValidation, responseValidation, api);
 
-    // Load custom resolvers and operations modifiers
-    if (resolvers) {
-      resolvers.forEach(resolver => {
-        resolver(this.operations);
-      });
-    } else {
-      BautaJS.requireAll<[Operations]>(
-        resolversPath || './server/resolvers/**/*resolver.js',
-        true,
-        [this.operations]
-      );
+    // This is required for loadResolvers, done this way to not modify the bauta.js construction interface which would be a big clusterluck
+    this.resolvers = resolvers;
+    this.resolversPath = resolversPath;
+  }
+
+  public async loadResolvers(): Promise<void> {
+    if (this.resolversAlreadyLoaded === false) {
+      // Load custom resolvers and operations modifiers
+      if (this.resolvers) {
+        this.resolvers.forEach(resolver => {
+          resolver(this.operations);
+        });
+      } else {
+        await BautaJS.requireAll<[Operations]>(
+          this.resolversPath || './server/resolvers/**/*resolver.js',
+          true,
+          [this.operations]
+        );
+      }
+
+      this.resolversAlreadyLoaded = true;
     }
   }
 
@@ -141,6 +160,9 @@ export class BautaJS implements BautaJSInstance {
     if (this.bootstrapped === true) {
       throw new Error('The instance has already being bootstrapped.');
     }
+
+    await this.loadResolvers();
+
     if (this.apiDefinition) {
       const parser = new Parser(this.logger);
       const parsedApiDefinition = await parser.asyncParse(this.apiDefinition);
@@ -233,12 +255,16 @@ export class BautaJS implements BautaJSInstance {
    *
    * const files = requireAll('./my/path/to/datasources/*.js', true, {someVar:123});
    */
-  static requireAll<T>(folder: string | string[], execute = true, vars?: T) {
-    const execFiles = (folderPath: string) => {
+  static async requireAll<T>(folder: string | string[], execute = true, vars?: T) {
+    const execFiles = async (folderPath: string) => {
       const result: any = [];
-      fastGlob.sync(folderPath.replace(/\\/g, '/')).forEach((file: string) => {
-        // eslint-disable-next-line global-require, import/no-dynamic-require, @typescript-eslint/no-var-requires
-        let data = require(resolve(file));
+      const files = await fastGlob.async(folderPath.replace(/\\/g, '/'));
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        let data = await import(resolve(file));
+
         if (data.default) {
           data = data.default;
         }
@@ -247,28 +273,37 @@ export class BautaJS implements BautaJSInstance {
         }
 
         result.push(data);
-      });
+      }
 
       return result;
     };
 
     let files = [];
     if (Array.isArray(folder)) {
-      files = folder.map(folderPath => execFiles(folderPath));
+      for (let i = 0; i < folder.length; i++) {
+        const folderPath = folder[i];
+        files.push(await execFiles(folderPath));
+      }
     } else {
-      files = execFiles(folder);
+      files = await execFiles(folder);
     }
 
     return files;
   }
 
-  public inheritOperationsFrom(bautajsInstance: BautaJSInstance) {
+  public async inheritOperationsFrom(bautajsInstance: BautaJSInstance) {
     if (!(bautajsInstance instanceof BautaJS)) {
       throw new Error('A bautaJS instance must be provided.');
     }
+
     if (this.bootstrapped === true) {
       throw new Error('Operation inherit should be done before bootstrap the BautaJS instance.');
     }
+
+    // We need to do this before the overriding of the operations
+    // When we do not version, this is done in bootstrap, but when we version, we need to do it here
+    await bautajsInstance.loadResolvers();
+
     if (bautajsInstance.bootstrapped === false) {
       this.logger.warn(
         'The given instance is not bootstrapped, thus operation schema will be no inherited.'

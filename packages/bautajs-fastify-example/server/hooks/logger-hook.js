@@ -4,6 +4,4 @@ function logRequest(request, reply, done) {
   return done();
 }
 
-module.exports = {
-  logRequest
-};
+export { logRequest };

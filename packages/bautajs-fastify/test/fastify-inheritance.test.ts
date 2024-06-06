@@ -1,12 +1,11 @@
 // eslint-disable-next-line no-unused-vars
-import { BautaJS } from '@axa/bautajs-core';
+import { BautaJS, Document } from '@axa/bautajs-core';
 import fastify, { FastifyInstance } from 'fastify';
-import { bautajsFastify } from '../src/index';
+import { bautajsFastify } from '../src/index.js';
 
-const [
-  apiDefinition,
-  apidDefinitionEmpty
-] = require('./fixtures/test-api-definition-inheritance.json');
+import apiDefinitionsFixtures from './fixtures/test-api-definition-inheritance.json';
+
+const [apiDefinition, apidDefinitionEmpty] = apiDefinitionsFixtures;
 
 describe('bautaJS fastify inheritance', () => {
   let fastifyInstance: FastifyInstance<any>;
@@ -19,7 +18,7 @@ describe('bautaJS fastify inheritance', () => {
 
   test('a Bauta.js instance with should inherit the operation resolver behaviour from another a Bauta.js if it is not implemented.', async () => {
     const bautajsV1 = new BautaJS({
-      apiDefinition,
+      apiDefinition: apiDefinition as Document,
       resolvers: [
         operations => {
           operations.operation1.setup(() => ({ test: 'v1' }));
@@ -35,7 +34,7 @@ describe('bautaJS fastify inheritance', () => {
       })
       .after(() => {
         const bautajsV2 = new BautaJS({
-          apiDefinition,
+          apiDefinition: apiDefinition as Document,
           resolvers: []
         });
         bautajsV2.inheritOperationsFrom(bautajsV1);
@@ -64,7 +63,7 @@ describe('bautaJS fastify inheritance', () => {
 
   test('bautajs-fastify should set up their bauta.js instance inheriting the operation resolver behaviour from another a Bauta.js if it is not implemented.', async () => {
     const bautajsV1 = new BautaJS({
-      apiDefinition,
+      apiDefinition: apiDefinition as Document,
       resolvers: [
         operations => {
           operations.operation1.setup(() => ({ test: 'v1' }));
@@ -80,7 +79,7 @@ describe('bautaJS fastify inheritance', () => {
       })
       .after(() => {
         fastifyInstance.register(bautajsFastify, {
-          apiDefinition,
+          apiDefinition: apiDefinition as Document,
           apiBasePath: '/api/',
           prefix: '/v2/',
           inheritOperationsFrom: bautajsV1
@@ -105,7 +104,7 @@ describe('bautaJS fastify inheritance', () => {
 
   test('bautajs-fastify should set up their bauta.js instance inheriting the operation resolver behaviour from another a Bauta.js if it is not defined on the API definition', async () => {
     const bautajsV1 = new BautaJS({
-      apiDefinition,
+      apiDefinition: apiDefinition as Document,
       resolvers: [
         operations => {
           operations.operation1.setup(() => ({ test: 'v1' }));
@@ -121,7 +120,7 @@ describe('bautaJS fastify inheritance', () => {
       })
       .after(() => {
         fastifyInstance.register(bautajsFastify, {
-          apiDefinition: apidDefinitionEmpty,
+          apiDefinition: apidDefinitionEmpty as Document,
           apiBasePath: '/api/',
           prefix: '/v2/',
           inheritOperationsFrom: bautajsV1

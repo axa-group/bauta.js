@@ -1,6 +1,6 @@
-const { getRequest } = require('@axa/bautajs-express');
-const { cache, pipe, resolver } = require('@axa/bautajs-core');
-const { chuckProvider } = require('../datasources/chuck-datasource');
+import { getRequest } from '@axa/bautajs-express';
+import { cache, pipe, resolver } from '@axa/bautajs-core';
+import { chuckProvider } from '../datasources/chuck-datasource.js';
 
 const normalizer = (_, ctx) => {
   const req = getRequest(ctx);
@@ -11,6 +11,6 @@ const chuckFactsPipeline = pipe(chuckProvider());
 
 const cachedChuckFactsPipeline = pipe(cache(chuckFactsPipeline, { maxSize: 2 }, normalizer));
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.chuckFacts.setup(cachedChuckFactsPipeline);
 });

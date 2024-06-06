@@ -2,10 +2,10 @@ import fp from 'fastify-plugin';
 import { FastifyInstance } from 'fastify';
 import * as bautaJS from '@axa/bautajs-core';
 
-import responseXRequestId from './x-request-id-plugin';
-import explorerPlugin from './explorer';
-import exposeRoutesPlugin from './expose-routes';
-import { BautaJSFastifyPluginOptions } from './types';
+import responseXRequestId from './x-request-id-plugin.js';
+import explorerPlugin from './explorer.js';
+import exposeRoutesPlugin from './expose-routes.js';
+import { BautaJSFastifyPluginOptions } from './types.js';
 
 function processOperations(operations: bautaJS.Operations) {
   return Object.keys(operations).reduce((routes: any, operationId) => {
@@ -36,7 +36,7 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
     : new bautaJS.BautaJS({ logger: fastify.log as bautaJS.Logger, ...opts });
 
   if (opts.inheritOperationsFrom) {
-    bautajs.inheritOperationsFrom(opts.inheritOperationsFrom);
+    await bautajs.inheritOperationsFrom(opts.inheritOperationsFrom);
   }
 
   await bautajs.bootstrap();
@@ -80,8 +80,8 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
   bautajs.decorate('fastify', fastify);
 }
 
-export * from './types';
-export * from './operators';
+export * from './types.js';
+export * from './operators.js';
 
 export default fp(bautajsFastify, {
   fastify: '4.x',

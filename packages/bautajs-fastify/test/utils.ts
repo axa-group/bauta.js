@@ -1,10 +1,6 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-export function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(() => resolve({}), ms));
-}
-
 /**
  * utility function to simulate the non-existing __dirname in ES6 modules
  *

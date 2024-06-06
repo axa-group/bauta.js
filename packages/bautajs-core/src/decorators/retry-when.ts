@@ -1,4 +1,4 @@
-import { Pipeline } from '../types';
+import { Pipeline } from '../types.js';
 
 const sleep = async (ms: number) => new Promise(resolve => setTimeout(resolve, ms).unref());
 

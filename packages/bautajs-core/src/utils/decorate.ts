@@ -1,4 +1,4 @@
-import { BautaJSInstance } from '../types';
+import { BautaJSInstance } from '../types.js';
 
 export function checkExistence(instance: BautaJSInstance, name: string) {
   return name in instance;

@@ -1,5 +1,5 @@
-const { pipe, step, resolver, iif, parallel } = require('@axa/bautajs-core');
-const { getResponse, getRequest } = require('@axa/bautajs-express');
+import { pipe, step, resolver, iif, parallel } from '@axa/bautajs-core';
+import { getResponse, getRequest } from '@axa/bautajs-express';
 
 const MAP = {};
 
@@ -64,7 +64,7 @@ const createMinimapPipeline = pipe(
   iif(found => !found, createMinimapStep, setStatusCode(409))
 );
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.getAllMinimap.setup(getAllMinimapPipeline);
   operations.getMinimapByKey.setup(getMinimapByKeyPipeline);
   operations.createMinimap.setup(createMinimapPipeline);

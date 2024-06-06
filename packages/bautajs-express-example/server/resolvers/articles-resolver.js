@@ -1,7 +1,7 @@
-const { pipe, resolver } = require('@axa/bautajs-core');
-const { getAllArticles } = require('../datasources/articles-datasource');
+import { pipe, resolver } from '@axa/bautajs-core';
+import { getAllArticles } from '../datasources/articles-datasource.js';
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.listAllArticles
     .validateRequest(false)
     .validateResponse(false)

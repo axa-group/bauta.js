@@ -1,5 +1,5 @@
-import { BautaJSInstance, createContext, pipe, step } from '../..';
-import { map } from '../map';
+import { BautaJSInstance, createContext, pipe, step } from '../../index.js';
+import { map } from '../map.js';
 
 describe('map decorator', () => {
   test('should throw an error if the selector do not return an array', async () => {

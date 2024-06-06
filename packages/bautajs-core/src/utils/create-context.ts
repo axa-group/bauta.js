@@ -1,7 +1,7 @@
-import { RawData, Logger, RawContext } from '../types';
-import { CancelableTokenBuilder } from '../core/cancelable-token';
-import { idGenerator } from './request-id-generator';
-import { defaultLogger } from '../default-logger';
+import { RawData, Logger, RawContext } from '../types.js';
+import { CancelableTokenBuilder } from '../core/cancelable-token.js';
+import { idGenerator } from './request-id-generator.js';
+import { defaultLogger } from '../default-logger.js';
 /**
  * Create a BautaJS context object. Useful for doing testing.
  *

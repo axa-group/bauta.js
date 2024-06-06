@@ -1,14 +1,16 @@
 import path from 'path';
 import FormData from 'form-data';
 import { Readable } from 'stream';
-import { resolver, defaultLogger, pipe, asPromise } from '@axa/bautajs-core';
+import { resolver, defaultLogger, pipe, asPromise, Document } from '@axa/bautajs-core';
 import fastify, { FastifyInstance } from 'fastify';
 import { bautajsFastify, getRequest, getResponse } from '../src/index';
 
-const apiDefinition = require('./fixtures/test-api-definitions.json');
-const apiDefinitionSwagger2 = require('./fixtures/test-api-definitions-swagger-2.json');
-const apiDefinitionSwaggerWithExtraTag = require('./fixtures/test-api-definition-extra-tag.json');
-const apiDefinitionSwaggerPathOrdering = require('./fixtures/test-api-definitions-swagger-path-ordering.json');
+import apiDefinition from './fixtures/test-api-definitions.json';
+import apiDefinitionSwagger2 from './fixtures/test-api-definitions-swagger-2.json';
+import apiDefinitionSwaggerWithExtraTag from './fixtures/test-api-definition-extra-tag.json';
+import apiDefinitionSwaggerPathOrdering from './fixtures/test-api-definitions-swagger-path-ordering.json';
+import { getDirname } from './utils';
+import { jest } from '@jest/globals';
 
 describe('bautaJS fastify tests', () => {
   describe('bautaJS fastify generic test', () => {
@@ -28,7 +30,7 @@ describe('bautaJS fastify tests', () => {
           'this is a custom property not defined on OPENAPI definition'
       };
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           operations => {
             operations.operation1.setup(() => [expected]);
@@ -53,7 +55,7 @@ describe('bautaJS fastify tests', () => {
         name: 'pet2'
       };
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           operations => {
             operations.operation1.setup(() => [
@@ -81,8 +83,11 @@ describe('bautaJS fastify tests', () => {
 
     test('should expose the given openAPI endpoints with an fastify API', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiDefinition: apiDefinition as Document,
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         apiBasePath: '/api/',
         prefix: '/v1/'
       });
@@ -104,8 +109,11 @@ describe('bautaJS fastify tests', () => {
     test('should allow adding hooks only to the api routes', async () => {
       const spy = jest.fn();
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiDefinition: apiDefinition as Document,
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         apiBasePath: '/api/',
         prefix: '/v1/',
         explorer: {
@@ -139,9 +147,9 @@ describe('bautaJS fastify tests', () => {
 
     test('should not expose the endpoints that have been configured as private', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolversPath: path.resolve(
-          __dirname,
+          getDirname(),
           './fixtures/test-resolvers/private-operation-resolver.js'
         )
       });
@@ -156,7 +164,7 @@ describe('bautaJS fastify tests', () => {
 
     test('should not send the response again if already has been sent', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           operations => {
             operations.operation1.setup((_, ctx) => {
@@ -192,7 +200,7 @@ describe('bautaJS fastify tests', () => {
       fastifyInstance.register(bautajsFastify, {
         apiBasePath: '/api/',
         prefix: '/v1/',
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operationStream.setup((_, ctx) => {
@@ -231,7 +239,7 @@ describe('bautaJS fastify tests', () => {
       fastifyInstance.register(bautajsFastify, {
         apiBasePath: '/api/',
         prefix: '/v1/',
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operationStream.setup(
@@ -275,7 +283,7 @@ describe('bautaJS fastify tests', () => {
       fastifyInstance.register(bautajsFastify, {
         apiBasePath: '/api/',
         prefix: 'v1',
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           resolver(operations => {
             operations.operationStream.setup((_, ctx) => {
@@ -306,7 +314,7 @@ describe('bautaJS fastify tests', () => {
         apiBasePath: '/api/',
         prefix: 'v1',
         apiDefinition: apiDefinitionSwagger2,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const res = await fastifyInstance.inject({
@@ -328,7 +336,10 @@ describe('bautaJS fastify tests', () => {
         apiBasePath: '/api/',
         prefix: 'v1',
         apiDefinition: apiDefinitionSwagger2,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         explorer: { enabled: false }
       });
 
@@ -345,7 +356,7 @@ describe('bautaJS fastify tests', () => {
         apiBasePath: '/api/',
         prefix: 'v1',
         apiDefinition: apiDefinitionSwagger2,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const res = await fastifyInstance.inject({
@@ -367,7 +378,7 @@ describe('bautaJS fastify tests', () => {
         apiBasePath: '/api/',
         prefix: 'v1',
         apiDefinition: apiDefinitionSwaggerWithExtraTag,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       const res = await fastifyInstance.inject({
@@ -381,7 +392,10 @@ describe('bautaJS fastify tests', () => {
     test('should expose the swagger or openapi json by default', async () => {
       fastifyInstance.register(bautajsFastify, {
         apiDefinition: apiDefinitionSwagger2,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         apiBasePath: '/api/',
         prefix: '/v1/'
       });
@@ -397,7 +411,7 @@ describe('bautaJS fastify tests', () => {
     test('should return a 204 empty response if the pipeline do not return anything', async () => {
       const fs = fastify();
       fs.register(bautajsFastify, {
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           op => {
             op.operation204.setup(() => {});
@@ -426,7 +440,7 @@ describe('bautaJS fastify tests', () => {
         requestIdHeader: 'x-request-id'
       });
       fs.register(bautajsFastify, {
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           op => {
             op.operation1.setup(() => {
@@ -453,9 +467,9 @@ describe('bautaJS fastify tests', () => {
       fs.register(bautajsFastify, {
         apiBasePath: '/api/',
         prefix: 'v1',
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolversPath: path.resolve(
-          __dirname,
+          getDirname(),
           './fixtures/test-resolvers/operation-resolver-error.js'
         )
       });
@@ -480,7 +494,7 @@ describe('bautaJS fastify tests', () => {
   describe('bautaJS fastify request cancellation', () => {
     test('should log a message in case of the request was canceled', async () => {
       const logger = defaultLogger();
-      jest.spyOn(logger, 'error').mockImplementation();
+      jest.spyOn(logger, 'error').mockImplementation(() => undefined);
       logger.child = (() => {
         return logger;
       }) as any;
@@ -488,7 +502,7 @@ describe('bautaJS fastify tests', () => {
       fs.register(bautajsFastify, {
         apiBasePath: '/api/',
         prefix: 'v1',
-        apiDefinition,
+        apiDefinition: apiDefinition as Document,
         resolvers: [
           operations => {
             operations.operation1.setup(
@@ -527,15 +541,21 @@ describe('bautaJS fastify tests', () => {
 
     test('should allow to specify multiple bautajs instances in different paths', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiDefinition: apiDefinition as Document,
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         apiBasePath: '/api/',
         prefix: '/v1/'
       });
 
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiDefinition: apiDefinition as Document,
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         apiBasePath: '/api/',
         prefix: '/v2/'
       });
@@ -567,15 +587,21 @@ describe('bautaJS fastify tests', () => {
 
     test('should allow to expose a swagger for multiple bautajs instances in different paths', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiDefinition: apiDefinition as Document,
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         apiBasePath: '/api/',
         prefix: '/v1/'
       });
 
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        apiDefinition: apiDefinition as Document,
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         apiBasePath: '/api/',
         prefix: '/v2/'
       });
@@ -607,9 +633,9 @@ describe('bautaJS fastify tests', () => {
 
     test('should work with specific operation first in the resolver', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition: apiDefinitionSwaggerPathOrdering,
+        apiDefinition: apiDefinitionSwaggerPathOrdering as Document,
         resolversPath: path.resolve(
-          __dirname,
+          getDirname(),
           './fixtures/test-resolvers/path-ordering-specific-first-resolver.js'
         ),
         apiBasePath: '/api/',
@@ -637,9 +663,9 @@ describe('bautaJS fastify tests', () => {
 
     test('should work with general operation first in the resolver', async () => {
       fastifyInstance.register(bautajsFastify, {
-        apiDefinition: apiDefinitionSwaggerPathOrdering,
+        apiDefinition: apiDefinitionSwaggerPathOrdering as Document,
         resolversPath: path.resolve(
-          __dirname,
+          getDirname(),
           './fixtures/test-resolvers/path-ordering-general-first-resolver.js'
         ),
         apiBasePath: '/api/',

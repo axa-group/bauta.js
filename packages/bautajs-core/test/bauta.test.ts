@@ -1,8 +1,10 @@
 import fastSafeStringify from 'fast-safe-stringify';
-import path from 'path';
+import path from 'node:path';
 import { BautaJS, pipe, resolver, OnCancel, Document, CancelablePromise } from '../src/index';
 import testApiDefinitionsJson from './fixtures/test-api-definitions.json';
 import testApiDefinitions2VersionsJson from './fixtures/test-api-definition-2-versions.json';
+import { getDirname } from './utils';
+import { jest } from '@jest/globals';
 
 describe('bauta core tests', () => {
   describe('core initialization tests', () => {
@@ -93,7 +95,7 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
 
       await bautaJS.bootstrap();
@@ -122,7 +124,7 @@ describe('bauta core tests', () => {
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
         enableRequestValidation: false,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js')
+        resolversPath: path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js')
       });
       await bautaJS.bootstrap();
 
@@ -137,7 +139,10 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         staticConfig: config,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         enableRequestValidation: false
       });
       bautaJS.operations.operation1.validateRequest(true);
@@ -179,7 +184,9 @@ describe('bauta core tests', () => {
       try {
         await bautaJS.operations.operation1.run({ req, res });
       } catch (e: any) {
-        expect(e.stack).toBe(`${e.name}: ${e.message} \n ${fastSafeStringify(e, undefined, 2)}`);
+        expect(e.stack).toBe(
+          `${e.name}: ${e.message} \n ${fastSafeStringify.default(e, undefined, 2)}`
+        );
       }
     });
 
@@ -196,14 +203,19 @@ describe('bauta core tests', () => {
 
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         staticConfig: config
       });
+
+      await bautaJS.bootstrap();
+
       bautaJS.operations.operation1.setup(() => ({
         id: 1,
         name: 'pety'
       }));
-      await bautaJS.bootstrap();
 
       await expect(bautaJS.operations.operation1.run({ req, res })).resolves.toStrictEqual({
         id: 1,
@@ -260,9 +272,14 @@ describe('bauta core tests', () => {
 
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
-        resolversPath: path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
+        resolversPath: path.resolve(
+          getDirname(),
+          './fixtures/test-resolvers/operation-resolver.js'
+        ),
         staticConfig: config
       });
+
+      await bautaJS.bootstrap();
 
       await expect(
         bautaJS.operations.operation1.run({ req: { query: {} }, res: {} })
@@ -282,11 +299,12 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: [
-          path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver.js'),
-          path.resolve(__dirname, './fixtures/test-resolvers/operation-resolver-1.js')
+          path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver.js'),
+          path.resolve(getDirname(), './fixtures/test-resolvers/operation-resolver-1.js')
         ],
         staticConfig: config
       });
+
       await bautaJS.bootstrap();
 
       await expect(
@@ -307,11 +325,12 @@ describe('bauta core tests', () => {
       const bautaJS = new BautaJS({
         apiDefinition: testApiDefinitionsJson as Document,
         resolversPath: [
-          `${__dirname}\\fixtures\\test-resolvers\\operation-resolver.js`,
-          `${__dirname}\\fixtures\\test-resolvers\\operation-resolver-1.js`
+          `${getDirname()}\\fixtures\\test-resolvers\\operation-resolver.js`,
+          `${getDirname()}\\fixtures\\test-resolvers\\operation-resolver-1.js`
         ],
         staticConfig: config
       });
+
       await bautaJS.bootstrap();
 
       await expect(
@@ -549,11 +568,12 @@ describe('bauta core tests', () => {
         resolvers: [resolver(() => {})],
         staticConfig: config
       });
-      // @ts-ignore
-      expect(() => bautaJSV2.inheritOperationsFrom({})).toThrow(
+
+      await expect(() => bautaJSV2.inheritOperationsFrom({} as any)).rejects.toThrow(
         new Error('A bautaJS instance must be provided.')
       );
     });
+
     test('should inherit the given operations from another bautajs instance on use inheritOperationsFrom', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -670,6 +690,7 @@ describe('bauta core tests', () => {
       expect(Object.prototype.hasOwnProperty.call(bautaJSV2.operations, 'operation1')).toBeFalsy();
       expect(request3).toBe('okoperationInherited');
     });
+
     test('operations can not be inherit after bootstrap', async () => {
       const config = {
         endpoint: 'http://google.es'
@@ -691,14 +712,16 @@ describe('bauta core tests', () => {
         ],
         staticConfig: config
       });
+
       const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
         staticConfig: config
       });
+
       await bautaJSV2.bootstrap();
 
-      expect(() => bautaJSV2.inheritOperationsFrom(bautaJSV1)).toThrow(
+      await expect(() => bautaJSV2.inheritOperationsFrom(bautaJSV1)).rejects.toThrow(
         new Error('Operation inherit should be done before bootstrap the BautaJS instance.')
       );
     });
@@ -745,13 +768,17 @@ describe('bauta core tests', () => {
         ],
         staticConfig: config
       });
+
       const bautaJSV2 = new BautaJS({
         apiDefinition: testApiDefinitions2VersionsJson as Document,
         resolvers: [resolver(() => {})],
         staticConfig: config
       });
-      bautaJSV2.inheritOperationsFrom(bautaJSV1);
+
+      await bautaJSV2.inheritOperationsFrom(bautaJSV1);
+
       await Promise.all([bautaJSV1.bootstrap(), bautaJSV2.bootstrap()]);
+
       expect(bautaJSV1.operations.operation1.schema).not.toStrictEqual(
         bautaJSV2.operations.operation1.schema
       );

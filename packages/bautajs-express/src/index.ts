@@ -2,13 +2,13 @@ import compression from 'compression';
 import express, { Response, IRoute } from 'express';
 import * as bautajs from '@axa/bautajs-core';
 import type { Logger as PinoLogger } from 'pino';
-import { sortRoutes } from './routes-order';
+import { sortRoutes } from './routes-order.js';
 import {
   RouterOptions,
   ExpressRequest,
   BautaJSExpressOptions,
   OnResponseValidationError
-} from './types';
+} from './types.js';
 import {
   initReqIdGenerator,
   initExpressPino,
@@ -16,8 +16,8 @@ import {
   initHelmet,
   initCors,
   initExplorer
-} from './middlewares';
-import { getContentType } from './utils';
+} from './middlewares.js';
+import { getContentType } from './utils.js';
 
 /**
  * Create an Express server using the BautaJS library with almost 0 configuration
@@ -234,14 +234,14 @@ export class BautaJSExpress extends bautajs.BautaJS {
   ): Promise<express.Router> {
     const router = express.Router(options.routerOptions);
 
+    await this.bootstrap();
+
     initReqIdGenerator(router, this.logger, options.reqGenerator, options.expressPino);
     initExpressPino(router, this.logger as PinoLogger, options.expressPino);
     initHelmet(router, options.helmet);
     initCors(router, options.cors);
     router.use(compression());
     initBodyParser(router, options.bodyParser);
-
-    await this.bootstrap();
 
     const routes = this.processOperations();
 
@@ -264,8 +264,8 @@ export class BautaJSExpress extends bautajs.BautaJS {
   }
 }
 
-export * from './operators';
-export * from './types';
-export * from './serializers/req';
-export * from './serializers/res';
+export * from './operators.js';
+export * from './types.js';
+export * from './serializers/req.js';
+export * from './serializers/res.js';
 export default BautaJSExpress;

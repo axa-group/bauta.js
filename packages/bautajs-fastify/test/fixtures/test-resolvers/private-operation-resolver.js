@@ -1,6 +1,6 @@
-const { resolver } = require('@axa/bautajs-core');
+import { resolver } from '@axa/bautajs-core';
 
-module.exports = resolver(operations => {
+export default resolver(operations => {
   operations.operation1.setAsPrivate(true).setup(() => [
     {
       id: 134,

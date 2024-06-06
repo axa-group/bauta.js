@@ -10,6 +10,8 @@ import { pipe, BautaJS } from '../src/index';
 import Parser from '../src/open-api/parser';
 import { asPromise } from '../src/decorators/as-promise';
 
+import testLongStringStream from './fixtures/test-long-string-stream.json';
+
 describe('operation class tests', () => {
   let route: Route;
   let bautaJS: BautaJSInstance;
@@ -417,11 +419,7 @@ describe('operation class tests', () => {
     });
 
     test('should not validate the response if the response is a stream', done => {
-      const {
-        input: inputStreamTest,
-        expected: expectedStream
-        // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-      } = require('./fixtures/test-long-string-stream.json');
+      const { input: inputStreamTest, expected: expectedStream } = testLongStringStream;
 
       streamOperationTest.setup(
         pipe(

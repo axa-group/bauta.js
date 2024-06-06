@@ -1,5 +1,5 @@
-import { BautaJSInstance, Context, GenericError, Pipeline } from '../types';
-import { isPromise } from '../utils/is-promise';
+import { BautaJSInstance, Context, GenericError, Pipeline } from '../types.js';
+import { isPromise } from '../utils/is-promise.js';
 
 export function compose<T, R>(
   f1: Pipeline.StepFunction<T, R>,
