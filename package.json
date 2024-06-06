@@ -33,6 +33,7 @@
     "test": "turbo run test",
     "release": "lerna changed && lerna publish --no-changelog --yes --no-commit-hooks",
     "release:beta:prepare": "lerna version --conventional-prerelease --no-private --no-push",
+    "release:beta:publish": "lerna publish from-package --no-changelog --yes --no-commit-hooks",
     "checkDeps": "npx npm-check-updates -u && npm run lerna exec -- npx npm-check-updates -u",
     "build": "turbo run build",
     "prepare": "husky install"
