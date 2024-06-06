@@ -32,7 +32,7 @@
     "lint": "eslint \"*/**/*.{ts,js}\"",
     "test": "turbo run test",
     "release": "lerna changed && lerna publish --no-changelog --yes --no-commit-hooks",
-    "release:beta:prepare": "lerna version --conventional-prerelease --no-push",
+    "release:beta:prepare": "lerna version --conventional-prerelease --no-private --no-push",
     "checkDeps": "npx npm-check-updates -u && npm run lerna exec -- npx npm-check-updates -u",
     "build": "turbo run build",
     "prepare": "husky install"
