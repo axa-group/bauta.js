@@ -1,6 +1,6 @@
 {
   "name": "@axa/bautajs-express",
-  "version": "3.1.0",
+  "version": "4.0.0-alpha.0",
   "description": "A bautaJS Express.js plugin. Allow auto exposing the bautaJS operations.",
   "types": "./dist/index.d.ts",
   "exports": "./dist/index.js",
@@ -33,7 +33,7 @@
     "npm": ">=8"
   },
   "dependencies": {
-    "@axa/bautajs-core": "^3.1.0",
+    "@axa/bautajs-core": "^4.0.0-alpha.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
@@ -44,6 +44,6 @@
     "swagger-ui-express": "^4.6.2"
   },
   "devDependencies": {
-    "@axa/bautajs-dev-config": "^3.0.1"
+    "@axa/bautajs-dev-config": "^4.0.0-alpha.0"
   }
 }
