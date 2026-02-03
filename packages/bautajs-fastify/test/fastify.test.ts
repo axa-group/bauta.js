@@ -131,8 +131,8 @@ describe('bautaJS fastify tests', () => {
         url: '/v1/explorer'
       });
 
-      // 301 is returned by the swagger explorer
-      expect(res.statusCode).toBe(302);
+      // 200 is returned by the swagger explorer
+      expect(res.statusCode).toBe(200);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith('preValidation');
     });
@@ -359,7 +359,7 @@ describe('bautaJS fastify tests', () => {
       });
 
       expect(res.statusCode).toBe(200);
-      expect(res2.statusCode).toBe(302);
+      expect(res2.statusCode).toBe(200);
     });
 
     test('should only show the tags that are in the exposed routes', async () => {
@@ -460,7 +460,7 @@ describe('bautaJS fastify tests', () => {
         )
       });
       fs.setErrorHandler((error, _request, reply) => {
-        reply.send({ message: error.message, code: 112 });
+        reply.send({ message: (error as Error).message, code: 112 });
       });
 
       const res = await fs.inject({
@@ -486,7 +486,7 @@ describe('bautaJS fastify tests', () => {
         child: (() => logger) as any,
         msgPrefix: undefined
       });
-      const fs = fastify({ logger });
+      const fs = fastify({ loggerInstance: logger as any });
       fs.register(bautajsFastify, {
         apiBasePath: '/api/',
         prefix: 'v1',
@@ -497,7 +497,7 @@ describe('bautaJS fastify tests', () => {
               pipe(
                 (_, ctx) => {
                   const req = getRequest(ctx);
-                  setTimeout(() => req.raw.emit('aborted'), 200);
+                  setTimeout(() => req.raw.emit('abort'), 200);
                 },
                 () => new Promise(resolve => setTimeout(() => resolve({ ok: 'ok' }), 200))
               )
@@ -592,9 +592,9 @@ describe('bautaJS fastify tests', () => {
         url: '/v2/explorer'
       });
 
-      // 302 is returned by the swagger explorer
-      expect(res.statusCode).toBe(302);
-      expect(res2.statusCode).toBe(302);
+      // 200 is returned by the swagger explorer
+      expect(res.statusCode).toBe(200);
+      expect(res2.statusCode).toBe(200);
     });
   });
 

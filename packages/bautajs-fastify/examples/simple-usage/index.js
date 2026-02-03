@@ -42,7 +42,7 @@ fastify
     });
   });
 
-// Fastify allows async await style. await fastify.listen(3000);
-fastify.listen(3000, err => {
+// Fastify allows async await style. await fastify.listen({ port: 3000 });
+fastify.listen({ port: 3000 }, err => {
   if (err) throw err;
 });

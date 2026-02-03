@@ -27,7 +27,7 @@ To get started with Bauta.js, we recommend using one of the framework's plugins 
 First, get Bauta.js with npm and the required dependencies:
 
 ```console
-npm i fastify@4 @axa/bautajs-core @axa/bautajs-fastify
+npm i fastify@5 @axa/bautajs-core @axa/bautajs-fastify
 ```
 
 Then create `server.js` and add the following content:
@@ -212,6 +212,10 @@ Bauta.js is written using TypesScript. Shipped with the typings definitions to i
 - Example of bauta.js API project using [express](https://github.com/expressjs/express): [bautajs-express-example](./packages/bautajs-express-example).
 - Example of bauta.js API project using [fastify](https://github.com/fastify/fastify): [bautajs-fastify-example](./packages/bautajs-fastify-example).
 - [How to unit test your code that use Bauta.js?](./docs/guides/testing.md)
+
+## Migration
+
+See the [Migration Guide](./MIGRATION.md) for instructions on upgrading between major versions.
 
 ## Benchmark
 
