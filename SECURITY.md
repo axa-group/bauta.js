@@ -6,7 +6,8 @@
 | ---------------- |--------------------|
 | Bauta.js 1.x     | :x:                |
 | Bauta.js 2.x     | :x:                |
-| Bauta.js 3.x     | :white_check_mark: |
+| Bauta.js 3.x     | :x:                |
+| Bauta.js 4.x     | :white_check_mark: |
 
 Additionally, we only support the [LTS Node.js versions](https://nodejs.org/en/about/releases/).
 
@@ -14,8 +15,7 @@ Bauta.js will deprecate the non-supported Node.js version following the Release 
 
 | Version          | Supported          |
 | ---------------- | ------------------ |
-| Node.js 18.x     | :white_check_mark: |
-| Node.js 20.x     | :white_check_mark: |
+| Node.js 24.x     | :white_check_mark: |
 
 ## Reporting a Vulnerability
 

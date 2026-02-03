@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/axa-group/bauta.js#readme",
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "scripts": {
     "benchmark-core": "npx concurrently -k -s first \"node ./packages/bautajs-core/benchmark/simple.js\" \"npx autocannon -c 100 -d 5 -p 10 localhost:3000/api/op1\"",
@@ -30,7 +30,7 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "lint": "eslint \"*/**/*.{ts,js}\"",
     "test": "turbo run test",
-    "release": "lerna changed && lerna publish -y",
+    "release": "lerna publish -y",
     "checkDeps": "npx npm-check-updates -u && npm run lerna exec -- npx npm-check-updates -u",
     "build": "turbo run build",
     "prepare": "husky install"
@@ -44,7 +44,7 @@
     "@types/express": "^4.17.17",
     "@types/express-pino-logger": "^4.0.3",
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.11",
+    "@types/node": "^24.0.0",
     "@types/pino": "^7.0.5",
     "@types/split2": "^3.2.1",
     "@types/supertest": "^2.0.12",

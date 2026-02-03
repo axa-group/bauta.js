@@ -6,19 +6,19 @@ This document describes how to migrate between major versions of bauta.js.
 
 ### Breaking Changes
 
-#### 1. Node.js 20+ Required
+#### 1. Node.js 24+ Required
 
-bauta.js v4.x requires **Node.js 20 or higher**. Node.js 18 is no longer supported.
+bauta.js v4.x requires **Node.js 24 or higher**. Node.js 18, 20, and 22 are no longer supported.
 
-**Action required:** Update your Node.js version to 20 or later before upgrading.
+**Action required:** Update your Node.js version to 24 or later before upgrading.
 
 ```bash
 # Check your current Node.js version
 node --version
 
-# If using nvm, install Node.js 20
-nvm install 20
-nvm use 20
+# If using nvm, install Node.js 24
+nvm install 24
+nvm use 24
 ```
 
 #### 2. Fastify 5.x Required (for @axa/bautajs-fastify users)
@@ -83,7 +83,7 @@ If you're importing these packages directly in your application (outside of baut
 
 ### Migration Steps
 
-1. **Update Node.js** to version 20 or later
+1. **Update Node.js** to version 24 or later
 
 2. **Update bauta.js packages** in your `package.json`:
 
@@ -122,7 +122,7 @@ If you're importing these packages directly in your application (outside of baut
 
 ### No Changes Required For
 
-- **@axa/bautajs-express users** - Express integration is unchanged (though you still need Node.js 20+)
+- **@axa/bautajs-express users** - Express integration is unchanged (though you still need Node.js 24+)
 - **Core bauta.js pipeline and decorators** - The pipeline API (`pipe`, `step`, decorators) remains unchanged
 - **Data source REST** - The REST data source API remains unchanged
 - **OpenAPI/Swagger definitions** - Your API definitions work as before
@@ -171,7 +171,7 @@ If you're contributing to bauta.js development, note these additional changes:
 The monorepo tooling has been upgraded from lerna 6.x to **lerna 9.x**. Key changes:
 
 - **`lerna bootstrap` removed** - Use `npm install` with npm workspaces instead (already configured)
-- **`lerna add` removed** - Use `npm install <package> -w <workspace>` instead
+- **`lerna add` removed** -<> Use `npm install <package> -w <workspace>` instead
 - **`lerna link` removed** - npm workspaces handles linking automatically
 
 After cloning/updating the repository, run:
