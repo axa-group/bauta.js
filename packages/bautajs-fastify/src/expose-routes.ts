@@ -182,9 +182,28 @@ async function exposeRoutes(
     // Response validation should be the final one
     preSerializationHooks.push(validateResponseHook);
 
+    // Log validation errors at trace level as they are expected errors
+    const validationErrorLogger: fastify.onErrorHookHandler = (request, _reply, error, done) => {
+      if (error instanceof ValidationError) {
+        // This error is intentionally logged as trace because for most of the errors is an expected error
+        request.log.trace(
+          {
+            error: {
+              name: error.name,
+              message: error.message,
+              stack: error.stack
+            }
+          },
+          `Fastify schema validation error found on the request`
+        );
+      }
+      done();
+    };
+
     fastifyInstance.route({
       validatorCompiler: ({ schema }) => validator.buildSchemaCompiler(schema),
       schemaErrorFormatter: createSchemaErrorFormatter(),
+      onError: validationErrorLogger,
       method,
       url: route,
       preSerialization: preSerializationHooks,
