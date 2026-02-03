@@ -5,7 +5,8 @@ import got, {
   Got,
   RequestError,
   CancelableRequest,
-  Response as GOTResponse
+  Response as GOTResponse,
+  Agents
 } from 'got';
 import { createHttpAgent, createHttpsAgent } from '@axa/native-proxy-agent';
 import { Context, BautaJSInstance } from '@axa/bautajs-core';
@@ -186,7 +187,7 @@ function create(globalGotOptions?: ExtendOptions) {
     agent: {
       http: httpAgent,
       https: httpsAgent
-    },
+    } as Agents,
     responseType: 'json',
     resolveBodyOnly: true,
     ...globalGotOptions
