@@ -161,3 +161,22 @@ If you encounter issues during migration:
 1. Check the [GitHub Issues](https://github.com/axa-group/bauta.js/issues) for similar problems
 2. Review the [Fastify v5 Migration Guide](https://fastify.dev/docs/latest/Guides/Migration-Guide-V5/) for Fastify-specific issues
 3. Open a new issue with details about your environment and the error you're seeing
+
+### For Contributors
+
+If you're contributing to bauta.js development, note these additional changes:
+
+#### Lerna 9.x
+
+The monorepo tooling has been upgraded from lerna 6.x to **lerna 9.x**. Key changes:
+
+- **`lerna bootstrap` removed** - Use `npm install` with npm workspaces instead (already configured)
+- **`lerna add` removed** - Use `npm install <package> -w <workspace>` instead
+- **`lerna link` removed** - npm workspaces handles linking automatically
+
+After cloning/updating the repository, run:
+
+```bash
+npm install
+npx lerna repair  # Migrates any legacy lerna configuration
+```
