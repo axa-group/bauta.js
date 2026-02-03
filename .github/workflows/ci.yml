@@ -83,7 +83,7 @@ jobs:
       - name: Comment on the PR on malware detected
         if: ${{ env.IS_MALWARE_DETECTED == 'true' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body "🦠 Possible malware detected, please review it before merge this PR. ```$(cat scan.txt)```"
 
@@ -100,5 +100,5 @@ jobs:
           fetch-depth: 0
       - uses: gitleaks/gitleaks-action@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_CLI_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
