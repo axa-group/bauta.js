@@ -36,3 +36,5 @@ coverage/
 test-report.xml
 
 .turbo
+
+AGENTS.md
