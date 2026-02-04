@@ -84,6 +84,5 @@
   "jestSonar": {
     "reportPath": "coverage",
     "reportFile": "test-reporter.xml"
-  },
-  "packageManager": "npm@9.9.0"
+  }
 }
