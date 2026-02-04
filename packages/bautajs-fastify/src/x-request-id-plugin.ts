@@ -8,6 +8,6 @@ async function xRequestId(fastify: FastifyInstance) {
 }
 
 export default fp(xRequestId, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: 'bautajs-x-request-id'
 });

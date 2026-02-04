@@ -49,7 +49,7 @@ fastify.register(bautajsFastify, {
 });
 
 (async () => {
-  fastify.listen(3000, err => {
+  fastify.listen({ port: 3000 }, err => {
     if (err) throw err;
     console.info('Server listening on localhost:', fastify.server.address().port);
   });

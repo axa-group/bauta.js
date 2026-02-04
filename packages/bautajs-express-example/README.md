@@ -6,7 +6,7 @@
 
 ## How to start
 
-- It is recommented that you are using node v18.
+- It is recommended that you are using node v24.
 - `npm install` from the root project of the monorepo
 - enter into `packages/bautajs-express-example` folder 
 - run npm script `npm run start`

@@ -53,7 +53,8 @@ export async function bautajsFastify(fastify: FastifyInstance, opts: any) {
         if (apiDefinition && (!opts.explorer || opts.explorer.enabled)) {
           fastifySwagger.register(explorerPlugin, {
             apiDefinition,
-            operations: bautajs.operations
+            operations: bautajs.operations,
+            prefix: opts.prefix
           });
         }
         if (opts.exposeOperations !== false) {
@@ -84,6 +85,6 @@ export * from './types';
 export * from './operators';
 
 export default fp(bautajsFastify, {
-  fastify: '4.x',
+  fastify: '5.x',
   name: 'bautajs'
 });

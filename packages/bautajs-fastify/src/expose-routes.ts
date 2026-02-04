@@ -26,30 +26,24 @@ function mapFsValidationToLocationErrors(
     : undefined;
 }
 
+// Schema error formatter for Fastify 5.x - converts validation errors to BautaJS format
+function createSchemaErrorFormatter() {
+  return (errors: fastify.ValidationResult[], dataVar: string): Error => {
+    const validationResult: ValidationResult = {
+      validation: errors as ValidateError[],
+      validationContext: dataVar
+    };
+    return new ValidationError(
+      'The request was not valid',
+      mapFsValidationToLocationErrors(validationResult) || [],
+      400
+    );
+  };
+}
+
 function createHandler(operation: Operation) {
   return async (request: fastify.FastifyRequest, reply: fastify.FastifyReply) => {
     let response;
-    // Convert the fastify validation error to the bautajs validation error format
-    if (request.validationError) {
-      // This error is intentionally logged as trace because for most of the errors is an expected error
-      request.log.trace(
-        {
-          error: {
-            name: request.validationError.name,
-            message: request.validationError.message,
-            stack: request.validationError.stack
-          }
-        },
-        `Fastify schema validation error found on the request`
-      );
-
-      reply.status(400);
-      throw new ValidationError(
-        'The request was not valid',
-        mapFsValidationToLocationErrors(request.validationError) || [],
-        400
-      );
-    }
     const op = operation.run<{ req: fastify.FastifyRequest; res: fastify.FastifyReply }, any>({
       req: request,
       res: reply,
@@ -58,9 +52,6 @@ function createHandler(operation: Operation) {
       log: request.log
     });
     request.raw.on('abort', () => {
-      op.cancel('Request was aborted by the requester intentionally');
-    });
-    request.raw.on('aborted', () => {
       op.cancel('Request was aborted by the requester intentionally');
     });
     request.raw.on('timeout', () => {
@@ -107,8 +98,7 @@ function createHandler(operation: Operation) {
         );
         // In case reply was sent by reply.raw
         reply.hijack();
-        // eslint-disable-next-line no-param-reassign
-        reply.sent = true;
+
         return {};
       }
       reply.status(error.statusCode || 500);
@@ -192,9 +182,28 @@ async function exposeRoutes(
     // Response validation should be the final one
     preSerializationHooks.push(validateResponseHook);
 
+    // Log validation errors at trace level as they are expected errors
+    const validationErrorLogger: fastify.onErrorHookHandler = (request, _reply, error, done) => {
+      if (error instanceof ValidationError) {
+        // This error is intentionally logged as trace because for most of the errors is an expected error
+        request.log.trace(
+          {
+            error: {
+              name: error.name,
+              message: error.message,
+              stack: error.stack
+            }
+          },
+          `Fastify schema validation error found on the request`
+        );
+      }
+      done();
+    };
+
     fastifyInstance.route({
       validatorCompiler: ({ schema }) => validator.buildSchemaCompiler(schema),
-      attachValidation: true,
+      schemaErrorFormatter: createSchemaErrorFormatter(),
+      onError: validationErrorLogger,
       method,
       url: route,
       preSerialization: preSerializationHooks,
