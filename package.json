@@ -68,7 +68,7 @@
     "lerna": "^9.0.3",
     "nock": "^13.3.0",
     "node-mocks-http": "^1.12.2",
-    "node-object-hash": "^2.3.10",
+    "node-object-hash": "^3.0.0",
     "pino": "^8.11.0",
     "prettier": "^2.8.7",
     "split2": "^4.2.0",
