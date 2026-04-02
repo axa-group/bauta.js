@@ -1,16 +1,20 @@
 import { BautaJSInstance, Context, Pipeline } from '../types';
-/**
- * @deprecated This function is deprecated and will be removed in future releases
- *
- * if elsePipeline is not provided there is no need to provide a third generic type variable
- *
- * remove the third not used generic and use the following instead
- * ```ts
- *  iif<TIn, TPipelineOut>(...)
- * ```
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function iif<TIn, TPipelineOut, TElseNever>(
+export function iif<
+  TIn,
+  TPipelineOut,
+  /**
+   * @deprecated This generic type is deprecated and will be removed in future releases.
+   *
+   * If elsePipeline is not provided there is no need to provide a third generic type variable.
+   *
+   * Remove the third not used generic and use the following instead:
+   * ```ts
+   * iif<TIn, TPipelineOut>(...)
+   * ```
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  TElseNever
+>(
   condition: (prev: TIn, ctx: Context, bautajs: BautaJSInstance) => boolean,
   pipeline: Pipeline.StepFunction<TIn, TPipelineOut>
 ): Pipeline.StepFunction<TIn, TIn | TPipelineOut>;
