@@ -61,7 +61,7 @@ describe('iif decorator', () => {
     );
   });
 
-  test('should mark only the deprecated generic type as deprecated in overload declaration', () => {
+  test('should scope @deprecated annotation to TElseNever type parameter, not entire function', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../iif.ts'), 'utf8');
     const firstOverloadIndex = source.indexOf('export function iif<');
     const firstOverloadEndIndex = source.indexOf(
