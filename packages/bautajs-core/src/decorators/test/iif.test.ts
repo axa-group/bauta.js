@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { BautaJSInstance, createContext, pipe } from '../..';
 import { iif } from '../iif';
 
@@ -57,5 +59,19 @@ describe('iif decorator', () => {
     expect(pipeline({}, createContext({}), {} as BautaJSInstance)).toBe(
       'Plastic is not fantastic!'
     );
+  });
+
+  test('should scope @deprecated annotation to TElseNever type parameter, not entire function', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../iif.ts'), 'utf8');
+    const firstOverloadIndex = source.indexOf('export function iif<');
+    const firstOverloadEndIndex = source.indexOf(
+      '): Pipeline.StepFunction<TIn, TIn | TPipelineOut>;',
+      firstOverloadIndex
+    );
+    const firstOverload = source.slice(firstOverloadIndex, firstOverloadEndIndex);
+
+    expect(source.slice(0, firstOverloadIndex)).not.toContain('@deprecated');
+    expect(firstOverload).toContain('@deprecated');
+    expect(firstOverload).toContain('TElseNever');
   });
 });
