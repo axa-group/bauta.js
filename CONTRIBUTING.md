@@ -21,15 +21,25 @@ Generally we like to see pull requests that
 - Have tests
 - Don't decrease the current code coverage
 
+## Local setup
+
+- Use Node.js 24 or newer.
+- Install dependencies from the repository root with `npm install`.
+- This repository uses npm workspaces, so package dependencies are installed and linked from the root project.
+
+Typical local validation flow from the root project:
+
+- `npm run lint`
+- `npm run build`
+- `npm test`
+
 ## Running tests
 
 - To run all tests, use `npm run test`.
-- To run units tests, use `npm run units`.
-- To run specific package units tests, use `npm run units -- --projects=./packages/bautajs`.
 - To run specific package tests, use `npm run test -- --projects=./packages/bautajs`.
 - To run the linter use, use `npm run lint`.
+- To build all packages, use `npm run build`.
 - To clean the packages node_modules, use `npm run clean`.
-- To bootstrap the packages node_modules, use `npm run bootstrap`.
 
 ## Usage with VSCode remote containers
 
