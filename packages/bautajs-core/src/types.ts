@@ -452,7 +452,7 @@ export declare namespace Pipeline {
     (
       value: ValueType,
       ctx: Context,
-      batuaJS: BautaJSInstance
+      bautajs: BautaJSInstance
     ): PromiseLike<ReturnType> | ReturnType;
   }
   interface PipelineFunction<ValueType, ReturnType> extends StepFunction<ValueType, ReturnType> {

@@ -36,8 +36,8 @@ Typical local validation flow from the root project:
 ## Running tests
 
 - To run all tests, use `npm run test`.
-- To run specific package tests, use `npm run test -- --projects=./packages/bautajs`.
-- To run the linter use, use `npm run lint`.
+- To run tests for a specific package, run `cd packages/<package> && npm test`.
+- To run the linter, use `npm run lint`.
 - To build all packages, use `npm run build`.
 - To clean the packages node_modules, use `npm run clean`.
 
