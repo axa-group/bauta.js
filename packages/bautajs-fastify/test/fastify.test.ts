@@ -481,10 +481,15 @@ describe('bautaJS fastify tests', () => {
     test('should log a message in case of the request was canceled', async () => {
       const baseLogger = defaultLogger();
       jest.spyOn(baseLogger, 'error').mockImplementation();
-      // Create a Fastify-compatible logger by adding msgPrefix
-      const logger = Object.assign(baseLogger, {
-        child: (() => logger) as any,
-        msgPrefix: undefined
+      // Create a Fastify-compatible logger without mutating pino internals.
+      // Newer pino versions expose `msgPrefix` as a getter-only property.
+      const logger = Object.create(baseLogger) as any;
+      logger.child = (() => logger) as any;
+      Object.defineProperty(logger, 'msgPrefix', {
+        value: undefined,
+        writable: true,
+        configurable: true,
+        enumerable: true
       });
       const fs = fastify({ loggerInstance: logger as any });
       fs.register(bautajsFastify, {

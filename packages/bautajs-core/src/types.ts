@@ -449,9 +449,11 @@ export declare namespace Pipeline {
     (error: GenericError, ctx: Context, batuajs: BautaJSInstance): ErrorType;
   }
   interface StepFunction<ValueType, ReturnType> {
-    (value: ValueType, ctx: Context, batuaJS: BautaJSInstance):
-      | PromiseLike<ReturnType>
-      | ReturnType;
+    (
+      value: ValueType,
+      ctx: Context,
+      batuaJS: BautaJSInstance
+    ): PromiseLike<ReturnType> | ReturnType;
   }
   interface PipelineFunction<ValueType, ReturnType> extends StepFunction<ValueType, ReturnType> {
     catchError: <ErrorType>(

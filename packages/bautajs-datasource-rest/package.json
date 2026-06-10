@@ -36,6 +36,6 @@
     "@axa/bautajs-dev-config": "^4.0.0-beta.0",
     "@axa/native-proxy-agent": "^2.0.0",
     "@sindresorhus/is": "^4.6.0",
-    "got": "^11.8.5"
+    "got": "^11.8.6"
   }
 }

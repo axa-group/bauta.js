@@ -38,7 +38,10 @@ export class OperationBuilder implements Operation {
 
   private validator?: OperationValidators;
 
-  constructor(public readonly id: string, private readonly bautajs: BautaJSInstance) {
+  constructor(
+    public readonly id: string,
+    private readonly bautajs: BautaJSInstance
+  ) {
     this.handler = buildDefaultStep();
   }
 
