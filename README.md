@@ -227,10 +227,10 @@ You can read the guide of how to contribute at [Contributing](./CONTRIBUTING.md)
 
 Bauta.js is a monorepo containing the following list of packages:
 
-- [BautaJS Core](./packages/bautajs-core)
-- [BautaJS Fastify](./packages/bautajs-fastify)
-- [BautaJS Express](./packages/bautajs-express)
-- [BautaJS Rest Datasource](./packages/bautajs-datasource-rest)
+- [Bauta.js Core](./packages/bautajs-core)
+- [Bauta.js Fastify](./packages/bautajs-fastify)
+- [Bauta.js Express](./packages/bautajs-express)
+- [Bauta.js Rest Datasource](./packages/bautajs-datasource-rest)
 
 ## Code of Conduct
 
@@ -245,10 +245,10 @@ Licensed under the MIT License.
 
 ### Production
 
-- [BautaJS Core](./packages/bautajs-core/README.md#third-party-dependencies-licenses)
-- [BautaJS Fastify](./packages/bautajs-fastify/README.md#third-party-dependencies-licenses)
-- [BautaJS Express](./packages/bautajs-express/README.md#third-party-dependencies-licenses)
-- [BautaJS Rest Datasource](./packages/bautajs-datasource-rest/README.md#third-party-dependencies-licenses)
+- [Bauta.js Core](./packages/bautajs-core/README.md#third-party-dependencies-licenses)
+- [Bauta.js Fastify](./packages/bautajs-fastify/README.md#third-party-dependencies-licenses)
+- [Bauta.js Express](./packages/bautajs-express/README.md#third-party-dependencies-licenses)
+- [Bauta.js Rest Datasource](./packages/bautajs-datasource-rest/README.md#third-party-dependencies-licenses)
 
 ### Development
  - [@commitlint/config-conventional@17.0.2](https://github.com/conventional-changelog/commitlint) - MIT

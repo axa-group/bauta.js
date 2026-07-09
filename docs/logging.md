@@ -1,6 +1,6 @@
 # Logging
 
-One of the main purpose of `bautajs` is provide a nice logging experience. Bauta.js provides a default logger (pino).
+One of the main purpose of Bauta.js is provide a nice logging experience. Bauta.js provides a default logger (pino).
 
 It can be overwritten by a custom logger passed on the initizalition of the Bauta.js instance. This log must follow the standard specified on [abstract-logging](https://www.npmjs.com/package/abstract-logging).
 

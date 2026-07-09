@@ -42,4 +42,4 @@ Accessing to the operations via:
 
 That way operationId findCat schema will be associated with the operation 'key' findCat.
 
-**Providing a API definition is not mandatory on create a Bautajs instance**
+**Providing a API definition is not mandatory on create a Bauta.js instance**

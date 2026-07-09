@@ -29,7 +29,7 @@ For versioning to work there are three parts that **must** be configured in orde
 
 :exclamation: You **must** declare any existing route that you want to use as a new version as ``deprecated``.  :exclamation:
 
-This is required to make sure that bautaJs does not overwrite the new version with the original route implementation.
+This is required to make sure that Bauta.js does not overwrite the new version with the original route implementation.
 
 Below there is an example of API definitions for two API versions (note: you may use two different swaggers and load each one of them separatedly):
 
@@ -116,7 +116,7 @@ Below there is an example of API definitions for two API versions (note: you may
 
 #### Deprecation programmaticaly
 
-Bautajs supports the deprecation by code with the resolver method `setAsDeprecated`. 
+Bauta.js supports the deprecation by code with the resolver method `setAsDeprecated`. 
 
 ```js
 const { resolver } = require('@axa/bautajs-core');
@@ -171,13 +171,13 @@ module.exports = resolver((operations) => {
 })
 ```
 
-### 3. BautaJS instantiation of both API versions
+### 3. Bauta.js instantiation of both API versions
 
-When you want to apply versioning, you have to modify slightly the way that bautaJs starts up to clearly configure what is considered the old version of your service endpoints and what is considered the latest version.
+When you want to apply versioning, you have to modify slightly the way that Bauta.js starts up to clearly configure what is considered the old version of your service endpoints and what is considered the latest version.
 
 #### Example using Bauta.js core without a Node.js framework plugin
 
-Now we need to specify a `bautaJS` instance per API swagger version.
+Now we need to specify a Bauta.js instance per API swagger version.
 
 ```js
 // instances.js

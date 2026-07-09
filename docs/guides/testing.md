@@ -32,7 +32,7 @@ module.export.pipeline = pipe(() => {
 ```
 
 To test this we need three main things:
- - Create an BautaJS application instance.
+ - Create a Bauta.js application instance.
  - Create a Bauta.js context.
  - Execute the pipeline passing the previous elements as parameters.
 
@@ -195,7 +195,7 @@ module.exports.bautajsInstance = bautajsInstance;
 
 Now we can start our testing. For that we will need:
 
-- Bootstrap BautaJS instance on the test
+- Bootstrap Bauta.js instance on the test
 - Call the operation to test
 
 ```js
