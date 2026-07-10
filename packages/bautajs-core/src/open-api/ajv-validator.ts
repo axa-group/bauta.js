@@ -12,6 +12,7 @@ import {
   headersSchema
 } from './validator-utils';
 import { AJVOperationValidators } from './operation-validators';
+import { setOwnProperty } from '../utils/set-own-property';
 
 const VALIDATOR_DEFAULT_OPTIONS: Options = {
   logger: false,
@@ -90,7 +91,11 @@ export class AjvValidator implements Validator<ValidateFunction> {
       validators[responseSchema.toString()] = Object.keys(operationSchema.response).reduce(
         (acc: Dictionary<ValidateFunction>, statusCode: string) => {
           if (operationSchema.response && operationSchema.response[statusCode]) {
-            acc[statusCode] = this.buildSchemaCompiler(operationSchema.response[statusCode]);
+            setOwnProperty(
+              acc,
+              statusCode,
+              this.buildSchemaCompiler(operationSchema.response[statusCode])
+            );
           }
           return acc;
         },

@@ -1,5 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { DocumentParsed, RouteSchema } from '../types';
+import { setOwnProperty } from '../utils/set-own-property';
 
 const HttpOperations = new Set(['delete', 'get', 'head', 'patch', 'post', 'put', 'options']);
 
@@ -42,8 +43,8 @@ class ParserV3 {
     };
     const required: string[] = [];
     data.forEach(item => {
-      params.properties[item.name] = item.schema;
-      this.copyProps(item, params.properties[item.name], ['description']);
+      const propertySchema = setOwnProperty(params.properties, item.name, item.schema);
+      this.copyProps(item, propertySchema, ['description']);
       // ajv wants "required" to be an array, which seems to be too strict
       // see https://github.com/json-schema/json-schema/wiki/Properties-and-required
       if (item.required) {
@@ -106,7 +107,7 @@ class ParserV3 {
       Object.keys(responses).forEach(httpCode => {
         const body = this.parseBody(responses[httpCode]);
         if (body !== undefined) {
-          result[httpCode] = body;
+          setOwnProperty(result, httpCode, body);
           hasResponse = true;
         }
       });

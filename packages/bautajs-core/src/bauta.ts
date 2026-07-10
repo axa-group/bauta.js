@@ -16,6 +16,7 @@ import { isLoggerValid } from './utils/logger-validator';
 import Parser from './open-api/parser';
 import { decorate } from './utils/decorate';
 import { AjvValidator } from './open-api/ajv-validator';
+import { setOwnProperty } from './utils/set-own-property';
 
 interface API {
   version: string;
@@ -158,7 +159,7 @@ export class BautaJS implements BautaJSInstance {
     // This will prevent to create new operations after bootstrapping the bautajs instance.
     this.operations = Object.freeze(
       Object.entries(this.operations).reduce((acc: Operations, [key, val]) => {
-        acc[key] = val;
+        setOwnProperty(acc, key, val);
 
         return acc;
       }, {})
@@ -280,16 +281,19 @@ export class BautaJS implements BautaJSInstance {
         operation.deprecated !== true &&
         !Object.prototype.hasOwnProperty.call(this.operations, operationId)
       ) {
-        this.operations[operationId] = OperationBuilder.create(operation.id, this);
-        this.operations[operationId].setup(operation.handler);
-        this.operations[operationId].requestValidationEnabled = operation.requestValidationEnabled;
-        this.operations[operationId].responseValidationEnabled =
-          operation.responseValidationEnabled;
+        const inheritedOperation = setOwnProperty(
+          this.operations,
+          operationId,
+          OperationBuilder.create(operation.id, this)
+        );
+        inheritedOperation.setup(operation.handler);
+        inheritedOperation.requestValidationEnabled = operation.requestValidationEnabled;
+        inheritedOperation.responseValidationEnabled = operation.responseValidationEnabled;
         if (operation.isPrivate()) {
-          this.operations[operationId].setAsPrivate();
+          inheritedOperation.setAsPrivate();
         }
         if (operation.route) {
-          this.operations[operationId].addRoute(operation.route);
+          inheritedOperation.addRoute(operation.route);
         }
       }
     });

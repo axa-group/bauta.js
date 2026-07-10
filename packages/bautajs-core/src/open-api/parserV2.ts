@@ -1,5 +1,6 @@
 import { OpenAPIV2 } from 'openapi-types';
 import { DocumentParsed, Route, RouteSchema } from '../types';
+import { setOwnProperty } from '../utils/set-own-property';
 
 class ParserV2 {
   public document: DocumentParsed;
@@ -44,8 +45,8 @@ class ParserV2 {
         Object.assign(item, { type: 'string', isFile: true });
       }
       //
-      params.properties[item.name] = {};
-      ParserV2.copyProps(item, params.properties[item.name], ['type', 'description']);
+      const propertySchema = setOwnProperty(params.properties, item.name, {});
+      ParserV2.copyProps(item, propertySchema, ['type', 'description']);
       // ajv wants "required" to be an array, which seems to be too strict
       // see https://github.com/json-schema/json-schema/wiki/Properties-and-required
       if (item.required) {
@@ -104,7 +105,7 @@ class ParserV2 {
         responses[httpCode as keyof OpenAPIV2.ResponseObject] as OpenAPIV2.SchemaObject
       )?.schema;
       if (schema) {
-        result[httpCode] = schema;
+        setOwnProperty(result, httpCode, schema);
         hasResponse = true;
       }
     });
